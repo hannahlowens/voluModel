@@ -8,9 +8,6 @@
 #'
 #' @return An object of class raster
 #'
-#' @importFrom fields Tps
-#' @importFrom raster raster
-#'
 #' @examples
 #' # Create sample raster
 #' r <- raster(ncol=10, nrow=10)
