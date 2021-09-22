@@ -23,7 +23,8 @@ Suggests:
     fields,
     nlme,
     raster,
-    knitr
+    knitr,
+    covr
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
