@@ -1,0 +1,25 @@
+Package: voluModel
+Title: Modeling Species Distributions in Three Dimensions
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Hannah",
+           family = "Owens",
+           role = c("aut", "cre"),
+           email = "hannah.owens@gmail.com",
+           comment = c(ORCID = "0000-0003-0071-1745"))
+Maintainer: Hannah L. Owens <hannah.owens@gmail.com>           
+Description: This package is designed to model species distributions in three 
+  dimensions. This is useful in an aquatic context when the organisms one 
+  wishes to model can be found across a wide range of depths in the water
+  column.
+License: `use_gpl3_license()`
+URL: https://hannahlowens.github.io/voluModel/
+BugReports: https://github.com/hannahlowens/voluModel/issues
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 3.5.0)
+Suggests:
+Imports:
+VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2

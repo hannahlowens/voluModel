@@ -1,2 +1,75 @@
-# voluModel
-R package for distributional modeling in 3 dimensions
+
+---
+title: "voluModel: Modeling Species Distributions in Three Dimensions"
+author:
+- Hannah L. Owens
+- Carsten Rahbek
+
+date: "`r Sys.Date()`"
+output:
+  md_document:
+    variant: markdown_github
+---
+
+```{r setup, include=FALSE}
+library(ape)
+library(occCite)
+knitr::opts_chunk$set(echo = TRUE, error = TRUE)
+knitr::opts_knit$set(root.dir = paste0(path.package("voluModel"), "/extdata/"))
+```
+
+<!-- badges: start -->
+[![R build status](https://github.com/hannahlowens/voluMod/workflows/R-CMD-check/badge.svg)](https://github.com/hannahlowens/voluModel/actions)
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Codecov test coverage](https://codecov.io/gh/hannahlowens/voluModel/branch/main/graph/badge.svg)](https://codecov.io/gh/hannahlowens/voluModel?branch=main)
+
+<!-- badges: end -->
+
+## Summary
+
+This package is designed to model species distributions in three dimensions. This is useful in an aquatic context when the organisms one wishes to model can be found across a wide range of depths in the water column.
+
+Please cite `voluModel`. Run the following to get the appropriate citation for the version you're using:
+
+```{r}
+citation(package = "voluModel")
+```
+
+## Installation
+
+Currently, there is only a development version.
+
+```{r eval=FALSE}
+devtools::install_github("hannahlowens/voluModel")
+```
+
+```{r}
+library("voluModel")
+```
+
+## Getting Started
+
+* Vignettes coming soon.
+
+## Meta
+
+* Please [report any issues or bugs](https://github.com/hannahlowens/voluModel/issues).
+* License: GPL-3
+* Get citation information for `voluModel` in R using `citation(package = 'voluModel')`
+
+- - -
+
+    © 2021 GitHub, Inc.
+    Terms
+    Privacy
+    Security
+    Status
+    Docs
+
+    Contact GitHub
+    Pricing
+    API
+    Training
+    Blog
+    About
+
