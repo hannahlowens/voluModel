@@ -1,4 +1,3 @@
-
 ---
 title: "voluModel: Modeling Species Distributions in Three Dimensions"
 author:
