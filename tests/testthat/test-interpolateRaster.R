@@ -1,4 +1,5 @@
 library(raster)
+library(fields)
 
 test_that("interpolateRaster returns appropriate information", {
   # Create sample raster
