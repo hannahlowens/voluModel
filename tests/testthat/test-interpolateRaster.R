@@ -1,3 +1,5 @@
+library(raster)
+
 test_that("interpolateRaster returns appropriate information", {
   # Create sample raster
   r <- raster(ncol=10, nrow=10)
