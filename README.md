@@ -4,7 +4,6 @@
 [![Project Status: WIP – Initial development is in progress, but there
 has not yet been a stable, usable release suitable for the
 public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![codecov](https://codecov.io/gh/hannahlowens/voluModel/branch/master/graph/badge.svg)](https://codecov.io/gh/hannahlowens/voluModel)
 [![Codecov test
 coverage](https://codecov.io/gh/hannahlowens/voluModel/branch/main/graph/badge.svg)](https://codecov.io/gh/hannahlowens/voluModel?branch=main)
 <!-- badges: end -->
