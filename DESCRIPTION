@@ -12,7 +12,7 @@ Description: This package is designed to model species distributions in three
   dimensions. This is useful in an aquatic context when the organisms one 
   wishes to model can be found across a wide range of depths in the water
   column.
-License: `use_gpl3_license()`
+License: use_gpl3_license()
 URL: https://hannahlowens.github.io/voluModel/
 BugReports: https://github.com/hannahlowens/voluModel/issues
 Encoding: UTF-8
