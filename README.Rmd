@@ -7,15 +7,8 @@ author:
 date: "`r Sys.Date()`"
 output:
   md_document:
-    variant: markdown_github
+    variant: gfm
 ---
-
-```{r setup, include=FALSE}
-library(ape)
-library(occCite)
-knitr::opts_chunk$set(echo = TRUE, error = TRUE)
-knitr::opts_knit$set(root.dir = paste0(path.package("voluModel"), "/extdata/"))
-```
 
 <!-- badges: start -->
 [![R build status](https://github.com/hannahlowens/voluMod/workflows/R-CMD-check/badge.svg)](https://github.com/hannahlowens/voluModel/actions)
