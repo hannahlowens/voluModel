@@ -41,8 +41,8 @@
 
 <meta property="og:title" content="Interpolate patchily sampled rasters — interpolateRaster" />
 <meta property="og:description" content="Uses thin plate spline regression from
-fields package to interpolate missing raster values.
-Note that this is only done in two dimensions, x and y." />
+fields package to interpolate missing two-dimensional
+raster values." />
 
 
 
@@ -120,11 +120,11 @@ Note that this is only done in two dimensions, x and y." />
 
     <div class="ref-description">
     <p>Uses thin plate spline regression from
-<code>fields</code> package to interpolate missing raster values.
-Note that this is only done in two dimensions, x and y.</p>
+<code>fields</code> package to interpolate missing two-dimensional
+raster values.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>interpolateRaster</span><span class='op'>(</span><span class='va'>inputRaster</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>interpolateRaster</span><span class='op'>(</span><span class='va'>inputRaster</span>, fast <span class='op'>=</span> <span class='cn'>F</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -133,21 +133,56 @@ Note that this is only done in two dimensions, x and y.</p>
       <th>inputRaster</th>
       <td><p>An object of class <code>raster</code></p></td>
     </tr>
+    <tr>
+      <th>fast</th>
+      <td><p>A logical operator. Setting to <code>T</code> triggers use
+of <code>fastTps</code> instead of <code>Tps</code>.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>For any additional arguments passed to <code>Tps</code> or <code>fastTps</code></p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>An object of class raster</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Missing data values from original raster
+are replaced with interpolated values. User has the
+option of choosing <code>fastTps</code> to speed calculation,
+but be advised that this is only an approximation
+of a true thin plate spline.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/fields/man/Tps.html'>Tps</a></code>, <code><a href='https://rdrr.io/pkg/fields/man/Tps.html'>fastTps</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Create sample raster</span>
-<span class='va'>r</span> <span class='op'>&lt;-</span> <span class='fu'>raster</span><span class='op'>(</span>ncol<span class='op'>=</span><span class='fl'>10</span>, nrow<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in raster(ncol = 10, nrow = 10): could not find function "raster"</span></div><div class='input'><span class='fu'>values</span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>100</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in values(r) &lt;- 1:100: object 'r' not found</span></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://rspatial.org/raster'>raster</a></span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Loading required package: sp</span></div><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/NCAR/Fields'>fields</a></span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Loading required package: spam</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: dotCall64</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: grid</span></div><div class='output co'>#&gt; <span class='message'>Spam version 2.7-0 (2021-06-25) is loaded.</span>
+#&gt; <span class='message'>Type 'help( Spam)' or 'demo( spam)' for a short introduction </span>
+#&gt; <span class='message'>and overview of this package.</span>
+#&gt; <span class='message'>Help for individual functions is also obtained by adding the</span>
+#&gt; <span class='message'>suffix '.spam' to the function name, e.g. 'help( chol.spam)'.</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attaching package: ‘spam’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    backsolve, forwardsolve</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: viridis</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: viridisLite</span></div><div class='output co'>#&gt; <span class='message'>See https://github.com/NCAR/Fields for</span>
+#&gt; <span class='message'> an extensive vignette, other supplements and source code </span></div><div class='input'><span class='co'># Create sample raster</span>
+<span class='va'>r</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span>ncol<span class='op'>=</span><span class='fl'>100</span>, nrow<span class='op'>=</span><span class='fl'>100</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/raster/man/getValues.html'>values</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10000</span>
+
 <span class='co'># Introduce a "hole"</span>
-<span class='fu'>values</span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>67</span><span class='op'>:</span><span class='fl'>70</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in values(r)[67:70] &lt;- NA: object 'r' not found</span></div><div class='input'><span class='va'>interpolatedRaster</span> <span class='op'>&lt;-</span> <span class='fu'>interpolateRaster</span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in interpolateRaster(r): object 'r' not found</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/pkg/raster/man/getValues.html'>values</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>67</span><span class='op'>:</span><span class='fl'>70</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
+
+<span class='co'># Patch hole with interpolateRaster</span>
+<span class='va'>interpolatedRaster</span> <span class='op'>&lt;-</span> <span class='fu'>interpolateRaster</span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Warning: 
+#&gt; Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
+#&gt;   (GCV) Generalized Cross-Validation 
+#&gt;    minimum at  right endpoint  lambda  =  3.025469e-06 (eff. df= 593.75 )</div><div class='input'><span class='va'>fastInterp</span> <span class='op'>&lt;-</span> <span class='fu'>interpolateRaster</span><span class='op'>(</span><span class='va'>r</span>, fast <span class='op'>=</span> <span class='cn'>TRUE</span>, aRange <span class='op'>=</span> <span class='fl'>3.0</span><span class='op'>)</span>
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
