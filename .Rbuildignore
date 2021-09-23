@@ -2,3 +2,10 @@
 ^\.Rproj\.user$
 ^\.github$
 ^codecov\.yml$
+^docs$
+^README_files$
+^README.Rmd
+^readme.md
+^cran-comments.md$
+^LICENSE\.md$
+^.*yml

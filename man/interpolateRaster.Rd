@@ -4,27 +4,47 @@
 \alias{interpolateRaster}
 \title{Interpolate patchily sampled rasters}
 \usage{
-interpolateRaster(inputRaster)
+interpolateRaster(inputRaster, fast = F, ...)
 }
 \arguments{
 \item{inputRaster}{An object of class \code{raster}}
+
+\item{fast}{A logical operator. Setting to \code{T} triggers use
+of \code{fastTps} instead of \code{Tps}.}
+
+\item{...}{For any additional arguments passed to \code{Tps} or \code{fastTps}}
 }
 \value{
 An object of class raster
 }
 \description{
 Uses thin plate spline regression from
-\code{fields} package to interpolate missing raster values.
-Note that this is only done in two dimensions, x and y.
+\code{fields} package to interpolate missing two-dimensional
+raster values.
+}
+\details{
+Missing data values from original raster
+are replaced with interpolated values. User has the
+option of choosing \code{fastTps} to speed calculation,
+but be advised that this is only an approximation
+of a true thin plate spline.
 }
 \examples{
+library(raster)
+library(fields)
 # Create sample raster
-r <- raster(ncol=10, nrow=10)
-values(r) <- 1:100
+r <- raster(ncol=100, nrow=100)
+values(r) <- 1:10000
 
 # Introduce a "hole"
 values(r)[67:70] <- NA
-interpolatedRaster <- interpolateRaster(r)
 
+# Patch hole with interpolateRaster
+interpolatedRaster <- interpolateRaster(r)
+fastInterp <- interpolateRaster(r, fast = TRUE, aRange = 3.0)
+
+}
+\seealso{
+\code{\link[fields]{Tps}}, \code{\link[fields]{fastTps}}
 }
 \keyword{dataPrep}
