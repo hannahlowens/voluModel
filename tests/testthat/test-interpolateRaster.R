@@ -1,6 +1,28 @@
 library(raster)
 library(fields)
 
+test_that("interpolateRaster input handling behaves as expected", {
+
+})
+
+test_that("interpolateRaster warnings behave as expected", {
+  # Create sample raster
+  r <- raster(ncol=10, nrow=10)
+  values(r) <- 1:100
+
+  # Tests
+  expect_error(interpolateRaster())
+  expect_null(interpolateRaster(inputRaster = "a"))
+  expect_null(interpolateRaster(inputRaster = r, fast = "a"))
+  expect_null(interpolateRaster(inputRaster = r, fast = F,
+                                lon.lat = "a"))
+  expect_null(interpolateRaster(inputRaster = r, fast = T))
+  expect_null(interpolateRaster(inputRaster = r, fast = T,
+                                aRange = "a"))
+  expect_null(interpolateRaster(inputRaster = r, fast = T,
+                                REML = "a"))
+})
+
 test_that("interpolateRaster returns appropriate information", {
   # Create sample raster
   r <- raster(ncol=10, nrow=10)
