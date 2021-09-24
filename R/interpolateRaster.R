@@ -79,7 +79,7 @@ interpolateRaster <- function(inputRaster, fast = F, ...){
     return(NULL)
   }
   if(fast && is.na(aRange)){
-    warning(paste0("'aRange' must be specified when using `fastTps()`.\n"))
+    warning(paste0("'aRange' or 'theta' must be specified when using `fastTps()`.\n"))
     return(NULL)
   }
   if(fast && !is.numeric(aRange)){
