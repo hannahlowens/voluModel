@@ -20,7 +20,8 @@ LazyData: true
 Depends: R (>= 3.5.0)
 Imports:
     fields,
-    raster
+    raster,
+    rgeos
 Suggests:
     testthat (>= 3.0.0),
     nlme,

@@ -120,7 +120,6 @@ xyzSample <- function(occs, envBrick){
           "\n as x, y, and z coordinates, respectively.")
 
   # Checking for appropriate environmental layer names
-  layerNames <- as.numeric(gsub("[X]", "", names(envBrick)))
   layerNames <- tryCatch(expr = as.numeric(gsub("[X]", "", names(envBrick))),
                          warning = function(w){
                            message(w)
@@ -140,8 +139,8 @@ xyzSample <- function(occs, envBrick){
   indices <- unique(occs$index)
   for(i in indices){
     occs[occs$index == i,]$sampledValues <- raster::extract(x = envBrick[[i]],
-                                                            y = occs[occs$index == i,c(yIndex,
-                                                                                       xIndex)])
+                                                            y = occs[occs$index == i,c(xIndex,
+                                                                                       yIndex)])
   }
   return(occs$sampledValues)
 }

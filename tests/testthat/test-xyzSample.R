@@ -21,7 +21,7 @@ test_that("xyzSample input warnings behave as expected", {
   occurrences <- as.data.frame(cbind(longitude,latitude,depth))
 
   # Tests
-  expect_error(interpolateRaster())
+  expect_error(xyzSample())
   expect_warning(xyzSample(occs = "a", envBrick = rBrick))
   expect_warning(xyzSample(occs = occurrences[,1:2], envBrick = rBrick))
   expect_warning(xyzSample(occs = occurrences, envBrick = "a"))
@@ -36,7 +36,7 @@ test_that("xyzSample input warnings behave as expected", {
   colnames(occurrences) <- c("longitude", "depth", "depth")
   expect_warning(xyzSample(occs = occurrences, envBrick = rBrick))
 
-  colnames(occurrences) <- c("y", "yak", "X")
+  colnames(occurrences) <- c("y", "yum", "X")
   expect_warning(xyzSample(occs = occurrences, envBrick = rBrick))
   colnames(occurrences) <- c("x", "exlax", "depth")
   expect_warning(xyzSample(occs = occurrences, envBrick = rBrick))
@@ -76,6 +76,7 @@ test_that("xyzSample returns appropriate information", {
 
   expect_type(occSample3d, "double")
   expect_length(occSample3d, 10)
+  expect_equal(0, sum(is.na(occSample3d)))
 })
 
 test_that("xyzSample column parsing works", {
@@ -110,5 +111,5 @@ test_that("xyzSample column parsing works", {
   occSample3d <- xyzSample(occurrences, rBrick)
   expect_type(occSample3d, "double")
   expect_length(occSample3d, 10)
+  expect_equal(0, sum(is.na(occSample3d)))
 })
-
