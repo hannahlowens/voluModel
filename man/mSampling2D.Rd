@@ -46,8 +46,9 @@ latitude <- sample(extent(r)[3]:extent(r)[4],
 occurrences <- as.data.frame(cbind(longitude,latitude))
 
 # Generate background sampling buffer
-mShp <- buffer(sp::SpatialPoints(occs[,c("longitude", "latitude")]),
-               width = 1, dissolve = T)
+buffPts <- SpatialPoints(occurrences[,c("longitude", "latitude")])
+crs(buffPts) <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+mShp <- buffer(buffPts, width = 1, dissolve = TRUE)
 
 # Here's the function
 result <- mSampling2D(occs = occurrences, rasterTemplate = r, mShp = mShp)

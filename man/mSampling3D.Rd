@@ -54,8 +54,13 @@ set.seed(0)
 depth <- sample(0:35, size = 10, replace = TRUE)
 occurrences <- as.data.frame(cbind(longitude,latitude,depth))
 
+# Generate background sampling buffer
+buffPts <- SpatialPoints(occurrences[,c("longitude", "latitude")])
+crs(buffPts) <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+mShp <- buffer(buffPts, width = 1, dissolve = TRUE)
+
 # Test function
-occSample3d <- mSampling3D(occurrences, envBrick)
+occSample3d <- mSampling3D(occurrences, envBrick, mShp = mShp)
 
 }
 \keyword{backgroundSampling}

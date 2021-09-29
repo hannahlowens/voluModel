@@ -1,5 +1,6 @@
 library(raster)
 library(rgeos)
+library(sp)
 
 test_that("mSampling2D input warnings behave as expected", {
   # Create sample raster
@@ -16,10 +17,10 @@ test_that("mSampling2D input warnings behave as expected", {
   occurrences <- as.data.frame(cbind(longitude,latitude))
 
   # Generate background sampling buffer
-  buffPts <- sp::SpatialPoints(occurrences[,c("longitude", "latitude")])
+  buffPts <- SpatialPoints(occurrences[,c("longitude", "latitude")])
   crs(buffPts) <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
   mShp <- buffer(buffPts,
-                 width = 600000, dissolve = T)
+                 width = 600000, dissolve = TRUE)
 
   # Tests
   expect_error(mSampling2D())

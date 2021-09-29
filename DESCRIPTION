@@ -21,7 +21,8 @@ Depends: R (>= 3.5.0)
 Imports:
     fields,
     raster,
-    rgeos
+    rgeos,
+    sp
 Suggests:
     testthat (>= 3.0.0),
     nlme,
