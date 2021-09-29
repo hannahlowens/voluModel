@@ -106,7 +106,7 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
     return(NULL)
   }
 
-  if(ncol(occs) < 2){
+  if(is.null(ncol(occs))){
     warning(paste0("'occs' must have at least two columns.\n"))
     return(NULL)
   }
@@ -227,6 +227,11 @@ mSampling3D <- function(occs, envBrick, mShp){
   }
 
   if(ncol(occs) < 3){
+    warning(paste0("'occs' must have at least three columns.\n"))
+    return(NULL)
+  }
+
+  if(is.null(ncol(occs))){
     warning(paste0("'occs' must have at least three columns.\n"))
     return(NULL)
   }
