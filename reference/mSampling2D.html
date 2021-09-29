@@ -172,12 +172,14 @@ for background sampling.</p>
 <span class='va'>occurrences</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='va'>longitude</span>,<span class='va'>latitude</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='co'># Generate background sampling buffer</span>
-<span class='va'>mShp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/buffer.html'>buffer</a></span><span class='op'>(</span><span class='fu'>sp</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/sp/man/SpatialPoints.html'>SpatialPoints</a></span><span class='op'>(</span><span class='va'>occs</span><span class='op'>[</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"longitude"</span>, <span class='st'>"latitude"</span><span class='op'>)</span><span class='op'>]</span><span class='op'>)</span>,
-               width <span class='op'>=</span> <span class='fl'>1</span>, dissolve <span class='op'>=</span> <span class='cn'>T</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'buffer': error in evaluating the argument 'obj' in selecting a method for function 'coordinates': object 'occs' not found</span></div><div class='input'>
+<span class='va'>buffPts</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/sp/man/SpatialPoints.html'>SpatialPoints</a></span><span class='op'>(</span><span class='va'>occurrences</span><span class='op'>[</span>,<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"longitude"</span>, <span class='st'>"latitude"</span><span class='op'>)</span><span class='op'>]</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/raster/man/projection.html'>crs</a></span><span class='op'>(</span><span class='va'>buffPts</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='st'>"+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"</span>
+<span class='va'>mShp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/buffer.html'>buffer</a></span><span class='op'>(</span><span class='va'>buffPts</span>, width <span class='op'>=</span> <span class='fl'>1</span>, dissolve <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Loading required namespace: rgeos</span></div><div class='input'>
 <span class='co'># Here's the function</span>
 <span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>mSampling2D</span><span class='op'>(</span>occs <span class='op'>=</span> <span class='va'>occurrences</span>, rasterTemplate <span class='op'>=</span> <span class='va'>r</span>, mShp <span class='op'>=</span> <span class='va'>mShp</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in mSampling2D(occs = occurrences, rasterTemplate = r, mShp = mShp): object 'mShp' not found</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>Using longitude and latitude</span>
+#&gt; <span class='message'> as x and y coordinates, respectively.</span></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
