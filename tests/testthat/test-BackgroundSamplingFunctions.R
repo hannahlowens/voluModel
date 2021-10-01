@@ -117,31 +117,59 @@ test_that("mSampling3D input warnings behave as expected", {
   depth <- sample(0:98, size = 10, replace = TRUE)
   occurrences <- as.data.frame(cbind(longitude,latitude,depth))
 
+  # Generate background sampling buffer
+  buffPts <- SpatialPoints(occurrences[,c("longitude", "latitude")])
+  crs(buffPts) <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+  mShp <- buffer(buffPts,
+                 width = 1000000, dissolve = TRUE)
+
   # Tests
   expect_error(mSampling3D())
-  expect_warning(mSampling3D(occs = "a", envBrick = rBrick))
+  expect_warning(mSampling3D(occs = "a", envBrick = rBrick, mShp = mShp))
   expect_warning(mSampling3D(occs = occurrences[,1:2], envBrick = rBrick))
   expect_warning(mSampling3D(occs = occurrences, envBrick = "a"))
 
   colnames(occurrences) <- c("cheese", "eggs", "spam")
-  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick))
+  expect_warning(mSampling3D(occs = occurrences,
+                             envBrick = rBrick, mShp = mShp))
 
   colnames(occurrences) <- c("longitude", "longitude", "depth")
-  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick))
+  expect_warning(mSampling3D(occs = occurrences,
+                             envBrick = rBrick, mShp = mShp))
   colnames(occurrences) <- c("latitude", "latitude", "depth")
-  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick))
+  expect_warning(mSampling3D(occs = occurrences,
+                             envBrick = rBrick, mShp = mShp))
   colnames(occurrences) <- c("longitude", "depth", "depth")
-  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick))
+  expect_warning(mSampling3D(occs = occurrences,
+                             envBrick = rBrick, mShp = mShp))
 
   colnames(occurrences) <- c("y", "yum", "X")
-  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick))
+  expect_warning(mSampling3D(occs = occurrences,
+                             envBrick = rBrick, mShp = mShp))
   colnames(occurrences) <- c("x", "exlax", "depth")
-  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick))
-  colnames(occurrences) <- c("z", "z", "sneeze")
-  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick))
+  expect_warning(mSampling3D(occs = occurrences,
+                             envBrick = rBrick, mShp = mShp))
+  colnames(occurrences) <- c("z", "zebra", "sneeze")
+  expect_warning(mSampling3D(occs = occurrences,
+                             envBrick = rBrick, mShp = mShp))
 
   names(rBrick) <- c("a", "b", "c")
-  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick))
+  expect_warning(mSampling3D(occs = occurrences,
+                             envBrick = rBrick, mShp = mShp))
+
+  colnames(occurrences) <- c("longitude", "longitude", "depth")
+  expect_warning(mSampling3D(occs = occurrences,
+                             envBrick = rBrick, mShp = "cheese"))
+
+  expect_warning(mSampling3D(occs = occurrences,
+                             envBrick = rBrick, mShp = mShp, depthLimit = rBrick))
+  expect_warning(mSampling3D(occs = occurrences,
+                             envBrick = rBrick, mShp = mShp, depthLimit = c(0,1,100)))
+  expect_warning(mSampling3D(occs = occurrences,
+                             envBrick = rBrick,  mShp = mShp, depthLimit = "cheese"))
+  expect_warning(mSampling3D(occs = occurrences,
+                             envBrick = rBrick,  mShp = mShp, depthLimit = c("all", "occs")))
+
 })
 
 test_that("mSampling3D outputs as expected", {
@@ -157,7 +185,7 @@ test_that("mSampling3D outputs as expected", {
   set.seed(0)
   longitude <- sample(extent(rBrick)[1]:extent(rBrick)[2],
                       size = 10, replace = FALSE)
-  set.seed(10)
+  set.seed(0)
   latitude <- sample(extent(rBrick)[3]:extent(rBrick)[4],
                      size = 10, replace = FALSE)
   set.seed(0)
@@ -173,7 +201,7 @@ test_that("mSampling3D outputs as expected", {
   # Testing
   expect_error(mSampling3D())
 
-  testResult <- mSampling3D(occurrences, rBrick, mShp = mShp)
+  testResult <- mSampling3D(occurrences, rBrick, mShp = mShp, depthLimit = "all")
   expect_true(is.data.frame(testResult))
-  expect_equal(nrow(testResult), 36)
+  expect_equal(nrow(testResult), 28)
 })

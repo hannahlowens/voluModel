@@ -4,10 +4,10 @@
 \alias{mSampling3D}
 \title{3D Background Sampling}
 \usage{
-mSampling3D(occs, envBrick, mShp)
+mSampling3D(occs, envBrick, mShp, depthLimit = "all")
 }
 \arguments{
-\item{occs}{A dataframe with at least three columns
+\item{occs}{A \code{data.frame} with at least three columns
 named "longitude", "latitude", and "depth", or that
 can be coerced into this format.}
 
@@ -17,6 +17,9 @@ coordinates.}
 
 \item{mShp}{A shapefile defining the area from
 which background points should be sampled.}
+
+\item{depthLimit}{An argument controlling the depth
+extent of sampling. Refer to \code{Details} for more information.}
 }
 \value{
 A \code{data.frame} with 3D coordinates of points for background
@@ -28,7 +31,17 @@ to minimum occurrence depth by buffering occurrences
 at XYZ resolution of envBrick
 }
 \details{
+This function is designed to sample background points for
+distributional modeling in three dimensions. If a voxel (3D pixel)
+in the \code{envBrick} intersects with an occurrence from \code{occs}, it is
+removed.
 
+\code{depthLimit} argument options
+\itemize{
+\item \code{occs} Samples background from the full depth extent of \code{occs}.
+\item \code{all} Samples background from the full depth extent of \code{envBrick}.
+\item A \code{vector} of length 2 with maximum and minimum values from which to sample.
+}
 }
 \examples{
 library(raster)
@@ -60,7 +73,9 @@ crs(buffPts) <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
 mShp <- buffer(buffPts, width = 1, dissolve = TRUE)
 
 # Test function
-occSample3d <- mSampling3D(occurrences, envBrick, mShp = mShp)
+occSample3d <- mSampling3D(occurrences,
+                           envBrick, mShp = mShp,
+                           depthLimit = "occs")
 
 }
 \keyword{backgroundSampling}

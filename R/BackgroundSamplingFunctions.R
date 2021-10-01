@@ -166,7 +166,7 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 #' to minimum occurrence depth by buffering occurrences
 #' at XYZ resolution of envBrick
 #'
-#' @param occs A dataframe with at least three columns
+#' @param occs A `data.frame` with at least three columns
 #' named "longitude", "latitude", and "depth", or that
 #' can be coerced into this format.
 #'
@@ -177,7 +177,20 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 #' @param mShp A shapefile defining the area from
 #' which background points should be sampled.
 #'
-#' @details
+#' @param depthLimit An argument controlling the depth
+#' extent of sampling. Refer to `Details` for more information.
+#'
+#' @details This function is designed to sample background points for
+#' distributional modeling in three dimensions. If a voxel (3D pixel)
+#' in the `envBrick` intersects with an occurrence from `occs`, it is
+#' removed.
+#'
+#' `depthLimit` argument options
+#' \itemize{
+#'   \item `occs` Samples background from the full depth extent of `occs`.
+#'   \item `all` Samples background from the full depth extent of `envBrick`.
+#'   \item A `vector` of length 2 with maximum and minimum values from which to sample.
+#' }
 #'
 #' @return A `data.frame` with 3D coordinates of points for background
 #' sampling.
@@ -212,7 +225,9 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 #' mShp <- buffer(buffPts, width = 1, dissolve = TRUE)
 #'
 #' # Test function
-#' occSample3d <- mSampling3D(occurrences, envBrick, mShp = mShp)
+#' occSample3d <- mSampling3D(occurrences,
+#'                            envBrick, mShp = mShp,
+#'                            depthLimit = "occs")
 #'
 #' @import raster
 #'
@@ -220,7 +235,9 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 #'
 #' @export
 
-mSampling3D <- function(occs, envBrick, mShp){
+mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all"){
+  if(is.null(depthLimit)){depthLimit <- "all"}
+
   if(!is.data.frame(occs)){
     warning(paste0("'occs' must be an object of class 'data.frame'.\n"))
     return(NULL)
@@ -239,6 +256,28 @@ mSampling3D <- function(occs, envBrick, mShp){
   if(class(envBrick) != "RasterBrick"){
     warning(paste0("'envBrick' must be of class 'RasterBrick'.\n"))
     return(NULL)
+  }
+
+  if(!(class(depthLimit) %in% c("character","numeric"))){
+    warning(paste0("'depthLimit' must be of class 'character' or 'numeric'.\n"))
+    return(NULL)
+  }
+
+  if(class(depthLimit) == "numeric"){
+    if(length(depthLimit) != 2){
+      warning(paste0("'depthLimit' arguments of 'numeric' must be of length 2.\n"))
+      return(NULL)
+    }
+  }
+
+  if(class(depthLimit) == "character"){
+    if(length(depthLimit) > 1){
+      warning(paste0(depthLimit, " is not a valid value for 'depthLimit'\n"))
+      return(NULL)
+    } else if(!(depthLimit %in% c("all", "occs"))){
+      warning(paste0(depthLimit, " is not a valid value for 'depthLimit'\n"))
+      return(NULL)
+    }
   }
 
   # Handling alternative column names for occurrences
@@ -297,9 +336,16 @@ mSampling3D <- function(occs, envBrick, mShp){
 
   # Get depth range
   layerNames <- as.numeric(gsub("[X]", "", names(envBrick)))
+
+  # If depthLimit = "occs"
   index <- unlist(lapply(occs[,zIndex], FUN = function(x) which.min(abs(layerNames - x))))
   occs$index <- index
   depthRange <- c(min(index), max(index))
+
+  # If depthLimit = "all"
+
+  # If depthLimit = numeric vector
+
   # Calculate lat/long buffers and buffer
   rasterTemplate <- envBrick[[1]]
   envBrick <- crop(mask(envBrick[[depthRange[[1]]:depthRange[[2]]]], mask = mShp), y = mShp)
@@ -321,5 +367,6 @@ mSampling3D <- function(occs, envBrick, mShp){
     }
     mPts <- rbind(mPts, tempPoints)
   }
+  colnames(mPts)[[3]] <- colNames[[zIndex]]
   return(mPts)
 }
