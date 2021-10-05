@@ -185,11 +185,11 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 #' in the `envBrick` intersects with an occurrence from `occs`, it is
 #' removed.
 #'
-#' `depthLimit` argument options
+#' `depthLimit` argument options:
 #' \itemize{
 #'   \item `occs` Samples background from the full depth extent of `occs`.
 #'   \item `all` Samples background from the full depth extent of `envBrick`.
-#'   \item A `vector` of length 2 with maximum and minimum values from which to sample.
+#'   \item A `vector` of length 2 with maximum and minimum depth values from which to sample.
 #' }
 #'
 #' @return A `data.frame` with 3D coordinates of points for background
@@ -334,17 +334,21 @@ mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all"){
                            return(NULL)
                          })
 
+  # Depth slice indices for occurrences
+  occs$index <- unlist(lapply(occs[,zIndex],
+                              FUN = function(x) which.min(abs(layerNames - x))))
+
   # Get depth range
   layerNames <- as.numeric(gsub("[X]", "", names(envBrick)))
 
-  # If depthLimit = "occs"
-  index <- unlist(lapply(occs[,zIndex], FUN = function(x) which.min(abs(layerNames - x))))
-  occs$index <- index
-  depthRange <- c(min(index), max(index))
-
-  # If depthLimit = "all"
-
-  # If depthLimit = numeric vector
+  if(class(depthLimit) == "numeric"){
+    depthRange <- c(which.min(abs(layerNames - min(depthLimit))),
+                    which.min(abs(layerNames - max(depthLimit))))
+  } else if(depthLimit == "occs"){
+    depthRange <- c(min(occs$index), max(occs$index))
+  } else {
+    depthRange <- c(1, nlayers(envBrick))
+  }
 
   # Calculate lat/long buffers and buffer
   rasterTemplate <- envBrick[[1]]
