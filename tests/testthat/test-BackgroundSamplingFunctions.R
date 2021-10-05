@@ -2,7 +2,7 @@ library(raster)
 library(rgeos)
 library(sp)
 
-#occCellRemoval() tests ----
+# occCellRemoval() tests ----
 # Create sample raster
 r <- raster(ncol=10, nrow=10)
 values(r) <- 1:100

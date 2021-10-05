@@ -2,11 +2,12 @@
 #'
 #' @description Removes cells from raster that contain occurrences
 #'
-#' @param occs A dataframe with at least two columns
+#' @param occs A `data.frame` with at least two columns
 #' named "longitude" and "latitude" or that
 #' can be coerced into this format.
 #'
-#' @param rasterTemplate
+#' @param rasterTemplate A `Raster*` object to serve
+#' as a template for cells to be removed.
 #'
 #' @details This is an internal function to remove cells that
 #' intersect with occurrences from a `Raster*` template object. This
