@@ -3,6 +3,7 @@
 export(interpolateRaster)
 export(mSampling2D)
 export(mSampling3D)
+export(smoothRaster)
 export(xyzSample)
 import(fields)
 import(raster)
