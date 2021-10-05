@@ -129,9 +129,11 @@ interpolateRaster <- function(inputRaster, fast = F, ...){
 #' of `fastTps` instead of `Tps`.
 #' @param ... For any additional arguments passed to `Tps` or `fastTps`
 #'
-#' @details Original raster
-#' are replaced with interpolated values. User has the
-#' option of choosing `fastTps` to speed calculation,
+#' @details Original raster is smoothed using a thin
+#' plate spline. This may be desireable in cases where
+#' the user has a reasonable expectation of spatial autocorrelation,
+#' but observes putative measurement errors in a raster. The user has
+#' the option of choosing `fastTps` to speed calculation,
 #' but be advised that this is only an approximation
 #' of a true thin plate spline.
 #'
@@ -148,8 +150,8 @@ interpolateRaster <- function(inputRaster, fast = F, ...){
 #' values(r)[520:525] <- 9999
 #'
 #' # Smooth bubble with smoothRaster
-#' interpolatedRaster <- smoothRaster(r)
-#' fastInterp <- smoothRaster(r, fast = TRUE, aRange = 3.0)
+#' smoothedRaster <- smoothRaster(r)
+#' fastSmooth <- smoothRaster(r, fast = TRUE, aRange = 3.0)
 #'
 #' @import raster
 #' @import fields

@@ -22,9 +22,11 @@ Uses thin plate spline regression from
 \code{fields} package to smooth raster values.
 }
 \details{
-Original raster
-are replaced with interpolated values. User has the
-option of choosing \code{fastTps} to speed calculation,
+Original raster is smoothed using a thin
+plate spline. This may be desireable in cases where
+the user has a reasonable expectation of spatial autocorrelation,
+but observes putative measurement errors in a raster. The user has
+the option of choosing \code{fastTps} to speed calculation,
 but be advised that this is only an approximation
 of a true thin plate spline.
 }
@@ -36,11 +38,11 @@ r <- raster(ncol=100, nrow=100)
 values(r) <- 1:10000
 
 # Introduce a "bubble"
-values(r)[67:70] <- 10
+values(r)[520:525] <- 9999
 
 # Smooth bubble with smoothRaster
-interpolatedRaster <- smoothRaster(r)
-fastInterp <- smoothRaster(r, fast = TRUE, aRange = 3.0)
+smoothedRaster <- smoothRaster(r)
+fastSmooth <- smoothRaster(r, fast = TRUE, aRange = 3.0)
 
 }
 \seealso{
