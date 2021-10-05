@@ -36,11 +36,11 @@ distributional modeling in three dimensions. If a voxel (3D pixel)
 in the \code{envBrick} intersects with an occurrence from \code{occs}, it is
 removed.
 
-\code{depthLimit} argument options
+\code{depthLimit} argument options:
 \itemize{
 \item \code{occs} Samples background from the full depth extent of \code{occs}.
 \item \code{all} Samples background from the full depth extent of \code{envBrick}.
-\item A \code{vector} of length 2 with maximum and minimum values from which to sample.
+\item A \code{vector} of length 2 with maximum and minimum depth values from which to sample.
 }
 }
 \examples{

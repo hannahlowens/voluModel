@@ -106,7 +106,7 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
     return(NULL)
   }
 
-  if(is.null(ncol(occs))){
+  if(is.vector(occs)){
     warning(paste0("'occs' must have at least two columns.\n"))
     return(NULL)
   }
@@ -236,8 +236,6 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 #' @export
 
 mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all"){
-  if(is.null(depthLimit)){depthLimit <- "all"}
-
   if(!is.data.frame(occs)){
     warning(paste0("'occs' must be an object of class 'data.frame'.\n"))
     return(NULL)

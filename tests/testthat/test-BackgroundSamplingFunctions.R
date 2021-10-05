@@ -158,6 +158,10 @@ test_that("mSampling3D outputs as expected", {
   # Testing
   expect_error(mSampling3D())
 
+  testResult <- mSampling3D(occurrences, rBrick, mShp = mShp)
+  expect_true(is.data.frame(testResult))
+  expect_equal(nrow(testResult), 40)
+
   testResult <- mSampling3D(occurrences, rBrick, mShp = mShp, depthLimit = "occs")
   expect_true(is.data.frame(testResult))
   expect_equal(nrow(testResult), 28)
