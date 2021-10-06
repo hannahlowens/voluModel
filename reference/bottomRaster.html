@@ -128,7 +128,7 @@ SpatialPointsDataFrame and generates a RasterLayer." />
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>rasterTemplate</th>
+      <th>rawPointData</th>
       <td><p>A <code>SpatialPointsDataFrame</code> object from which
 bottom variables will be sampled. See Details for more about format.</p></td>
     </tr>
@@ -164,16 +164,16 @@ rasterized at the resolution and extent of the x,y coordinates.</p>
                 d10M <span class='op'>=</span> <span class='fl'>11</span><span class='op'>:</span><span class='fl'>35</span>,
                 d25M <span class='op'>=</span> <span class='fl'>16</span><span class='op'>:</span><span class='fl'>40</span><span class='op'>)</span>
 <span class='va'>dd</span><span class='op'>$</span><span class='va'>d25M</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fl'>18</span><span class='op'>:</span><span class='fl'>25</span><span class='op'>)</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
-<span class='va'>dd</span><span class='op'>$</span><span class='va'>d10m</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fl'>21</span><span class='op'>:</span><span class='fl'>23</span><span class='op'>)</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in `$&lt;-.data.frame`(`*tmp*`, d10m, value = c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)): replacement has 23 rows, data has 25</span></div><div class='input'><span class='va'>dd</span><span class='op'>$</span><span class='va'>d5M</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>, <span class='fl'>22</span><span class='op'>)</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
+<span class='va'>dd</span><span class='op'>$</span><span class='va'>d10M</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fl'>21</span><span class='op'>:</span><span class='fl'>23</span><span class='op'>)</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
+<span class='va'>dd</span><span class='op'>$</span><span class='va'>d5M</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>, <span class='fl'>22</span><span class='op'>)</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
 
 <span class='co'># Create SpatialPointsDataFrame</span>
-<span class='va'>sp</span> <span class='op'>&lt;-</span> <span class='fu'>SpatialPointsDataFrame</span><span class='op'>(</span>coords <span class='op'>=</span> <span class='va'>coords</span>,
+<span class='va'>sp</span> <span class='op'>&lt;-</span> <span class='fu'>sp</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/sp/man/SpatialPoints.html'>SpatialPointsDataFrame</a></span><span class='op'>(</span>coords <span class='op'>=</span> <span class='va'>coords</span>,
                             data <span class='op'>=</span> <span class='va'>dd</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in SpatialPointsDataFrame(coords = coords, data = dd): could not find function "SpatialPointsDataFrame"</span></div><div class='input'>
+
 <span class='co'># Here's the function</span>
-<span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>bottomRaster</span><span class='op'>(</span><span class='va'>rawPointData</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in bottomRaster(rawPointData): could not find function "bottomRaster"</span></div><div class='input'>
+<span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>bottomRaster</span><span class='op'>(</span>rawPointData <span class='op'>=</span> <span class='va'>sp</span><span class='op'>)</span>
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

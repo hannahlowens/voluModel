@@ -162,7 +162,10 @@ sampling.</p>
     <p>This function is designed to sample background points for
 distributional modeling in three dimensions. If a voxel (3D pixel)
 in the <code>envBrick</code> intersects with an occurrence from <code>occs</code>, it is
-removed.</p>
+removed. Note that this function returns points representing every
+voxel in the background area within the specified depth range. It
+is up to the user to downsample from these data as necessary,
+depending on the model type being used.</p>
 <p><code>depthLimit</code> argument options:</p><ul>
 <li><p><code>occs</code> Samples background from the full depth extent of <code>occs</code>.</p></li>
 <li><p><code>all</code> Samples background from the full depth extent of <code>envBrick</code>.</p></li>
