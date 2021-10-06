@@ -26,7 +26,11 @@ for background sampling.
 Samples in 2D at resolution of raster
 }
 \details{
-
+This function is designed to sample background points
+for distributional modeling in three dimensions. The returned
+\code{data.frame} contains all points from accross the designated
+background. It is up to the user to determine how to
+appropriately sample from those background points.
 }
 \examples{
 library(raster)

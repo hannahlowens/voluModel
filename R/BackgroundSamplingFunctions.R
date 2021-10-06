@@ -65,7 +65,11 @@ occCellRemoval <- function(occs, rasterTemplate){
 #' @param mShp A shapefile defining the area from
 #' which background points should be sampled.
 #'
-#' @details
+#' @details This function is designed to sample background points
+#' for distributional modeling in three dimensions. The returned
+#' `data.frame` contains all points from accross the designated
+#' background. It is up to the user to determine how to
+#' appropriately sample from those background points.
 #'
 #' @return A `data.frame` with 2D coordinates of points
 #' for background sampling.
@@ -184,7 +188,10 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 #' @details This function is designed to sample background points for
 #' distributional modeling in three dimensions. If a voxel (3D pixel)
 #' in the `envBrick` intersects with an occurrence from `occs`, it is
-#' removed.
+#' removed. Note that this function returns points representing every
+#' voxel in the background area within the specified depth range. It
+#' is up to the user to downsample from these data as necessary,
+#' depending on the model type being used.
 #'
 #' `depthLimit` argument options:
 #' \itemize{

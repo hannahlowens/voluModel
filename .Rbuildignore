@@ -9,3 +9,4 @@
 ^cran-comments.md$
 ^LICENSE\.md$
 ^.*yml
+^CODE_OF_CONDUCT.md
