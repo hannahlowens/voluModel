@@ -15,6 +15,7 @@
 #' input data into this format.
 #'
 #' @examples
+#' library(raster)
 #' # Create sample raster
 #' r <- raster(ncol=10, nrow=10)
 #' values(r) <- 1:100
@@ -26,6 +27,7 @@
 #' set.seed(0)
 #' latitude <- sample(extent(r)[3]:extent(r)[4],
 #'                    size = 10, replace = FALSE)
+#' occurrences <- as.data.frame(cbind(longitude,latitude))
 #'
 #' # Here's the function
 #' result <- downsample(occs = occurrences, rasterTemplate = r)
@@ -33,7 +35,7 @@
 #' @import raster
 #'
 #' @keywords inputProcessing
-
+#' @export
 
 downsample <- function(occs, rasterTemplate){
   if(!is.data.frame(occs)){
@@ -81,15 +83,15 @@ downsample <- function(occs, rasterTemplate){
   message("Using ", colNames[xIndex], " and ", colNames[yIndex],
           "\n as x and y coordinates, respectively.")
 
-  occCells <- cellFromXY(object = rasterTemplate, occs[,c("decimalLongitude","decimalLatitude")])
+  occCells <- cellFromXY(object = rasterTemplate, occs[,c(xIndex,yIndex)])
   occCells <- unique(occCells)
   occs <- xyFromCell(object = rasterTemplate, cell = occCells)
   occs <- occs[complete.cases(occs),]
   if(is.null(nrow(occs))){
-    names(occs) <- c("decimalLongitude","decimalLatitude")
+    names(occs) <- colNames[c(xIndex,yIndex)]
     occs <- data.frame(t(occs))
   } else {
-    colnames(occs) <- c("decimalLongitude","decimalLatitude")
+    colnames(occs) <- colNames[c(xIndex,yIndex)]
     occs <- data.frame(occs)
   }
   return(occs)
@@ -100,7 +102,7 @@ downsample <- function(occs, rasterTemplate){
 #' @description Samples deepest depth values from a
 #' `SpatialPointsDataFrame` and generates a `RasterLayer`.
 #'
-#' @param rasterTemplate A `SpatialPointsDataFrame` object from which
+#' @param rawPointData A `SpatialPointsDataFrame` object from which
 #' bottom variables will be sampled. See Details for more about format.
 #'
 #' @return A `RasterLayer` designed to approximate sea bottom
@@ -130,23 +132,31 @@ downsample <- function(occs, rasterTemplate){
 #'                 d10M = 11:35,
 #'                 d25M = 16:40)
 #' dd$d25M[c(1:5, 18:25)] <- NA
-#' dd$d10m[c(3:5, 21:23)] <- NA
+#' dd$d10M[c(3:5, 21:23)] <- NA
 #' dd$d5M[c(4, 22)] <- NA
 #'
 #' # Create SpatialPointsDataFrame
-#' sp <- SpatialPointsDataFrame(coords = coords,
+#' sp <- sp::SpatialPointsDataFrame(coords = coords,
 #'                             data = dd)
 #'
 #' # Here's the function
-#' result <- bottomRaster(rawPointData)
+#' result <- bottomRaster(rawPointData = sp)
 #'
 #' @import raster
+#' @importFrom stats complete.cases
 #'
 #' @keywords inputProcessing
+#' @export
 
 # Samples bottom values from raster bricks
 bottomRaster <- function(rawPointData){
+  if(class(rawPointData) != "SpatialPointsDataFrame"){
+    warning(paste0("'rawPointData' must be of class 'SpatialPointsDataFrame'.\n"))
+    return(NULL)
+  }
+
   bottomSample <- apply(rawPointData@data, MARGIN = 1, FUN = function(x) tail(x[!is.na(x)],1))
   rawPointData@data$Bottom <- bottomSample
   bRaster <- rasterFromXYZ(cbind(rawPointData@coords,rawPointData@data$Bottom))
+  return(bRaster)
 }

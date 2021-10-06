@@ -24,6 +24,7 @@ input data into this format.
 Reduces number of occurrences to resolution of input raster
 }
 \examples{
+library(raster)
 # Create sample raster
 r <- raster(ncol=10, nrow=10)
 values(r) <- 1:100
@@ -35,6 +36,7 @@ longitude <- sample(extent(r)[1]:extent(r)[2],
 set.seed(0)
 latitude <- sample(extent(r)[3]:extent(r)[4],
                    size = 10, replace = FALSE)
+occurrences <- as.data.frame(cbind(longitude,latitude))
 
 # Here's the function
 result <- downsample(occs = occurrences, rasterTemplate = r)

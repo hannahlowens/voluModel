@@ -7,7 +7,7 @@
 bottomRaster(rawPointData)
 }
 \arguments{
-\item{rasterTemplate}{A \code{SpatialPointsDataFrame} object from which
+\item{rawPointData}{A \code{SpatialPointsDataFrame} object from which
 bottom variables will be sampled. See Details for more about format.}
 }
 \value{
@@ -43,15 +43,15 @@ dd <- data.frame(SURFACE = 1:25,
                 d10M = 11:35,
                 d25M = 16:40)
 dd$d25M[c(1:5, 18:25)] <- NA
-dd$d10m[c(3:5, 21:23)] <- NA
+dd$d10M[c(3:5, 21:23)] <- NA
 dd$d5M[c(4, 22)] <- NA
 
 # Create SpatialPointsDataFrame
-sp <- SpatialPointsDataFrame(coords = coords,
+sp <- sp::SpatialPointsDataFrame(coords = coords,
                             data = dd)
 
 # Here's the function
-result <- bottomRaster(rawPointData)
+result <- bottomRaster(rawPointData = sp)
 
 }
 \keyword{inputProcessing}

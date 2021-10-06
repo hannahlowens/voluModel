@@ -1,5 +1,6 @@
+library(raster)
+library(sp)
 # downsample() tests ----
-
 # Create sample raster
 r <- raster(ncol=10, nrow=10)
 values(r) <- 1:100
@@ -37,6 +38,19 @@ test_that("downsample input warnings behave as expected", {
 # Here's the function
 result <- downsample(occs = occurrences, rasterTemplate = r)
 
+test_that("downsample outputs as expected", {
+  expect_true(is.data.frame(result))
+  expect_equal(ncol(result), 2)
+  expect_true(nrow(result) == 18)
+})
+
+test_that("downsample special case checks", {
+  result <- downsample(occs = occurrences[1,], rasterTemplate = r)
+  expect_true(is.data.frame(result))
+  expect_equal(ncol(result), 2)
+  expect_true(nrow(result) == 1)
+})
+
 # bottomRaster() tests ----
 
 # Create point grid
@@ -50,9 +64,22 @@ dd <- data.frame(SURFACE = 1:25,
                  d10M = 11:35,
                  d25M = 16:40)
 dd$d25M[c(1:5, 18:25)] <- NA
-dd$d10m[c(3:5, 21:23)] <- NA
-dd$d5M[c(4, 22)] <- NA
+dd$d10M[c(3:4, 21:23)] <- NA
+dd$d5M[c(4, 15, 22)] <- NA
 
 # Create SpatialPointsDataFrame
 sp <- SpatialPointsDataFrame(coords = coords,
                              data = dd)
+
+test_that("bottomRaster input warnings behave as expected", {
+  expect_error(bottomRaster())
+  expect_warning(bottomRaster(rawPointData = "a"))
+})
+
+result <- bottomRaster(rawPointData = sp)
+
+test_that("bottomRaster outputs as expected", {
+  expect_true(class(result) == "RasterLayer")
+  expect_true(cellStats(is.na(result), sum) == 0)
+  expect_true(result[2] == 22)
+})
