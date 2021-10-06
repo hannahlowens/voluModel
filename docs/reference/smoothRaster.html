@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Interpolate patchily sampled rasters — interpolateRaster • voluModel</title>
+<title>Smooth rasters — smoothRaster • voluModel</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,9 @@
 
 
 
-<meta property="og:title" content="Interpolate patchily sampled rasters — interpolateRaster" />
+<meta property="og:title" content="Smooth rasters — smoothRaster" />
 <meta property="og:description" content="Uses thin plate spline regression from
-fields package to interpolate missing two-dimensional
-raster values." />
+fields package to smooth raster values." />
 
 
 
@@ -113,18 +112,17 @@ raster values." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Interpolate patchily sampled rasters</h1>
+    <h1>Smooth rasters</h1>
     <small class="dont-index">Source: <a href='https://github.com/hannahlowens/voluModel/blob/master/R/interpolateRaster.R'><code>R/interpolateRaster.R</code></a></small>
-    <div class="hidden name"><code>interpolateRaster.Rd</code></div>
+    <div class="hidden name"><code>smoothRaster.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>Uses thin plate spline regression from
-<code>fields</code> package to interpolate missing two-dimensional
-raster values.</p>
+<code>fields</code> package to smooth raster values.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>interpolateRaster</span><span class='op'>(</span><span class='va'>inputRaster</span>, fast <span class='op'>=</span> <span class='cn'>F</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>smoothRaster</span><span class='op'>(</span><span class='va'>inputRaster</span>, fast <span class='op'>=</span> <span class='cn'>F</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -146,12 +144,14 @@ of <code>fastTps</code> instead of <code>Tps</code>.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class raster</p>
+    <p>An object of class <code>RasterLayer</code></p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Missing data values from original raster
-are replaced with interpolated values. User has the
-option of choosing <code>fastTps</code> to speed calculation,
+    <p>Original raster is smoothed using a thin
+plate spline. This may be desireable in cases where
+the user has a reasonable expectation of spatial autocorrelation,
+but observes putative measurement errors in a raster. The user has
+the option of choosing <code>fastTps</code> to speed calculation,
 but be advised that this is only an approximation
 of a true thin plate spline.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -161,27 +161,19 @@ of a true thin plate spline.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://rspatial.org/raster'>raster</a></span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/NCAR/Fields'>fields</a></span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Loading required package: spam</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: dotCall64</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: grid</span></div><div class='output co'>#&gt; <span class='message'>Spam version 2.7-0 (2021-06-25) is loaded.</span>
-#&gt; <span class='message'>Type 'help( Spam)' or 'demo( spam)' for a short introduction </span>
-#&gt; <span class='message'>and overview of this package.</span>
-#&gt; <span class='message'>Help for individual functions is also obtained by adding the</span>
-#&gt; <span class='message'>suffix '.spam' to the function name, e.g. 'help( chol.spam)'.</span></div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: ‘spam’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    backsolve, forwardsolve</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: viridis</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: viridisLite</span></div><div class='output co'>#&gt; <span class='message'>See https://github.com/NCAR/Fields for</span>
-#&gt; <span class='message'> an extensive vignette, other supplements and source code </span></div><div class='input'><span class='co'># Create sample raster</span>
+<span class='co'># Create sample raster</span>
 <span class='va'>r</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span>ncol<span class='op'>=</span><span class='fl'>100</span>, nrow<span class='op'>=</span><span class='fl'>100</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/pkg/raster/man/getValues.html'>values</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10000</span>
 
-<span class='co'># Introduce a "hole"</span>
-<span class='fu'><a href='https://rdrr.io/pkg/raster/man/getValues.html'>values</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>67</span><span class='op'>:</span><span class='fl'>70</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
+<span class='co'># Introduce a "bubble"</span>
+<span class='fu'><a href='https://rdrr.io/pkg/raster/man/getValues.html'>values</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>520</span><span class='op'>:</span><span class='fl'>525</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>9999</span>
 
-<span class='co'># Patch hole with interpolateRaster</span>
-<span class='va'>interpolatedRaster</span> <span class='op'>&lt;-</span> <span class='fu'>interpolateRaster</span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span>
+<span class='co'># Smooth bubble with smoothRaster</span>
+<span class='va'>smoothedRaster</span> <span class='op'>&lt;-</span> <span class='fu'>smoothRaster</span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Warning: 
 #&gt; Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
 #&gt;   (GCV) Generalized Cross-Validation 
-#&gt;    minimum at  right endpoint  lambda  =  3.025469e-06 (eff. df= 593.75 )</div><div class='input'><span class='va'>fastInterp</span> <span class='op'>&lt;-</span> <span class='fu'>interpolateRaster</span><span class='op'>(</span><span class='va'>r</span>, fast <span class='op'>=</span> <span class='cn'>TRUE</span>, aRange <span class='op'>=</span> <span class='fl'>3.0</span><span class='op'>)</span>
+#&gt;    minimum at  right endpoint  lambda  =  3.025469e-06 (eff. df= 593.75 )</div><div class='input'><span class='va'>fastSmooth</span> <span class='op'>&lt;-</span> <span class='fu'>smoothRaster</span><span class='op'>(</span><span class='va'>r</span>, fast <span class='op'>=</span> <span class='cn'>TRUE</span>, aRange <span class='op'>=</span> <span class='fl'>3.0</span><span class='op'>)</span>
 
 </div></pre>
   </div>
