@@ -1,3 +1,109 @@
+#' @title Column Parsing
+#'
+#' @description Parses column names from input occurrence
+#' `data.frame` for more seamless function
+#'
+#' @param occs A `data.frame` with at least two columns
+#' named "longitude" and "latitude" or that
+#' can be coerced into this format.
+#'
+#' @param wDepth Logical; flags whether a depth column should
+#' also be sought.
+#'
+#' @details This is an internal function to return the putative
+#' indices for latitute and longitude or x and y coordinates
+#' of occurrances to allow for code that is more robust to
+#' very common user error
+#'
+#' @return A `list` of length 2 with indices of the x and y
+#' columns, respectively, followed by a message with a plain
+#' text report of which columns were interpreted as x and y.
+#'
+#' @examples
+#' library(raster)
+#'
+#' # Create sample raster
+#' r <- raster(ncol=10, nrow=10)
+#' values(r) <- 1:100
+#'
+#' # Create test occurrences
+#' set.seed(0)
+#' longitude <- sample(extent(r)[1]:extent(r)[2],
+#'                     size = 10, replace = FALSE)
+#' set.seed(0)
+#' latitude <- sample(extent(r)[3]:extent(r)[4],
+#'                    size = 10, replace = FALSE)
+#' set.seed(0)
+#' depth <- sample(0:35, size = 10, replace = TRUE)
+#' occurrences <- as.data.frame(cbind(longitude,latitude,depth))
+#'
+#' # Here's the function
+#' result <- columnParse(occs = occurrences[,1:2],
+#'                       wDepth = FALSE)
+#' result <- columnParse(occs = occurrences,
+#'                       wDepth = TRUE)
+#'
+#' @import raster
+#'
+#' @keywords internal
+#'
+#' @noRd
+
+columnParse <- function(occs, wDepth = FALSE){
+  # Handling alternative column names for occurrences
+  colNames <- colnames(occs)
+  xIndex <- grep(tolower(colNames), pattern = "long")
+  yIndex <- grep(tolower(colNames), pattern = "lat")
+  if(length(xIndex) > 1){xIndex <- xIndex[[1]]}
+  if(length(yIndex) > 1){yIndex <- yIndex[[1]]}
+  if(length(xIndex) == 0){
+    xIndex <- grep(tolower(colNames), pattern = "x")
+    if(length(xIndex) > 1){xIndex <- xIndex[[1]]}
+    if(length(xIndex) < 1){
+      warning(message("Could not parse\n ",
+                      paste0(colNames, collapse = ", "), "\n ",
+                      "into x and/or y coordinates."))
+      return(NULL)
+    }
+  }
+  if(length(yIndex) == 0){
+    yIndex <- grep(tolower(colNames), pattern = "y")
+    if(length(yIndex) > 1){yIndex <- yIndex[[1]]}
+    if(length(yIndex) < 1){
+      warning(message("Could not parse\n ",
+                      paste0(colNames, collapse = ", "), "\n ",
+                      "into x and/or y coordinates."))
+      return(NULL)
+    }
+  }
+
+  # Depth parsing
+  if(wDepth){
+    zIndex <- grep(tolower(colNames), pattern = "depth")
+    if(length(zIndex) > 1){zIndex <- zIndex[[1]]}
+    if(length(zIndex) == 0){
+      zIndex <- grep(tolower(colNames), pattern = "z")
+      if(length(zIndex) > 1){zIndex <- zIndex[[1]]}
+      if(length(zIndex) < 1){
+        warning(message("Could not parse\n ",
+                        paste0(colNames, collapse = ", "), "\n ",
+                        "into x, y, and/or z coordinates."))
+        return(NULL)
+      }
+    }
+    reportMessage <- paste0("Using ", colNames[xIndex], ", ",
+                            colNames[yIndex], ", and ", colNames[zIndex],
+                            "\n as x, y, and z coordinates, respectively.")
+    return(list(xIndex = xIndex, yIndex = yIndex, zIndex = zIndex,
+                reportMessage = reportMessage))
+  } else {
+    reportMessage <- paste0("Using ", colNames[xIndex], " and ",
+                            colNames[yIndex],
+                            "\n as x and y coordinates, respectively.")
+    return(list(xIndex = xIndex, yIndex = yIndex, reportMessage = reportMessage))
+  }
+}
+
 #' @title Occurrence downsampling
 #'
 #' @description Reduces number of occurrences to resolution of input raster
@@ -43,45 +149,22 @@ downsample <- function(occs, rasterTemplate){
     return(NULL)
   }
 
-  if(is.vector(occs)){
-    warning(paste0("'occs' must have at least two columns.\n"))
-    return(NULL)
-  }
-
   if(!grepl("Raster", class(rasterTemplate))){
     warning(paste0("'rasterTemplate' must be of class 'Raster*'.\n"))
     return(NULL)
   }
 
-  # Handling alternative column names for occurrences
+  # Parse columns
   colNames <- colnames(occs)
-  xIndex <- grep(tolower(colNames), pattern = "long")
-  yIndex <- grep(tolower(colNames), pattern = "lat")
-  if(length(xIndex) > 1){xIndex <- xIndex[[1]]}
-  if(length(yIndex) > 1){yIndex <- yIndex[[1]]}
-  if(length(xIndex) == 0){
-    xIndex <- grep(tolower(colNames), pattern = "x")
-    if(length(xIndex) > 1){xIndex <- xIndex[[1]]}
-    if(length(xIndex) < 1){
-      warning(message("Could not parse\n ",
-                      paste0(colNames, collapse = ", "), "\n ",
-                      "into x and/or y coordinates."))
-      return(NULL)
-    }
+  colParse <- voluModel:::columnParse(occs)
+  if(is.null(colParse)){
+    return(NULL)
   }
-  if(length(yIndex) == 0){
-    yIndex <- grep(tolower(colNames), pattern = "y")
-    if(length(yIndex) > 1){yIndex <- yIndex[[1]]}
-    if(length(yIndex) < 1){
-      warning(message("Could not parse\n ",
-                      paste0(colNames, collapse = ", "), "\n ",
-                      "into x and/or y coordinates."))
-      return(NULL)
-    }
-  }
+  xIndex <- colParse$xIndex
+  yIndex <- colParse$yIndex
+  interp <- colParse$reportMessage
 
-  message("Using ", colNames[xIndex], " and ", colNames[yIndex],
-          "\n as x and y coordinates, respectively.")
+  message(interp)
 
   occCells <- cellFromXY(object = rasterTemplate, occs[,c(xIndex,yIndex)])
   occCells <- unique(occCells)

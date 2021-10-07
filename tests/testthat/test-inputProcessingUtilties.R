@@ -1,5 +1,92 @@
 library(raster)
 library(sp)
+
+# voluModel:::columnParse() tests ----
+# Create sample raster
+r <- raster(ncol=10, nrow=10)
+values(r) <- 1:100
+
+# Create sample raster brick
+rBrick <- brick(r, r*10, r*100)
+names(rBrick) <- c(0, 10, 100)
+
+# Create test occurrences
+set.seed(0)
+longitude <- sample(extent(rBrick)[1]:extent(rBrick)[2],
+                    size = 10, replace = FALSE)
+set.seed(0)
+latitude <- sample(extent(rBrick)[3]:extent(rBrick)[4],
+                   size = 10, replace = FALSE)
+set.seed(0)
+depth <- sample(0:98, size = 10, replace = TRUE)
+occurrences <- as.data.frame(cbind(longitude, latitude, depth))
+
+test_that("columnParse input warnings behave as expected", {
+
+  expect_error(voluModel:::columnParse())
+  expect_warning(voluModel:::columnParse(occs = "a"))
+
+  # 2D
+  expect_warning(voluModel:::columnParse(occs = occurrences[,1]))
+
+  colnames(occurrences) <- c("cheese", "eggs")
+  expect_warning(voluModel:::columnParse(occs = occurrences))
+
+  colnames(occurrences) <- c("longitude", "longitude")
+  expect_warning(voluModel:::columnParse(occs = occurrences))
+  colnames(occurrences) <- c("latitude", "latitude")
+  expect_warning(voluModel:::columnParse(occs = occurrences))
+
+  occurrences$extra <- occurrences$longitude
+  colnames(occurrences) <- rep("yak", times = length(colnames(occurrences)))
+  expect_warning(voluModel:::columnParse(occs = occurrences))
+  colnames(occurrences) <- rep("xebu", times = length(colnames(occurrences)))
+  expect_warning(voluModel:::columnParse(occs = occurrences))
+
+  # 3D
+  expect_warning(voluModel:::columnParse(occs = occurrences, wDepth = TRUE))
+  expect_warning(voluModel:::columnParse(occs = occurrences, wDepth = TRUE))
+  expect_warning(voluModel:::columnParse(occs = occurrences, wDepth = TRUE))
+
+  colnames(occurrences) <- c("cheese", "eggs", "spam")
+  expect_warning(voluModel:::columnParse(occs = occurrences, wDepth = TRUE))
+
+  colnames(occurrences) <- c("longitude", "longitude", "depth")
+  expect_warning(voluModel:::columnParse(occs = occurrences, wDepth = TRUE))
+  colnames(occurrences) <- c("latitude", "latitude", "depth")
+  expect_warning(voluModel:::columnParse(occs = occurrences, wDepth = TRUE))
+  colnames(occurrences) <- c("longitude", "depth", "depth")
+  expect_warning(voluModel:::columnParse(occs = occurrences, wDepth = TRUE))
+
+  colnames(occurrences) <- c("y", "yum", "X")
+  expect_warning(voluModel:::columnParse(occs = occurrences, wDepth = TRUE))
+  colnames(occurrences) <- c("x", "exlax", "depth")
+  expect_warning(voluModel:::columnParse(occs = occurrences, wDepth = TRUE))
+  colnames(occurrences) <- c("z", "z", "sneeze")
+  expect_warning(voluModel:::columnParse(occs = occurrences, wDepth = TRUE))
+
+  names(rBrick) <- c("a", "b", "c")
+  expect_warning(voluModel:::columnParse(occs = occurrences, wDepth = TRUE))
+})
+
+result2D <- voluModel:::columnParse(occs = occurrences)
+result3D <- voluModel:::columnParse(occs = occurrences, wDepth = TRUE)
+
+test_that("columnParse outputs as expected", {
+  # 2D
+  expect_equal(length(result2D), 3)
+  expect_true(is.numeric(result2D$xIndex))
+  expect_true(is.numeric(result2D$yIndex))
+  expect_true(is.character(result2D$reportMessage))
+
+  # 3D
+  expect_equal(length(result3D), 4)
+  expect_true(is.numeric(result3D$xIndex))
+  expect_true(is.numeric(result3D$yIndex))
+  expect_true(is.numeric(result3D$zIndex))
+  expect_true(is.character(result3D$reportMessage))
+})
+
 # downsample() tests ----
 # Create sample raster
 r <- raster(ncol=10, nrow=10)
@@ -20,18 +107,7 @@ test_that("downsample input warnings behave as expected", {
   expect_warning(downsample(occs = occurrences[,1], rasterTemplate = r))
   expect_warning(downsample(occs = occurrences, rasterTemplate = "a"))
 
-  colnames(occurrences) <- c("cheese", "eggs")
-  expect_warning(downsample(occs = occurrences, rasterTemplate = r))
-
-  colnames(occurrences) <- c("longitude", "longitude")
-  expect_warning(downsample(occs = occurrences, rasterTemplate = r))
-  colnames(occurrences) <- c("latitude", "latitude")
-  expect_warning(downsample(occs = occurrences, rasterTemplate = r))
-
-  occurrences$extra <- occurrences$longitude
-  colnames(occurrences) <- rep("yak", times = length(colnames(occurrences)))
-  expect_warning(downsample(occs = occurrences, rasterTemplate = r))
-  colnames(occurrences) <- rep("xebu", times = length(colnames(occurrences)))
+  colnames(occurrences) <- c("spam", "eggs")
   expect_warning(downsample(occs = occurrences, rasterTemplate = r))
 })
 

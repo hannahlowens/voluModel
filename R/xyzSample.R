@@ -77,59 +77,29 @@ xyzSample <- function(occs, envBrick){
     return(NULL)
   }
 
-  # Handling alternative column names for occurrences
+  # Parse columns
   colNames <- colnames(occs)
-  xIndex <- grep(tolower(colNames), pattern = "long")
-  yIndex <- grep(tolower(colNames), pattern = "lat")
-  zIndex <- grep(tolower(colNames), pattern = "depth")
-  if(length(xIndex) > 1){xIndex <- xIndex[[1]]}
-  if(length(yIndex) > 1){yIndex <- yIndex[[1]]}
-  if(length(zIndex) > 1){zIndex <- zIndex[[1]]}
-  if(length(xIndex) == 0){
-    xIndex <- grep(tolower(colNames), pattern = "x")
-    if(length(xIndex) > 1){xIndex <- xIndex[[1]]}
-    if(length(xIndex) < 1){
-      warning(message("Could not parse\n ",
-                      paste0(colNames, collapse = ", "), "\n ",
-                      "into x, y, and/or z coordinates."))
-      return(NULL)
-    }
+  colParse <- voluModel:::columnParse(occs, wDepth = TRUE)
+  if(is.null(colParse)){
+    return(NULL)
   }
-  if(length(yIndex) == 0){
-    yIndex <- grep(tolower(colNames), pattern = "y")
-    if(length(yIndex) > 1){yIndex <- yIndex[[1]]}
-    if(length(yIndex) < 1){
-      warning(message("Could not parse\n ",
-                      paste0(colNames, collapse = ", "), "\n ",
-                      "into x, y, and/or z coordinates."))
-      return(NULL)
-    }
-  }
-  if(length(zIndex) == 0){
-    zIndex <- grep(tolower(colNames), pattern = "z")
-    if(length(zIndex) > 1){zIndex <- zIndex[[1]]}
-    if(length(zIndex) < 1){
-      warning(message("Could not parse\n ",
-                      paste0(colNames, collapse = ", "), "\n ",
-                      "into x, y, and/or z coordinates."))
-      return(NULL)
-    }
-  }
-  message("Using ", colNames[xIndex], ", ",
-          colNames[yIndex], ", and ", colNames[zIndex],
-          "\n as x, y, and z coordinates, respectively.")
+  xIndex <- colParse$xIndex
+  yIndex <- colParse$yIndex
+  zIndex <- colParse$zIndex
+  interp <- colParse$reportMessage
+
+  message(interp)
 
   # Checking for appropriate environmental layer names
-  layerNames <- tryCatch(expr = as.numeric(gsub("[X]", "", names(envBrick))),
-                         warning = function(w){
-                           message(w)
-                           message("\nInput RasterBrick names inappropriate: \n",
-                                   paste(names(envBrick), collapse = ", "), "\n",
-                                   "Names must follow the format 'X' ",
-                                   "followed by a number corresponding to ",
-                                   "the starting depth of the layer.")
-                           return(NULL)
-                           })
+  layerNames <- as.numeric(gsub("[X]", "", names(envBrick)))
+  if(sum(is.na(layerNames)) > 0){
+    message("\nInput RasterBrick names inappropriate: \n",
+            paste(names(envBrick), collapse = ", "), "\n",
+            "Names must follow the format 'X' ",
+            "followed by a number corresponding to ",
+            "the starting depth of the layer.")
+    return(NULL)
+  }
 
   # Sampling values
   sampledValues <- NULL

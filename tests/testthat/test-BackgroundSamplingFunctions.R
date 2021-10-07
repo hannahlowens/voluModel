@@ -55,18 +55,7 @@ test_that("mSampling2D input warnings behave as expected", {
   expect_warning(mSampling2D(occs = occurrences, rasterTemplate = "a", mShp = mShp))
   expect_warning(mSampling2D(occs = occurrences, rasterTemplate = r, mShp = "a"))
 
-  colnames(occurrences) <- c("cheese", "eggs")
-  expect_warning(mSampling2D(occs = occurrences, rasterTemplate = r, mShp = mShp))
-
-  colnames(occurrences) <- c("longitude", "longitude")
-  expect_warning(mSampling2D(occs = occurrences, rasterTemplate = r, mShp = mShp))
-  colnames(occurrences) <- c("latitude", "latitude")
-  expect_warning(mSampling2D(occs = occurrences, rasterTemplate = r, mShp = mShp))
-
-  occurrences$extra <- occurrences$longitude
-  colnames(occurrences) <- rep("yak", times = length(colnames(occurrences)))
-  expect_warning(mSampling2D(occs = occurrences, rasterTemplate = r, mShp = mShp))
-  colnames(occurrences) <- rep("xebu", times = length(colnames(occurrences)))
+  colnames(occurrences) <- c("spam", "eggs")
   expect_warning(mSampling2D(occs = occurrences, rasterTemplate = r, mShp = mShp))
 })
 
@@ -108,40 +97,18 @@ test_that("mSampling3D input warnings behave as expected", {
   expect_error(mSampling3D())
   expect_warning(mSampling3D(occs = "a", envBrick = rBrick, mShp = mShp))
   expect_warning(mSampling3D(occs = occurrences[,1:2], envBrick = rBrick))
+  expect_warning(mSampling3D(occs = occurrences[,1], envBrick = rBrick))
   expect_warning(mSampling3D(occs = occurrences, envBrick = "a"))
 
-  colnames(occurrences) <- c("cheese", "eggs", "spam")
-  expect_warning(mSampling3D(occs = occurrences,
-                             envBrick = rBrick, mShp = mShp))
-
-  colnames(occurrences) <- c("longitude", "longitude", "depth")
-  expect_warning(mSampling3D(occs = occurrences,
-                             envBrick = rBrick, mShp = mShp))
-  colnames(occurrences) <- c("latitude", "latitude", "depth")
-  expect_warning(mSampling3D(occs = occurrences,
-                             envBrick = rBrick, mShp = mShp))
-  colnames(occurrences) <- c("longitude", "depth", "depth")
-  expect_warning(mSampling3D(occs = occurrences,
-                             envBrick = rBrick, mShp = mShp))
-
-  colnames(occurrences) <- c("y", "yum", "X")
-  expect_warning(mSampling3D(occs = occurrences,
-                             envBrick = rBrick, mShp = mShp))
-  colnames(occurrences) <- c("x", "exlax", "depth")
-  expect_warning(mSampling3D(occs = occurrences,
-                             envBrick = rBrick, mShp = mShp))
-  colnames(occurrences) <- c("z", "zebra", "sneeze")
-  expect_warning(mSampling3D(occs = occurrences,
-                             envBrick = rBrick, mShp = mShp))
+  colnames(occurrences) <- c("spam", "eggs", "cheese")
+  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick, mShp = mShp))
+  colnames(occurrences) <- c("longitude", "latitude", "depth")
 
   names(rBrick) <- c("a", "b", "c", "d")
-  expect_warning(mSampling3D(occs = occurrences,
-                             envBrick = rBrick, mShp = mShp))
-  names(rBrick) <- c(0, 10, 100, 1000)
+  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick, mShp = mShp))
 
-  colnames(occurrences) <- c("longitude", "longitude", "depth")
-  expect_warning(mSampling3D(occs = occurrences,
-                             envBrick = rBrick, mShp = "cheese"))
+  names(rBrick) <- c(0, 10, 100, 1000)
+  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick, mShp = "cheese"))
 
   expect_warning(mSampling3D(occs = occurrences,
                              envBrick = rBrick, mShp = mShp, depthLimit = rBrick))

@@ -111,11 +111,6 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
     return(NULL)
   }
 
-  if(is.vector(occs)){
-    warning(paste0("'occs' must have at least two columns.\n"))
-    return(NULL)
-  }
-
   if(!grepl("Raster", class(rasterTemplate))){
     warning(paste0("'rasterTemplate' must be of class 'Raster*'.\n"))
     return(NULL)
@@ -126,35 +121,17 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
     return(NULL)
   }
 
-  # Handling alternative column names for occurrences
+  # Parse columns
   colNames <- colnames(occs)
-  xIndex <- grep(tolower(colNames), pattern = "long")
-  yIndex <- grep(tolower(colNames), pattern = "lat")
-  if(length(xIndex) > 1){xIndex <- xIndex[[1]]}
-  if(length(yIndex) > 1){yIndex <- yIndex[[1]]}
-  if(length(xIndex) == 0){
-    xIndex <- grep(tolower(colNames), pattern = "x")
-    if(length(xIndex) > 1){xIndex <- xIndex[[1]]}
-    if(length(xIndex) < 1){
-      warning(message("Could not parse\n ",
-                      paste0(colNames, collapse = ", "), "\n ",
-                      "into x and/or y coordinates."))
-      return(NULL)
-    }
+  colParse <- voluModel:::columnParse(occs)
+  if(is.null(colParse)){
+    return(NULL)
   }
-  if(length(yIndex) == 0){
-    yIndex <- grep(tolower(colNames), pattern = "y")
-    if(length(yIndex) > 1){yIndex <- yIndex[[1]]}
-    if(length(yIndex) < 1){
-      warning(message("Could not parse\n ",
-                      paste0(colNames, collapse = ", "), "\n ",
-                      "into x and/or y coordinates."))
-      return(NULL)
-    }
-  }
+  xIndex <- colParse$xIndex
+  yIndex <- colParse$yIndex
+  interp <- colParse$reportMessage
 
-  message("Using ", colNames[xIndex], " and ", colNames[yIndex],
-          "\n as x and y coordinates, respectively.")
+  message(interp)
 
   # Calculate lat/lon buffers and buffer
   rasterTemplate <- crop(mask(rasterTemplate, mask = mShp), y = mShp)
@@ -254,13 +231,13 @@ mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all"){
     return(NULL)
   }
 
-  if(is.null(ncol(occs))){
-    warning(paste0("'occs' must have at least three columns.\n"))
+  if(class(envBrick) != "RasterBrick"){
+    warning(paste0("'envBrick' must be of class 'RasterBrick'.\n"))
     return(NULL)
   }
 
-  if(class(envBrick) != "RasterBrick"){
-    warning(paste0("'envBrick' must be of class 'RasterBrick'.\n"))
+  if(class(mShp) != "SpatialPolygons"){
+    warning(paste0("'mShp' must be of class 'SpatialPolygons'.\n"))
     return(NULL)
   }
 
@@ -286,59 +263,29 @@ mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all"){
     }
   }
 
-  # Handling alternative column names for occurrences
+  # Parse columns
   colNames <- colnames(occs)
-  xIndex <- grep(tolower(colNames), pattern = "long")
-  yIndex <- grep(tolower(colNames), pattern = "lat")
-  zIndex <- grep(tolower(colNames), pattern = "depth")
-  if(length(xIndex) > 1){xIndex <- xIndex[[1]]}
-  if(length(yIndex) > 1){yIndex <- yIndex[[1]]}
-  if(length(zIndex) > 1){zIndex <- zIndex[[1]]}
-  if(length(xIndex) == 0){
-    xIndex <- grep(tolower(colNames), pattern = "x")
-    if(length(xIndex) > 1){xIndex <- xIndex[[1]]}
-    if(length(xIndex) < 1){
-      warning(message("Could not parse\n ",
-                      paste0(colNames, collapse = ", "), "\n ",
-                      "into x, y, and/or z coordinates."))
-      return(NULL)
-    }
+  colParse <- voluModel:::columnParse(occs, wDepth = TRUE)
+  if(is.null(colParse)){
+    return(NULL)
   }
-  if(length(yIndex) == 0){
-    yIndex <- grep(tolower(colNames), pattern = "y")
-    if(length(yIndex) > 1){yIndex <- yIndex[[1]]}
-    if(length(yIndex) < 1){
-      warning(message("Could not parse\n ",
-                      paste0(colNames, collapse = ", "), "\n ",
-                      "into x, y, and/or z coordinates."))
-      return(NULL)
-    }
-  }
-  if(length(zIndex) == 0){
-    zIndex <- grep(tolower(colNames), pattern = "z")
-    if(length(zIndex) > 1){zIndex <- zIndex[[1]]}
-    if(length(zIndex) < 1){
-      warning(message("Could not parse\n ",
-                      paste0(colNames, collapse = ", "), "\n ",
-                      "into x, y, and/or z coordinates."))
-      return(NULL)
-    }
-  }
-  message("Using ", colNames[xIndex], ", ",
-          colNames[yIndex], ", and ", colNames[zIndex],
-          "\n as x, y, and z coordinates, respectively.")
+  xIndex <- colParse$xIndex
+  yIndex <- colParse$yIndex
+  zIndex <- colParse$zIndex
+  interp <- colParse$reportMessage
+
+  message(interp)
 
   # Checking for appropriate environmental layer names
-  layerNames <- tryCatch(expr = as.numeric(gsub("[X]", "", names(envBrick))),
-                         warning = function(w){
-                           message(w)
-                           message("\nInput RasterBrick names inappropriate: \n",
-                                   paste(names(envBrick), collapse = ", "), "\n",
-                                   "Names must follow the format 'X' ",
-                                   "followed by a number corresponding to ",
-                                   "the starting depth of the layer.")
-                           return(NULL)
-                         })
+  layerNames <- as.numeric(gsub("[X]", "", names(envBrick)))
+  if(sum(is.na(layerNames)) > 0){
+    message("\nInput RasterBrick names inappropriate: \n",
+            paste(names(envBrick), collapse = ", "), "\n",
+            "Names must follow the format 'X' ",
+            "followed by a number corresponding to ",
+            "the starting depth of the layer.")
+    return(NULL)
+  }
 
   # Depth slice indices for occurrences
   occs$index <- unlist(lapply(occs[,zIndex],
