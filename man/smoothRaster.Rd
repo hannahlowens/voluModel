@@ -23,7 +23,7 @@ Uses thin plate spline regression from
 }
 \details{
 Original raster is smoothed using a thin
-plate spline. This may be desireable in cases where
+plate spline. This may be desirable in cases where
 the user has a reasonable expectation of spatial autocorrelation,
 but observes putative measurement errors in a raster. The user has
 the option of choosing \code{fastTps} to speed calculation,

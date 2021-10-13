@@ -67,7 +67,7 @@ occCellRemoval <- function(occs, rasterTemplate){
 #'
 #' @details This function is designed to sample background points
 #' for distributional modeling in three dimensions. The returned
-#' `data.frame` contains all points from accross the designated
+#' `data.frame` contains all points from across the designated
 #' background. It is up to the user to determine how to
 #' appropriately sample from those background points.
 #'

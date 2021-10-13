@@ -4,12 +4,17 @@
 \alias{marineBackground}
 \title{Marine background shapefile generation}
 \usage{
-marineBackground(occs, ...)
+marineBackground(occs, clipToOcean = TRUE, ...)
 }
 \arguments{
 \item{occs}{A \code{data.frame} with at least two columns
 named "longitude" and "latitude" or that
 can be coerced into this format.}
+
+\item{clipToOcean}{\code{logical}. Clips shapefile to oceans where species
+occurs. Useful in cases where buffers jump over narrow
+peninsulas (e.g. Isthmus of Panama). Can be quite artificial at ocean
+boundaries.}
 
 \item{...}{Additional optional arguments to pass to
 \code{getDynamicAlphaHull}.}
@@ -69,7 +74,7 @@ latitude <- sample(extent(r)[3]:extent(r)[4],
 occurrences <- as.data.frame(cbind(longitude,latitude))
 
 # Here's the function
-result <- marineBackground(occs = occurrences)
+result <- marineBackground(occs = occurrences, clipToOcean = TRUE)
 
 }
 \seealso{
