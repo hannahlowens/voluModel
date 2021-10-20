@@ -28,6 +28,11 @@
 #' named "longitude" and "latitude" or that
 #' can be coerced into this format.
 #'
+#' @param clipToOcean `logical`. Clips shapefile to oceans where species
+#' occurs. Useful in cases where buffers jump over narrow
+#' peninsulas (e.g. Isthmus of Panama). Can be quite artificial at ocean
+#' boundaries.
+#'
 #' @param ... Additional optional arguments to pass to
 #' `getDynamicAlphaHull`.
 #'
@@ -59,17 +64,19 @@
 #' occurrences <- as.data.frame(cbind(longitude,latitude))
 #'
 #' # Here's the function
-#' result <- marineBackground(occs = occurrences)
+#' result <- marineBackground(occs = occurrences, clipToOcean = TRUE)
 #'
 #' @import raster
 #' @import rangeBuilder
+#' @import rgeos
+#' @import sp
 #'
 #' @seealso \code{\link[rangeBuilder:getDynamicAlphaHull]{getDynamicAlphaHull}}
 #'
 #' @keywords backgroundSampling
 
 
-marineBackground <- function(occs, ...){
+marineBackground <- function(occs, clipToOcean = TRUE, ...){
   args <- list(...)
 
   if("fraction" %in% names(args)){
@@ -81,7 +88,7 @@ marineBackground <- function(occs, ...){
   if("partCount" %in% names(args)){
     partCount <- args$partCount
   } else {
-    partCount <- 3
+    partCount <- 1
   }
 
   if("buff" %in% names(args)){
@@ -113,8 +120,10 @@ marineBackground <- function(occs, ...){
     warning(paste0("'occs' must be an object of class 'data.frame'.\n"))
     return(NULL)
   }
-
-
+  if (!is.logical(clipToOcean)) {
+    warning(message("Argument 'clipToOcean' is not of type 'logical'.\n"))
+    return(NULL)
+  }
   if (!is.numeric(fraction)) {
     warning(message("Argument 'fraction' is not of class 'numeric'.\n"))
     return(NULL)
@@ -152,14 +161,19 @@ marineBackground <- function(occs, ...){
 
   message(interp)
 
-
   # Calculate buffer
-  pDist <- pointDistance(occs[,c(xIndex, yIndex)], lonlat = T)
+  pDist <- raster::pointDistance(occs[,c(xIndex, yIndex)], lonlat = T)
   buff <- mean(quantile(pDist, c(.1, .9), na.rm = T))/2
 
   # Hull part
-  hull <- try(getDynamicAlphaHull(occs, coordHeaders=c(xIndex,yIndex),
-                                  clipToCoast = "no", fraction = .99, partCount = 1), silent = T)
+  hull <- try(rangeBuilder::getDynamicAlphaHull(occs,
+                                                initialAlpha = initialAlpha,
+                                                alphaIncrement = alphaIncrement,
+                                                coordHeaders=colnames(occs)[c(xIndex,yIndex)],
+                                                clipToCoast = clipToCoast,
+                                                fraction = fraction,
+                                                partCount = partCount),
+              silent = T)
   if("try-error" %in% class(hull)){
     x1 <- min(occs[xIndex])
     x2 <- max(occs[xIndex])
@@ -169,23 +183,43 @@ marineBackground <- function(occs, ...){
     hull <- Polygons(list(hull), ID = "A")
     hull <- SpatialPolygons(list(hull))
     proj4string(hull) <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
-    hull <- spTransform(hull, CRSobj = CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
+    hull <- sp::spTransform(hull[[1]], CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
   } else{
-    hull <- spTransform(hull[[1]], CRSobj = CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
+    hull <- sp::spTransform(hull[[1]], CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
   }
 
-  # Project to Plate Carre
-  hullBuff <- buffer(hull, width = buff, dissolve = T)
+  hullBuff <- raster::buffer(hull, width = buff, dissolve = T)
 
   # Point part
-  occsForM <- suppressWarnings(SpatialPoints(occs[,c(xIndex, yIndex)],
-                                             proj4string = CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")))
-  test <- intersect(occsForM, pacificShapefile) # Collect points that occur in the East Pacific for later...
-  occsForM <- spTransform(occsForM, CRSobj = CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
-  occBuff <- suppressWarnings(buffer(occsForM, width = buff, dissolve = T))
+  occsForM <- suppressWarnings(sp::SpatialPoints(occs[,c(xIndex, yIndex)],
+                                                 proj4string = sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")))
+  occsForM <- sp::spTransform(occsForM, CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
+  occBuff <- suppressWarnings(raster::buffer(occsForM, width = buff, dissolve = T))
+
+  # Unite and crop out land
+  wholeM <- rgeos::gUnion(occBuff, hullBuff)
+  land <- suppressWarnings(aggregate(buffer(sp::spTransform(rangeBuilder::gshhs,
+                                                     CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs")),
+                                            width = 500, dissolve = TRUE),
+                                    dissolve = T))
+  wholeM <- suppressWarnings(rgeos::gDifference(wholeM,land))
+
+  # Optional removal of unoccupied polygons
+  if(clipToOcean){
+    # First, split up disjunct polygons
+    wholeM <- sp::disaggregate(wholeM)
+    wholeM <- wholeM[apply(rgeos::gContains(wholeM, occsForM, byid = T), 2, FUN = any)]
+    sp::plot(wholeM)
+  }
 
   # Putting it all together and fixing the date line
-  wholeM <- gUnion(occBuff, hullBuff)
+  worldExtent <- extent(-20037508,
+                        20037508,
+                        -10018754,
+                        10018754) # Plate-Carre world extent
+  worldExtent <- as(worldExtent, 'SpatialPolygons')
+  crs(worldExtent) <- sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs")
+
   wholeM <- crop(wholeM, extent(c(xmin(wholeM),
                                   xmax(wholeM),
                                   ymin(worldExtent),
@@ -221,13 +255,6 @@ marineBackground <- function(occs, ...){
   }
 
   wholeM <- spTransform(wholeM, CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
-
-  # Remove East Pacific from training region in case of western Caribbean leakage
-  if(nrow(test@coords) < 1){
-    wholeM <- gDifference(wholeM, pacificShapefile)
-  }
-
-  envBuffers[[i]] <- wholeM
 
   return(wholeM)
 }
