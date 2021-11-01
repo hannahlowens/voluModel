@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Smooth rasters — smoothRaster • voluModel</title>
+<title>Point mapping — pointMap • voluModel</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,9 @@
 
 
 
-<meta property="og:title" content="Smooth rasters — smoothRaster" />
-<meta property="og:description" content="Uses thin plate spline regression from
-fields package to smooth raster values." />
+<meta property="og:title" content="Point mapping — pointMap" />
+<meta property="og:description" content="A convenient wrapper around ggplot
+to generate formatted occurrence point plots." />
 
 
 
@@ -112,65 +112,71 @@ fields package to smooth raster values." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Smooth rasters</h1>
-    <small class="dont-index">Source: <a href='https://github.com/hannahlowens/voluModel/blob/master/R/interpolateRaster.R'><code>R/interpolateRaster.R</code></a></small>
-    <div class="hidden name"><code>smoothRaster.Rd</code></div>
+    <h1>Point mapping</h1>
+    <small class="dont-index">Source: <a href='https://github.com/hannahlowens/voluModel/blob/master/R/visualizations.R'><code>R/visualizations.R</code></a></small>
+    <div class="hidden name"><code>pointMap.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Uses thin plate spline regression from
-<code>fields</code> package to smooth raster values.</p>
+    <p>A convenient wrapper around ggplot
+to generate formatted occurrence point plots.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>smoothRaster</span><span class='op'>(</span><span class='va'>inputRaster</span>, fast <span class='op'>=</span> <span class='cn'>F</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>pointMap</span><span class='op'>(</span><span class='va'>occs</span>, <span class='va'>spName</span>, <span class='va'>world</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>inputRaster</th>
-      <td><p>An object of class <code>raster</code></p></td>
+      <th>occs</th>
+      <td><p>A <code>data.frame</code> with at least two columns
+named "longitude" and "latitude" or that
+can be coerced into this format.</p></td>
     </tr>
     <tr>
-      <th>fast</th>
-      <td><p>A logical operator. Setting to <code>T</code> triggers use
-of <code>fastTps</code> instead of <code>Tps</code>.</p></td>
+      <th>spName</th>
+      <td><p>A character string with the species
+name to be used in the plot title.</p></td>
+    </tr>
+    <tr>
+      <th>world</th>
+      <td><p>An optional coastline shapefile to
+provide geographic context for the occurrence points.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>For any additional arguments passed to <code>Tps</code> or <code>fastTps</code></p></td>
+      <td><p>Additional optional arguments to pass to
+<code>ggplot</code> initial plot object.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class <code>RasterLayer</code></p>
+    <p>A <code>data.frame</code> with two columns named "longitude"
+and "latitude" or with names that were used when coercing
+input data into this format.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Original raster is smoothed using a thin
-plate spline. This may be desirable in cases where
-the user has a reasonable expectation of spatial autocorrelation,
-but observes putative measurement errors in a raster. The user has
-the option of choosing <code>fastTps</code> to speed calculation,
-but be advised that this is only an approximation
-of a true thin plate spline.</p>
+    <p>The meat of this function is a special-case wrapper
+around <code>getDynamicAlphaHull</code> from the <code>rangeBuilder</code> package.
+The function documented here is especially useful in cases where
+one wants to automatically generate training regions that overlap
+the international date line. Regions that exceed the line are cut
+and pasted into the appropriate hemisphere instead of being
+deleted.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/fields/man/Tps.html'>Tps</a></code>, <code><a href='https://rdrr.io/pkg/fields/man/Tps.html'>fastTps</a></code></p></div>
+    <div class='dont-index'><p><code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://rspatial.org/raster'>raster</a></span><span class='op'>)</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/dnychka/fieldsRPackage'>fields</a></span><span class='op'>)</span>
-<span class='co'># Create sample raster</span>
-<span class='va'>r</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span>ncol<span class='op'>=</span><span class='fl'>100</span>, nrow<span class='op'>=</span><span class='fl'>100</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/raster/man/getValues.html'>values</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10000</span>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/ropenscilabs/rnaturalearth'>rnaturalearth</a></span><span class='op'>)</span>
 
-<span class='co'># Introduce a "bubble"</span>
-<span class='fu'><a href='https://rdrr.io/pkg/raster/man/getValues.html'>values</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>520</span><span class='op'>:</span><span class='fl'>525</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>9999</span>
-
-<span class='co'># Smooth bubble with smoothRaster</span>
-<span class='va'>smoothedRaster</span> <span class='op'>&lt;-</span> <span class='fu'>smoothRaster</span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span>
-<span class='va'>fastSmooth</span> <span class='op'>&lt;-</span> <span class='fu'>smoothRaster</span><span class='op'>(</span><span class='va'>r</span>, fast <span class='op'>=</span> <span class='cn'>TRUE</span>, aRange <span class='op'>=</span> <span class='fl'>3.0</span><span class='op'>)</span>
+<span class='va'>occs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/utils/read.table.html'>read.csv</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata/"</span>, package<span class='op'>=</span><span class='st'>'voluModel'</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: 'raw = FALSE' but '/home/runner/work/_temp/Library/voluModel/extdata/' is not a regular file</span></div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open file '/home/runner/work/_temp/Library/voluModel/extdata/': it is a directory</span></div><div class='output co'>#&gt; <span class='error'>Error in file(file, "rt"): cannot open the connection</span></div><div class='input'><span class='va'>world</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html'>ne_countries</a></span><span class='op'>(</span>scale <span class='op'>=</span> <span class='st'>"medium"</span>, returnclass <span class='op'>=</span> <span class='st'>"sf"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>The rnaturalearthdata package needs to be installed.</span></div><div class='output co'>#&gt; <span class='message'>Installing the rnaturalearthdata package.</span></div><div class='output co'>#&gt; <span class='message'>Installing package into ‘/home/runner/work/_temp/Library’</span>
+#&gt; <span class='message'>(as ‘lib’ is unspecified)</span></div><div class='output co'>#&gt; <span class='error'>Error in value[[3L]](cond): Failed to install the rnaturalearthdata package.</span>
+#&gt; <span class='error'> Please try installing the package for yourself using the following command: </span>
+#&gt; <span class='error'> install.packages("rnaturalearthdata")</span></div><div class='input'>
 
 </div></pre>
   </div>
