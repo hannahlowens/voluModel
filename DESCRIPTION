@@ -28,7 +28,8 @@ Suggests:
     testthat (>= 3.0.0),
     nlme,
     knitr,
-    covr
+    covr,
+    rnaturalearth
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2

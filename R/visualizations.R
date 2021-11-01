@@ -1,14 +1,76 @@
 # Visualization ----
-pointMap <- function(points, spName, world){
+#' @title Point mapping
+#'
+#' @description A convenient wrapper around ggplot
+#' to generate formatted occurrence point plots.
+#'
+#' @param occs A `data.frame` with at least two columns
+#' named "longitude" and "latitude" or that
+#' can be coerced into this format.
+#'
+#' @param spName A character string with the species
+#' name to be used in the plot title.
+#'
+#' @param world An optional coastline shapefile to
+#' provide geographic context for the occurrence points.
+#'
+#' @param ... Additional optional arguments to pass to
+#' `ggplot` initial plot object.
+#'
+#' @return A `data.frame` with two columns named "longitude"
+#' and "latitude" or with names that were used when coercing
+#' input data into this format.
+#'
+#' @details The meat of this function is a special-case wrapper
+#' around `getDynamicAlphaHull` from the `rangeBuilder` package.
+#' The function documented here is especially useful in cases where
+#' one wants to automatically generate training regions that overlap
+#' the international date line. Regions that exceed the line are cut
+#' and pasted into the appropriate hemisphere instead of being
+#' deleted.
+#'
+#' @examples
+#' library(rnaturalearth)
+#'
+#'
+#' @import ggplot2
+#'
+#' @seealso \code{\link[ggplot2:ggplot]{ggplot}}
+#'
+#' @keywords plotting
+
+
+pointMap <- function(occs, spName, world = NA, ...){
+  args <- list(...)
+
+  # Input checking
+  if(!is.data.frame(occs)){
+    warning(paste0("'occs' must be an object of class 'data.frame'.\n"))
+    return(NULL)
+  }
+
+  # Parse columns
+  colNames <- colnames(occs)
+  colParse <- voluModel:::columnParse(occs)
+  if(is.null(colParse)){
+    return(NULL)
+  }
+  xIndex <- colParse$xIndex
+  yIndex <- colParse$yIndex
+  interp <- colParse$reportMessage
+
+  message(interp)
+
+  # Where the actual function happens
   point_map <- ggplot() +
     geom_sf(data = world, color = "gray", fill = "gray") +
-    geom_point(data = points, aes(x = decimalLongitude, y = decimalLatitude),
+    geom_point(data = occs, aes(x = occs[[xIndex]], y = occs[[yIndex]]),
                colour = "#bd0026", shape = 20, alpha = 2/3) +
     theme(panel.background = element_rect(fill = "steelblue")) +
     theme(panel.grid = element_blank()) +
-    xlab("Longitude") +
-    ylab("Latitude") +
-    ggtitle(paste0(spName, ", ", nrow(points), " points"))
+    #xlab("Longitude") +
+    #ylab("Latitude") +
+    ggtitle(paste0(spName, ", ", nrow(occs), " points"))
   return(point_map)
 }
 
