@@ -122,7 +122,15 @@ to generate formatted occurrence point plots." />
 to generate formatted occurrence point plots.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>pointMap</span><span class='op'>(</span><span class='va'>occs</span>, <span class='va'>spName</span>, <span class='va'>world</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>pointMap</span><span class='op'>(</span>
+  <span class='va'>occs</span>,
+  <span class='va'>spName</span>,
+  land <span class='op'>=</span> <span class='cn'>NA</span>,
+  ptCol <span class='op'>=</span> <span class='st'>"#bd0026"</span>,
+  landCol <span class='op'>=</span> <span class='st'>"gray"</span>,
+  waterCol <span class='op'>=</span> <span class='st'>"steelblue"</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,9 +147,22 @@ can be coerced into this format.</p></td>
 name to be used in the plot title.</p></td>
     </tr>
     <tr>
-      <th>world</th>
-      <td><p>An optional coastline shapefile to
-provide geographic context for the occurrence points.</p></td>
+      <th>land</th>
+      <td><p>An optional coastline polygon shapefile
+of type <code>sf</code> to provide geographic context for the
+occurrence points.</p></td>
+    </tr>
+    <tr>
+      <th>ptCol</th>
+      <td><p>Color for occurrence points on map</p></td>
+    </tr>
+    <tr>
+      <th>landCol</th>
+      <td><p>Color for land on map</p></td>
+    </tr>
+    <tr>
+      <th>waterCol</th>
+      <td><p>Color for water on map</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -169,15 +190,12 @@ deleted.</p>
     <div class='dont-index'><p><code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/ropenscilabs/rnaturalearth'>rnaturalearth</a></span><span class='op'>)</span>
-
-<span class='va'>occs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/utils/read.table.html'>read.csv</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata/"</span>, package<span class='op'>=</span><span class='st'>'voluModel'</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: 'raw = FALSE' but '/home/runner/work/_temp/Library/voluModel/extdata/' is not a regular file</span></div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open file '/home/runner/work/_temp/Library/voluModel/extdata/': it is a directory</span></div><div class='output co'>#&gt; <span class='error'>Error in file(file, "rt"): cannot open the connection</span></div><div class='input'><span class='va'>world</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html'>ne_countries</a></span><span class='op'>(</span>scale <span class='op'>=</span> <span class='st'>"medium"</span>, returnclass <span class='op'>=</span> <span class='st'>"sf"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>The rnaturalearthdata package needs to be installed.</span></div><div class='output co'>#&gt; <span class='message'>Installing the rnaturalearthdata package.</span></div><div class='output co'>#&gt; <span class='message'>Installing package into ‘/home/runner/work/_temp/Library’</span>
-#&gt; <span class='message'>(as ‘lib’ is unspecified)</span></div><div class='output co'>#&gt; <span class='error'>Error in value[[3L]](cond): Failed to install the rnaturalearthdata package.</span>
-#&gt; <span class='error'> Please try installing the package for yourself using the following command: </span>
-#&gt; <span class='error'> install.packages("rnaturalearthdata")</span></div><div class='input'>
-
+    <pre class="examples"><div class='input'><span class='va'>occs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/utils/read.table.html'>read.csv</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata/Aphanopus_intermedius.csv"</span>,
+                             package<span class='op'>=</span><span class='st'>'voluModel'</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>spName</span> <span class='op'>&lt;-</span> <span class='st'>"Aphanopus intermedius"</span>
+<span class='fu'>pointMap</span><span class='op'>(</span>occs <span class='op'>=</span> <span class='va'>occs</span>, spName <span class='op'>=</span> <span class='va'>spName</span>, land <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Using decimalLongitude and decimalLatitude</span>
+#&gt; <span class='message'> as x and y coordinates, respectively.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Use of `occs[[xIndex]]` is discouraged. Use `.data[[xIndex]]` instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Use of `occs[[yIndex]]` is discouraged. Use `.data[[yIndex]]` instead.</span></div><div class='img'><img src='pointMap-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

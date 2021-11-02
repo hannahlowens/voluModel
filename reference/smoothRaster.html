@@ -170,7 +170,10 @@ of a true thin plate spline.</p>
 
 <span class='co'># Smooth bubble with smoothRaster</span>
 <span class='va'>smoothedRaster</span> <span class='op'>&lt;-</span> <span class='fu'>smoothRaster</span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span>
-<span class='va'>fastSmooth</span> <span class='op'>&lt;-</span> <span class='fu'>smoothRaster</span><span class='op'>(</span><span class='va'>r</span>, fast <span class='op'>=</span> <span class='cn'>TRUE</span>, aRange <span class='op'>=</span> <span class='fl'>3.0</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Warning: 
+#&gt; Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
+#&gt;   (GCV) Generalized Cross-Validation 
+#&gt;    minimum at  right endpoint  lambda  =  3.025469e-06 (eff. df= 593.75 )</div><div class='input'><span class='va'>fastSmooth</span> <span class='op'>&lt;-</span> <span class='fu'>smoothRaster</span><span class='op'>(</span><span class='va'>r</span>, fast <span class='op'>=</span> <span class='cn'>TRUE</span>, aRange <span class='op'>=</span> <span class='fl'>3.0</span><span class='op'>)</span>
 
 </div></pre>
   </div>
