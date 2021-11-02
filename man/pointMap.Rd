@@ -4,7 +4,15 @@
 \alias{pointMap}
 \title{Point mapping}
 \usage{
-pointMap(occs, spName, world)
+pointMap(
+  occs,
+  spName,
+  land = NA,
+  ptCol = "#bd0026",
+  landCol = "gray",
+  waterCol = "steelblue",
+  ...
+)
 }
 \arguments{
 \item{occs}{A \code{data.frame} with at least two columns
@@ -14,8 +22,15 @@ can be coerced into this format.}
 \item{spName}{A character string with the species
 name to be used in the plot title.}
 
-\item{world}{An optional coastline shapefile to
-provide geographic context for the occurrence points.}
+\item{land}{An optional coastline polygon shapefile
+of type \code{sf} to provide geographic context for the
+occurrence points.}
+
+\item{ptCol}{Color for occurrence points on map}
+
+\item{landCol}{Color for land on map}
+
+\item{waterCol}{Color for water on map}
 
 \item{...}{Additional optional arguments to pass to
 \code{ggplot} initial plot object.}
@@ -39,14 +54,13 @@ and pasted into the appropriate hemisphere instead of being
 deleted.
 }
 \examples{
-library(rnaturalearth)
-
-occs <- read.csv(system.file("extdata/", package='voluModel'))
-world <- ne_countries(scale = "medium", returnclass = "sf")
-
+occs <- read.csv(system.file("extdata/Aphanopus_intermedius.csv",
+                             package='voluModel'))
+spName <- "Aphanopus intermedius"
+pointMap(occs = occs, spName = spName, land = NA)
 
 }
 \seealso{
 \code{\link[ggplot2:ggplot]{ggplot}}
 }
-\keyword{backgroundSampling}
+\keyword{plotting}

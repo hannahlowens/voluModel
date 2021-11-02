@@ -11,8 +11,15 @@
 #' @param spName A character string with the species
 #' name to be used in the plot title.
 #'
-#' @param world An optional coastline shapefile to
-#' provide geographic context for the occurrence points.
+#' @param land An optional coastline polygon shapefile
+#' of type `sf` to provide geographic context for the
+#' occurrence points.
+#'
+#' @param ptCol Color for occurrence points on map
+#'
+#' @param landCol Color for land on map
+#'
+#' @param waterCol Color for water on map
 #'
 #' @param ... Additional optional arguments to pass to
 #' `ggplot` initial plot object.
@@ -30,22 +37,65 @@
 #' deleted.
 #'
 #' @examples
-#' library(rnaturalearth)
-#'
+#' occs <- read.csv(system.file("extdata/Aphanopus_intermedius.csv",
+#'                              package='voluModel'))
+#' spName <- "Aphanopus intermedius"
+#' pointMap(occs = occs, spName = spName, land = NA)
 #'
 #' @import ggplot2
 #'
 #' @seealso \code{\link[ggplot2:ggplot]{ggplot}}
 #'
 #' @keywords plotting
+#' @export
 
 
-pointMap <- function(occs, spName, world = NA, ...){
+pointMap <- function(occs, spName, land = NA,
+                     ptCol = "#bd0026", landCol = "gray",
+                     waterCol = "steelblue",
+                     ...){
   args <- list(...)
+
+  if("mapping" %in% names(args)){
+    mapping <- args$mapping
+  } else{
+    mapping <- aes()
+  }
 
   # Input checking
   if(!is.data.frame(occs)){
     warning(paste0("'occs' must be an object of class 'data.frame'.\n"))
+    return(NULL)
+  }
+
+  if(!is.character(spName)){
+    warning(paste0("'spName' must be an object of class 'character'.\n"))
+    return(NULL)
+  }
+
+  if(!any(is.character(c(ptCol, landCol, waterCol)))){
+    warning(paste0("'ptCol', 'landCol', and 'waterCol' must
+                   be objects of class 'character'.\n"))
+    return(NULL)
+  }
+
+  if(!any(is.na(land[[1]]), "sf" %in% class(land))){
+    warning(paste0("'land' must either be NA or of class 'sf'."))
+    return(NULL)
+  }
+
+  areColors <- function(x) {
+    sapply(x, function(X) {
+      tryCatch(is.matrix(col2rgb(X)),
+               error = function(e) FALSE)
+    })
+  }
+  colVec <- c(ptCol, landCol, waterCol)
+  colTest <- areColors(colVec)
+
+  if(!any(c(all(colTest), length(colTest) < 3))){
+    warning(paste0("'ptCol', 'landCol', and 'waterCol' must
+                   be recognized colors.\n"))
     return(NULL)
   }
 
@@ -62,15 +112,32 @@ pointMap <- function(occs, spName, world = NA, ...){
   message(interp)
 
   # Where the actual function happens
-  point_map <- ggplot() +
-    geom_sf(data = world, color = "gray", fill = "gray") +
-    geom_point(data = occs, aes(x = occs[[xIndex]], y = occs[[yIndex]]),
-               colour = "#bd0026", shape = 20, alpha = 2/3) +
-    theme(panel.background = element_rect(fill = "steelblue")) +
-    theme(panel.grid = element_blank()) +
-    #xlab("Longitude") +
-    #ylab("Latitude") +
-    ggtitle(paste0(spName, ", ", nrow(occs), " points"))
+  if(length(land) == 1){
+    if(is.na(land)){
+      point_map <- ggplot(mapping = mapping) +
+        geom_point(data = occs, aes(x = occs[[xIndex]], y = occs[[yIndex]]),
+                   colour = ptCol, shape = 20, alpha = 2/3) +
+        theme(panel.background = element_rect(fill = waterCol),
+              panel.grid = element_blank()) +
+        coord_sf(xlim = c(min(occs[[xIndex]]), max(occs[[xIndex]])),
+                 ylim = c(min(occs[[yIndex]]), max(occs[[yIndex]])), expand = .05, ) +
+        xlab("Longitude") +
+        ylab("Latitude") +
+        ggtitle(paste0(spName, ", ", nrow(occs), " points"))
+    }
+  }else{
+    point_map <- ggplot(mapping = mapping) +
+      geom_sf(data = land, color = landCol, fill = landCol) +
+      geom_point(data = occs, aes(x = occs[[xIndex]], y = occs[[yIndex]]),
+                 colour = ptCol, shape = 20, alpha = 2/3) +
+      theme(panel.background = element_rect(fill = waterCol),
+            panel.grid = element_blank()) +
+      coord_sf(xlim = c(min(occs[[xIndex]]), max(occs[[xIndex]])),
+               ylim = c(min(occs[[yIndex]]), max(occs[[yIndex]])), expand = .05, ) +
+      xlab("Longitude") +
+      ylab("Latitude") +
+      ggtitle(paste0(spName, ", ", nrow(occs), " points"))
+  }
   return(point_map)
 }
 
