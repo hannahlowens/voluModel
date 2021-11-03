@@ -21,6 +21,9 @@
 #'
 #' @param waterCol Color for water on map
 #'
+#' @param ptSize `numeric` value for `cex`;
+#' size of occurrence points on map.
+#'
 #' @param ... Additional optional arguments to pass to
 #' `ggplot` initial plot object.
 #'
@@ -52,7 +55,7 @@
 
 pointMap <- function(occs, spName, land = NA,
                      ptCol = "#bd0026", landCol = "gray",
-                     waterCol = "steelblue",
+                     waterCol = "steelblue", ptSize = 1,
                      ...){
   args <- list(...)
 
@@ -70,12 +73,6 @@ pointMap <- function(occs, spName, land = NA,
 
   if(!is.character(spName)){
     warning(paste0("'spName' must be an object of class 'character'.\n"))
-    return(NULL)
-  }
-
-  if(!any(is.character(c(ptCol, landCol, waterCol)))){
-    warning(paste0("'ptCol', 'landCol', and 'waterCol' must
-                   be objects of class 'character'.\n"))
     return(NULL)
   }
 
@@ -99,6 +96,10 @@ pointMap <- function(occs, spName, land = NA,
     return(NULL)
   }
 
+  if(!is.numeric(ptSize)){
+    warning(paste0("'ptSize' must be numeric.\n"))
+  }
+
   # Parse columns
   colNames <- colnames(occs)
   colParse <- voluModel:::columnParse(occs)
@@ -112,11 +113,10 @@ pointMap <- function(occs, spName, land = NA,
   message(interp)
 
   # Where the actual function happens
-  if(length(land) == 1){
-    if(is.na(land)){
+  if(any(is.na(land))){
       point_map <- ggplot(mapping = mapping) +
         geom_point(data = occs, aes(x = occs[[xIndex]], y = occs[[yIndex]]),
-                   colour = ptCol, shape = 20, alpha = 2/3) +
+                   colour = ptCol, cex = ptSize, shape = 20, alpha = 2/3) +
         theme(panel.background = element_rect(fill = waterCol),
               panel.grid = element_blank()) +
         coord_sf(xlim = c(min(occs[[xIndex]]), max(occs[[xIndex]])),
@@ -124,12 +124,11 @@ pointMap <- function(occs, spName, land = NA,
         xlab("Longitude") +
         ylab("Latitude") +
         ggtitle(paste0(spName, ", ", nrow(occs), " points"))
-    }
   }else{
     point_map <- ggplot(mapping = mapping) +
       geom_sf(data = land, color = landCol, fill = landCol) +
       geom_point(data = occs, aes(x = occs[[xIndex]], y = occs[[yIndex]]),
-                 colour = ptCol, shape = 20, alpha = 2/3) +
+                 colour = ptCol, cex = ptSize, shape = 20, alpha = 2/3) +
       theme(panel.background = element_rect(fill = waterCol),
             panel.grid = element_blank()) +
       coord_sf(xlim = c(min(occs[[xIndex]]), max(occs[[xIndex]])),
@@ -141,25 +140,163 @@ pointMap <- function(occs, spName, land = NA,
   return(point_map)
 }
 
-doublePointMapDimensions <- function(ps1, ps2, spName, world){
-  psBoth <- NA
-  if (!is.null(nrow(ps1)) && !is.null(nrow(ps2))){
-    psBoth <- unique(dplyr::inner_join(ps2[,c("decimalLongitude", "decimalLatitude")],
-                                       ps1[,c("decimalLongitude", "decimalLatitude")]))
-    psBoth$source <- rep_len("both", length.out = nrow(psBoth))
-    psBoth <- psBoth[,c("decimalLongitude", "decimalLatitude", "source")]
-    ps1 <- unique(anti_join(ps1[,c("decimalLongitude", "decimalLatitude")],psBoth))
-    ps1$source <- rep_len("twoD", length.out = nrow(ps1))
-    ps2 <- unique(anti_join(ps2[,c("decimalLongitude", "decimalLatitude")],psBoth))
-    ps2$source <- rep_len("threeD", length.out = nrow(ps2))
-    ps2 <- ps2[,c("decimalLongitude", "decimalLatitude", "source")]
+#' @title Comparative point mapping
+#'
+#' @description A convenient wrapper around ggplot
+#' to generate formatted plots comparing two sets of
+#' occurrence point plots.
+#'
+#' @param occs1 A `data.frame` with at least two columns
+#' named "longitude" and "latitude" or that
+#' can be coerced into this format.
+#'
+#' @param occs2 A `data.frame` with at least two columns
+#' named "longitude" and "latitude" or that
+#' can be coerced into this format.
+#'
+#' @param spName A character string with the species
+#' name to be used in the plot title.
+#'
+#' @param land An optional coastline polygon shapefile
+#' of type `sf` to provide geographic context for the
+#' occurrence points.
+#'
+#' @param pt1Col Color for occurrence points on map
+#'
+#' @param pt2Col Color for occurrence points on map
+#'
+#' @param landCol Color for land on map
+#'
+#' @param waterCol Color for water on map
+#'
+#' @param ptSize `numeric` value for `cex`;
+#' size of occurrence points on map.
+#'
+#' @param ... Additional optional arguments to pass to
+#' `ggplot` initial plot object.
+#'
+#' @return A `data.frame` with two columns named "longitude"
+#' and "latitude" or with names that were used when coercing
+#' input data into this format.
+#'
+#' @details The meat of this function is a special-case wrapper
+#' around `getDynamicAlphaHull` from the `rangeBuilder` package.
+#' The function documented here is especially useful in cases where
+#' one wants to automatically generate training regions that overlap
+#' the international date line. Regions that exceed the line are cut
+#' and pasted into the appropriate hemisphere instead of being
+#' deleted.
+#'
+#' @examples
+#' occs <- read.csv(system.file("extdata/Aphanopus_intermedius.csv",
+#'                              package='voluModel'))
+#' spName <- "Aphanopus intermedius"
+#' pointMap(occs = occs, spName = spName, land = NA)
+#'
+#' @import ggplot2
+#' @import dplyr
+#'
+#' @seealso \code{\link[ggplot2:ggplot]{ggplot}}
+#'
+#' @keywords plotting
+
+pointCompMap <- function(occs1, occs2,
+                         spName, land = NA,
+                         pt1Col = "#bd0026",
+                         pt2Col = "#fd8d3c",
+                         landCol = "gray",
+                         waterCol = "steelblue", ptSize = 1,
+                         ...){
+  args <- list(...)
+
+  if("mapping" %in% names(args)){
+    mapping <- args$mapping
+  } else{
+    mapping <- aes()
   }
-  else if(!is.null(nrow(ps1))) {
-    ps1 <- unique(ps1[,c("decimalLongitude", "decimalLatitude")])
-    ps1$source <- rep_len("twoD", length.out = nrow(ps1))
-  } else if (!is.null(nrow(ps2))){
-    ps2 <- unique(ps2[,c("decimalLongitude", "decimalLatitude")])
-    ps2$source <- rep_len("threeD", length.out = nrow(ps2))
+
+  # Input checking
+  if(!is.data.frame(occs1)){
+    warning(paste0("'occs1' must be an object of class 'data.frame'.\n"))
+    return(NULL)
+  }
+
+  if(!is.data.frame(occs2)){
+    warning(paste0("'occs2' must be an object of class 'data.frame'.\n"))
+    return(NULL)
+  }
+
+  if(!is.character(spName)){
+    warning(paste0("'spName' must be an object of class 'character'.\n"))
+    return(NULL)
+  }
+
+  if(!any(is.na(land[[1]]), "sf" %in% class(land))){
+    warning(paste0("'land' must either be NA or of class 'sf'."))
+    return(NULL)
+  }
+
+  areColors <- function(x) {
+    sapply(x, function(X) {
+      tryCatch(is.matrix(col2rgb(X)),
+               error = function(e) FALSE)
+    })
+  }
+  colVec <- c(pt1Col, pt2Col, landCol, waterCol)
+  colTest <- areColors(colVec)
+
+  if(!any(c(all(colTest), length(colTest) < 4))){
+    warning(paste0("'pt1Col', 'pt2Col', 'landCol', and 'waterCol' must
+                   be recognized colors.\n"))
+    return(NULL)
+  }
+
+  if(!is.numeric(ptSize)){
+    warning(paste0("'ptSize' must be numeric.\n"))
+  }
+
+  # Parse columns
+  colNames1 <- colnames(occs1)
+  colParse1 <- voluModel:::columnParse(occs1)
+  if(is.null(colParse1)){
+    return(NULL)
+  }
+  xIndex1 <- colParse1$xIndex
+  yIndex1 <- colParse1$yIndex
+  interp1 <- colParse1$reportMessage
+
+  message(interp1)
+
+  colNames2 <- colnames(occs2)
+  colParse2 <- voluModel:::columnParse(occs2)
+  if(is.null(colParse2)){
+    return(NULL)
+  }
+  xIndex2 <- colParse2$xIndex
+  yIndex2 <- colParse2$yIndex
+  interp2 <- colParse2$reportMessage
+
+  message(interp2)
+
+  # Where the function actually starts
+  occsBoth <- NA
+  if (!is.null(nrow(occs1)) && !is.null(nrow(occs2))){
+    occsBoth <- unique(dplyr::inner_join(occs2[,c(xIndex2, yIndex2)],
+                                       occs1[,c(xIndex1, yIndex1)]))
+    occsBoth$source <- rep_len("both", length.out = nrow(occsBoth))
+    occsBoth <- occsBoth[,c("decimalLongitude", "decimalLatitude", "source")]
+    occs1 <- unique(anti_join(occs1[,c("decimalLongitude", "decimalLatitude")],occsBoth))
+    occs1$source <- rep_len("twoD", length.out = nrow(occs1))
+    occs2 <- unique(anti_join(occs2[,c("decimalLongitude", "decimalLatitude")],occsBoth))
+    occs2$source <- rep_len("threeD", length.out = nrow(occs2))
+    occs2 <- occs2[,c("decimalLongitude", "decimalLatitude", "source")]
+  }
+  else if(!is.null(nrow(occs1))) {
+    occs1 <- unique(occs1[,c("decimalLongitude", "decimalLatitude")])
+    occs1$source <- rep_len("twoD", length.out = nrow(occs1))
+  } else if (!is.null(nrow(occs2))){
+    occs2 <- unique(occs2[,c("decimalLongitude", "decimalLatitude")])
+    occs2$source <- rep_len("threeD", length.out = nrow(occs2))
   } else {
     obis_map <- ggplot() +
       geom_sf(data = world, color = "gray", fill = "gray") +
@@ -176,7 +313,7 @@ doublePointMapDimensions <- function(ps1, ps2, spName, world){
     return(obis_map)
     break
   }
-  allDat <- list(psBoth, ps1, ps2)
+  allDat <- list(occsBoth, occs1, occs2)
   occ_dat <- do.call("rbind", allDat[!is.na(allDat)])
 
   # Now add the occurrence points

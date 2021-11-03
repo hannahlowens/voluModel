@@ -11,6 +11,7 @@ pointMap(
   ptCol = "#bd0026",
   landCol = "gray",
   waterCol = "steelblue",
+  ptSize = 1,
   ...
 )
 }
@@ -31,6 +32,9 @@ occurrence points.}
 \item{landCol}{Color for land on map}
 
 \item{waterCol}{Color for water on map}
+
+\item{ptSize}{\code{numeric} value for \code{cex};
+size of occurrence points on map.}
 
 \item{...}{Additional optional arguments to pass to
 \code{ggplot} initial plot object.}
