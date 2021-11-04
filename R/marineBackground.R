@@ -70,10 +70,13 @@
 #' @import rangeBuilder
 #' @import rgeos
 #' @import sp
+#' @importFrom methods as slot<-
 #'
 #' @seealso \code{\link[rangeBuilder:getDynamicAlphaHull]{getDynamicAlphaHull}}
 #'
 #' @keywords backgroundSampling
+#'
+#' @export
 
 
 marineBackground <- function(occs, clipToOcean = TRUE, ...){
@@ -151,7 +154,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
 
   # Parse columns
   colNames <- colnames(occs)
-  colParse <- voluModel:::columnParse(occs)
+  colParse <- columnParse(occs)
   if(is.null(colParse)){
     return(NULL)
   }

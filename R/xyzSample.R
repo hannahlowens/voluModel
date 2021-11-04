@@ -79,7 +79,7 @@ xyzSample <- function(occs, envBrick){
 
   # Parse columns
   colNames <- colnames(occs)
-  colParse <- voluModel:::columnParse(occs, wDepth = TRUE)
+  colParse <- columnParse(occs, wDepth = TRUE)
   if(is.null(colParse)){
     return(NULL)
   }

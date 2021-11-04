@@ -123,7 +123,7 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 
   # Parse columns
   colNames <- colnames(occs)
-  colParse <- voluModel:::columnParse(occs)
+  colParse <- columnParse(occs)
   if(is.null(colParse)){
     return(NULL)
   }
@@ -265,7 +265,7 @@ mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all"){
 
   # Parse columns
   colNames <- colnames(occs)
-  colParse <- voluModel:::columnParse(occs, wDepth = TRUE)
+  colParse <- columnParse(occs, wDepth = TRUE)
   if(is.null(colParse)){
     return(NULL)
   }

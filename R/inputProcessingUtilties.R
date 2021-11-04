@@ -46,6 +46,8 @@
 #' @import raster
 #'
 #' @keywords internal
+#'
+#' @export
 
 columnParse <- function(occs, wDepth = FALSE){
   # Handling alternative column names for occurrences
@@ -154,7 +156,7 @@ downsample <- function(occs, rasterTemplate){
 
   # Parse columns
   colNames <- colnames(occs)
-  colParse <- voluModel:::columnParse(occs)
+  colParse <- columnParse(occs)
   if(is.null(colParse)){
     return(NULL)
   }
