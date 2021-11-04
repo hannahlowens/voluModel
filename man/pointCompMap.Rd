@@ -67,8 +67,18 @@ must match.
 \examples{
 occs <- read.csv(system.file("extdata/Aphanopus_intermedius.csv",
                              package='voluModel'))
+set.seed(0)
+occs1 <- occs[sample(1:nrow(occs),
+                     size = 24, replace = FALSE),]
+set.seed(10)
+occs2 <- occs[sample(1:nrow(occs),
+                     size = 24, replace = FALSE),]
+
 spName <- "Aphanopus intermedius"
-pointMap(occs = occs, spName = spName, land = NA)
+
+
+pointCompMap(occs1 = occs1, occs2 = occs2,
+             spName = spName, land = NA)
 
 }
 \seealso{

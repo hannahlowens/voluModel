@@ -46,8 +46,6 @@
 #' @import raster
 #'
 #' @keywords internal
-#'
-#' @noRd
 
 columnParse <- function(occs, wDepth = FALSE){
   # Handling alternative column names for occurrences

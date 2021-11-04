@@ -63,3 +63,12 @@ test_that("pointCompMap checks", {
   point_map <- pointCompMap(occs1 = occs1, occs2 = rbind(occs1,occs2), spName = spName, land = NA)
   expect_true(is.ggplot(point_map))
 })
+
+test_that("transpCol checks", {
+  expect_error(voluModel:::transpColor())
+  expect_warning(voluModel:::transpColor(color = "eggs"))
+  expect_warning(voluModel:::transpColor(color = "red", percent = "blue"))
+  expect_warning(voluModel:::transpColor(color = "red", percent = 200))
+  expect_equal(class(voluModel:::transpColor(color = "red", percent = 20)), "character")
+})
+

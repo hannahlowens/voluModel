@@ -175,8 +175,18 @@ pointMap <- function(occs, spName, land = NA,
 #' @examples
 #' occs <- read.csv(system.file("extdata/Aphanopus_intermedius.csv",
 #'                              package='voluModel'))
+#' set.seed(0)
+#' occs1 <- occs[sample(1:nrow(occs),
+#'                      size = 24, replace = FALSE),]
+#' set.seed(10)
+#' occs2 <- occs[sample(1:nrow(occs),
+#'                      size = 24, replace = FALSE),]
+#'
 #' spName <- "Aphanopus intermedius"
-#' pointMap(occs = occs, spName = spName, land = NA)
+#'
+#'
+#' pointCompMap(occs1 = occs1, occs2 = occs2,
+#'              spName = spName, land = NA)
 #'
 #' @import ggplot2
 #' @import dplyr
@@ -373,22 +383,62 @@ pointCompMap <- function(occs1, occs2,
   return(comparison_map)
 }
 
-t_col <- function(color, percent = 50, name = NULL) {
-  #      color = color name
-  #    percent = % transparency
-  #       name = an optional name for the color
+#' @title Transparent Color
+#'
+#' @description Generates transparent colors
+#'
+#' @param color Anthing that can be interpreted by `rgb`
+#' as a color.
+#'
+#' @param percent A whole number between 0 and 100 specifying
+#' how transparent the color should be.
+#'
+#' @return A `list` of length 2 with indices of the x and y
+#' columns, respectively, followed by a message with a plain
+#' text report of which columns were interpreted as x and y.
+#'
+#' @examples
+#'
+#' tcol(color = "red", percent = 50)
+#'
+#' @importFrom grDevices col2rgb rgb
+#'
+#' @keywords internal plotting
+
+transpColor <- function(color, percent = 50) {
+  areColors <- function(x) {
+    sapply(x, function(X) {
+      tryCatch(is.matrix(col2rgb(X)),
+               error = function(e) FALSE)
+    })
+  }
+  colTest <- areColors(color)
+
+  if(!colTest){
+    warning(paste0("'color' must be a recognized color.\n"))
+    return(NULL)
+  }
+
+  if(!is.numeric(percent)){
+    warning(paste0("'percent' must be numeric.\n"))
+    return(NULL)
+  }
+
+  if(!all(percent >= 0, 100 >= percent)){
+    warning(paste0("'percent' must be between 0 and 100.\n"))
+    return(NULL)
+  }
 
   ## Get RGB values for named color
   rgb.val <- col2rgb(color)
 
-  ## Make new color using input color as base and alpha set by transparency
+  ## Make new color using input color as base and transparency set by alpha
   t.col <- rgb(rgb.val[1], rgb.val[2], rgb.val[3],
                max = 255,
-               alpha = (100 - percent) * 255 / 100,
-               names = name)
+               alpha = (100 - percent) * 255 / 100)
 
   ## Save the color
-  invisible(t.col)
+  return(t.col)
 }
 
 rasterMapFunction <- function(rast1, rast2, title){
