@@ -92,7 +92,7 @@ pointMap <- function(occs, spName, land = NA,
 
   # Parse columns
   colNames <- colnames(occs)
-  colParse <- voluModel:::columnParse(occs)
+  colParse <- columnParse(occs)
   if(is.null(colParse)){
     return(NULL)
   }
@@ -132,7 +132,7 @@ pointMap <- function(occs, spName, land = NA,
 
 #' @title Comparative point mapping
 #'
-#' @description A convenient wrapper around ggplot
+#' @description A convenient wrapper around `ggplot`
 #' to generate formatted plots comparing two sets of
 #' occurrence point plots.
 #'
@@ -151,9 +151,20 @@ pointMap <- function(occs, spName, land = NA,
 #' of type `sf` to provide geographic context for the
 #' occurrence points.
 #'
-#' @param pt1Col Color for occurrence points on map
+#' @param occs1Col Color for occurrence points on map
 #'
-#' @param pt2Col Color for occurrence points on map
+#' @param occs2Col Color for occurrence points on map
+#'
+#' @param occs1Name An optional name for the first set
+#' of occurrences, which will be color-coded to
+#' `occs1Col` in the resulting plot.
+#'
+#' @param occs2Name An optional name for the first set
+#' of occurrences, which will be color-coded to
+#' `occs2Col` in the resulting plot.
+#'
+#' @param agreeCol Color for occurrence points shared
+#' between `occs1` and `occs2`.
 #'
 #' @param landCol Color for land on map
 #'
@@ -165,9 +176,7 @@ pointMap <- function(occs, spName, land = NA,
 #' @param ... Additional optional arguments to pass to
 #' `ggplot` initial plot object.
 #'
-#' @return A `data.frame` with two columns named "longitude"
-#' and "latitude" or with names that were used when coercing
-#' input data into this format.
+#' @return A `ggplot` plot object.
 #'
 #' @note The x and y column names of `occs1` and `occs2`
 #' must match.
@@ -186,6 +195,12 @@ pointMap <- function(occs, spName, land = NA,
 #'
 #'
 #' pointCompMap(occs1 = occs1, occs2 = occs2,
+#'              occs1Col = "red", occs2Col = "orange",
+#'              agreeCol = "purple",
+#'              occs1Name = "2D",
+#'              occs2Name = "3D",
+#'              landCol = "beige",
+#'              waterCol = "steelblue",
 #'              spName = spName, land = NA)
 #'
 #' @import ggplot2
@@ -262,7 +277,7 @@ pointCompMap <- function(occs1, occs2,
 
   # Parse columns
   colNames1 <- colnames(occs1)
-  colParse1 <- voluModel:::columnParse(occs1)
+  colParse1 <- columnParse(occs1)
   if(is.null(colParse1)){
     return(NULL)
   }
@@ -273,7 +288,7 @@ pointCompMap <- function(occs1, occs2,
   message(interp1)
 
   colNames2 <- colnames(occs2)
-  colParse2 <- voluModel:::columnParse(occs2)
+  colParse2 <- columnParse(occs2)
   if(is.null(colParse2)){
     return(NULL)
   }
@@ -300,11 +315,11 @@ pointCompMap <- function(occs1, occs2,
   occs2 <- unique(anti_join(occs2[,c(xIndex2, yIndex2)],occsBoth))
   occs2$source <- rep_len(occs2Name, length.out = nrow(occs2))
 
-  colParse1 <- voluModel:::columnParse(occs1)
+  colParse1 <- columnParse(occs1)
   xIndex1 <- colParse1$xIndex
   yIndex1 <- colParse1$yIndex
 
-  colParse2 <- voluModel:::columnParse(occs2)
+  colParse2 <- columnParse(occs2)
   xIndex2 <- colParse2$xIndex
   yIndex2 <- colParse2$yIndex
 
@@ -334,7 +349,7 @@ pointCompMap <- function(occs1, occs2,
     }
   }
 
-  occ_datIndices <- voluModel:::columnParse(occ_dat)
+  occ_datIndices <- columnParse(occ_dat)
 
   if(any(is.na(land))){
     comparison_map <- ggplot() +
@@ -399,11 +414,13 @@ pointCompMap <- function(occs1, occs2,
 #'
 #' @examples
 #'
-#' tcol(color = "red", percent = 50)
+#' transpColor(color = "red", percent = 50)
 #'
 #' @importFrom grDevices col2rgb rgb
 #'
 #' @keywords internal plotting
+#'
+#' @export
 
 transpColor <- function(color, percent = 50) {
   areColors <- function(x) {
@@ -434,42 +451,197 @@ transpColor <- function(color, percent = 50) {
 
   ## Make new color using input color as base and transparency set by alpha
   t.col <- rgb(rgb.val[1], rgb.val[2], rgb.val[3],
-               max = 255,
+               maxColorValue = 255,
                alpha = (100 - percent) * 255 / 100)
 
   ## Save the color
   return(t.col)
 }
 
-rasterMapFunction <- function(rast1, rast2, title){
-  myCols <- c(t_col("white", perc = 100, name = "clear"),
-              t_col("red", perc = 50, name = "red50"),
-              t_col("blue", perc = 50, name = "blue50"),
-              t_col("purple", perc = 30, name = "purple50"))
+#' @title Comparative raster mapping
+#'
+#' @description A convenient wrapper around `spplot`
+#' to generate formatted plots comparing two rasters.
+#'
+#' @param occs1 A `data.frame` with at least two columns
+#' named "longitude" and "latitude" or that
+#' can be coerced into this format.
+#'
+#' @param occs2 A `data.frame` with at least two columns
+#' named "longitude" and "latitude" or that
+#' can be coerced into this format.
+#'
+#' @param spName A character string with the species
+#' name to be used in the plot title.
+#'
+#' @param land An optional coastline polygon shapefile
+#' of type `sf` to provide geographic context for the
+#' occurrence points.
+#'
+#' @param occs1Col Color for occurrence points on map
+#'
+#' @param occs2Col Color for occurrence points on map
+#'
+#' @param occs1Name An optional name for the first set
+#' of occurrences, which will be color-coded to
+#' `occs1Col` in the resulting plot.
+#'
+#' @param occs2Name An optional name for the first set
+#' of occurrences, which will be color-coded to
+#' `occs2Col` in the resulting plot.
+#'
+#' @param agreeCol Color for occurrence points shared
+#' between `occs1` and `occs2`.
+#'
+#' @param landCol Color for land on map
+#'
+#' @param land An optional coastline polygon shapefile
+#' of type `sf` to provide geographic context for the
+#' occurrence points.
+#'
+#' @param ... Additional optional arguments to pass to
+#' `spplot` initial plot object.
+#'
+#' @note The extents of `rast1` and `rast2`
+#' must match.
+#'
+#' @examples
+#'
+#' @import raster
+#' @importFrom latticeExtra as.layer
+#'
+#' @seealso \code{\link[raster:spplot]{spplot}}
+#'
+#' @keywords plotting
+#' @export
 
-  if (!is.null(rast1) && !is.null(rast2)){
-    spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
-           key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[c(2:4)])),
-                    text=list(c("Absent", "2D", "3D", "Both"))), col="transparent", main = title,
-           par.settings = list(mai = c(0,0,0,0))) +
-      as.layer(spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, col="transparent")) +
-      layer(sp.polygons(rangeBuilder::gshhs, fill="black"))
-  } else if (is.null(rast1) && is.null(rast2)){
-    r <- raster(ncol=3,nrow=3)
-    r[] <- 1:(3*3)
-    spplot(r, main = title)
-  } else if(is.null(rast1)){
-    spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = F,
-           key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[3])),
-                    text=list(c("Absent", "3D"))), col="transparent", main = title,
-           par.settings = list(mai = c(0,0,0,0))) +
-      layer(sp.polygons(rangeBuilder::gshhs, fill="black"))
+rasterCompFunction <- function(rast1 = NULL, rast2 = NULL,
+                              col1 = "red", col2 = "blue",
+                              rast1Name = "Set 1", rast2Name = "Set 2",
+                              colNeither = "white", colBoth = "purple",
+                              land = NA, landCol = "black",
+                              title = "A Raster Comparison", ...){
+
+  args <- list(...)
+
+  if("maxpixels" %in% names(args)){
+    maxpixels <- args$maxpixels
+  } else{
+    maxpixels <- 50000
+  }
+
+  areColors <- function(x) {
+    sapply(x, function(X) {
+      tryCatch(is.matrix(col2rgb(X)),
+               error = function(e) FALSE)
+    })
+  }
+  colVec <- c(col1, col2, colBoth, landCol)
+  colTest <- areColors(colVec)
+
+  if(!any(c(all(colTest), length(colTest) < 4))){
+    warning(paste0("'col1', 'col2', 'colBoth', and 'landCol'
+                   must be recognized colors.\n"))
+    return(NULL)
+  }
+
+  if(!any(is.na(land[[1]]), "sf" %in% class(land))){
+    warning(paste0("'land' must either be NA or of class 'sf'."))
+    return(NULL)
+  }
+
+  if(!all(c(is.character(rast1Name),
+            is.character(rast2Name),
+            is.character(title)))){
+    warning(paste0("'rast1Name', 'rast2Name', and 'title'
+                   must be 'character' strings.\n"))
+    return(NULL)
+  }
+
+  # Here is where the function actually starts
+  myCols <- c(transpColor("white", perc = 100),
+              transpColor(col1, perc = 50),
+              transpColor(col2, perc = 50),
+              transpColor(colBoth, perc = 30))
+  if(is.na(land)){
+    if (!all(is.null(rast1), !is.null(rast2))){
+      if(all(class(rast1) == "RasterLayer", class(rast2) == "RasterLayer")){
+        spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
+               key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[c(2:4)])),
+                        text=list(c("Neither", rast1Name, rast2Name, "Both"))), col="transparent", main = title,
+               par.settings = list(mai = c(0,0,0,0)),
+               maxpixels = maxpixels) +
+          as.layer(spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, col="transparent"))
+      } else {
+        warning(paste0("'rast1' and 'rast2' must be raster layers."))
+        return(NULL)
+      }
+    } else if (all(is.null(rast1), is.null(rast2))){
+      r <- raster(ncol=3,nrow=3)
+      r[] <- 1:(3*3)
+      spplot(r, main = title)
+    } else if(is.null(rast1)){
+      if(class(rast2) == "RasterLayer"){
+        spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = F,
+               key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[3])),
+                        text=list(c("Neither", rast2Name))), col="transparent", main = title,
+               par.settings = list(mai = c(0,0,0,0)))
+      } else{
+        warning(paste0("'rast2' and must be a raster layer."))
+        return(NULL)
+      }
+    } else {
+      if(class(rast1) == "RasterLayer"){
+        spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
+               key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[2])),
+                        text=list(c("Neither", rast1Name))), col="transparent", main = title,
+               par.settings = list(mai = c(0,0,0,0)))
+      } else {
+        warning(paste0("'rast1' and must be a raster layer."))
+        return(NULL)
+      }
+    }
   } else {
-    spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
-           key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[2])),
-                    text=list(c("Absent", "2D"))), col="transparent", main = title,
-           par.settings = list(mai = c(0,0,0,0))) +
-      layer(sp.polygons(rangeBuilder::gshhs, fill="black"))
+    if (!all(is.null(rast1), !is.null(rast2))){
+      if(all(class(rast1) == "RasterLayer", class(rast2) == "RasterLayer")){
+        spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
+               key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[c(2:4)])),
+                        text=list(c("Neither", rast1Name, rast2Name, "Both"))), col="transparent", main = title,
+               par.settings = list(mai = c(0,0,0,0)),
+               maxpixels = maxpixels) +
+          as.layer(spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, col="transparent")) +
+          layer(sp.polygons(as(land, "Spatial"), fill=landCol))
+      } else {
+        warning(paste0("'rast1' and 'rast2' must be raster layers."))
+        return(NULL)
+      }
+    } else if (all(is.null(rast1), is.null(rast2))){
+      r <- raster(ncol=3,nrow=3)
+      r[] <- 1:(3*3)
+      spplot(r, main = title)
+    } else if(is.null(rast1)){
+      if(class(rast2) == "RasterLayer"){
+        spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = F,
+               key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[3])),
+                        text=list(c("Neither", rast2Name))), col="transparent", main = title,
+               par.settings = list(mai = c(0,0,0,0))) +
+          layer(sp.polygons(as(land, "Spatial"), fill=landCol))
+      } else{
+        warning(paste0("'rast2' and must be a raster layer."))
+        return(NULL)
+      }
+    } else {
+      if(class(rast1) == "RasterLayer"){
+        spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
+               key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[2])),
+                        text=list(c("Neither", rast1Name))), col="transparent", main = title,
+               par.settings = list(mai = c(0,0,0,0))) +
+          layer(sp.polygons(as(land, "Spatial"), fill=landCol))
+      } else{
+        warning(paste0("'rast1' and must be a raster layer."))
+        return(NULL)
+      }
+    }
   }
 }
 

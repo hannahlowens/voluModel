@@ -64,7 +64,7 @@ test_that("pointCompMap checks", {
   expect_true(is.ggplot(point_map))
 })
 
-test_that("transpCol checks", {
+test_that("transpColor checks", {
   expect_error(voluModel:::transpColor())
   expect_warning(voluModel:::transpColor(color = "eggs"))
   expect_warning(voluModel:::transpColor(color = "red", percent = "blue"))
@@ -72,3 +72,24 @@ test_that("transpCol checks", {
   expect_equal(class(voluModel:::transpColor(color = "red", percent = 20)), "character")
 })
 
+# Set up tests for rasterCompFunction
+rast1 <- raster(ncol=10, nrow=10)
+values(rast1) <- rep(0:1, 50)
+
+rast2 <- raster(ncol=10, nrow=10)
+values(rast2) <- c(rep(0, 50), rep(1,50))
+
+test_that("rasterCompFunction", {
+  expect_error(rasterCompFunction())
+  expect_warning(rasterCompFunction(rast1 = "a"))
+  expect_warning(rasterCompFunction(rast1 = rast1, rast1Name = 2))
+  expect_warning(rasterCompFunction(rast1 = rast1, rast1Name = "First Raster",
+                                    rast2 = rast2, rast2Name = "Second Raster",
+                                    land = "b"))
+  expect_warning(rasterCompFunction(rast1 = rast1,
+                                    land = land))
+  expect_warning(rasterCompFunction(rast2 = rast2,
+                                    land = land))
+  expect_warning(rasterCompFunction(rast1 = rast1, rast2 = rast2,
+                                    land = land))
+})

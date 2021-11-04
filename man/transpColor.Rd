@@ -23,7 +23,7 @@ Generates transparent colors
 }
 \examples{
 
-tcol(color = "red", percent = 50)
+transpColor(color = "red", percent = 50)
 
 }
 \keyword{internal}

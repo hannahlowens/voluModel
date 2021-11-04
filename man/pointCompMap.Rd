@@ -36,6 +36,21 @@ name to be used in the plot title.}
 of type \code{sf} to provide geographic context for the
 occurrence points.}
 
+\item{occs1Col}{Color for occurrence points on map}
+
+\item{occs2Col}{Color for occurrence points on map}
+
+\item{agreeCol}{Color for occurrence points shared
+between \code{occs1} and \code{occs2}.}
+
+\item{occs1Name}{An optional name for the first set
+of occurrences, which will be color-coded to
+\code{occs1Col} in the resulting plot.}
+
+\item{occs2Name}{An optional name for the first set
+of occurrences, which will be color-coded to
+\code{occs2Col} in the resulting plot.}
+
 \item{landCol}{Color for land on map}
 
 \item{waterCol}{Color for water on map}
@@ -45,18 +60,12 @@ size of occurrence points on map.}
 
 \item{...}{Additional optional arguments to pass to
 \code{ggplot} initial plot object.}
-
-\item{pt1Col}{Color for occurrence points on map}
-
-\item{pt2Col}{Color for occurrence points on map}
 }
 \value{
-A \code{data.frame} with two columns named "longitude"
-and "latitude" or with names that were used when coercing
-input data into this format.
+A \code{ggplot} plot object.
 }
 \description{
-A convenient wrapper around ggplot
+A convenient wrapper around \code{ggplot}
 to generate formatted plots comparing two sets of
 occurrence point plots.
 }
@@ -78,6 +87,12 @@ spName <- "Aphanopus intermedius"
 
 
 pointCompMap(occs1 = occs1, occs2 = occs2,
+             occs1Col = "red", occs2Col = "orange",
+             agreeCol = "purple",
+             occs1Name = "2D",
+             occs2Name = "3D",
+             landCol = "beige",
+             waterCol = "steelblue",
              spName = spName, land = NA)
 
 }
