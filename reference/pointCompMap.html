@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Point mapping — pointMap • voluModel</title>
+<title>Comparative point mapping — pointCompMap • voluModel</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,10 @@
 
 
 
-<meta property="og:title" content="Point mapping — pointMap" />
+<meta property="og:title" content="Comparative point mapping — pointCompMap" />
 <meta property="og:description" content="A convenient wrapper around ggplot
-to generate formatted occurrence point plots." />
+to generate formatted plots comparing two sets of
+occurrence point plots." />
 
 
 
@@ -112,21 +113,27 @@ to generate formatted occurrence point plots." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Point mapping</h1>
+    <h1>Comparative point mapping</h1>
     <small class="dont-index">Source: <a href='https://github.com/hannahlowens/voluModel/blob/master/R/visualizations.R'><code>R/visualizations.R</code></a></small>
-    <div class="hidden name"><code>pointMap.Rd</code></div>
+    <div class="hidden name"><code>pointCompMap.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>A convenient wrapper around ggplot
-to generate formatted occurrence point plots.</p>
+to generate formatted plots comparing two sets of
+occurrence point plots.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>pointMap</span><span class='op'>(</span>
-  <span class='va'>occs</span>,
+    <pre class="usage"><span class='fu'>pointCompMap</span><span class='op'>(</span>
+  <span class='va'>occs1</span>,
+  <span class='va'>occs2</span>,
   <span class='va'>spName</span>,
   land <span class='op'>=</span> <span class='cn'>NA</span>,
-  ptCol <span class='op'>=</span> <span class='st'>"#bd0026"</span>,
+  occs1Col <span class='op'>=</span> <span class='st'>"#bd0026"</span>,
+  occs2Col <span class='op'>=</span> <span class='st'>"#fd8d3c"</span>,
+  agreeCol <span class='op'>=</span> <span class='st'>"black"</span>,
+  occs1Name <span class='op'>=</span> <span class='st'>"Set 1"</span>,
+  occs2Name <span class='op'>=</span> <span class='st'>"Set 2"</span>,
   landCol <span class='op'>=</span> <span class='st'>"gray"</span>,
   waterCol <span class='op'>=</span> <span class='st'>"steelblue"</span>,
   ptSize <span class='op'>=</span> <span class='fl'>1</span>,
@@ -137,7 +144,13 @@ to generate formatted occurrence point plots.</p>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>occs</th>
+      <th>occs1</th>
+      <td><p>A <code>data.frame</code> with at least two columns
+named "longitude" and "latitude" or that
+can be coerced into this format.</p></td>
+    </tr>
+    <tr>
+      <th>occs2</th>
       <td><p>A <code>data.frame</code> with at least two columns
 named "longitude" and "latitude" or that
 can be coerced into this format.</p></td>
@@ -152,10 +165,6 @@ name to be used in the plot title.</p></td>
       <td><p>An optional coastline polygon shapefile
 of type <code>sf</code> to provide geographic context for the
 occurrence points.</p></td>
-    </tr>
-    <tr>
-      <th>ptCol</th>
-      <td><p>Color for occurrence points on map</p></td>
     </tr>
     <tr>
       <th>landCol</th>
@@ -175,11 +184,25 @@ size of occurrence points on map.</p></td>
       <td><p>Additional optional arguments to pass to
 <code>ggplot</code> initial plot object.</p></td>
     </tr>
+    <tr>
+      <th>pt1Col</th>
+      <td><p>Color for occurrence points on map</p></td>
+    </tr>
+    <tr>
+      <th>pt2Col</th>
+      <td><p>Color for occurrence points on map</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>ggplot</code> plot object.</p>
+    <p>A <code>data.frame</code> with two columns named "longitude"
+and "latitude" or with names that were used when coercing
+input data into this format.</p>
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>The x and y column names of <code>occs1</code> and <code>occs2</code>
+must match.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></code></p></div>
@@ -188,9 +211,9 @@ size of occurrence points on map.</p></td>
     <pre class="examples"><div class='input'><span class='va'>occs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/utils/read.table.html'>read.csv</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata/Aphanopus_intermedius.csv"</span>,
                              package<span class='op'>=</span><span class='st'>'voluModel'</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>spName</span> <span class='op'>&lt;-</span> <span class='st'>"Aphanopus intermedius"</span>
-<span class='fu'>pointMap</span><span class='op'>(</span>occs <span class='op'>=</span> <span class='va'>occs</span>, spName <span class='op'>=</span> <span class='va'>spName</span>, land <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span>
+<span class='fu'><a href='pointMap.html'>pointMap</a></span><span class='op'>(</span>occs <span class='op'>=</span> <span class='va'>occs</span>, spName <span class='op'>=</span> <span class='va'>spName</span>, land <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Using decimalLongitude and decimalLatitude</span>
-#&gt; <span class='message'> as x and y coordinates, respectively.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Use of `occs[[xIndex]]` is discouraged. Use `.data[[xIndex]]` instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Use of `occs[[yIndex]]` is discouraged. Use `.data[[yIndex]]` instead.</span></div><div class='img'><img src='pointMap-1.png' alt='' width='700' height='433' /></div><div class='input'>
+#&gt; <span class='message'> as x and y coordinates, respectively.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Use of `occs[[xIndex]]` is discouraged. Use `.data[[xIndex]]` instead.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Use of `occs[[yIndex]]` is discouraged. Use `.data[[yIndex]]` instead.</span></div><div class='img'><img src='pointCompMap-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
