@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • voluModel</title>
+<title>Comparative raster mapping — rasterCompFunction • voluModel</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,9 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Comparative raster mapping — rasterCompFunction" />
+<meta property="og:description" content="A convenient wrapper around spplot
+to generate formatted plots comparing two rasters." />
 
 
 
@@ -58,7 +60,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -108,102 +110,107 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Comparative raster mapping</h1>
+    <small class="dont-index">Source: <a href='https://github.com/hannahlowens/voluModel/blob/master/R/visualizations.R'><code>R/visualizations.R</code></a></small>
+    <div class="hidden name"><code>rasterCompFunction.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>A convenient wrapper around <code>spplot</code>
+to generate formatted plots comparing two rasters.</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>rasterCompFunction</span><span class='op'>(</span>
+  rast1 <span class='op'>=</span> <span class='cn'>NULL</span>,
+  rast2 <span class='op'>=</span> <span class='cn'>NULL</span>,
+  col1 <span class='op'>=</span> <span class='st'>"red"</span>,
+  col2 <span class='op'>=</span> <span class='st'>"blue"</span>,
+  rast1Name <span class='op'>=</span> <span class='st'>"Set 1"</span>,
+  rast2Name <span class='op'>=</span> <span class='st'>"Set 2"</span>,
+  colNeither <span class='op'>=</span> <span class='st'>"white"</span>,
+  colBoth <span class='op'>=</span> <span class='st'>"purple"</span>,
+  land <span class='op'>=</span> <span class='cn'>NA</span>,
+  landCol <span class='op'>=</span> <span class='st'>"black"</span>,
+  title <span class='op'>=</span> <span class='st'>"A Raster Comparison"</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="bottomRaster.html">bottomRaster()</a></code> </p>
-        </td>
-        <td><p>Bottom raster generation</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="downsample.html">downsample()</a></code> </p>
-        </td>
-        <td><p>Occurrence downsampling</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="interpolateRaster.html">interpolateRaster()</a></code> </p>
-        </td>
-        <td><p>Interpolate patchily sampled rasters</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="mSampling2D.html">mSampling2D()</a></code> </p>
-        </td>
-        <td><p>2D Background Sampling</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="mSampling3D.html">mSampling3D()</a></code> </p>
-        </td>
-        <td><p>3D Background Sampling</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="marineBackground.html">marineBackground()</a></code> </p>
-        </td>
-        <td><p>Marine background shapefile generation</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pointCompMap.html">pointCompMap()</a></code> </p>
-        </td>
-        <td><p>Comparative point mapping</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pointMap.html">pointMap()</a></code> </p>
-        </td>
-        <td><p>Point mapping</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="rasterCompFunction.html">rasterCompFunction()</a></code> </p>
-        </td>
-        <td><p>Comparative raster mapping</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="smoothRaster.html">smoothRaster()</a></code> </p>
-        </td>
-        <td><p>Smooth rasters</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="xyzSample.html">xyzSample()</a></code> </p>
-        </td>
-        <td><p>Sampling from rasterBrick using 3D coordinates</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>land</th>
+      <td><p>An optional coastline polygon shapefile
+of type <code>sf</code> to provide geographic context for the
+occurrence points.</p></td>
+    </tr>
+    <tr>
+      <th>landCol</th>
+      <td><p>Color for land on map</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Additional optional arguments to pass to
+<code>spplot</code> initial plot object.</p></td>
+    </tr>
+    <tr>
+      <th>occs1</th>
+      <td><p>A <code>data.frame</code> with at least two columns
+named "longitude" and "latitude" or that
+can be coerced into this format.</p></td>
+    </tr>
+    <tr>
+      <th>occs2</th>
+      <td><p>A <code>data.frame</code> with at least two columns
+named "longitude" and "latitude" or that
+can be coerced into this format.</p></td>
+    </tr>
+    <tr>
+      <th>spName</th>
+      <td><p>A character string with the species
+name to be used in the plot title.</p></td>
+    </tr>
+    <tr>
+      <th>occs1Col</th>
+      <td><p>Color for occurrence points on map</p></td>
+    </tr>
+    <tr>
+      <th>occs2Col</th>
+      <td><p>Color for occurrence points on map</p></td>
+    </tr>
+    <tr>
+      <th>occs1Name</th>
+      <td><p>An optional name for the first set
+of occurrences, which will be color-coded to
+<code>occs1Col</code> in the resulting plot.</p></td>
+    </tr>
+    <tr>
+      <th>occs2Name</th>
+      <td><p>An optional name for the first set
+of occurrences, which will be color-coded to
+<code>occs2Col</code> in the resulting plot.</p></td>
+    </tr>
+    <tr>
+      <th>agreeCol</th>
+      <td><p>Color for occurrence points shared
+between <code>occs1</code> and <code>occs2</code>.</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>The extents of <code>rast1</code> and <code>rast2</code>
+must match.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/raster/man/spplot.html'>spplot</a></code></p></div>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
