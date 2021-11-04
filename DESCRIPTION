@@ -20,6 +20,8 @@ LazyData: true
 Depends: R (>= 3.5.0)
 Imports:
     fields,
+    ggplot2,
+    ggtext,
     grDevices,
     raster,
     rangeBuilder,
@@ -30,7 +32,6 @@ Suggests:
     nlme,
     knitr,
     covr,
-    ggtext,
     rnaturalearth
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
