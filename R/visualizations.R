@@ -604,13 +604,17 @@ rasterCompFunction <- function(rast1 = NULL, rast2 = NULL,
   } else {
     if (!all(is.null(rast1), !is.null(rast2))){
       if(all(class(rast1) == "RasterLayer", class(rast2) == "RasterLayer")){
-        spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
-               key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[c(2:4)])),
-                        text=list(c("Neither", rast1Name, rast2Name, "Both"))), col="transparent", main = title,
-               par.settings = list(mai = c(0,0,0,0)),
-               maxpixels = maxpixels) +
-          as.layer(spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, col="transparent")) +
-          layer(sp.polygons(as(land, "Spatial"), fill=landCol))
+        compPlot <- spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1,
+                           colorkey = F, key=list(space="right",
+                                                  points=list(pch = 22, cex = 2,
+                                                              fill=c("white",myCols[c(2:4)])),
+                        text=list(c("Neither", rast1Name, rast2Name, "Both"))),
+                        col="transparent",
+                        par.settings = list(mai = c(0,0,0,0)),
+                        maxpixels = maxpixels) +
+                        as.layer(spplot(rast2, col.regions = myCols[c(1,3)],
+                                        cuts = 1, col="transparent")) +
+          layer(sp.polygons(as(land, "Spatial"), fill=landCol, main = title))
       } else {
         warning(paste0("'rast1' and 'rast2' must be raster layers."))
         return(NULL)

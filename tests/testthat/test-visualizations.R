@@ -1,4 +1,6 @@
 library(rnaturalearth)
+library(raster)
+
 occs <- read.csv(system.file("extdata/Aphanopus_intermedius.csv", package='voluModel'))
 spName <- "Aphanopus intermedius"
 land <- ne_countries(scale = "medium", returnclass = "sf")[1]
@@ -80,7 +82,7 @@ rast2 <- raster(ncol=10, nrow=10)
 values(rast2) <- c(rep(0, 50), rep(1,50))
 
 test_that("rasterCompFunction", {
-  expect_error(rasterCompFunction())
+  expect_warning(rasterCompFunction())
   expect_warning(rasterCompFunction(rast1 = "a"))
   expect_warning(rasterCompFunction(rast1 = rast1, rast1Name = 2))
   expect_warning(rasterCompFunction(rast1 = rast1, rast1Name = "First Raster",
