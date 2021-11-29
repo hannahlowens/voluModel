@@ -463,24 +463,30 @@ transpColor <- function(color, percent = 50) {
 #' @description A convenient wrapper around `spplot`
 #' to generate formatted plots comparing two rasters.
 #'
-#' @param occs1 A `data.frame` with at least two columns
-#' named "longitude" and "latitude" or that
-#' can be coerced into this format.
+#' @param rast1 A single `RasterLayer` showing the
+#' distribution of the species corresponding to
+#' `rast1Name`. Should have values of 0 (absence)
+#' and 1 (presence). Can also be `NULL`.
 #'
-#' @param occs2 A `data.frame` with at least two columns
-#' named "longitude" and "latitude" or that
-#' can be coerced into this format.
+#' @param rast2 A single `RasterLayer` showing the
+#' distribution of the species corresponding to
+#' `rast2Name`. Should have values of 0 (absence)
+#' and 1 (presence). Must match the extent and
+#' resolution of `rast1`. Can also be `NULL.`
 #'
-#' @param spName A character string with the species
-#' name to be used in the plot title.
+#' @param rast1Name A character string with the name
+#' of the species depicted in `rast1`.
+#'
+#' @param rast2Name A character string with the name
+#' of the species depicted in `rast2`.
 #'
 #' @param land An optional coastline polygon shapefile
 #' of type `sf` to provide geographic context for the
 #' occurrence points.
 #'
-#' @param occs1Col Color for occurrence points on map
+#' @param col1 Color for `rast1` presences
 #'
-#' @param occs2Col Color for occurrence points on map
+#' @param col2 Color for `rast2` presences
 #'
 #' @param occs1Name An optional name for the first set
 #' of occurrences, which will be color-coded to
@@ -490,14 +496,19 @@ transpColor <- function(color, percent = 50) {
 #' of occurrences, which will be color-coded to
 #' `occs2Col` in the resulting plot.
 #'
-#' @param agreeCol Color for occurrence points shared
-#' between `occs1` and `occs2`.
+#' @param colBoth Color for cells with presences for
+#' both `rast1` and `rast2`.
 #'
-#' @param landCol Color for land on map
+#' @param colNeither Color for cells with absences for
+#' both `rast1` and `rast2`.
+#'
+#' @param landCol Color for land on map.
 #'
 #' @param land An optional coastline polygon shapefile
 #' of type `sf` to provide geographic context for the
 #' occurrence points.
+#'
+#' @param title A title for the plot.
 #'
 #' @param ... Additional optional arguments to pass to
 #' `spplot` initial plot object.
@@ -558,56 +569,63 @@ rasterCompFunction <- function(rast1 = NULL, rast2 = NULL,
     return(NULL)
   }
 
+  if(any(all(!class(rast1) == "RasterLayer", !is.null(rast1)),
+         all(!class(rast2) == "RasterLayer", !is.null(rast2)))){
+    warning(paste0("'rast1' and 'rast2', must either be objects of type
+                   'RasterLayer' or NULL.\n"))
+    return(NULL)
+  }
+
+  if(any(is.null(rast1), is.null(rast2))){
+    if(all(is.null(rast1),!is.null(rast2))){
+      rast1 <- rast2
+      values(rast1) <- 0
+      message(paste0("'rast1' was null. Replaced with blank raster."))
+    }else if(all(is.null(rast2),!is.null(rast1))){
+      rast2 <- rast1
+      values(rast2) <- 0
+      message(paste0("'rast2' was null. Replaced with blank raster."))
+    } else{
+      rast1 <- raster(ncol=10, nrow=10)
+      values(rast1) <- 0
+      rast2 <- raster(ncol=10, nrow=10)
+      values(rast2) <- 0
+      message(paste0("Both 'rast1' and 'rast2' were null.\n",
+                     "They were replaced with blank rasters."))
+    }
+  }
+
   # Here is where the function actually starts
   myCols <- c(transpColor("white", perc = 100),
               transpColor(col1, perc = 50),
               transpColor(col2, perc = 50),
               transpColor(colBoth, perc = 30))
   if(is.na(land)){
-    if (!all(is.null(rast1), !is.null(rast2))){
-      if(all(class(rast1) == "RasterLayer", class(rast2) == "RasterLayer")){
-        spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
-               key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[c(2:4)])),
-                        text=list(c("Neither", rast1Name, rast2Name, "Both"))), col="transparent", main = title,
-               par.settings = list(mai = c(0,0,0,0)),
-               maxpixels = maxpixels) +
-          as.layer(spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, col="transparent"))
-      } else {
-        warning(paste0("'rast1' and 'rast2' must be raster layers."))
-        return(NULL)
-      }
-    } else if (all(is.null(rast1), is.null(rast2))){
-      r <- raster(ncol=3,nrow=3)
-      r[] <- 1:(3*3)
-      spplot(r, main = title)
-    } else if(is.null(rast1)){
-      if(class(rast2) == "RasterLayer"){
-        spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = F,
-               key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[3])),
-                        text=list(c("Neither", rast2Name))), col="transparent", main = title,
-               par.settings = list(mai = c(0,0,0,0)))
-      } else{
-        warning(paste0("'rast2' and must be a raster layer."))
-        return(NULL)
-      }
-    } else {
-      if(class(rast1) == "RasterLayer"){
-        spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
-               key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[2])),
-                        text=list(c("Neither", rast1Name))), col="transparent", main = title,
-               par.settings = list(mai = c(0,0,0,0)))
-      } else {
-        warning(paste0("'rast1' and must be a raster layer."))
-        return(NULL)
-      }
+    if(all(cellStats(rast2, sum) > 0, cellStats(rast1, sum) > 0)){
+      spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
+             key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[c(2:4)])),
+                      text=list(c("Neither", rast1Name, rast2Name, "Both"))), col="transparent", main = title,
+             par.settings = list(mai = c(0,0,0,0)),
+             maxpixels = maxpixels) +
+        as.layer(spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, col="transparent"))
+    } else if(cellStats(rast2, sum) == 0){
+      spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
+             key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[c(2:4)])),
+                      text=list(c("Neither", rast1Name, rast2Name, "Both"))), col="transparent", main = title,
+             par.settings = list(mai = c(0,0,0,0)),
+             maxpixels = maxpixels)
+    } else{
+      spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = F,
+             key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[3])),
+                      text=list(c("Neither", rast2Name))), col="transparent", main = title,
+             par.settings = list(mai = c(0,0,0,0)))
     }
   } else {
-    if (!all(is.null(rast1), !is.null(rast2))){
-      if(all(class(rast1) == "RasterLayer", class(rast2) == "RasterLayer")){
-        compPlot <- spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1,
-                           colorkey = F, key=list(space="right",
-                                                  points=list(pch = 22, cex = 2,
-                                                              fill=c("white",myCols[c(2:4)])),
+    if (all(cellStats(rast2, sum) > 0, cellStats(rast1, sum) > 0)){
+      compPlot <- spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1,
+                         colorkey = F, key=list(space="right",
+                                                points=list(pch = 22, cex = 2,
+                                                            fill=c("white",myCols[c(2:4)])),
                         text=list(c("Neither", rast1Name, rast2Name, "Both"))),
                         col="transparent",
                         par.settings = list(mai = c(0,0,0,0)),
@@ -615,36 +633,18 @@ rasterCompFunction <- function(rast1 = NULL, rast2 = NULL,
                         as.layer(spplot(rast2, col.regions = myCols[c(1,3)],
                                         cuts = 1, col="transparent")) +
           layer(sp.polygons(as(land, "Spatial"), fill=landCol, main = title))
-      } else {
-        warning(paste0("'rast1' and 'rast2' must be raster layers."))
-        return(NULL)
-      }
-    } else if (all(is.null(rast1), is.null(rast2))){
-      r <- raster(ncol=3,nrow=3)
-      r[] <- 1:(3*3)
-      spplot(r, main = title)
-    } else if(is.null(rast1)){
-      if(class(rast2) == "RasterLayer"){
-        spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = F,
-               key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[3])),
-                        text=list(c("Neither", rast2Name))), col="transparent", main = title,
-               par.settings = list(mai = c(0,0,0,0))) +
-          layer(sp.polygons(as(land, "Spatial"), fill=landCol))
-      } else{
-        warning(paste0("'rast2' and must be a raster layer."))
-        return(NULL)
-      }
-    } else {
-      if(class(rast1) == "RasterLayer"){
-        spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
-               key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[2])),
-                        text=list(c("Neither", rast1Name))), col="transparent", main = title,
-               par.settings = list(mai = c(0,0,0,0))) +
-          layer(sp.polygons(as(land, "Spatial"), fill=landCol))
-      } else{
-        warning(paste0("'rast1' and must be a raster layer."))
-        return(NULL)
-      }
+    } else if (cellStats(rast2, sum) == 0){
+      spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
+             key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[2])),
+                      text=list(c("Neither", rast1Name))), col="transparent", main = title,
+             par.settings = list(mai = c(0,0,0,0))) +
+        layer(sp.polygons(as(land, "Spatial"), fill=landCol))
+    } else{
+      spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = F,
+             key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[3])),
+                      text=list(c("Neither", rast2Name))), col="transparent", main = title,
+             par.settings = list(mai = c(0,0,0,0))) +
+        layer(sp.polygons(as(land, "Spatial"), fill=landCol))
     }
   }
 }

@@ -20,29 +20,43 @@ rasterCompFunction(
 )
 }
 \arguments{
+\item{rast1}{A single \code{RasterLayer} showing the
+distribution of the species corresponding to
+\code{rast1Name}. Should have values of 0 (absence)
+and 1 (presence). Can also be \code{NULL}.}
+
+\item{rast2}{A single \code{RasterLayer} showing the
+distribution of the species corresponding to
+\code{rast2Name}. Should have values of 0 (absence)
+and 1 (presence). Must match the extent and
+resolution of \code{rast1}. Can also be \code{NULL.}}
+
+\item{col1}{Color for \code{rast1} presences}
+
+\item{col2}{Color for \code{rast2} presences}
+
+\item{rast1Name}{A character string with the name
+of the species depicted in \code{rast1}.}
+
+\item{rast2Name}{A character string with the name
+of the species depicted in \code{rast2}.}
+
+\item{colNeither}{Color for cells with absences for
+both \code{rast1} and \code{rast2}.}
+
+\item{colBoth}{Color for cells with presences for
+both \code{rast1} and \code{rast2}.}
+
 \item{land}{An optional coastline polygon shapefile
 of type \code{sf} to provide geographic context for the
 occurrence points.}
 
-\item{landCol}{Color for land on map}
+\item{landCol}{Color for land on map.}
+
+\item{title}{A title for the plot.}
 
 \item{...}{Additional optional arguments to pass to
 \code{spplot} initial plot object.}
-
-\item{occs1}{A \code{data.frame} with at least two columns
-named "longitude" and "latitude" or that
-can be coerced into this format.}
-
-\item{occs2}{A \code{data.frame} with at least two columns
-named "longitude" and "latitude" or that
-can be coerced into this format.}
-
-\item{spName}{A character string with the species
-name to be used in the plot title.}
-
-\item{occs1Col}{Color for occurrence points on map}
-
-\item{occs2Col}{Color for occurrence points on map}
 
 \item{occs1Name}{An optional name for the first set
 of occurrences, which will be color-coded to
@@ -51,9 +65,6 @@ of occurrences, which will be color-coded to
 \item{occs2Name}{An optional name for the first set
 of occurrences, which will be color-coded to
 \code{occs2Col} in the resulting plot.}
-
-\item{agreeCol}{Color for occurrence points shared
-between \code{occs1} and \code{occs2}.}
 }
 \description{
 A convenient wrapper around \code{spplot}

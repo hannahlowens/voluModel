@@ -24,6 +24,7 @@ Imports:
     ggplot2,
     ggtext,
     grDevices,
+    latticeExtra,
     methods,
     raster,
     rangeBuilder,
@@ -34,7 +35,6 @@ Suggests:
     nlme,
     knitr,
     covr,
-    latticeExtra,
     rnaturalearth,
     rnaturalearthdata
 VignetteBuilder: knitr

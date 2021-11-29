@@ -82,16 +82,9 @@ rast2 <- raster(ncol=10, nrow=10)
 values(rast2) <- c(rep(0, 50), rep(1,50))
 
 test_that("rasterCompFunction", {
-  expect_warning(rasterCompFunction())
   expect_warning(rasterCompFunction(rast1 = "a"))
   expect_warning(rasterCompFunction(rast1 = rast1, rast1Name = 2))
   expect_warning(rasterCompFunction(rast1 = rast1, rast1Name = "First Raster",
                                     rast2 = rast2, rast2Name = "Second Raster",
                                     land = "b"))
-  expect_warning(rasterCompFunction(rast1 = rast1,
-                                    land = land))
-  expect_warning(rasterCompFunction(rast2 = rast2,
-                                    land = land))
-  expect_warning(rasterCompFunction(rast1 = rast1, rast2 = rast2,
-                                    land = land))
 })
