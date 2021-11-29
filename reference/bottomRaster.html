@@ -153,28 +153,28 @@ x, y coordinate pair that contains data. These measurements are then
 rasterized at the resolution and extent of the x,y coordinates.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Create point grid</span>
-<span class='va'>coords</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span>, times <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>,
-                    y <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, FUN <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
-                      <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>x</span>, times <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span><span class='op'>}</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># Create data and add NAs to simulate uneven bottom depths</span>
-<span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>SURFACE <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>25</span>,
-                d5M <span class='op'>=</span> <span class='fl'>6</span><span class='op'>:</span><span class='fl'>30</span>,
-                d10M <span class='op'>=</span> <span class='fl'>11</span><span class='op'>:</span><span class='fl'>35</span>,
-                d25M <span class='op'>=</span> <span class='fl'>16</span><span class='op'>:</span><span class='fl'>40</span><span class='op'>)</span>
-<span class='va'>dd</span><span class='op'>$</span><span class='va'>d25M</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fl'>18</span><span class='op'>:</span><span class='fl'>25</span><span class='op'>)</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
-<span class='va'>dd</span><span class='op'>$</span><span class='va'>d10M</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fl'>21</span><span class='op'>:</span><span class='fl'>23</span><span class='op'>)</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
-<span class='va'>dd</span><span class='op'>$</span><span class='va'>d5M</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>, <span class='fl'>22</span><span class='op'>)</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span>
-
-<span class='co'># Create SpatialPointsDataFrame</span>
-<span class='va'>sp</span> <span class='op'>&lt;-</span> <span class='fu'>sp</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/sp/man/SpatialPoints.html'>SpatialPointsDataFrame</a></span><span class='op'>(</span>coords <span class='op'>=</span> <span class='va'>coords</span>,
-                            data <span class='op'>=</span> <span class='va'>dd</span><span class='op'>)</span>
-
-<span class='co'># Here's the function</span>
-<span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>bottomRaster</span><span class='op'>(</span>rawPointData <span class='op'>=</span> <span class='va'>sp</span><span class='op'>)</span>
-
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># Create point grid</span></span>
+<span class='r-in'><span class='va'>coords</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span>, times <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span>,</span>
+<span class='r-in'>                    y <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, FUN <span class='op'>=</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'>                      <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='va'>x</span>, times <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span><span class='op'>}</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Create data and add NAs to simulate uneven bottom depths</span></span>
+<span class='r-in'><span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>SURFACE <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>25</span>,</span>
+<span class='r-in'>                d5M <span class='op'>=</span> <span class='fl'>6</span><span class='op'>:</span><span class='fl'>30</span>,</span>
+<span class='r-in'>                d10M <span class='op'>=</span> <span class='fl'>11</span><span class='op'>:</span><span class='fl'>35</span>,</span>
+<span class='r-in'>                d25M <span class='op'>=</span> <span class='fl'>16</span><span class='op'>:</span><span class='fl'>40</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>dd</span><span class='op'>$</span><span class='va'>d25M</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fl'>18</span><span class='op'>:</span><span class='fl'>25</span><span class='op'>)</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span></span>
+<span class='r-in'><span class='va'>dd</span><span class='op'>$</span><span class='va'>d10M</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fl'>21</span><span class='op'>:</span><span class='fl'>23</span><span class='op'>)</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span></span>
+<span class='r-in'><span class='va'>dd</span><span class='op'>$</span><span class='va'>d5M</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>4</span>, <span class='fl'>22</span><span class='op'>)</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='cn'>NA</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Create SpatialPointsDataFrame</span></span>
+<span class='r-in'><span class='va'>sp</span> <span class='op'>&lt;-</span> <span class='fu'>sp</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/sp/man/SpatialPoints.html'>SpatialPointsDataFrame</a></span><span class='op'>(</span>coords <span class='op'>=</span> <span class='va'>coords</span>,</span>
+<span class='r-in'>                            data <span class='op'>=</span> <span class='va'>dd</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Here's the function</span></span>
+<span class='r-in'><span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>bottomRaster</span><span class='op'>(</span>rawPointData <span class='op'>=</span> <span class='va'>sp</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
