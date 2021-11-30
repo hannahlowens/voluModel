@@ -729,6 +729,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
 #' @return A `RasterLayer`
 #'
 #' @examples
+#' library(raster)
 #' rast1 <- raster(ncol=10, nrow=10)
 #' values(rast1) <- rep(0:1, 50)
 #'
@@ -748,7 +749,7 @@ diversityStack <- function(rasterList, template){
     return(NULL)
   }
 
-  if(!all(unlist(lapply(rastList,
+  if(!all(unlist(lapply(rasterList,
                         function(X){grepl("Raster*", class(X))})))){
     warning(paste0("All objects in 'rastList' must be of class 'Raster*'.\n"))
     return(NULL)
