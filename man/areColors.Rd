@@ -4,7 +4,7 @@
 \alias{areColors}
 \title{Are Colors}
 \usage{
-areColors(x)
+areColors(col)
 }
 \arguments{
 \item{col}{A vector of anthing to be interpreted by \code{rgb}
@@ -20,7 +20,7 @@ interpreted by R as a color or colors
 }
 \examples{
 
-areColors(col = "c(red", "prairie_chicken", 2))
+areColors(col = c("red", "prairie_chicken", 2))
 
 }
 \keyword{internal}

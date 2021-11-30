@@ -12,7 +12,7 @@
 #'
 #' @examples
 #'
-#' areColors(col = "c(red", "prairie_chicken", 2))
+#' areColors(col = c("red", "prairie_chicken", 2))
 #'
 #' @importFrom grDevices col2rgb
 #'
@@ -20,11 +20,60 @@
 #'
 #' @export
 
-areColors <- function(x) {
-  sapply(x, function(X) {
-    tryCatch(is.matrix(col2rgb(X)),
-             error = function(e) FALSE)
-  })
+areColors <- function(col) {
+  if(is.null(col)){
+    warning(paste0("'col' cannot be NULL.\n"))
+    return(NULL)
+  } else{
+    result <- sapply(col, function(X) {
+      tryCatch(is.matrix(col2rgb(X)),
+               error = function(e) FALSE)
+    })
+    return(result)
+  }
+}
+
+#' @title Test Intersection
+#'
+#' @description Tests whether two rasters overlap. Used in
+#' `\code{\link[voluModel:diversityStack]{diversityStack}}`
+#' function to verify all rasters in list overlap with the
+#' template raster.
+#'
+#' @param a The first `Raster*` object
+#'
+#' @param b The second `Raster*` object
+#'
+#' @return A logical vector stating whether the two
+#' inputs overlap
+#'
+#' @examples
+#'
+#' library(raster)
+#' rast1 <- raster(ncol=10, nrow=10)
+#' values(rast1) <- rep(0:1, 50)
+#'
+#' rast2 <- raster(ncol=10, nrow=10)
+#' values(rast2) <- c(rep(0, 50), rep(1,50))
+#'
+#' testIntersection(rast1, rast2)
+#'
+#' rast1 <- crop(rast1, extent(10, 20, 30, 40))
+#' rast2 <- crop(rast2, extent(-20, -10, -40, -30))
+#'
+#' testIntersection(rast1, rast2)
+#'
+#' @importFrom grDevices col2rgb
+#'
+#' @keywords internal plotting
+#'
+#' @export
+
+testIntersection <- function(a,b){
+  #reads in two rasters and tests for overlap T or F
+  # if returns TRUE then there is overlap
+  # try error is included b/c errors has come up with other test data
+  !(class(try(intersect(a,b),T ))=='try-error' || is.null(intersect(a,b)))
 }
 
 #' @title Point mapping
@@ -69,7 +118,6 @@ areColors <- function(x) {
 #'
 #' @keywords plotting
 #' @export
-
 
 pointMap <- function(occs, spName, land = NA,
                      ptCol = "#bd0026", landCol = "gray",
@@ -432,7 +480,7 @@ pointCompMap <- function(occs1, occs2,
 #'
 #' transpColor(color = "red", percent = 50)
 #'
-#' @importFrom grDevices col2rgb rgb
+#' @importFrom grDevices rgb
 #'
 #' @keywords internal plotting
 #'
@@ -472,6 +520,9 @@ transpColor <- function(color, percent = 50) {
 #'
 #' @description A convenient wrapper around `spplot`
 #' to generate formatted plots comparing two rasters.
+#' This is used in the context of voluModel to
+#' overlay semi-transparent distributions (coded as 1)
+#' in two different `RasterLayers`.
 #'
 #' @param rast1 A single `RasterLayer` showing the
 #' distribution of the species corresponding to
@@ -527,6 +578,14 @@ transpColor <- function(color, percent = 50) {
 #' must match.
 #'
 #' @examples
+#' library(raster)
+#' rast1 <- raster(ncol=10, nrow=10)
+#' values(rast1) <- rep(0:1, 50)
+#'
+#' rast2 <- raster(ncol=10, nrow=10)
+#' values(rast2) <- c(rep(0, 50), rep(1,50))
+#'
+#' rasterComp(rast1 = rast1, rast2 = rast2)
 #'
 #' @import raster
 #' @importFrom latticeExtra as.layer
@@ -536,12 +595,12 @@ transpColor <- function(color, percent = 50) {
 #' @keywords plotting
 #' @export
 
-rasterCompFunction <- function(rast1 = NULL, rast2 = NULL,
-                              col1 = "red", col2 = "blue",
-                              rast1Name = "Set 1", rast2Name = "Set 2",
-                              colNeither = "white", colBoth = "purple",
-                              land = NA, landCol = "black",
-                              title = "A Raster Comparison", ...){
+rasterComp <- function(rast1 = NULL, rast2 = NULL,
+                       col1 = "red", col2 = "blue",
+                       rast1Name = "Set 1", rast2Name = "Set 2",
+                       colNeither = "white", colBoth = "purple",
+                       land = NA, landCol = "black",
+                       title = "A Raster Comparison", ...){
 
   args <- list(...)
 
@@ -600,10 +659,10 @@ rasterCompFunction <- function(rast1 = NULL, rast2 = NULL,
   }
 
   # Here is where the function actually starts
-  myCols <- c(transpColor("white", perc = 100),
-              transpColor(col1, perc = 50),
-              transpColor(col2, perc = 50),
-              transpColor(colBoth, perc = 30))
+  myCols <- c(transpColor("white", percent = 100),
+              transpColor(col1, percent = 50),
+              transpColor(col2, percent = 50),
+              transpColor(colBoth, percent = 30))
   if(is.na(land)){
     if(all(cellStats(rast2, sum) > 0, cellStats(rast1, sum) > 0)){
       spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
@@ -653,21 +712,60 @@ rasterCompFunction <- function(rast1 = NULL, rast2 = NULL,
   }
 }
 
-test_intersection <- function(a,b){
-  #reads in two rasters and tests for overlap T or F
-  # if returns TRUE then there is overlap
-  # try error is included b/c errors has come up with other test data
-  !(class(try(intersect(a,b),T ))=='try-error' || is.null(intersect(a,b)))
-}
+#' @title Diversity Stack
+#'
+#' @description Takes list of rasters of species distributions
+#' (interpreted as 1 = presence, 0 = absence), which do not
+#' have to have the same extents, and stack them to create an
+#' estimate of species richness that matches the extent and
+#' resolution of a template.
+#'
+#' @param rasterList A `list` of `RasterLayer` objects, which
+#' are interpreted as species distributions (1 = presence,
+#' 0 = absence).
+#'
+#' @param template A `RasterLayer` with the desired extent
+#'
+#' @return A `RasterLayer`
+#'
+#' @examples
+#' rast1 <- raster(ncol=10, nrow=10)
+#' values(rast1) <- rep(0:1, 50)
+#'
+#' rast2 <- raster(ncol=10, nrow=10)
+#' values(rast2) <- c(rep(0, 50), rep(1,50))
+#'
+#' rastList <- list(rast1, rast2)
+#' diversityStack(rasterList = rastList,
+#'                template = rast2)
+#'
+#' @keywords plotting
+#' @export
 
 diversityStack <- function(rasterList, template){
+  if(!class(rastList) == "list"){
+    warning(paste0("'rastList' must be of class 'list'.\n"))
+    return(NULL)
+  }
+
+  if(!all(unlist(lapply(rastList,
+                        function(X){grepl("Raster*", class(X))})))){
+    warning(paste0("All objects in 'rastList' must be of class 'Raster*'.\n"))
+    return(NULL)
+  }
+
+  if(!grepl("Raster*", class(template))){
+    warning(paste0("'template' must be of class 'Raster*'.\n"))
+    return(NULL)
+  }
+
   diversityRaster <- raster(nrows = template@nrows, ncol = template@ncols,
                             ext = template@extent, crs = template@crs)
   values(r=diversityRaster) <- 0
 
   for(i in 1:length(rasterList)){
     temp <- rasterList[[i]]
-    if(test_intersection(temp,template)){
+    if(testIntersection(temp,template)){
       temp <- raster::resample(temp, template)
       temp[is.na(temp[])] <- 0
       diversityRaster <- diversityRaster + temp
@@ -676,10 +774,100 @@ diversityStack <- function(rasterList, template){
   return(diversityRaster)
 }
 
-oneRasterPlot <- function(rast, title, scaleRange){
-  at <- seq(from = scaleRange[[1]], to = scaleRange[[2]], by = (scaleRange[2]-scaleRange[1])/11)
+#' @title Comparative raster mapping
+#'
+#' @description A convenient wrapper around `spplot`
+#' to generate a formatted plot showing .
+#' This is used in the context of voluModel to
+#' overlay semi-transparent distributions (coded as 1)
+#' in two different `RasterLayers`.
+#'
+#' @param rast A single `Raster*` layer on a continuous
+#' scale.
+#'
+#' @param land An optional coastline polygon shapefile
+#' of type `sf` to provide geographic context for the
+#' occurrence points.
+#'
+#' @param landCol Color for land on map.
+#'
+#' @param title A title for the plot.
+#'
+#' @param ... Additional optional arguments to pass to
+#' `spplot` initial plot object or `viridis`.
+#'
+#' @note The extents of `rast1` and `rast2`
+#' must match.
+#'
+#' @examples
+#' library(raster)
+#' rast <- raster(ncol=10, nrow=10)
+#' values(rast) <- seq(0,99, 1)
+#'
+#' oneRasterPlot(rast = rast, )
+#'
+#' @import raster
+#' @import viridis
+#' @importFrom latticeExtra as.layer
+#'
+#' @seealso \code{\link[viridis:viridis]{viridis}} \code{\link[raster:spplot]{spplot}}
+#'
+#' @keywords plotting
+#' @export
+
+oneRasterPlot <- function(rast,
+                          land = NA, landCol = "black",
+                          title = "A Raster", ...){
+  #Input processing
+  args <- list(...)
+
+  if("maxpixels" %in% names(args)){
+    maxpixels <- args$maxpixels
+  } else{
+    maxpixels <- 50000
+  }
+
+  if("alpha" %in% names(args)){
+    alpha <- args$alpha
+  } else{
+    alpha <- 1
+  }
+
+  if("option" %in% names(args)){
+    option <- args$option
+  } else{
+    option <- "plasma"
+  }
+
+  # Input error checking
+  if(!grepl("Raster*", class(rast))){
+    warning(paste0("'rast' must be of class 'Raster*'.\n"))
+    return(NULL)
+  }
+
+  if(!any(is.na(land[[1]]), "sf" %in% class(land))){
+    warning(paste0("'land' must either be NA or of class 'sf'."))
+    return(NULL)
+  }
+
+  colTest <- areColors(landCol)
+
+  if(!any(c(all(colTest), length(colTest) < 1))){
+    warning(paste0("'landCol' must be a recognized color.\n"))
+    return(NULL)
+  }
+
+  if(!is.character(title)){
+    warning(paste0("'title' must be a 'character' string.\n"))
+    return(NULL)
+  }
+
+  #Function body
+  at <- seq(from = cellStats(rast, min), to = cellStats(rast, max),
+            by = (cellStats(rast, max)-cellStats(rast, min))/11)
+
   spplot(rast, col = "transparent",
-         col.regions = viridis::plasma(11), at = at,
+         col.regions = viridis::viridis(11), at = at,
          xlim=c(-100, 25), main = title) +
-    latticeExtra::layer(sp.polygons(rangeBuilder::gshhs, fill = "black"))
+  layer(sp.polygons(as(land, "Spatial"), fill=landCol, main = title))
 }

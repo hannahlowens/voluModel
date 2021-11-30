@@ -29,6 +29,7 @@ Imports:
     raster,
     rangeBuilder,
     rgeos,
+    viridis,
     sp
 Suggests:
     testthat (>= 3.0.0),
