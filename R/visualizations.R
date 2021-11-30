@@ -488,11 +488,11 @@ transpColor <- function(color, percent = 50) {
 #'
 #' @param col2 Color for `rast2` presences
 #'
-#' @param occs1Name An optional name for the first set
+#' @param rast1Name An optional name for the first set
 #' of occurrences, which will be color-coded to
 #' `occs1Col` in the resulting plot.
 #'
-#' @param occs2Name An optional name for the first set
+#' @param rast2Name An optional name for the first set
 #' of occurrences, which will be color-coded to
 #' `occs2Col` in the resulting plot.
 #'

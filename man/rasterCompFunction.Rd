@@ -35,11 +35,13 @@ resolution of \code{rast1}. Can also be \code{NULL.}}
 
 \item{col2}{Color for \code{rast2} presences}
 
-\item{rast1Name}{A character string with the name
-of the species depicted in \code{rast1}.}
+\item{rast1Name}{An optional name for the first set
+of occurrences, which will be color-coded to
+\code{occs1Col} in the resulting plot.}
 
-\item{rast2Name}{A character string with the name
-of the species depicted in \code{rast2}.}
+\item{rast2Name}{An optional name for the first set
+of occurrences, which will be color-coded to
+\code{occs2Col} in the resulting plot.}
 
 \item{colNeither}{Color for cells with absences for
 both \code{rast1} and \code{rast2}.}
@@ -57,14 +59,6 @@ occurrence points.}
 
 \item{...}{Additional optional arguments to pass to
 \code{spplot} initial plot object.}
-
-\item{occs1Name}{An optional name for the first set
-of occurrences, which will be color-coded to
-\code{occs1Col} in the resulting plot.}
-
-\item{occs2Name}{An optional name for the first set
-of occurrences, which will be color-coded to
-\code{occs2Col} in the resulting plot.}
 }
 \description{
 A convenient wrapper around \code{spplot}
