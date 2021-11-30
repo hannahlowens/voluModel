@@ -1,4 +1,32 @@
 # Visualization ----
+#' @title Are Colors
+#'
+#' @description Checks to see if a given vector can be
+#' interpreted by R as a color or colors
+#'
+#' @param col A vector of anthing to be interpreted by `rgb`
+#' as a color.
+#'
+#' @return A logical vector stating whether inputs
+#' can be interpreted as colors.
+#'
+#' @examples
+#'
+#' areColors(col = "c(red", "prairie_chicken", 2))
+#'
+#' @importFrom grDevices col2rgb
+#'
+#' @keywords internal plotting
+#'
+#' @export
+
+areColors <- function(x) {
+  sapply(x, function(X) {
+    tryCatch(is.matrix(col2rgb(X)),
+             error = function(e) FALSE)
+  })
+}
+
 #' @title Point mapping
 #'
 #' @description A convenient wrapper around ggplot
@@ -71,12 +99,6 @@ pointMap <- function(occs, spName, land = NA,
     return(NULL)
   }
 
-  areColors <- function(x) {
-    sapply(x, function(X) {
-      tryCatch(is.matrix(col2rgb(X)),
-               error = function(e) FALSE)
-    })
-  }
   colVec <- c(ptCol, landCol, waterCol)
   colTest <- areColors(colVec)
 
@@ -255,12 +277,6 @@ pointCompMap <- function(occs1, occs2,
     return(NULL)
   }
 
-  areColors <- function(x) {
-    sapply(x, function(X) {
-      tryCatch(is.matrix(col2rgb(X)),
-               error = function(e) FALSE)
-    })
-  }
   colVec <- c(occs1Col, occs2Col, agreeCol, landCol, waterCol)
   colTest <- areColors(colVec)
 
@@ -423,12 +439,6 @@ pointCompMap <- function(occs1, occs2,
 #' @export
 
 transpColor <- function(color, percent = 50) {
-  areColors <- function(x) {
-    sapply(x, function(X) {
-      tryCatch(is.matrix(col2rgb(X)),
-               error = function(e) FALSE)
-    })
-  }
   colTest <- areColors(color)
 
   if(!colTest){
@@ -541,17 +551,11 @@ rasterCompFunction <- function(rast1 = NULL, rast2 = NULL,
     maxpixels <- 50000
   }
 
-  areColors <- function(x) {
-    sapply(x, function(X) {
-      tryCatch(is.matrix(col2rgb(X)),
-               error = function(e) FALSE)
-    })
-  }
-  colVec <- c(col1, col2, colBoth, landCol)
+  colVec <- c(col1, col2, colBoth, colNeither, landCol)
   colTest <- areColors(colVec)
 
   if(!any(c(all(colTest), length(colTest) < 4))){
-    warning(paste0("'col1', 'col2', 'colBoth', and 'landCol'
+    warning(paste0("'col1', 'col2', 'colBoth', 'colNeither' and 'landCol'
                    must be recognized colors.\n"))
     return(NULL)
   }
