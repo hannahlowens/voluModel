@@ -1,5 +1,6 @@
 library(rnaturalearth)
 library(raster)
+library(ggplot2)
 
 occs <- read.csv(system.file("extdata/Aphanopus_intermedius.csv", package='voluModel'))
 spName <- "Aphanopus intermedius"
@@ -9,6 +10,12 @@ test_that("input checks", {
   expect_identical(class(occs), "data.frame")
   expect_type(land, "list")
   expect_identical(class(land), c("sf", "data.frame"))
+})
+
+test_that("areColors works as expected", {
+  expect_error(areColors())
+  expect_warning(areColors(NULL))
+  expect_true(is.logical(areColors("red")))
 })
 
 test_that("pointMap checks", {
@@ -81,10 +88,35 @@ values(rast1) <- rep(0:1, 50)
 rast2 <- raster(ncol=10, nrow=10)
 values(rast2) <- c(rep(0, 50), rep(1,50))
 
-test_that("rasterCompFunction", {
-  expect_warning(rasterCompFunction(rast1 = "a"))
-  expect_warning(rasterCompFunction(rast1 = rast1, rast1Name = 2))
-  expect_warning(rasterCompFunction(rast1 = rast1, rast1Name = "First Raster",
-                                    rast2 = rast2, rast2Name = "Second Raster",
-                                    land = "b"))
+test_that("rasterComp works", {
+  expect_warning(rasterComp(rast1 = "a"))
+  expect_warning(rasterComp(rast1 = rast1, rast1Name = 2))
+  expect_warning(rasterComp(rast1 = rast1, rast1Name = "First Raster",
+                            rast2 = rast2, rast2Name = "Second Raster",
+                            land = "b"))
+  expect_warning(rasterComp(rast1 = rast1, rast1Name = "First Raster",
+                            rast2 = rast2, rast2Name = "Second Raster",
+                            col1 = "ukulele"))
+  expect_equal(class(rasterComp(rast1 = rast1)), "trellis")
+  expect_equal(class(rasterComp(rast2 = rast2)), "trellis")
+  expect_equal(class(rasterComp()), "trellis")
+  expect_equal(class(rasterComp(rast1 = rast1, rast2 = rast2)), "trellis")
+  expect_equal(class(rasterComp(rast1 = rast1, land = land)), "trellis")
+  expect_equal(class(rasterComp(rast2 = rast2, land = land)), "trellis")
+  expect_equal(class(rasterComp(land = land)), "trellis")
+  expect_equal(class(rasterComp(rast1 = rast1, rast2 = rast2, land = land)),
+               "trellis")
+})
+
+test_that("diversityStack works", {
+  divStack <- diversityStack(list(rast1, rast2), template = rast2)
+  expect_true(grepl("Raster*", class(divStack)))
+})
+
+test_that("oneRasterPlot works", {
+  divStack <- diversityStack(list(rast1, rast2), template = rast2)
+  expect_warning(oneRasterPlot(rast = "a"))
+  expect_warning(oneRasterPlot(rast = divStack, land = "a"))
+  expect_equal(class(oneRasterPlot(divStack)), "trellis")
+  expect_equal(class(oneRasterPlot(divStack, land = land)), "trellis")
 })
