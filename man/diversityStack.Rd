@@ -24,6 +24,7 @@ estimate of species richness that matches the extent and
 resolution of a template.
 }
 \examples{
+library(raster)
 rast1 <- raster(ncol=10, nrow=10)
 values(rast1) <- rep(0:1, 50)
 

@@ -37,7 +37,7 @@ library(raster)
 rast <- raster(ncol=10, nrow=10)
 values(rast) <- seq(0,99, 1)
 
-oneRasterPlot(rast = rast, )
+oneRasterPlot(rast = rast)
 
 }
 \seealso{

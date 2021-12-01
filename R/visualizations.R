@@ -663,7 +663,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
               transpColor(col1, percent = 50),
               transpColor(col2, percent = 50),
               transpColor(colBoth, percent = 30))
-  if(is.na(land)){
+  if(any(is.na(land))){
     if(all(cellStats(rast2, sum) > 0, cellStats(rast1, sum) > 0)){
       spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
              key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[c(2:4)])),
@@ -681,6 +681,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
       spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = F,
              key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[3])),
                       text=list(c("Neither", rast2Name))), col="transparent", main = title,
+             maxpixels = maxpixels,
              par.settings = list(mai = c(0,0,0,0)))
     }
   } else {
@@ -695,19 +696,21 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
                         maxpixels = maxpixels) +
                         as.layer(spplot(rast2, col.regions = myCols[c(1,3)],
                                         cuts = 1, col="transparent")) +
-          layer(sp.polygons(as(land, "Spatial"), fill=landCol, main = title))
+        latticeExtra::layer(sp.polygons(as(land, "Spatial"), fill=landCol, main = title))
     } else if (cellStats(rast2, sum) == 0){
       spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
              key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[2])),
                       text=list(c("Neither", rast1Name))), col="transparent", main = title,
+             maxpixels = maxpixels,
              par.settings = list(mai = c(0,0,0,0))) +
-        layer(sp.polygons(as(land, "Spatial"), fill=landCol))
+        latticeExtra::layer(sp.polygons(as(land, "Spatial"), fill=landCol))
     } else{
       spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = F,
              key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[3])),
                       text=list(c("Neither", rast2Name))), col="transparent", main = title,
+             maxpixels = maxpixels,
              par.settings = list(mai = c(0,0,0,0))) +
-        layer(sp.polygons(as(land, "Spatial"), fill=landCol))
+        latticeExtra::layer(sp.polygons(as(land, "Spatial"), fill=landCol))
     }
   }
 }
@@ -744,14 +747,14 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
 #' @export
 
 diversityStack <- function(rasterList, template){
-  if(!class(rastList) == "list"){
-    warning(paste0("'rastList' must be of class 'list'.\n"))
+  if(!class(rasterList) == "list"){
+    warning(paste0("'rasterList' must be of class 'list'.\n"))
     return(NULL)
   }
 
   if(!all(unlist(lapply(rasterList,
                         function(X){grepl("Raster*", class(X))})))){
-    warning(paste0("All objects in 'rastList' must be of class 'Raster*'.\n"))
+    warning(paste0("All objects in 'rasterList' must be of class 'Raster*'.\n"))
     return(NULL)
   }
 
@@ -762,7 +765,7 @@ diversityStack <- function(rasterList, template){
 
   diversityRaster <- raster(nrows = template@nrows, ncol = template@ncols,
                             ext = template@extent, crs = template@crs)
-  values(r=diversityRaster) <- 0
+  values(diversityRaster) <- 0
 
   for(i in 1:length(rasterList)){
     temp <- rasterList[[i]]
@@ -805,11 +808,10 @@ diversityStack <- function(rasterList, template){
 #' rast <- raster(ncol=10, nrow=10)
 #' values(rast) <- seq(0,99, 1)
 #'
-#' oneRasterPlot(rast = rast, )
+#' oneRasterPlot(rast = rast)
 #'
 #' @import raster
 #' @import viridis
-#' @importFrom latticeExtra as.layer
 #'
 #' @seealso \code{\link[viridis:viridis]{viridis}} \code{\link[raster:spplot]{spplot}}
 #'
@@ -846,7 +848,7 @@ oneRasterPlot <- function(rast,
     return(NULL)
   }
 
-  if(!any(is.na(land[[1]]), "sf" %in% class(land))){
+  if(!any(is.na(land), "sf" %in% class(land))){
     warning(paste0("'land' must either be NA or of class 'sf'."))
     return(NULL)
   }
@@ -867,8 +869,18 @@ oneRasterPlot <- function(rast,
   at <- seq(from = cellStats(rast, min), to = cellStats(rast, max),
             by = (cellStats(rast, max)-cellStats(rast, min))/11)
 
-  spplot(rast, col = "transparent",
-         col.regions = viridis::viridis(11), at = at,
-         xlim=c(-100, 25), main = title) +
-  layer(sp.polygons(as(land, "Spatial"), fill=landCol, main = title))
+  if(any(is.na(land))){
+    spplot(rast, col = "transparent",
+           col.regions = viridis::viridis(11, alpha = alpha,
+                                          option = option),
+           at = at, main = title,
+           maxpixels = maxpixels)
+  } else {
+    spplot(rast, col = "transparent",
+           col.regions = viridis::viridis(11, alpha = alpha,
+                                          option = option),
+           at = at, main = title,
+           maxpixels = maxpixels) +
+      latticeExtra::layer(sp.polygons(as(land, "Spatial"), fill=landCol, main = title))
+  }
 }
