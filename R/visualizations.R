@@ -274,7 +274,7 @@ pointMap <- function(occs, spName, land = NA,
 #'              spName = spName, land = NA)
 #'
 #' @import ggplot2
-#' @importFrom dplyr inner_join
+#' @importFrom dplyr inner_join anti_join
 #' @importFrom ggtext element_markdown
 #'
 #' @seealso \code{\link[ggplot2:ggplot]{ggplot}}
@@ -374,9 +374,9 @@ pointCompMap <- function(occs1, occs2,
   occsBoth <- unique(dplyr::inner_join(occs2[,c(xIndex2, yIndex2)],
                                      occs1[,c(xIndex1, yIndex1)]))
   occsBoth$source <- rep_len("both", length.out = nrow(occsBoth))
-  occs1 <- unique(anti_join(occs1[,c(xIndex1, yIndex1)],occsBoth))
+  occs1 <- unique(dplyr::anti_join(occs1[,c(xIndex1, yIndex1)],occsBoth))
   occs1$source <- rep_len(occs1Name, length.out = nrow(occs1))
-  occs2 <- unique(anti_join(occs2[,c(xIndex2, yIndex2)],occsBoth))
+  occs2 <- unique(dplyr::anti_join(occs2[,c(xIndex2, yIndex2)],occsBoth))
   occs2$source <- rep_len(occs2Name, length.out = nrow(occs2))
 
   colParse1 <- columnParse(occs1)
