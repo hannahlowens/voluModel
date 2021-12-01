@@ -274,7 +274,7 @@ pointMap <- function(occs, spName, land = NA,
 #'              spName = spName, land = NA)
 #'
 #' @import ggplot2
-#' @import dplyr
+#' @importFrom dplyr inner_join
 #' @importFrom ggtext element_markdown
 #'
 #' @seealso \code{\link[ggplot2:ggplot]{ggplot}}
@@ -743,6 +743,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
 #' diversityStack(rasterList = rastList,
 #'                template = rast2)
 #'
+#' @import raster
 #' @keywords plotting
 #' @export
 
