@@ -33,6 +33,7 @@ Imports:
     raster,
     rangeBuilder,
     rgeos,
+    rmarkdown,
     viridis,
     sp
 Suggests:
