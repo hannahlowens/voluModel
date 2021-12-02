@@ -21,6 +21,8 @@ knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 [![Codecov test coverage](https://codecov.io/gh/hannahlowens/voluModel/branch/main/graph/badge.svg)](https://codecov.io/gh/hannahlowens/voluModel?branch=main)
 <!-- badges: end -->
 
+# voluModel <img src='man/figures/logo.png' align="right" height="138" />
+
 ## Summary
 
 This package is designed to model species distributions in three dimensions. This is useful in an aquatic context when the organisms one wishes to model can be found across a wide range of depths in the water column.
