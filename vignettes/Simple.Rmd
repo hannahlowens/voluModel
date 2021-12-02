@@ -19,8 +19,6 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-library(ape)
-library(occCite)
 knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 knitr::opts_knit$set(root.dir = system.file('extdata/', package='occCite'))
 ```
