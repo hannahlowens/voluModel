@@ -1,12 +1,8 @@
 ---
-title: "Simple execution of occurrence searches and citation generation"
+title: "A simple example of how to use voluModel for niche modeling"
 author:
 - Hannah L. Owens
-- Cory Merow
-- Brian Maitner
-- Jamie M. Kass
-- Vijay Barve
-- Robert Guralnick
+- Carsten Rahbek
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
@@ -14,7 +10,7 @@ output:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{Simple execution of occurrence searches and citation generation}
+  %\VignetteIndexEntry{A simple example of how to use voluModel for niche modeling}
   \usepackage[utf8]{inputenc}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
@@ -30,101 +26,54 @@ knitr::opts_knit$set(root.dir = system.file('extdata/', package='occCite'))
 ```
 
 # Introduction 
+Coming soon. Stay tuned.
 
-We have entered the age of data-intensive scientific discovery. As data sets increase in complexity and heterogeneity, we must preserve the cycle of data citation from primary data sources to aggregating databases to research products and back to primary data sources. The citation cycle keeps science transparent, but it is also key to supporting primary providers by documenting the use of their data. The Global Biodiversity Information Facility (GBIF), Botanical Information and Ecology Network (BIEN), and other data aggregators have made great strides in harvesting citation data from research products and linking them back to primary data providers. However, this only works if those that publish research products cite primary data sources in the first place. We developed `occCite`, a set of `R`-based tools for downloading, managing, and citing biodiversity data, to advance toward the goal of closing the data provenance cycle. These tools preserve links between occurrence data and primary providers once researchers download aggregated data, and facilitate the citation of primary data providers in research papers.
+# Data Inputs
 
-The `occCite` workflow follows a three-step process. First, the user inputs one or more taxonomic names (or a phylogeny). `occCite` then rectifies these names by checking them against one or more taxonomic databases, which can be specified by the user (see the [Global Names List](http://gni.globalnames.org/data_sources)). The results of the taxonomic rectification are then kept in an `occCiteData` object in local memory. Next, `occCite` takes the `occCiteData` object and user-defined search parameters to query BIEN (through `rbien`) and/or GBIF(through `rGBIF`) for records. The results are appended to the `occCiteData` object, along with metadata on the search. Finally, the user can pass the `occCiteData` object to `occCitation`, which compiles citations for the primary providers, database aggregators, and `R` packages used to build the dataset.
+```{r environmental data, eval=FALSE}
 
-Future iterations of `occCite` will track citation data through the data cleaning process and provide a series of visualizations on raw query results and final data sets. It will also provide data citations in a format congruent with best-practice recommendations for large biodiversity data sets. Based on these data citation tools, we will also propose a new set of standards for citing primary biodiversity data in published research articles that provides due credit to contributors and allows them to track the use of their work. Keep checking back!
-
-# Setup
-
-If you plan to query GBIF, you will need to provide them with your user login information. We have provided a dummy login below to show you the format. *You will need to provide actual account information.* This is because you will actually be downloading *all* of the records available for the species using `occ_download()`, instead of getting results from `occ_search()`, which has a hard limit of 100,000 occurrences.
-
-```{r login, eval=FALSE}
-library(occCite);
-#Creating a GBIF login
-GBIFLogin <- GBIFLoginManager(user = "occCiteTester",
-                              email = "****@yahoo.com",
-                              pwd = "12345")
 ```
 
-# Performing a simple search
+```{r environmental data processing, eval=FALSE}
 
-## The basics
-
-At its simplest, `occCite` allows you to search for occurrences for a single species. The taxonomy of the user-specified species will be verified using EOL and NCBI taxonomies by default. 
-
-```{r simple_search, eval=F}
-# Simple search
-mySimpleOccCiteObject <- occQuery(x = "Protea cynaroides",
-                                  datasources = c("gbif", "bien"),
-                                  GBIFLogin = GBIFLogin, 
-                                  GBIFDownloadDirectory = 
-                                    system.file('extdata/', package='occCite'),
-                                  checkPreviousGBIFDownload = T)
 ```
 
-```{r simple_search sssssecret cooking show, eval=T, echo = F}
-# Simple search
-data(myOccCiteObject)
-mySimpleOccCiteObject <- myOccCiteObject
+```{r occurrence data, eval=FALSE}
+
 ```
 
-Here is what the GBIF results look like:
+# Background Sampling
 
-```{r simple_search_GBIF_results}
-# GBIF search results
-head(mySimpleOccCiteObject@occResults$`Protea cynaroides`$GBIF$OccurrenceTable)
+```{r automatic sampling region generation, eval=FALSE}
+
 ```
 
-And here are the BIEN results:
+```{r environmental background sampling, eval=FALSE}
 
-```{r simple_search_BIEN_results}
-#BIEN search results
-head(mySimpleOccCiteObject@occResults$`Protea cynaroides`$BIEN$OccurrenceTable)
 ```
 
-There is also a summary method for `occCite` objects with some basic information about your search.
+# Niche model generation
 
-```{r summary of simple search}
-summary(mySimpleOccCiteObject)
+```{r generate niche model, eval=FALSE}
+
 ```
 
-If you want to visualize the results of your search, you can use the `plot` method on `occCite` objects to generate several kinds of summary plots.
+# Niche model generation
 
-```{r plotting a simple search, eval=T, message=FALSE, warning=FALSE, paged.print=FALSE, results='hide', fig.hold='hold', out.width="33%"}
-plot(mySimpleOccCiteObject)
+```{r project niche model, eval=FALSE}
+
 ```
 
-## Simple citations
+```{r visualize niche model, eval=FALSE}
 
-After doing a search for occurrence points, you can use `occCitation()` to generate citations for primary biodiversity databases, as well as database aggregators.
-**Note:** Currently, GBIF and BIEN are the only aggregators for which citations are supported.
-
-```{r simple_citation}
-#Get citations
-mySimpleOccCitations <- occCitation(mySimpleOccCiteObject)
 ```
 
-Here is a simple way of generating a formatted citation document from the results of `occCitation()`.
-```{r show_simple_citations}
-print(mySimpleOccCitations)
+# Bonus feature: Diversity map generation
+
+```{r stack presence/absence rasters, eval=FALSE}
+
 ```
 
-## Simple Taxonomic Rectification
+```{r plot diversity map, eval=FALSE}
 
-In the simplest of searches, such as the one above, the taxonomy of your input species name is automatically rectified through the `occCite` function `studyTaxonList()` using `gnr_resolve()` from the `taxize` `R` package. If you would like to change the source of the taxonomy being used to rectify your species names, you can specify as many taxonomic repositories as you like from the Global Names Index (GNI). The complete list of GNI repositories can be found [here](http://gni.globalnames.org/data_sources). 
-
-`studyTaxonList()` chooses the taxonomic names closest to those being input and documents which taxonomic repositories agreed with those names. `studyTaxonList()` instantiates an `occCiteData` object the same way `occQuery()` does. This object can be passed into `occQuery()` to perform your occurrence data search.
-
-```{r taxonomic_rectification}
-#Rectify taxonomy
-myTROccCiteObject <- studyTaxonList(x = "Protea cynaroides", 
-                                  datasources = c("National Center for Biotechnology Information",
-                                                  "Encyclopedia of Life", 
-                                                  "Integrated Taxonomic Information SystemITIS"))
-myTROccCiteObject@cleanedTaxonomy
 ```
-
-For advanced features, please refer to `vignette("Advanced", package = "occCite")`.

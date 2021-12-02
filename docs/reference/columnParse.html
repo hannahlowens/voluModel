@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Sampling from rasterBrick using 3D coordinates — xyzSample • voluModel</title>
+<title>Column Parsing — columnParse • voluModel</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,9 @@
 
 
 
-<meta property="og:title" content="Sampling from rasterBrick using 3D coordinates — xyzSample" />
-<meta property="og:description" content="Gets values at x,y,z occurrences from a
-given 3D environmental variable brick" />
+<meta property="og:title" content="Column Parsing — columnParse" />
+<meta property="og:description" content="Parses column names from input occurrence
+data.frame for more seamless function" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -132,82 +132,69 @@ given 3D environmental variable brick" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Sampling from rasterBrick using 3D coordinates</h1>
-    <small class="dont-index">Source: <a href='https://github.com/hannahlowens/voluModel/blob/master/R/xyzSample.R'><code>R/xyzSample.R</code></a></small>
-    <div class="hidden name"><code>xyzSample.Rd</code></div>
+    <h1>Column Parsing</h1>
+    <small class="dont-index">Source: <a href='https://github.com/hannahlowens/voluModel/blob/master/R/inputProcessingUtilties.R'><code>R/inputProcessingUtilties.R</code></a></small>
+    <div class="hidden name"><code>columnParse.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Gets values at x,y,z occurrences from a
-given 3D environmental variable brick</p>
+    <p>Parses column names from input occurrence
+<code>data.frame</code> for more seamless function</p>
     </div>
 
-    <pre class="usage"><span class='fu'>xyzSample</span><span class='op'>(</span><span class='va'>occs</span>, <span class='va'>envBrick</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>columnParse</span><span class='op'>(</span><span class='va'>occs</span>, wDepth <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>occs</th>
-      <td><p>A dataframe with at least three columns
-named "longitude", "latitude", and "depth", or that
+      <td><p>A <code>data.frame</code> with at least two columns
+named "longitude" and "latitude" or that
 can be coerced into this format.</p></td>
     </tr>
     <tr>
-      <th>envBrick</th>
-      <td><p>A <code>rasterBrick</code> object with
-one environmental variable. Each layer represents
-a depth slice. See Details for more information.</p></td>
+      <th>wDepth</th>
+      <td><p>Logical; flags whether a depth column should
+also be sought.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Vector of environmental values equal in length
-to number of rows of input <code>occs</code> <code>data.frame</code>.</p>
+    <p>A <code>list</code> of length 2 with indices of the x and y
+columns, respectively, followed by a message with a plain
+text report of which columns were interpreted as x and y.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The <code>envBrick</code> <code>rasterBrick</code> object should
-have numeric names that correspond with the beginning
-depth of a particular depth slice. For example, one
-might have three layers, one from 0 to 10m, one from
-10 to 30m, and one from 30 to 100m. You would name the
-layers in this brick <code>names(envBrick) &lt;- c(0, 10, 30</code>.
-R will rename the layers "X0", "X10", and "X30". This
-is expected behavior and <code>xyzSample</code> was written to
-expect this. <code>xyzSample</code> identifies the layer name
-that is closest to the depth layer value at a
-particular X, Y coordinate, and samples the
-environmental value at that 3D coordinate.</p>
+    <p>This is an internal function to return the putative
+indices for latitute and longitude or x and y coordinates
+of occurrances to allow for code that is more robust to
+very common user error</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://rspatial.org/raster'>raster</a></span><span class='op'>)</span>
-
-<span class='co'># Create test raster</span>
-<span class='va'>r1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span>ncol<span class='op'>=</span><span class='fl'>10</span>, nrow<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/raster/man/getValues.html'>values</a></span><span class='op'>(</span><span class='va'>r1</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>100</span>
-<span class='va'>r2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span>ncol<span class='op'>=</span><span class='fl'>10</span>, nrow<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/raster/man/getValues.html'>values</a></span><span class='op'>(</span><span class='va'>r2</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>20</span>, times <span class='op'>=</span> <span class='fl'>50</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>60</span>, times <span class='op'>=</span> <span class='fl'>50</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>r3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span>ncol<span class='op'>=</span><span class='fl'>10</span>, nrow<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/raster/man/getValues.html'>values</a></span><span class='op'>(</span><span class='va'>r3</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>8</span>
-<span class='va'>envBrick</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/brick.html'>brick</a></span><span class='op'>(</span><span class='va'>r1</span>, <span class='va'>r2</span>, <span class='va'>r3</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/raster/man/names.html'>names</a></span><span class='op'>(</span><span class='va'>envBrick</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>10</span>, <span class='fl'>30</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Loading required package: sp</span></div><div class='input'>
+<span class='co'># Create sample raster</span>
+<span class='va'>r</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/raster.html'>raster</a></span><span class='op'>(</span>ncol<span class='op'>=</span><span class='fl'>10</span>, nrow<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/raster/man/getValues.html'>values</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>100</span>
 
 <span class='co'># Create test occurrences</span>
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span>
-<span class='va'>longitude</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='va'>envBrick</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='va'>envBrick</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>2</span><span class='op'>]</span>,
+<span class='va'>longitude</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>2</span><span class='op'>]</span>,
                     size <span class='op'>=</span> <span class='fl'>10</span>, replace <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span>
-<span class='va'>latitude</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='va'>envBrick</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>3</span><span class='op'>]</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='va'>envBrick</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>4</span><span class='op'>]</span>,
+<span class='va'>latitude</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>3</span><span class='op'>]</span><span class='op'>:</span><span class='fu'><a href='https://rdrr.io/pkg/raster/man/extent.html'>extent</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>4</span><span class='op'>]</span>,
                    size <span class='op'>=</span> <span class='fl'>10</span>, replace <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span>
 <span class='va'>depth</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>0</span><span class='op'>:</span><span class='fl'>35</span>, size <span class='op'>=</span> <span class='fl'>10</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='va'>occurrences</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/raster/man/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='va'>longitude</span>,<span class='va'>latitude</span>,<span class='va'>depth</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='co'># Test function</span>
-<span class='va'>occSample3d</span> <span class='op'>&lt;-</span> <span class='fu'>xyzSample</span><span class='op'>(</span><span class='va'>occurrences</span>, <span class='va'>envBrick</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Using longitude, latitude, and depth</span>
-#&gt; <span class='message'> as x, y, and z coordinates, respectively.</span></div><div class='input'>
+<span class='co'># Here's the function</span>
+<span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>columnParse</span><span class='op'>(</span>occs <span class='op'>=</span> <span class='va'>occurrences</span><span class='op'>[</span>,<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>]</span>,
+                      wDepth <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='va'>result</span> <span class='op'>&lt;-</span> <span class='fu'>columnParse</span><span class='op'>(</span>occs <span class='op'>=</span> <span class='va'>occurrences</span>,
+                      wDepth <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
 </div></pre>
   </div>
