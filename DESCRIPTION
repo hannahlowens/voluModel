@@ -2,11 +2,15 @@ Package: voluModel
 Title: Modeling Species Distributions in Three Dimensions
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "Hannah",
-           family = "Owens",
-           role = c("aut", "cre"),
-           email = "hannah.owens@gmail.com",
-           comment = c(ORCID = "0000-0003-0071-1745"))
+    c(person(given = "Hannah",
+             family = "Owens",
+             role = c("aut", "cre"),
+             email = "hannah.owens@gmail.com",
+             comment = c(ORCID = "0000-0003-0071-1745")),
+      person(given = "Carsten", 
+             family = "Rahbek",,,
+             role="aut",
+             comment = c(ORCID = "0000-0003-4585-0300")))
 Maintainer: Hannah L. Owens <hannah.owens@gmail.com>           
 Description: This package is designed to model species distributions in three 
   dimensions. This is useful in an aquatic context when the organisms one 
