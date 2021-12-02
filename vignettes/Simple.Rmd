@@ -20,7 +20,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, error = TRUE)
-knitr::opts_knit$set(root.dir = system.file('extdata/', package='occCite'))
+knitr::opts_knit$set(root.dir = system.file('extdata/', package='voluModel'))
 ```
 
 # Introduction 
@@ -56,7 +56,7 @@ Coming soon. Stay tuned.
 
 ```
 
-# Niche model generation
+# Niche model projection
 
 ```{r project niche model, eval=FALSE}
 
