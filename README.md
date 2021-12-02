@@ -8,6 +8,8 @@ public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostat
 coverage](https://codecov.io/gh/hannahlowens/voluModel/branch/main/graph/badge.svg)](https://codecov.io/gh/hannahlowens/voluModel?branch=main)
 <!-- badges: end -->
 
+# voluModel <img src='man/figures/logo.png' align="right" height="138" />
+
 ## Summary
 
 This package is designed to model species distributions in three
