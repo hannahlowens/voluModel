@@ -26,9 +26,9 @@ A \code{data.frame} with 3D coordinates of points for background
 sampling.
 }
 \description{
-Samples coordinates in 3D from maximum
-to minimum occurrence depth by buffering occurrences
-at XYZ resolution of envBrick
+Samples XYZ coordinates from a shapefile
+from maximum to minimum occurrence depth at XYZ
+resolution of envBrick.
 }
 \details{
 This function is designed to sample background points for

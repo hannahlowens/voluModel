@@ -66,7 +66,7 @@ occCellRemoval <- function(occs, rasterTemplate){
 #' which background points should be sampled.
 #'
 #' @details This function is designed to sample background points
-#' for distributional modeling in three dimensions. The returned
+#' for distributional modeling in two dimensions. The returned
 #' `data.frame` contains all points from across the designated
 #' background. It is up to the user to determine how to
 #' appropriately sample from those background points.
@@ -144,9 +144,9 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 
 #' @title 3D Background Sampling
 #'
-#' @description Samples coordinates in 3D from maximum
-#' to minimum occurrence depth by buffering occurrences
-#' at XYZ resolution of envBrick
+#' @description Samples XYZ coordinates from a shapefile
+#' from maximum to minimum occurrence depth at XYZ
+#' resolution of envBrick.
 #'
 #' @param occs A `data.frame` with at least three columns
 #' named "longitude", "latitude", and "depth", or that
