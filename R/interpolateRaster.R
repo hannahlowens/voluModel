@@ -32,7 +32,7 @@
 #' fastInterp <- interpolateRaster(r, fast = TRUE, aRange = 3.0)
 #'
 #' @import raster
-#' @import fields
+#' @importFrom fields Tps fastTps
 #'
 #' @seealso \code{\link[fields]{Tps}}, \code{\link[fields]{fastTps}}
 #'
