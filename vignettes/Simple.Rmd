@@ -19,7 +19,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error = TRUE, dpi=300,fig.width=5)
+knitr::opts_chunk$set(echo = TRUE, error = TRUE, dpi=300, fig.width=3)
 knitr::opts_knit$set(root.dir = system.file('extdata/', package='voluModel'))
 load(system.file("extdata/datForVignette.RData", 
                              package='voluModel'))
@@ -109,7 +109,8 @@ plot(oxygenSmooth[[c(1,nlayers(oxygenSmooth))]],
               "Apparent Oxygen Utilization, max depth"))
 ```
 ```{r smooth oxygen display, echo=FALSE}
-plot(oxygenSmooth[[1]], main = "Apparent Oxygen Utilization, surface")
+plot(oxygenSmooth[[1]], 
+     main = "Smoothed Apparent Oxygen Utilization, surface")
 ```
 
 # Sampling data for model generation
@@ -117,7 +118,7 @@ plot(oxygenSmooth[[1]], main = "Apparent Oxygen Utilization, surface")
 The first step is down-sampling the occurrence data so that there is only one occurrence per voxel (i.e. 3D pixel) of environmental data. We do this to avoid over-fitting the model due to biased sampling. The resampled points are centered in each voxel.
 
 ```{r downsample to voxel, eval=TRUE, warning=FALSE}
-occurrences <- occs[,c("decimalLatitude", "decimalLongitude", "depth")] # Remove metadata
+occurrences <- occs[,c("decimalLatitude", "decimalLongitude", "depth")] 
 
 # Preliminary cleaning
 occurrences <- dplyr::distinct(occurrences)
@@ -138,7 +139,6 @@ for(i in indices){
 occurrences <- downsampledOccs
 
 print(paste0("Original number of points: ", nrow(occs), "; number of downsampled occs: ", nrow(occurrences)))
-rm(indices, layerNames, tempPoints, i, downsampledOccs)
 pointCompMap(occs1 = occs, occs2 = occurrences, 
              occs1Name = "Original", occs2Name = "Cleaned", 
              spName = "Aphanopus intermedius", 
@@ -213,30 +213,23 @@ names(envelopeModel) <- names(temperature)
 rm(tempLims, aouLims, temperaturePresence, AOUpresence)
 ```
 
-It's hard to visualize things in three dimensions, but here's an attempt. This script plots a transparent layer of suitable habitat for each depth coordinate. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. Here, I am plotting suitability from 55m to 1300m, the depth range of occurrences used to train the envelope model.
+It's hard to visualize things in three dimensions, but here's an attempt. `plotLayers` plots a transparent layer of suitable habitat for each depth layer. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. Here, I am plotting suitability from 55m to 1300m, the depth range of occurrences used to train the envelope model.
 
 ```{r 3D envelope model}
+# Get indices of model-relevant layers
 layerNames <- as.numeric(gsub("[X]", "", names(envelopeModel)))
-occurrences$index <- unlist(lapply(occurrences$depth, FUN = function(x) which.min(abs(layerNames - x))))
+occurrences$index <- unlist(lapply(occurrences$depth, 
+                                   FUN = function(x) 
+                                     which.min(abs(layerNames - x))))
 indices <- sort(unique(occurrences$index))
 
-redVal <- 1
-blueVal <- 0
-stepSize <- 1/(max(indices)-min(indices) + 1)
-image(envelopeModel[[min(indices)]], col = c(rgb(0,0,0,0), 
-                                  rgb(redVal,0,blueVal,stepSize)),
-      main = paste0("Suitability from ", names(envelopeModel)[[min(indices)]], " to ",
-                    names(envelopeModel)[[max(indices)]]))
-for(i in (min(indices)+1):max(indices)){
-  redVal <- redVal - stepSize
-  blueVal <- blueVal + stepSize
-  image(envelopeModel[[i]], 
-        col = c(rgb(0,0,0,0), rgb(redVal,0, blueVal,stepSize)), 
-        add = T) 
-}
+# Get continent shapefile
+land <- rnaturalearth::ne_countries(scale = "medium", 
+                                    returnclass = "sf")[1]
 
-plot(rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1], col = "black", add = T)
-rm(layerNames, indices, redVal, blueVal, stepSize, i, envelopeModel, occurrences)
+plotLayers(envelopeModel[[min(indices):max(indices)]], 
+          land = land, landCol = "black")
+rm(layerNames, indices)
 ```
 
 # Generalized linear models
@@ -259,7 +252,7 @@ backgroundWdata$distance <- apply(backgroundWdata[,c("Temperature", "AOU")], MAR
                                   FUN = function(x) dist(rbind(suitableCentroid, x)))
 backgroundWdata$sampleWeight <- (backgroundWdata$distance - min(backgroundWdata$distance))/(max(backgroundWdata$distance)-min(backgroundWdata$distance))
 sampleForAbsence <- sample(x = rownames(backgroundWdata), 
-                           size = nrow(occsWdata) * 10, 
+                           size = nrow(occsWdata) * 100, 
                            prob = backgroundWdata$sampleWeight)
 backgroundWdata <- backgroundWdata[match(sampleForAbsence, rownames(backgroundWdata)),]
 
@@ -311,25 +304,10 @@ And plotted like the envelope model.
 ```{r thresholded glm niche model plotted}
 layerNames <- as.numeric(gsub("[X]", "", names(glmThresholded)))
 datForMod$index <- unlist(lapply(datForMod$depth, FUN = function(x) which.min(abs(layerNames - x))))
-indices <- sort(unique(datForMod$index))
+indices <- unique(datForMod$index)
 
-redVal <- 1
-blueVal <- 0
-stepSize <- 1/(max(indices)-min(indices) + 1)
-image(glmThresholded[[min(indices)]], col = c(rgb(0,0,0,0), 
-                                              rgb(redVal,0,blueVal,stepSize)),
-      main = paste0("Suitability from ", names(glmThresholded)[[min(indices)]], " to ",
-                    names(glmThresholded)[[max(indices)]]))
-for(i in (min(indices)+1):max(indices)){
-  redVal <- redVal - stepSize
-  blueVal <- blueVal + stepSize
-  image(glmThresholded[[i]], 
-        col = c(rgb(0,0,0,0), rgb(redVal,0, blueVal,stepSize)), 
-        add = T) 
-}
-
-plot(rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1], col = "black", add = T)
-rm(layerNames, indices, redVal, blueVal, stepSize, i, glmThresholded, datForMod)
+plotLayers(glmThresholded[[min(indices):max(indices)]], 
+          land = land, landCol = "black")
 ```
 
 Of course, these are just two starting examples. We welcome submissions from the community for other types of models you would like to see. Submit your suggestions as issues [here](https://github.com/hannahlowens/voluModel/issues).
