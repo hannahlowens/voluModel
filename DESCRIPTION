@@ -32,9 +32,11 @@ Imports:
     methods,
     raster,
     rangeBuilder,
+    rgdal,
     rgeos,
     rmarkdown,
     viridis,
+    viridisLite,
     sp
 Suggests:
     testthat (>= 3.0.0),

@@ -23,14 +23,7 @@ occurrence points.}
 }
 \description{
 A convenient wrapper around \code{spplot}
-to generate a formatted plot showing .
-This is used in the context of voluModel to
-overlay semi-transparent distributions (coded as 1)
-in two different \code{RasterLayers}.
-}
-\note{
-The extents of \code{rast1} and \code{rast2}
-must match.
+to generate a formatted plot of a single raster.
 }
 \examples{
 library(raster)
