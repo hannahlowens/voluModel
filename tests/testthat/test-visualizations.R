@@ -120,3 +120,21 @@ test_that("oneRasterPlot works", {
   expect_equal(class(oneRasterPlot(divStack)), "trellis")
   expect_equal(class(oneRasterPlot(divStack, land = land)), "trellis")
 })
+
+rast1 <- raster(ncol=10, nrow=10)
+values(rast1) <- rep(0:1, 50)
+
+rast2 <- raster(ncol=10, nrow=10)
+values(rast2) <- c(rep(0, 50), rep(1,50))
+
+rast3 <- raster(ncol=10, nrow=10)
+values(rast3) <- rep(c(1,0,0,1), 25)
+distBrick <- brick(rast1, rast2, rast3)
+
+test_that("plotLayers works", {
+  expect_warning(plotLayers(rast = "a"))
+  expect_warning(plotLayers(rast = distBrick, land = "a"))
+  expect_equal(class(plotLayers(distBrick)), "trellis")
+  expect_equal(class(plotLayers(distBrick, land = land)), "trellis")
+})
+

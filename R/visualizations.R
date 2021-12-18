@@ -700,7 +700,8 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
     } else if (cellStats(rast2, sum) == 0){
       spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
              key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[2])),
-                      text=list(c("Neither", rast1Name))), col="transparent", main = title,
+                      text=list(c("Neither", rast1Name))),
+             col="transparent", main = title,
              maxpixels = maxpixels,
              par.settings = list(mai = c(0,0,0,0))) +
         latticeExtra::layer(sp.polygons(as(land, "Spatial"), fill=landCol))
@@ -782,10 +783,7 @@ diversityStack <- function(rasterList, template){
 #' @title Comparative raster mapping
 #'
 #' @description A convenient wrapper around `spplot`
-#' to generate a formatted plot showing .
-#' This is used in the context of voluModel to
-#' overlay semi-transparent distributions (coded as 1)
-#' in two different `RasterLayers`.
+#' to generate a formatted plot of a single raster.
 #'
 #' @param rast A single `Raster*` layer on a continuous
 #' scale.
@@ -800,9 +798,6 @@ diversityStack <- function(rasterList, template){
 #'
 #' @param ... Additional optional arguments to pass to
 #' `spplot` initial plot object or `viridis`.
-#'
-#' @note The extents of `rast1` and `rast2`
-#' must match.
 #'
 #' @examples
 #' library(raster)
@@ -884,4 +879,124 @@ oneRasterPlot <- function(rast,
            maxpixels = maxpixels) +
       latticeExtra::layer(sp.polygons(as(land, "Spatial"), fill=landCol, main = title))
   }
+}
+
+#' @title Plotting 3D model in 2D
+#'
+#' @description This script plots a transparent layer
+#' of suitable habitat for each depth layer. The redder
+#' the color, the shallower the layer, the bluer, the
+#' deeper. The more saturated the color, the more layers
+#' with suitable habitat.
+#'
+#' @param rast A `Raster*` with the 3D presence/absence
+#' distribution of a species (interpreted as 1 = presence,
+#' 0 = absence). This could be a `RasterBrick` or a
+#' `RasterStack`.
+#'
+#' @param land An optional coastline polygon shapefile
+#' of type `sf` to provide geographic context for the
+#' occurrence points.
+#'
+#' @param landCol Color for land on map.
+#'
+#' @param title A title for the plot.
+#'
+#' @param ... Additional optional arguments.
+#'
+#' @note Only include the depth layers that you actually
+#' want to plot.
+#'
+#' @examples
+#' library(raster)
+#'
+#' rast1 <- raster(ncol=10, nrow=10)
+#' values(rast1) <- rep(0:1, 50)
+#'
+#' rast2 <- raster(ncol=10, nrow=10)
+#' values(rast2) <- c(rep(0, 50), rep(1,50))
+#'
+#' rast3 <- raster(ncol=10, nrow=10)
+#' values(rast3) <- rep(c(1,0,0,1), 25)
+#'
+#' distBrick <- brick(rast1, rast2, rast3)
+#'
+#' plotLayers(distBrick)
+#'
+#' @import raster
+#' @import viridis
+#'
+#' @seealso \code{\link[viridis:viridis]{viridis}} \code{\link[raster:spplot]{spplot}}
+#'
+#' @keywords plotting
+#'
+#' @return A plot of class `trellis`
+#'
+#' @export
+
+
+plotLayers <- function(rast,
+                      land = NA, landCol = "black",
+                      title = "A Raster", ...){
+  #Input processing
+  args <- list(...)
+
+  if("maxpixels" %in% names(args)){
+    maxpixels <- args$maxpixels
+  } else{
+    maxpixels <- 50000
+  }
+
+  # Input error checking
+  if(!grepl("Raster*", class(rast))){
+    warning(paste0("'rast' must be of class 'Raster*'.\n"))
+    return(NULL)
+  }
+
+  if(!any(is.na(land), "sf" %in% class(land))){
+    warning(paste0("'land' must either be NA or of class 'sf'."))
+    return(NULL)
+  }
+
+  colTest <- areColors(landCol)
+
+  if(!any(c(all(colTest), length(colTest) < 1))){
+    warning(paste0("'landCol' must be a recognized color.\n"))
+    return(NULL)
+  }
+
+  if(!is.character(title)){
+    warning(paste0("'title' must be a 'character' string.\n"))
+    return(NULL)
+  }
+
+  #Function body
+  redVal <- 1
+  blueVal <- 0
+  stepSize <- 1/(nlayers(rast) + 1)
+
+  plotStart <- spplot(rast[[1]],
+                      col.regions = c(rgb(0,0,0,0),
+                                      rgb(redVal,0,blueVal,stepSize)),
+                      cuts = 1, colorkey = F, col="transparent", main = paste0("Suitability from ", names(rast)[[1]]," to ", names(rast)[[nlayers(rast)]]),
+                      par.settings = list(mai = c(0,0,0,0)),
+                      maxpixels = maxpixels)
+
+  for(i in 2:nlayers(rast)){
+    redVal <- redVal - stepSize
+    blueVal <- blueVal + stepSize
+    plotStart <- plotStart + as.layer(spplot(rast[[i]],
+                                             col.regions = c(rgb(0,0,0,0),
+                                                             rgb(redVal,0,
+                                                                 blueVal,
+                                                                 stepSize)),
+                                             cuts = 1, col="transparent"))
+  }
+
+  if(!any(is.na(land))){
+    plotStart <- plotStart + latticeExtra::layer(sp.polygons(as(land,
+                                                                "Spatial"),
+                                                             fill = landCol))
+  }
+  return(plotStart)
 }
