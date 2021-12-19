@@ -877,7 +877,7 @@ oneRasterPlot <- function(rast,
                                           option = option),
            at = at, main = title,
            maxpixels = maxpixels) +
-      latticeExtra::layer(sp.polygons(as(land, "Spatial"), fill=landCol, main = title))
+      as.layer(spplot(as(land,"Spatial"), fill=landCol, main = title))
   }
 }
 
@@ -925,6 +925,7 @@ oneRasterPlot <- function(rast,
 #'
 #' @import raster
 #' @import viridis
+#' @importFrom latticeExtra as.layer
 #'
 #' @seealso \code{\link[viridis:viridis]{viridis}} \code{\link[raster:spplot]{spplot}}
 #'
@@ -994,9 +995,8 @@ plotLayers <- function(rast,
   }
 
   if(!any(is.na(land))){
-    plotStart <- plotStart + latticeExtra::layer(sp.polygons(as(land,
-                                                                "Spatial"),
-                                                             fill = landCol))
+    plotStart <- plotStart +
+      as.layer(spplot(as(land,"Spatial"), fill=landCol))
   }
   return(plotStart)
 }

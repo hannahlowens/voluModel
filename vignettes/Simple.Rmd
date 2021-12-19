@@ -19,7 +19,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error = TRUE, dpi=300, fig.width=3)
+knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 knitr::opts_knit$set(root.dir = system.file('extdata/', package='voluModel'))
 load(system.file("extdata/datForVignette.RData", 
                              package='voluModel'))
@@ -228,7 +228,7 @@ land <- rnaturalearth::ne_countries(scale = "medium",
                                     returnclass = "sf")[1]
 
 plotLayers(envelopeModel[[min(indices):max(indices)]], 
-          land = land, landCol = "black")
+          land = land)
 rm(layerNames, indices)
 ```
 
