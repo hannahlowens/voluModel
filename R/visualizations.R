@@ -4,7 +4,7 @@
 #' @description Checks to see if a given vector can be
 #' interpreted by R as a color or colors
 #'
-#' @param col A vector of anthing to be interpreted by `rgb`
+#' @param col A vector of anything to be interpreted by `rgb`
 #' as a color.
 #'
 #' @return A logical vector stating whether inputs
