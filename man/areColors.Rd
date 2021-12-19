@@ -7,7 +7,7 @@
 areColors(col)
 }
 \arguments{
-\item{col}{A vector of anthing to be interpreted by \code{rgb}
+\item{col}{A vector of anything to be interpreted by \code{rgb}
 as a color.}
 }
 \value{
