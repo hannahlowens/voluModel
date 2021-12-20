@@ -63,7 +63,8 @@ library("voluModel")
 
 ## Getting Started
 
--   Vignettes coming soon.
+-   voluModel introduction vignette
+    (<https://hannahlowens.github.io/voluModel/articles/Simple.html>)
 
 ## Meta
 
