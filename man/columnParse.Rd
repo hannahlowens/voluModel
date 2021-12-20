@@ -25,8 +25,8 @@ Parses column names from input occurrence
 }
 \details{
 This is an internal function to return the putative
-indices for latitute and longitude or x and y coordinates
-of occurrances to allow for code that is more robust to
+indices for latitude and longitude or x and y coordinates
+of occurrences to allow for code that is more robust to
 very common user error
 }
 \examples{

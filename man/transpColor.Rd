@@ -7,7 +7,7 @@
 transpColor(color, percent = 50)
 }
 \arguments{
-\item{color}{Anthing that can be interpreted by \code{rgb}
+\item{color}{Anything that can be interpreted by \code{rgb}
 as a color.}
 
 \item{percent}{A whole number between 0 and 100 specifying

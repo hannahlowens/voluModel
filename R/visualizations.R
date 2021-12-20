@@ -466,7 +466,7 @@ pointCompMap <- function(occs1, occs2,
 #'
 #' @description Generates transparent colors
 #'
-#' @param color Anthing that can be interpreted by `rgb`
+#' @param color Anything that can be interpreted by `rgb`
 #' as a color.
 #'
 #' @param percent A whole number between 0 and 100 specifying
