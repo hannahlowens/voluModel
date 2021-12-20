@@ -43,7 +43,8 @@ depending on the model type being used.
 \itemize{
 \item \code{occs} Samples background from the full depth extent of \code{occs}.
 \item \code{all} Samples background from the full depth extent of \code{envBrick}.
-\item A \code{vector} of length 2 with maximum and minimum depth values from which to sample.
+\item A \code{vector} of length 2 with maximum and minimum depth values from
+which to sample.
 }
 }
 \examples{

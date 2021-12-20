@@ -5,7 +5,7 @@
 #' raster values.
 #'
 #' @param inputRaster An object of class `raster`
-#' @param fast A logical operator. Setting to `T` triggers use
+#' @param fast A logical operator. Setting to `TRUE` triggers use
 #' of `fastTps` instead of `Tps`.
 #' @param ... For any additional arguments passed to `Tps` or `fastTps`
 #'
@@ -40,7 +40,7 @@
 #' @export
 
 # Interpolates patchily sampled rasters (2d)
-interpolateRaster <- function(inputRaster, fast = F, ...){
+interpolateRaster <- function(inputRaster, fast = FALSE, ...){
   args <- list(...)
 
   if("lon.lat" %in% names(args)){
@@ -103,15 +103,16 @@ interpolateRaster <- function(inputRaster, fast = F, ...){
 
   #### Thin plate spline model
   if(fast){
-    tps <- fastTps(xy, v, lon.lat = lon.lat, aRange = aRange, REML = REML, verbose = F)
+    tps <- fastTps(xy, v, lon.lat = lon.lat, aRange = aRange, REML = REML,
+                   verbose = F)
   } else {
-    tps <- Tps(xy, v, lon.lat = lon.lat, verbose = F)
+    tps <- Tps(xy, v, lon.lat = lon.lat, verbose = FALSE)
   }
 
   p <- raster(r)
 
   # use model to predict values at all locations
-  p <- interpolate(p, tps, verbose = F)
+  p <- interpolate(p, tps, verbose = FALSE)
 
   # Fill in holes in original raster
   complete <- cover(r, p)
@@ -125,7 +126,7 @@ interpolateRaster <- function(inputRaster, fast = F, ...){
 #' `fields` package to smooth raster values.
 #'
 #' @param inputRaster An object of class `raster`
-#' @param fast A logical operator. Setting to `T` triggers use
+#' @param fast A logical operator. Setting to `TRUE` triggers use
 #' of `fastTps` instead of `Tps`.
 #' @param ... For any additional arguments passed to `Tps` or `fastTps`
 #'
@@ -161,7 +162,7 @@ interpolateRaster <- function(inputRaster, fast = F, ...){
 #' @keywords dataPrep
 #' @export
 
-smoothRaster <- function(inputRaster, fast = F, ...){
+smoothRaster <- function(inputRaster, fast = FALSE, ...){
   args <- list(...)
 
   if("lon.lat" %in% names(args)){
@@ -224,15 +225,16 @@ smoothRaster <- function(inputRaster, fast = F, ...){
 
   #### Thin plate spline model
   if(fast){
-    tps <- fastTps(xy, v, lon.lat = lon.lat, aRange = aRange, REML = REML, verbose = F)
+    tps <- fastTps(xy, v, lon.lat = lon.lat, aRange = aRange, REML = REML,
+                   verbose = FALSE)
   } else {
-    tps <- Tps(xy, v, lon.lat = lon.lat, verbose = F)
+    tps <- Tps(xy, v, lon.lat = lon.lat, verbose = FALSE)
   }
 
   p <- raster(r)
 
   # use model to predict values at all locations
-  p <- interpolate(p, tps, verbose = F)
+  p <- interpolate(p, tps, verbose = FALSE)
 
   return(p)
 }

@@ -135,8 +135,9 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 
   # Calculate lat/lon buffers and buffer
   rasterTemplate <- crop(mask(rasterTemplate, mask = mShp), y = mShp)
-  # For each layer, toss cells where there are occurrences, then rasterToPoints for all cells in buffer
-  rawLayer <- occCellRemoval(occs = occs[,c(xIndex,yIndex)], rasterTemplate)
+  # For each layer, toss cells where there are occurrences
+  rawLayer <- occCellRemoval(occs = occs[,c(xIndex,yIndex)],
+                             rasterTemplate)
   mPts <- data.frame(rasterToPoints(rawLayer)[,c("x", "y")])
   colnames(mPts) <- colNames[c(xIndex, yIndex)]
   return(mPts)
@@ -174,7 +175,8 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 #' \itemize{
 #'   \item `occs` Samples background from the full depth extent of `occs`.
 #'   \item `all` Samples background from the full depth extent of `envBrick`.
-#'   \item A `vector` of length 2 with maximum and minimum depth values from which to sample.
+#'   \item A `vector` of length 2 with maximum and minimum depth values from
+#'   which to sample.
 #' }
 #'
 #' @return A `data.frame` with 3D coordinates of points for background
@@ -305,8 +307,9 @@ mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all"){
 
   # Calculate lat/long buffers and buffer
   rasterTemplate <- envBrick[[1]]
-  envBrick <- crop(mask(envBrick[[depthRange[[1]]:depthRange[[2]]]], mask = mShp), y = mShp)
-  # For each layer, toss cells where there are occurrences, then rasterToPoints for all cells in buffer
+  envBrick <- crop(mask(envBrick[[depthRange[[1]]:depthRange[[2]]]],
+                        mask = mShp), y = mShp)
+  # For each layer, toss cells where there are occurrences
   mPts <- data.frame()
   for(i in 1:nlayers(envBrick)){
     rawLayer <- envBrick[[i]]

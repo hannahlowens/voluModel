@@ -50,13 +50,18 @@ mShp <- buffer(buffPts,
 # Testing
 test_that("mSampling2D input warnings behave as expected", {
   expect_error(mSampling2D())
-  expect_warning(mSampling2D(occs = "a", rasterTemplate = r, mShp = mShp))
-  expect_warning(mSampling2D(occs = occurrences[,1], rasterTemplate = r, mShp = mShp))
-  expect_warning(mSampling2D(occs = occurrences, rasterTemplate = "a", mShp = mShp))
-  expect_warning(mSampling2D(occs = occurrences, rasterTemplate = r, mShp = "a"))
+  expect_warning(mSampling2D(occs = "a", rasterTemplate = r,
+                             mShp = mShp))
+  expect_warning(mSampling2D(occs = occurrences[,1], rasterTemplate = r,
+                             mShp = mShp))
+  expect_warning(mSampling2D(occs = occurrences, rasterTemplate = "a",
+                             mShp = mShp))
+  expect_warning(mSampling2D(occs = occurrences, rasterTemplate = r,
+                             mShp = "a"))
 
   colnames(occurrences) <- c("spam", "eggs")
-  expect_warning(mSampling2D(occs = occurrences, rasterTemplate = r, mShp = mShp))
+  expect_warning(mSampling2D(occs = occurrences, rasterTemplate = r,
+                             mShp = mShp))
 })
 
 test_that("mSampling2D outputs as expected", {
@@ -101,23 +106,30 @@ test_that("mSampling3D input warnings behave as expected", {
   expect_warning(mSampling3D(occs = occurrences, envBrick = "a"))
 
   colnames(occurrences) <- c("spam", "eggs", "cheese")
-  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick, mShp = mShp))
+  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick,
+                             mShp = mShp))
   colnames(occurrences) <- c("longitude", "latitude", "depth")
 
   names(rBrick) <- c("a", "b", "c", "d")
-  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick, mShp = mShp))
+  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick,
+                             mShp = mShp))
 
   names(rBrick) <- c(0, 10, 100, 1000)
-  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick, mShp = "cheese"))
+  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick,
+                             mShp = "cheese"))
 
   expect_warning(mSampling3D(occs = occurrences,
-                             envBrick = rBrick, mShp = mShp, depthLimit = rBrick))
+                             envBrick = rBrick, mShp = mShp,
+                             depthLimit = rBrick))
   expect_warning(mSampling3D(occs = occurrences,
-                             envBrick = rBrick, mShp = mShp, depthLimit = c(0,1,100)))
+                             envBrick = rBrick, mShp = mShp,
+                             depthLimit = c(0,1,100)))
   expect_warning(mSampling3D(occs = occurrences,
-                             envBrick = rBrick,  mShp = mShp, depthLimit = "cheese"))
+                             envBrick = rBrick,  mShp = mShp,
+                             depthLimit = "cheese"))
   expect_warning(mSampling3D(occs = occurrences,
-                             envBrick = rBrick,  mShp = mShp, depthLimit = c("all", "occs")))
+                             envBrick = rBrick,  mShp = mShp,
+                             depthLimit = c("all", "occs")))
 
 })
 
@@ -129,15 +141,18 @@ test_that("mSampling3D outputs as expected", {
   expect_true(is.data.frame(testResult))
   expect_equal(nrow(testResult), 40)
 
-  testResult <- mSampling3D(occurrences, rBrick, mShp = mShp, depthLimit = "occs")
+  testResult <- mSampling3D(occurrences, rBrick, mShp = mShp,
+                            depthLimit = "occs")
   expect_true(is.data.frame(testResult))
   expect_equal(nrow(testResult), 28)
 
-  testResult <- mSampling3D(occurrences, rBrick, mShp = mShp, depthLimit = "all")
+  testResult <- mSampling3D(occurrences, rBrick, mShp = mShp,
+                            depthLimit = "all")
   expect_true(is.data.frame(testResult))
   expect_equal(nrow(testResult), 40)
 
-  testResult <- mSampling3D(occurrences, rBrick, mShp = mShp, depthLimit = c(5, 25))
+  testResult <- mSampling3D(occurrences, rBrick, mShp = mShp,
+                            depthLimit = c(5, 25))
   expect_true(is.data.frame(testResult))
   expect_equal(nrow(testResult), 20)
 })

@@ -25,7 +25,7 @@ areColors <- function(col) {
     warning(paste0("'col' cannot be NULL.\n"))
     return(NULL)
   } else{
-    result <- sapply(col, function(X) {
+    result <- vapply(col, function(X) {
       tryCatch(is.matrix(col2rgb(X)),
                error = function(e) FALSE)
     })
@@ -180,7 +180,8 @@ pointMap <- function(occs, spName, land = NA,
         theme(panel.background = element_rect(fill = waterCol),
               panel.grid = element_blank()) +
         coord_sf(xlim = c(min(occs[[xIndex]]), max(occs[[xIndex]])),
-                 ylim = c(min(occs[[yIndex]]), max(occs[[yIndex]])), expand = .05, ) +
+                 ylim = c(min(occs[[yIndex]]), max(occs[[yIndex]])),
+                 expand = .05, ) +
         xlab("Longitude") +
         ylab("Latitude") +
         ggtitle(paste0(spName, ", ", nrow(occs), " points"))
@@ -192,7 +193,8 @@ pointMap <- function(occs, spName, land = NA,
       theme(panel.background = element_rect(fill = waterCol),
             panel.grid = element_blank()) +
       coord_sf(xlim = c(min(occs[[xIndex]]), max(occs[[xIndex]])),
-               ylim = c(min(occs[[yIndex]]), max(occs[[yIndex]])), expand = .05, ) +
+               ylim = c(min(occs[[yIndex]]), max(occs[[yIndex]])),
+               expand = .05, ) +
       xlab("Longitude") +
       ylab("Latitude") +
       ggtitle(paste0(spName, ", ", nrow(occs), " points"))
@@ -434,7 +436,8 @@ pointCompMap <- function(occs1, occs2,
     <span style='color:", agreeCol,";'>Overlapping</span>,
     <span style='color:", occs1Col, ";'>in ", occs1Name,
                      " dataset only</span>, and
-    <span style='color:", occs2Col, ";'>in ", occs2Name, " dataset only</span>")) +
+    <span style='color:", occs2Col, ";'>in ",
+                     occs2Name, " dataset only</span>")) +
     theme(plot.title = element_markdown(lineheight = .4))}
   else{
     comparison_map <- ggplot() +
@@ -456,7 +459,8 @@ pointCompMap <- function(occs1, occs2,
     <span style='color:black;'>Overlapping</span>,
     <span style='color:", occs1Col, ";'>in ", occs1Name,
                        " dataset only</span>, and
-    <span style='color:", occs2Col, ";'>in ", occs2Name, " dataset only</span>")) +
+    <span style='color:", occs2Col, ";'>in ", occs2Name,
+                       " dataset only</span>")) +
       theme(plot.title = element_markdown(lineheight = .4))
   }
   return(comparison_map)
@@ -665,50 +669,62 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
               transpColor(colBoth, percent = 30))
   if(any(is.na(land))){
     if(all(cellStats(rast2, sum) > 0, cellStats(rast1, sum) > 0)){
-      spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
-             key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[c(2:4)])),
-                      text=list(c("Neither", rast1Name, rast2Name, "Both"))), col="transparent", main = title,
+      spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = FALSE,
+             key=list(space="right", points=list(pch = 22, cex = 2,
+                                                 fill=c("white",myCols[c(2:4)])),
+                      text=list(c("Neither", rast1Name, rast2Name, "Both"))),
+             col="transparent", main = title,
              par.settings = list(mai = c(0,0,0,0)),
              maxpixels = maxpixels) +
-        as.layer(spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, col="transparent"))
+        as.layer(spplot(rast2, col.regions = myCols[c(1,3)],
+                        cuts = 1, col="transparent"))
     } else if(cellStats(rast2, sum) == 0){
-      spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
-             key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[c(2:4)])),
-                      text=list(c("Neither", rast1Name, rast2Name, "Both"))), col="transparent", main = title,
+      spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = FALSE,
+             key=list(space="right", points=list(pch = 22, cex = 2,
+                                                 fill=c("white",myCols[c(2:4)])),
+                      text=list(c("Neither", rast1Name, rast2Name, "Both"))),
+             col="transparent", main = title,
              par.settings = list(mai = c(0,0,0,0)),
              maxpixels = maxpixels)
     } else{
-      spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = F,
-             key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[3])),
-                      text=list(c("Neither", rast2Name))), col="transparent", main = title,
+      spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = FALSE,
+             key=list(space="right", points=list(pch = 22, cex = 2,
+                                                 fill=c("white",myCols[3])),
+                      text=list(c("Neither", rast2Name))),
+             col="transparent", main = title,
              maxpixels = maxpixels,
              par.settings = list(mai = c(0,0,0,0)))
     }
   } else {
     if (all(cellStats(rast2, sum) > 0, cellStats(rast1, sum) > 0)){
       compPlot <- spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1,
-                         colorkey = F, key=list(space="right",
-                                                points=list(pch = 22, cex = 2,
-                                                            fill=c("white",myCols[c(2:4)])),
+                         colorkey = FALSE,
+                         key=list(space="right",
+                                  points=list(pch = 22, cex = 2,
+                                              fill=c("white",myCols[c(2:4)])),
                         text=list(c("Neither", rast1Name, rast2Name, "Both"))),
                         col="transparent",
                         par.settings = list(mai = c(0,0,0,0)),
                         maxpixels = maxpixels) +
                         as.layer(spplot(rast2, col.regions = myCols[c(1,3)],
                                         cuts = 1, col="transparent")) +
-        latticeExtra::layer(sp.polygons(as(land, "Spatial"), fill=landCol, main = title))
+        latticeExtra::layer(sp.polygons(as(land, "Spatial"),
+                                        fill=landCol, main = title))
     } else if (cellStats(rast2, sum) == 0){
-      spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = F,
-             key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[2])),
+      spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = FALSE,
+             key=list(space="right", points=list(pch = 22, cex = 2,
+                                                 fill=c("white",myCols[2])),
                       text=list(c("Neither", rast1Name))),
              col="transparent", main = title,
              maxpixels = maxpixels,
              par.settings = list(mai = c(0,0,0,0))) +
         latticeExtra::layer(sp.polygons(as(land, "Spatial"), fill=landCol))
     } else{
-      spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = F,
-             key=list(space="right", points=list(pch = 22, cex = 2, fill=c("white",myCols[3])),
-                      text=list(c("Neither", rast2Name))), col="transparent", main = title,
+      spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = FALSE,
+             key=list(space="right", points=list(pch = 22, cex = 2,
+                                                 fill=c("white",myCols[3])),
+                      text=list(c("Neither", rast2Name))),
+             col="transparent", main = title,
              maxpixels = maxpixels,
              par.settings = list(mai = c(0,0,0,0))) +
         latticeExtra::layer(sp.polygons(as(land, "Spatial"), fill=landCol))
@@ -979,7 +995,10 @@ plotLayers <- function(rast,
   plotStart <- spplot(rast[[1]],
                       col.regions = c(rgb(0,0,0,0),
                                       rgb(redVal,0,blueVal,stepSize)),
-                      cuts = 1, colorkey = F, col="transparent", main = paste0("Suitability from ", names(rast)[[1]]," to ", names(rast)[[nlayers(rast)]]),
+                      cuts = 1, colorkey = FALSE, col="transparent",
+                      main = paste0("Suitability from ",
+                                    names(rast)[[1]]," to ",
+                                    names(rast)[[nlayers(rast)]]),
                       par.settings = list(mai = c(0,0,0,0)),
                       maxpixels = maxpixels)
 

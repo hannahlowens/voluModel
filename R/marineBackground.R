@@ -85,7 +85,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
   if("fraction" %in% names(args)){
     fraction <- args$fraction
   } else {
-    fraction = 0.95
+    fraction <- 0.95
   }
 
   if("partCount" %in% names(args)){
@@ -144,7 +144,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
     return(NULL)
   }
   if (!(clipToCoast %in% c("no", "terrestrial", "aquatic"))) {
-    warning(message(clipToCoast, " is not a valid selection for 'clipToCoast'.\n"))
+    warning(message(clipToCoast, " is not valid for 'clipToCoast'.\n"))
     return(NULL)
   }
   if (!is.numeric(alphaIncrement)) {
@@ -165,18 +165,19 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
   message(interp)
 
   # Calculate buffer
-  pDist <- raster::pointDistance(occs[,c(xIndex, yIndex)], lonlat = T)
-  buff <- mean(quantile(pDist, c(.1, .9), na.rm = T))/2
+  pDist <- raster::pointDistance(occs[,c(xIndex, yIndex)], lonlat = TRUE)
+  buff <- mean(quantile(pDist, c(.1, .9), na.rm = TRUE))/2
 
   # Hull part
   hull <- try(rangeBuilder::getDynamicAlphaHull(occs,
                                                 initialAlpha = initialAlpha,
                                                 alphaIncrement = alphaIncrement,
-                                                coordHeaders=colnames(occs)[c(xIndex,yIndex)],
+                                                coordHeaders=colnames(occs)[c(xIndex,
+                                                                              yIndex)],
                                                 clipToCoast = clipToCoast,
                                                 fraction = fraction,
                                                 partCount = partCount),
-              silent = T)
+              silent = TRUE)
   if("try-error" %in% class(hull)){
     x1 <- min(occs[xIndex])
     x2 <- max(occs[xIndex])
@@ -186,32 +187,37 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
     hull <- Polygons(list(hull), ID = "A")
     hull <- SpatialPolygons(list(hull))
     proj4string(hull) <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
-    hull <- sp::spTransform(hull[[1]], CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
+    hull <- sp::spTransform(hull[[1]],
+                            CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
   } else{
-    hull <- sp::spTransform(hull[[1]], CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
+    hull <- sp::spTransform(hull[[1]],
+                            CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
   }
 
-  hullBuff <- raster::buffer(hull, width = buff, dissolve = T)
+  hullBuff <- raster::buffer(hull, width = buff, dissolve = TRUE)
 
   # Point part
   occsForM <- suppressWarnings(sp::SpatialPoints(occs[,c(xIndex, yIndex)],
                                                  proj4string = sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")))
-  occsForM <- sp::spTransform(occsForM, CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
-  occBuff <- suppressWarnings(raster::buffer(occsForM, width = buff, dissolve = T))
+  occsForM <- sp::spTransform(occsForM,
+                              CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
+  occBuff <- suppressWarnings(raster::buffer(occsForM,
+                                             width = buff, dissolve = TRUE))
 
   # Unite and crop out land
   wholeM <- rgeos::gUnion(occBuff, hullBuff)
   land <- suppressWarnings(aggregate(buffer(sp::spTransform(rangeBuilder::gshhs,
                                                      CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs")),
                                             width = 500, dissolve = TRUE),
-                                    dissolve = T))
+                                    dissolve = TRUE))
   wholeM <- suppressWarnings(rgeos::gDifference(wholeM,land))
 
   # Optional removal of unoccupied polygons
   if(clipToOcean){
     # First, split up disjunct polygons
     wholeM <- sp::disaggregate(wholeM)
-    wholeM <- wholeM[apply(rgeos::gContains(wholeM, occsForM, byid = T), 2, FUN = any)]
+    wholeM <- wholeM[apply(rgeos::gContains(wholeM, occsForM, byid = TRUE),
+                           2, FUN = any)]
     sp::plot(wholeM)
   }
 
@@ -223,10 +229,12 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
   worldExtent <- as(worldExtent, 'SpatialPolygons')
   crs(worldExtent) <- sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs")
 
+  # Get rid of slop at poles
   wholeM <- crop(wholeM, extent(c(xmin(wholeM),
                                   xmax(wholeM),
                                   ymin(worldExtent),
-                                  ymax(worldExtent)))) # Gets rid of slop at poles
+                                  ymax(worldExtent))))
+  # Wrap shapefiles at 180th meridian
   middle <- gIntersection(wholeM, worldExtent)
   ends <- gDifference(wholeM, worldExtent)
   if(!is.null(ends)){
@@ -257,7 +265,8 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
     wholeM <- middle
   }
 
-  wholeM <- spTransform(wholeM, CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
+  wholeM <- spTransform(wholeM,
+                        CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
 
   return(wholeM)
 }

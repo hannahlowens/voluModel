@@ -100,7 +100,8 @@ columnParse <- function(occs, wDepth = FALSE){
     reportMessage <- paste0("Using ", colNames[xIndex], " and ",
                             colNames[yIndex],
                             "\n as x and y coordinates, respectively.")
-    return(list(xIndex = xIndex, yIndex = yIndex, reportMessage = reportMessage))
+    return(list(xIndex = xIndex, yIndex = yIndex,
+                reportMessage = reportMessage))
   }
 }
 
@@ -234,11 +235,12 @@ downsample <- function(occs, rasterTemplate){
 # Samples bottom values from raster bricks
 bottomRaster <- function(rawPointData){
   if(class(rawPointData) != "SpatialPointsDataFrame"){
-    warning(paste0("'rawPointData' must be of class 'SpatialPointsDataFrame'.\n"))
+    warning(paste0("'rawPointData' must be class 'SpatialPointsDataFrame'.\n"))
     return(NULL)
   }
 
-  bottomSample <- apply(rawPointData@data, MARGIN = 1, FUN = function(x) tail(x[!is.na(x)],1))
+  bottomSample <- apply(rawPointData@data, MARGIN = 1,
+                        FUN = function(x) tail(x[!is.na(x)],1))
   rawPointData@data$Bottom <- bottomSample
   bRaster <- rasterFromXYZ(cbind(rawPointData@coords,rawPointData@data$Bottom))
   return(bRaster)

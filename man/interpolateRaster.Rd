@@ -4,12 +4,12 @@
 \alias{interpolateRaster}
 \title{Interpolate patchily sampled rasters}
 \usage{
-interpolateRaster(inputRaster, fast = F, ...)
+interpolateRaster(inputRaster, fast = FALSE, ...)
 }
 \arguments{
 \item{inputRaster}{An object of class \code{raster}}
 
-\item{fast}{A logical operator. Setting to \code{T} triggers use
+\item{fast}{A logical operator. Setting to \code{TRUE} triggers use
 of \code{fastTps} instead of \code{Tps}.}
 
 \item{...}{For any additional arguments passed to \code{Tps} or \code{fastTps}}
