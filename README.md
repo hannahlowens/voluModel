@@ -1,11 +1,14 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/hannahlowens/voluModel/workflows/R-CMD-check/badge.svg)](https://github.com/hannahlowens/voluModel/actions)
-[![Project Status: WIP – Initial development is in progress, but there
-has not yet been a stable, usable release suitable for the
-public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Codecov test
 coverage](https://codecov.io/gh/hannahlowens/voluModel/branch/main/graph/badge.svg)](https://codecov.io/gh/hannahlowens/voluModel?branch=main)
+[![cran
+version](https://www.r-pkg.org/badges/version/voluModel)](https://cran.r-project.org/package=voluModel)
+[![DOI](https://zenodo.org/badge/409153439.svg)](https://zenodo.org/badge/latestdoi/409153439)
+[![rstudio mirror
+downloads](https://cranlogs.r-pkg.org/badges/voluModel)](https://github.com/r-hub/cranlogs.app)
 <!-- badges: end -->
 
 # voluModel <img src='man/figures/logo.png' align="right" height="138" />
