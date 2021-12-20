@@ -89,7 +89,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2021-12-18</h4>
+            <h4 data-toc-skip class="date">2021-12-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/Simple.Rmd" class="external-link"><code>vignettes/Simple.Rmd</code></a></small>
       <div class="hidden name"><code>Simple.Rmd</code></div>
@@ -179,7 +179,7 @@
 <span class="co">## Linking to sp version:1.4-6</span>
 <span class="co">## To mute warnings of possible GDAL/OSR exportToProj4() degradation,</span>
 <span class="co">## use options("rgdal_show_exportToProj4_warnings"="none") before loading sp or rgdal.</span></code></pre>
-<p><img src="Simple_files/figure-html/environmental%20data%20loading%20temperature%20display-1.png" width="900"></p>
+<p><img src="Simple_files/figure-html/environmental%20data%20loading%20temperature%20display-1.png" width="700"></p>
 <p>Apparent oxygen usage is more patchily sampled than temperature (it’s generally measured from instrument casts on research cruises), so we use the <code><a href="../reference/interpolateRaster.html">interpolateRaster()</a></code> function to produce statistically-interpolated layers using <code>TPS()</code> from the <code>fields</code> package. Be patient–this step can take a while, although as shown here, I am using the <code>fastTPS()</code> approximation. Maybe this will work ok for your data, maybe it won’t. It depends on the data.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dnychka/fieldsRPackage" class="external-link">fields</a></span><span class="op">)</span>
@@ -200,7 +200,7 @@
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/pkg/raster/man/nlayers.html" class="external-link">nlayers</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>, 
      main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Apparent Oxygen Utilization, surface"</span>,
               <span class="st">"Apparent Oxygen Utilization, max depth"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="Simple_files/figure-html/environmental%20data%20loading%20oxygen%20display-1.png" width="900"></p>
+<p><img src="Simple_files/figure-html/environmental%20data%20loading%20oxygen%20display-1.png" width="700"></p>
 <p>You can see from these plots that apparent oxygen utilization is still “patchier” than temperature. If you are confident that there should be a strong spatial correlation in a “patchy” data layer, you can also statistically smooth it, again using <code>TPS()</code>, like this:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">oxygenSmooth</span> <span class="op">&lt;-</span> <span class="va">oxygen</span>
@@ -215,7 +215,7 @@
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">oxygenSmooth</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fu"><a href="https://rdrr.io/pkg/raster/man/nlayers.html" class="external-link">nlayers</a></span><span class="op">(</span><span class="va">oxygenSmooth</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>, 
      main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Apparent Oxygen Utilization, surface"</span>,
               <span class="st">"Apparent Oxygen Utilization, max depth"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="Simple_files/figure-html/smooth%20oxygen%20display-1.png" width="900"></p>
+<p><img src="Simple_files/figure-html/smooth%20oxygen%20display-1.png" width="700"></p>
 </div>
 <div class="section level1">
 <h1 id="sampling-data-for-model-generation">Sampling data for model generation<a class="anchor" aria-label="anchor" href="#sampling-data-for-model-generation"></a>
@@ -273,7 +273,7 @@
 <pre><code><span class="co">## Joining, by = c("decimalLongitude", "decimalLatitude")</span>
 <span class="co">## Joining, by = c("decimalLongitude", "decimalLatitude")</span>
 <span class="co">## Joining, by = c("decimalLongitude", "decimalLatitude")</span></code></pre>
-<p><img src="Simple_files/figure-html/downsample%20to%20voxel-1.png" width="900"></p>
+<p><img src="Simple_files/figure-html/downsample%20to%20voxel-1.png" width="700"></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">indices</span>, <span class="va">layerNames</span>, <span class="va">tempPoints</span>, <span class="va">i</span>, <span class="va">downsampledOccs</span>, <span class="va">occs</span><span class="op">)</span></code></pre></div>
 <p>Next, we generate a sampling region for the model based on occurrence points. Note that ideally when you’re modeling you would carefully curate this background sampling region to make sure it truly approximates the area accessible to the species you are modeling. However, if you do not have a lot of information regarding accessible areas, the function supplied here may be useful to at least generate something logical and repeatable. <code>marineBackground</code> is a special case wrapper around <code>getDynamicAlphaHull</code> from the <code>rangeBuilder</code> package. <code>getDynamicAlphaHull</code> generates an alpha hull polygon around occurrence points; it iteratively adjusts the alpha parameter (how tightly the hull adheres to the points) to meet fit a hull around the data per the user’s requirements. One can give it a buffer distance around points, as well as the minimum fraction of occurrences that must be found within the shapefile and the number of allowable distinct polygons. What <code>marineBackground</code> brings to the table is 1) robust functionality when the hull expands beyond 180 degrees East and/or West. Regions beyond this meridian are wrapped to the appropriate hemisphere instead of being deleted.</p>
@@ -281,7 +281,7 @@
 <code class="sourceCode R"><span class="va">backgroundSamplingRegions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Using decimalLongitude and decimalLatitude</span>
 <span class="co">##  as x and y coordinates, respectively.</span></code></pre>
-<p><img src="Simple_files/figure-html/environmental%20background%20sampling-1.png" width="900"></p>
+<p><img src="Simple_files/figure-html/environmental%20background%20sampling-1.png" width="700"></p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, 
      main <span class="op">=</span> <span class="st">"Points and background sampling plotted on surface temperature"</span>,
@@ -289,7 +289,7 @@
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">backgroundSamplingRegions</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>,<span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>, 
        cex <span class="op">=</span> <span class="fl">2</span>, pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></code></pre></div>
-<p><img src="Simple_files/figure-html/environmental%20background%20sampling-2.png" width="900"></p>
+<p><img src="Simple_files/figure-html/environmental%20background%20sampling-2.png" width="700"></p>
 <p>Finally, we need to draw the environmental variable data from each occurrence voxel, as well as from the background sampling region. First, we sample data for occurrences. Then, we generate background data by drawing occurrences from the XY extent of the background shapefile and from user-specified depths from 100 to 1500m. Background points intersecting with occurrences are not returned. Finally, the environmental data at each background coordinate are drawn and stored in their own data object.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Presences</span>
@@ -369,8 +369,8 @@
                                     returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
 
 <span class="fu"><a href="../reference/plotLayers.html">plotLayers</a></span><span class="op">(</span><span class="va">envelopeModel</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>, 
-          land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></code></pre></div>
-<p><img src="Simple_files/figure-html/3D%20envelope%20model-1.png" width="900"></p>
+          land <span class="op">=</span> <span class="va">land</span><span class="op">)</span></code></pre></div>
+<p><img src="Simple_files/figure-html/3D%20envelope%20model-1.png" width="700"></p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">layerNames</span>, <span class="va">indices</span><span class="op">)</span></code></pre></div>
 </div>
@@ -461,7 +461,7 @@
 
 <span class="fu"><a href="../reference/plotLayers.html">plotLayers</a></span><span class="op">(</span><span class="va">glmThresholded</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>, 
           land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></code></pre></div>
-<p><img src="Simple_files/figure-html/thresholded%20glm%20niche%20model%20plotted-1.png" width="900"></p>
+<p><img src="Simple_files/figure-html/thresholded%20glm%20niche%20model%20plotted-1.png" width="700"></p>
 <p>Of course, these are just two starting examples. We welcome submissions from the community for other types of models you would like to see. Submit your suggestions as issues <a href="https://github.com/hannahlowens/voluModel/issues" class="external-link">here</a>.</p>
 </div>
 <div class="section level1">
