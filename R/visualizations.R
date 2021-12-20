@@ -25,7 +25,7 @@ areColors <- function(col) {
     warning(paste0("'col' cannot be NULL.\n"))
     return(NULL)
   } else{
-    result <- vapply(col, function(X) {
+    result <- sapply(col, function(X) {
       tryCatch(is.matrix(col2rgb(X)),
                error = function(e) FALSE)
     })
