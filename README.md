@@ -23,31 +23,23 @@ column.
 Please cite `voluModel`. Run the following to get the appropriate
 citation for the version you’re using:
 
-``` r
+```r 
 citation(package = "voluModel")
 ```
-
-    ## Warning in citation(package = "voluModel"): no date field in DESCRIPTION file of
-    ## package 'voluModel'
-
-    ## Warning in citation(package = "voluModel"): could not determine year for
-    ## 'voluModel' from package DESCRIPTION file
-
-    ## 
-    ## To cite package 'voluModel' in publications use:
-    ## 
-    ##   Hannah Owens (NA). voluModel: Modeling Species Distributions in Three
-    ##   Dimensions. R package version 0.0.0.9000.
-    ##   https://hannahlowens.github.io/voluModel/
-    ## 
+    ## Owens H, Rahbek C (2021). _voluModel: Modeling Species Distributions in Three Dimensions_. doi:
+    ## 10.5281/zenodo.5568785 (URL: https://doi.org/10.5281/zenodo.5568785), R package version 0.1.0, <URL:
+    ## http://CRAN.R-project.org/package=voluModel>.
+    ##
     ## A BibTeX entry for LaTeX users is
-    ## 
-    ##   @Manual{,
-    ##     title = {voluModel: Modeling Species Distributions in Three Dimensions},
-    ##     author = {Hannah Owens},
-    ##     note = {R package version 0.0.0.9000},
-    ##     url = {https://hannahlowens.github.io/voluModel/},
-    ##   }
+    ##
+    ##  @Manual{,
+    ##    title = {{voluModel}: Modeling Species Distributions in Three Dimensions},
+    ##    author = {Hannah L. Owens and Carsten Rahbek},
+    ##    note = {R package version 0.1.0},
+    ##    url = {http://CRAN.R-project.org/package=voluModel},
+    ##    doi = {10.5281/zenodo.5568785},
+    ##  }
+
 
 ## Installation
 

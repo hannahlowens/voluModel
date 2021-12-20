@@ -1,0 +1,11 @@
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
+
+bibentry(bibtype = "Manual",
+         title = "{voluModel}: Modeling Species Distributions in Three Dimensions",
+         author = c(person("Hannah L.", "Owens"),
+                    person("Carsten", "Rahbek")),
+         year = year,
+         note = note,
+         url = "http://CRAN.R-project.org/package=voluModel",
+         doi = "10.5281/zenodo.5568785")
