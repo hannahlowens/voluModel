@@ -131,6 +131,12 @@ pointMap <- function(occs, spName, land = NA,
     mapping <- aes()
   }
 
+  if("alpha" %in% names(args)){
+    alpha <- args$alpha
+  } else{
+    alpha <- 2/3
+  }
+
   # Input checking
   if(!is.data.frame(occs)){
     warning(paste0("'occs' must be an object of class 'data.frame'.\n"))
@@ -176,7 +182,7 @@ pointMap <- function(occs, spName, land = NA,
   if(any(is.na(land))){
       point_map <- ggplot(mapping = mapping) +
         geom_point(data = occs, aes(x = occs[[xIndex]], y = occs[[yIndex]]),
-                   colour = ptCol, cex = ptSize, shape = 20, alpha = 2/3) +
+                   colour = ptCol, cex = ptSize, shape = 20, alpha = alpha) +
         theme(panel.background = element_rect(fill = waterCol),
               panel.grid = element_blank()) +
         coord_sf(xlim = c(min(occs[[xIndex]]), max(occs[[xIndex]])),
@@ -189,7 +195,7 @@ pointMap <- function(occs, spName, land = NA,
     point_map <- ggplot(mapping = mapping) +
       geom_sf(data = land, color = landCol, fill = landCol) +
       geom_point(data = occs, aes(x = occs[[xIndex]], y = occs[[yIndex]]),
-                 colour = ptCol, cex = ptSize, shape = 20, alpha = 2/3) +
+                 colour = ptCol, cex = ptSize, shape = 20, alpha = alpha) +
       theme(panel.background = element_rect(fill = waterCol),
             panel.grid = element_blank()) +
       coord_sf(xlim = c(min(occs[[xIndex]]), max(occs[[xIndex]])),

@@ -7,5 +7,5 @@ bibentry(bibtype = "Manual",
                     person("Carsten", "Rahbek")),
          year = year,
          note = note,
-         url = "http://CRAN.R-project.org/package=voluModel",
+         url = "https://CRAN.R-project.org/package=voluModel",
          doi = "10.5281/zenodo.5568785")

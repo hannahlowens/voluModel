@@ -21,7 +21,7 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 knitr::opts_knit$set(root.dir = system.file('extdata/', package='voluModel'))
-load(system.file("extdata/datForVignette.RData", 
+load(system.file("extdata/smoothOxygen.RData", 
                              package='voluModel'))
 ```
 
@@ -40,37 +40,30 @@ head(occs)
 
 Next, we load two environmental datasets from the World Ocean Atlas (Garcia et al., 2019): temperature (Locarnini et al., 2018) and apparent oxygen utilization (Garcia et al., 2019). We have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles, so our first task is to read in the shapefiles and convert each variable into a `RasterBrick`. 
 
-```{r environmental data loading temperature, eval=FALSE}
+```{r environmental data loading temperature, eval=T}
 library(rgdal)
 library(raster)
 library(voluModel)
-temperature <- readOGR(system.file("extdata/woa18_decav_t00mn01_shape/woa18_decav_t00mn01.shp", 
+temperature <- readOGR(system.file("extdata/woa18_decav_t00mn01_shape/woa18_decav_t00mn01_cropped.shp", 
                                    package = "voluModel"))
 temperature@data[temperature@data == -999.999] <- NA
-temperature <- rasterFromXYZ(cbind(temperature@coords,temperature@data))
+temperature <- rasterFromXYZ(cbind(temperature@coords,
+                                   temperature@data))
 
 # Get names of depths
 envtNames <- gsub("[d,M]", "", names(temperature))
 envtNames[[1]] <- "0"
 names(temperature) <- envtNames
 
-plot(temperature[[c(1,nlayers(temperature))]], 
-     main = c("Temperature, surface",
-              "Temperature, max depth"))
-```
-
-```{r environmental data loading temperature display, echo=FALSE}
-library(raster)
-library(voluModel)
-library(rgdal)
-plot(temperature[[1]], main = "Temperature, surface")
+plot(temperature[[1]], 
+     main = c("Temperature, surface"))
 ```
 
 Apparent oxygen usage is more patchily sampled than temperature (it's generally measured from instrument casts on research cruises), so we use the `interpolateRaster()` function to produce statistically-interpolated layers using `TPS()` from the `fields` package. Be patient--this step can take a while, although as shown here, I am using the `fastTPS()` approximation. Maybe this will work ok for your data, maybe it won't. It depends on the data.
 
-```{r environmental data loading oxygen, eval=FALSE}
+```{r environmental data loading oxygen, eval=T}
 library(fields)
-oxygen <- readOGR(system.file("extdata/woa18_all_A00mn01_shape/woa18_all_A00mn01.shp",
+oxygen <- readOGR(system.file("extdata/woa18_all_A00mn01_shape/woa18_all_A00mn01_cropped.shp",
                               package = "voluModel"))
 oxygen@data[oxygen@data == -999.999] <- NA
 oxygen <- rasterFromXYZ(cbind(oxygen@coords, oxygen@data))
@@ -84,12 +77,8 @@ for (i in 1:nlayers(oxygen)){
 names(oxygen) <- envtNames
 rm(envtNames)
 
-plot(oxygen[[c(1,nlayers(oxygen))]], 
-     main = c("Apparent Oxygen Utilization, surface",
-              "Apparent Oxygen Utilization, max depth"))
-```
-```{r environmental data loading oxygen display, echo=FALSE}
-plot(oxygen[[1]], main = "Apparent Oxygen Utilization, surface")
+plot(oxygen[[1]], 
+     main = "Apparent Oxygen Utilization, surface")
 ```
 
 You can see from these plots that apparent oxygen utilization is still "patchier" than temperature. If you are confident that there should be a strong spatial correlation in a "patchy" data layer, you can also statistically smooth it, again using `TPS()`, like this:
@@ -104,9 +93,8 @@ for (i in 1:nlayers(oxygen)){
 # Change names to match temperature
 names(oxygenSmooth) <- names(temperature)
 
-plot(oxygenSmooth[[c(1,nlayers(oxygenSmooth))]], 
-     main = c("Apparent Oxygen Utilization, surface",
-              "Apparent Oxygen Utilization, max depth"))
+plot(oxygenSmooth[[1]], 
+     main = "Apparent Oxygen Utilization, surface")
 ```
 ```{r smooth oxygen display, echo=FALSE}
 plot(oxygenSmooth[[1]], 
