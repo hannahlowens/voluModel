@@ -218,7 +218,6 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
     wholeM <- sp::disaggregate(wholeM)
     wholeM <- wholeM[apply(rgeos::gContains(wholeM, occsForM, byid = TRUE),
                            2, FUN = any)]
-    sp::plot(wholeM)
   }
 
   # Putting it all together and fixing the date line
