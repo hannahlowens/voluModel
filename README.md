@@ -62,6 +62,6 @@ library("voluModel")
 
 -   Please [report any issues or
     bugs](https://github.com/hannahlowens/voluModel/issues).
--   License: GPL-3
+-   License: ACM
 -   Get citation information for `voluModel` in R using
     `citation(package = 'voluModel')`
