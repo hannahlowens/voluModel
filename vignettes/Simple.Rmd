@@ -30,23 +30,28 @@ To date, distribution and ecological models of marine species have generally onl
 
 # Data Inputs
 
-First thing's first. Distributional models are based on coordinates of species' occurrences. Here is an example dataset of Aphanopus intermedius, Intermediate Scabbardfish, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain et al., 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens et al., 2021).
+First thing's first. Distributional models are based on coordinates of species' occurrences. Here is an example dataset of Steindachneria argentia, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain et al., 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens et al., 2021).
 
 ```{r occurrence data, eval=T}
-occs <- read.csv(system.file("extdata/Aphanopus_intermedius.csv", 
+occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
                              package='voluModel'))
 head(occs)
 ```
 
-Next, we load two environmental datasets from the World Ocean Atlas (Garcia et al., 2019): temperature (Locarnini et al., 2018) and apparent oxygen utilization (Garcia et al., 2019). We have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles, so our first task is to read in the shapefiles and convert each variable into a `RasterBrick`. 
+Next, we load two environmental datasets from the World Ocean Atlas (Garcia et al., 2019): temperature (Locarnini et al., 2018) and apparent oxygen utilization (Garcia et al., 2019). We have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -100 and -45 longitude and between 0 and 50 latitude to make it more memory-efficient. Our first task is to read in the shapefiles and convert each variable into a `RasterBrick`. While we are at it, we will generate a raster from the deepest value available for each point. While you might call this a "bottom" raster, it is important to note that in some cases, values are not available for the bottom.
 
-```{r environmental data loading temperature, eval=T}
+```{r environmental data loading temperature, eval=T, asis=T}
 library(rgdal)
 library(raster)
 library(voluModel)
-temperature <- readOGR(system.file("extdata/woa18_decav_t00mn01_shape/woa18_decav_t00mn01_cropped.shp", 
+temperature <- readOGR(system.file("extdata/woa18_decav_t00mn01_shape/woa18_decav_t00mn01.shp", 
                                    package = "voluModel"))
 temperature@data[temperature@data == -999.999] <- NA
+
+#Creating a bottom raster
+temperatureBottom <- bottomRaster(temperature)
+
+# Creating a RasterBrick
 temperature <- rasterFromXYZ(cbind(temperature@coords,
                                    temperature@data))
 
@@ -55,17 +60,26 @@ envtNames <- gsub("[d,M]", "", names(temperature))
 envtNames[[1]] <- "0"
 names(temperature) <- envtNames
 
+# How do these files look?
 plot(temperature[[1]], 
-     main = c("Temperature, surface"))
+     main = "Temperature, surface")
+
+plot(temperatureBottom,
+     main = "Temperature, bottom")
 ```
 
 Apparent oxygen usage is more patchily sampled than temperature (it's generally measured from instrument casts on research cruises), so we use the `interpolateRaster()` function to produce statistically-interpolated layers using `TPS()` from the `fields` package. Be patient--this step can take a while, although as shown here, I am using the `fastTPS()` approximation. Maybe this will work ok for your data, maybe it won't. It depends on the data.
 
-```{r environmental data loading oxygen, eval=T}
+```{r environmental data loading oxygen, eval=T, asis=T}
 library(fields)
-oxygen <- readOGR(system.file("extdata/woa18_all_A00mn01_shape/woa18_all_A00mn01_cropped.shp",
+oxygen <- readOGR(system.file("extdata/woa18_all_A00mn01_shape/woa18_all_A00mn01.shp",
                               package = "voluModel"))
 oxygen@data[oxygen@data == -999.999] <- NA
+
+#Creating a bottom raster
+oxygenBottom <- bottomRaster(oxygen)
+
+# Creating a RasterBrick
 oxygen <- rasterFromXYZ(cbind(oxygen@coords, oxygen@data))
 
 for (i in 1:nlayers(oxygen)){
@@ -79,9 +93,12 @@ rm(envtNames)
 
 plot(oxygen[[1]], 
      main = "Apparent Oxygen Utilization, surface")
+
+plot(oxygenBottom,
+     main = "Apparent Oxygen Utilization, bottom")
 ```
 
-You can see from these plots that apparent oxygen utilization is still "patchier" than temperature. If you are confident that there should be a strong spatial correlation in a "patchy" data layer, you can also statistically smooth it, again using `TPS()`, like this:
+You can see from these plots that apparent oxygen utilization is "patchier" than temperature. If you are confident that there should be a strong spatial correlation in a "patchy" data layer, you can also statistically smooth it, again using `TPS()`, like this:
 
 ```{r smoothing oxygen, eval=FALSE}
 oxygenSmooth <- oxygen
@@ -100,10 +117,18 @@ plot(oxygenSmooth[[1]],
 plot(oxygenSmooth[[1]], 
      main = "Smoothed Apparent Oxygen Utilization, surface")
 ```
+```{r bottom smoothed oxygen, eval = T, asis = T}
+oxygenSmoothBottom <- smoothRaster(oxygenBottom, lon.lat = T)
+oxygenSmoothBottom <- crop(mask(x = oxygenSmoothBottom, 
+                                mask = temperature[[i]]), 
+                           temperature[[i]])
+plot(oxygenSmoothBottom, 
+     main = "Smoothed Apparent Oxygen Utilization, bottom")
+```
 
 # Sampling data for model generation
 
-The first step is down-sampling the occurrence data so that there is only one occurrence per voxel (i.e. 3D pixel) of environmental data. We do this to avoid over-fitting the model due to biased sampling. The resampled points are centered in each voxel.
+The first step is down-sampling the occurrence data so that there is only one occurrence per voxel (i.e. 3D pixel) of environmental data. We do this to avoid over-fitting the model due to biased sampling. The resampled points are centered in each voxel. You will notice the original and cleaned datasets completely agree. This is because the dataset supplied was already cleaned.
 
 ```{r downsample to voxel, eval=TRUE, warning=FALSE}
 occurrences <- occs[,c("decimalLatitude", "decimalLongitude", "depth")] 
@@ -129,7 +154,7 @@ occurrences <- downsampledOccs
 print(paste0("Original number of points: ", nrow(occs), "; number of downsampled occs: ", nrow(occurrences)))
 pointCompMap(occs1 = occs, occs2 = occurrences, 
              occs1Name = "Original", occs2Name = "Cleaned", 
-             spName = "Aphanopus intermedius", 
+             spName = "Steindachneria argentia", 
              land = rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
 )
 rm(indices, layerNames, tempPoints, i, downsampledOccs, occs)
@@ -302,9 +327,17 @@ Of course, these are just two starting examples. We welcome submissions from the
 
 # References
 
-Catania D, Fong J (2020). CAS Ichthyology (ICH). Version 150.241. California Academy of Sciences. Occurrence dataset https://doi.org/10.15468/efh2ib accessed via GBIF.org on 2020-09-24.
+Bakis Y (2021): TU_Fish. v1.1. No organization. Dataset/Occurrence. https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1 Accessed via OBIS on 2020-11-04.  
 
-Chic Giménez Ò, Lombarte Carrera A (2018). Colección de referencia de otolitos, Instituto de Ciencias del Mar-CSIC. Institute of Marine Sciences (ICM-CSIC). Occurrence dataset https://doi.org/10.15468/wdwxid accessed via GBIF.org on 2020-09-24.
+Bentley A (2022). KUBI Ichthyology Collection. Version 17.80. University of Kansas Biodiversity Institute. https://doi.org/10.15468/mgjasg. Accessed via GBIF on 2020-10-13.
+
+Bentley A (2022). KUBI Ichthyology Tissue Collection. Version 18.68. University of Kansas Biodiversity Institute. https://doi.org/10.15468/jmsnwg. Accessed via GBIF on 2020-10-13.
+
+Buckup P A (2022). Coleção Ictiológica (MNRJ), Museu Nacional (MN), Universidade Federal do Rio de Janeiro(UFRJ). Version 157.1487. Museu Nacional / UFRJ. https://doi.org/10.15468/lluzfl. Accessed via GBIF on 2020-10-13.
+
+Catania D, Fong J (2022). CAS Ichthyology (ICH). Version 150.300. California Academy of Sciences. https://doi.org/10.15468/efh2ib. Accessed via GBIF on 2020-10-13.
+
+Chakrabarty P (2019). LSUMZ (LSU MNS) Fishes Collection. Version 2.2. Louisiana State University Museum of Natural Science. https://doi.org/10.15468/gbnym3. Accessed via GBIF on 2020-10-13.
 
 Chamberlain S, Barve V, Mcglinn D, Oldoni D, Desmet P, Geffert L, Ram K (2021). rgbif: Interface to the Global Biodiversity Information Facility API. R package version 3.6.0, https://CRAN.R-project.org/package=rgbif.
 
@@ -312,33 +345,69 @@ Chamberlain S, Boettiger C (2017). “R Python, and Ruby clients for GBIF specie
 
 Davis Rabosky AR, Cox CL, Rabosky DL, Title PO, Holmes IA, Feldman A, McGuire JA (2016). Coral snakes predict the evolution of mimicry across New World snakes. Nature Communications 7:11484.
 
-European Nucleotide Archive (EMBL-EBI) (2019). Geographically tagged INSDC sequences. Occurrence dataset https://doi.org/10.15468/cndomv accessed via GBIF.org on 2020-09-24.
+Espinosa Pérez H, Comisión nacional para el conocimiento y uso de la biodiversidad C (2021). Computarización de la Colección Nacional de Peces del Instituto de Biología UNAM. Version 1.9. Comisión nacional para el conocimiento y uso de la biodiversidad. https://doi.org/10.15468/zb2odl. Accessed via GBIF on 2020-10-13.
 
-Frable B (2019). SIO Marine Vertebrate Collection. Version 1.7. Scripps Institution of Oceanography. Occurrence dataset https://doi.org/10.15468/ad1ovc accessed via GBIF.org on 2020-09-24.
+Frable B (2019). SIO Marine Vertebrate Collection. Version 1.7. Scripps Institution of Oceanography. https://doi.org/10.15468/ad1ovc. Accessed via GBIF on 2020-10-13.
 
-Garcia HE, Boyer TP, Baranova OK, Locarnini RA, Mishonov AV, Grodsky A, Paver CR, Weathers KW, Smolyar IV, Reagan JR, Seidov D, Zweng MM (2019). World Ocean Atlas 2018: Product Documentation. A Mishonov, Technical Editor.
+Fishnet2 Portal, http://www.fishnet2.net, [Access date] Accessed via OBIS on 2020-11-04.
+
+Froese, R. and D. Pauly. Editors. 200x. FishBase. World Wide Web electronic publication. www.fishbase.org, version (xx/200x). Accessed via OBIS on 2020-11-04.   
+
+Gall L (2021). Vertebrate Zoology Division - Ichthyology, Yale Peabody Museum. Yale University Peabody Museum. https://doi.org/10.15468/mgyhok. Accessed via GBIF on 2020-10-13.
+
+García, CB, and Duarte, LO, 'Columbian Caribbean Sea', in J.H. Nicholls (comp.) HMAP Data Pages (https://oceanspast.org/hmap_db.php) Accessed via OBIS on 2020-11-04.   
 
 Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA, Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018). World Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen Utilization, and Oxygen Saturation. A Mishonov Technical Ed.; NOAA Atlas NESDIS 83, 38pp.
 
 GBIF.org (24 September 2020) GBIF Occurrence Download https://doi.org/10.15468/dl.efuutj.
 
-Grant S, McMahan C (2020). Field Museum of Natural History (Zoology) Fish Collection. Version 13.12. Field Museum. Occurrence dataset https://doi.org/10.15468/alz7wu accessed via GBIF.org on 2020-09-24.
+Grant S, McMahan C (2020). Field Museum of Natural History (Zoology) Fish Collection. Version 13.12. Field Museum. https://doi.org/10.15468/alz7wu. Accessed via GBIF on 2020-10-13.
+
+Harvard University M, Morris P J (2022). Museum of Comparative Zoology, Harvard University. Version 162.296. Museum of Comparative Zoology, Harvard University. https://doi.org/10.15468/p5rupv. Accessed via GBIF on 2020-10-13.
+
+Hendrickson D A, Cohen A E, Casarez M J (2022). University of Texas, Biodiversity Center, Ichthyology Collection (TNHCi). Version 5.175. University of Texas at Austin, Biodiversity Collections. https://doi.org/10.15468/h8gxdr. Accessed via GBIF on 2020-10-13.
+
+INVEMAR. SIBM en línea: Sistema de Información sobre Biodiversidad Marina. Santa Marta: Instituto de investigaciones Marinas y Costeras José Benito Vives de Andréis,. http://www.invemar.org.co/siam/sibm/index.htm Accessed via OBIS on 2020-11-04. 
 
 Locarnini RA, Mishonov AV, Baranova OK, Boyer TP, Zweng MM, Garcia HE, Reagan JR, Seidov D, Weathers K, Paver CR, Smolyar I (2018). World Ocean Atlas 2018, Volume 1: Temperature. A. Mishonov Technical Ed.; NOAA Atlas NESDIS 81, 52pp.
 
-Menezes G (2020). Demersais survey in the Azores between 1996 and 2013. Version 1.1. Institute of Marine Research. Occurrence dataset https://doi.org/10.14284/22 accessed via GBIF.org on 2020-09-24.
+McLean, M.W. (2014). Straightforward Bibliography Management in R Using the RefManager Package. NA, NA. https://arxiv.org/abs/1403.2036.
 
-Natural History Museum (2020). Natural History Museum (London) Collection Specimens. Occurrence dataset https://doi.org/10.5519/0002965 accessed via GBIF.org on 2020-09-24.
+McLean, M.W. (2017). RefManageR: Import and Manage BibTeX and BibLaTeX References in R. The Journal of Open Source Software.
 
-Norén M, Shah M (2017). Fishbase. FishBase. Occurrence dataset https://doi.org/10.15468/wk3zk7 accessed via GBIF.org on 2020-09-24.
+Mertz W (2021). LACM Vertebrate Collection. Version 18.9. Natural History Museum of Los Angeles County. https://doi.org/10.15468/77rmwd. Accessed via GBIF on 2020-10-13.
+
+Nakae M, Shinohara G (2018). Fish collection of National Museum of Nature and Science. National Museum of Nature and Science, Japan. Occurrence dataset https://doi.org/10.15468/w3dzv1 accessed via GBIF.org on yyyy-mm-dd. Accessed via OBIS on 2020-11-04.    
+
+Natural History Museum (2021). Natural History Museum (London) Collection Specimens. https://doi.org/10.5519/0002965. Accessed via GBIF on 2020-10-13.
+
+National Museum of Natural History, Smithsonian Institution NMNH Fishes Collection Database. National Museum of Natural History, Smithsonian Institution, 10th and Constitution Ave. N.W., Washington, DC 20560-0193, 2007. Accessed via OBIS on 2020-11-04.
+
+Norén M, Shah M (2017). Fishbase. FishBase. https://doi.org/10.15468/wk3zk7. Accessed via GBIF on 2020-10-13.
+
+Norton B, Hogue G (2021). NCSM Ichthyology Collection. Version 22.8. North Carolina State Museum of Natural Sciences. https://doi.org/10.36102/dwc.1. Accessed via GBIF on 2020-10-13.
 
 Nychka D, Furrer R, Paige J, Sain S (2021). “fields: Tools for spatial data.” R package version 13.3, <URL:
 https://github.com/dnychka/fieldsRPackage>.
 
-Orrell T (2020). NMNH Extant Specimen Records. Version 1.35. National Museum of Natural History, Smithsonian Institution. Occurrence dataset https://doi.org/10.15468/hnhrg3 accessed via GBIF.org on 2020-09-24.
+Orrell T, Informatics Office (2021). NMNH Extant Specimen Records (USNM, US). Version 1.49. National Museum of Natural History, Smithsonian Institution. https://doi.org/10.15468/hnhrg3. Accessed via GBIF on 2020-10-13.
 
 Owens H, Merow C, Maitner B, Kass J, Barve V, Guralnick R (2021). occCite: Querying and Managing Large Biodiversity Occurrence Datasets_. doi: 10.5281/zenodo.4726676 (URL: https://doi.org/10.5281/zenodo.4726676), R package version 0.4.9.9000, (<URL: https://CRAN.R-project.org/package=occCite>).
 
+Prestridge H (2021). Biodiversity Research and Teaching Collections - TCWC Vertebrates. Version 9.4. Texas A&M University Biodiversity Research and Teaching Collections. https://doi.org/10.15468/szomia. Accessed via GBIF on 2020-10-13.
+
 Provoost P, Bosch S (2019). “robis: R Client to access data from the OBIS API.” Ocean Biogeographic Information System. Intergovernmental Oceanographic Commission of UNESCO. R package version 2.1.8, https://cran.r-project.org/package=robis.
 
+Pugh W (2021). UAIC Ichthyological Collection. Version 3.3. University of Alabama Biodiversity and Systematics. https://doi.org/10.15468/a2laag. Accessed via GBIF on 2020-10-13.
+
 R Core Team (2017). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+Robins R (2021). UF FLMNH Ichthyology. Version 117.342. Florida Museum of Natural History. https://doi.org/10.15468/8mjsel. Accessed via GBIF on 2020-10-13.
+
+Tavera L, Tavera M. L (2021). Biodiversidad de los recursos marinos y costeros entre Cartagena y el Golfo de Urabá, Caribe colombiano. Version 2.4. Instituto de Investigaciones Marinas y Costeras - Invemar. https://doi.org/10.15472/d2jusp. Accessed via GBIF on 2020-10-13.
+
+UNIBIO, IBUNAM. CNPE/Coleccion Nacional de Peces. https://doi.org/10.15468/o5d48z. Accessed via GBIF on 2020-10-13.
+
+Wagner M (2017). MMNS Ichthyology Collection. Mississippi Museum of Natural Science. https://doi.org/10.15468/4c3qeq. Accessed via GBIF on 2020-10-13.
+
+Werneke D (2019). AUM Fish Collection. Version 8.1. Auburn University Museum. https://doi.org/10.15468/dm3oyz. Accessed via GBIF on 2020-10-13.
