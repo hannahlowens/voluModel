@@ -21,12 +21,12 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 knitr::opts_knit$set(root.dir = system.file('extdata/', package='voluModel'))
-load(system.file("extdata/smoothOxygen.RData", 
+load(system.file("data/smoothOxygen.RData", 
                              package='voluModel'))
 ```
 
 # Introduction 
-To date, distribution and ecological models of marine species have generally only considered distributions in two-dimensional space, not accounting for depth. This may lead to mis-estimation of species distributions and subsequent diversity estimates, especially among pelagic and benthic species. Here, we present a possible way forward: generating species distribution models based on environmental data extracted at the depths where individuals were observed, and calibrated with three-dimensional sampling of pseudo-absences. We also provide some methods to project these models back into three-dimensional space and visualize the results. 
+To date, distribution and ecological niche models of marine species have generally only considered distributions in two-dimensional space, not accounting for depth. This may lead to mis-estimation of species distributions and subsequent diversity estimates, especially among pelagic and benthic species. Here, we present a possible way forward: generating species distribution models based on environmental data extracted at the depths where individuals were observed, and calibrated with three-dimensional sampling of pseudo-absences. We also provide some methods to project these models back into three-dimensional space and visualize the results. 
 
 # Data Inputs
 
@@ -38,14 +38,19 @@ occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
 head(occs)
 ```
 
-Next, we load two environmental datasets from the World Ocean Atlas (Garcia et al., 2019): temperature (Locarnini et al., 2018) and apparent oxygen utilization (Garcia et al., 2019). We have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -100 and -45 longitude and between 0 and 50 latitude to make it more memory-efficient. Our first task is to read in the shapefiles and convert each variable into a `RasterBrick`. While we are at it, we will generate a raster from the deepest value available for each point. While you might call this a "bottom" raster, it is important to note that in some cases, values are not available for the bottom.
+Next, we load two environmental datasets from the World Ocean Atlas (Garcia et al., 2019): temperature (Locarnini et al., 2018) and apparent oxygen utilization (Garcia et al., 2019). We have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. Our first task is to read in the shapefiles and convert each variable into a `RasterBrick`. While we are at it, we will generate a raster from the deepest value available for each point. While you might call this a "bottom" raster, it is important to note that in some cases, values are not available for the bottom.
 
 ```{r environmental data loading temperature, eval=T, asis=T}
 library(rgdal)
 library(raster)
 library(voluModel)
-temperature <- readOGR(system.file("extdata/woa18_decav_t00mn01_shape/woa18_decav_t00mn01.shp", 
-                                   package = "voluModel"))
+td <- tempdir()
+unzip("inst/extdata/woa18_decav_t00mn01_cropped.zip",
+      exdir = paste0(td, "/temperature"), junkpaths = T)
+temperature <- readOGR(dsn = paste0(td, "/temperature/"), 
+                       layer ="woa18_decav_t00mn01_cropped")
+unlink(paste0(td, "/temperature/"), recursive = T)
+
 temperature@data[temperature@data == -999.999] <- NA
 
 #Creating a bottom raster
@@ -72,8 +77,14 @@ Apparent oxygen usage is more patchily sampled than temperature (it's generally 
 
 ```{r environmental data loading oxygen, eval=T, asis=T}
 library(fields)
-oxygen <- readOGR(system.file("extdata/woa18_all_A00mn01_shape/woa18_all_A00mn01.shp",
-                              package = "voluModel"))
+td <- tempdir()
+unzip("inst/extdata/woa18_all_A00mn01_cropped.zip",
+      exdir = paste0(td, "/oxygen"), junkpaths = T)
+# do something with the files
+oxygen <- readOGR(dsn = paste0(td, "/oxygen/"), 
+                  layer = "woa18_all_A00mn01_cropped")
+unlink(paste0(td, "/oxygen/"), recursive = T)
+
 oxygen@data[oxygen@data == -999.999] <- NA
 
 #Creating a bottom raster

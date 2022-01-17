@@ -15,10 +15,12 @@ downloads](https://cranlogs.r-pkg.org/badges/voluModel)](https://github.com/r-hu
 
 ## Summary
 
-This package is designed to model species distributions in three
-dimensions. This is useful in an aquatic context when the organisms one
-wishes to model can be found across a wide range of depths in the water
-column.
+This package is designed to facilitate modeling species' ecological niches
+and geographic distributions based on occurrences and environments that 
+have a vertical as well as horizontal component, and projecting models into 
+three-dimensional geographic space. Working in three dimensions is useful in 
+an aquatic context when the organisms one wishes to model can be found across 
+a wide range of depths in the water column.
 
 Please cite `voluModel`. Run the following to get the appropriate
 citation for the version you’re using:
