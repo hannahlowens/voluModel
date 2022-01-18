@@ -7,6 +7,8 @@ date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     fig_caption: yes
+    fig_width: 7
+    fig_height: 7
     toc: true
     toc_depth: 3
 vignette: >
@@ -20,9 +22,10 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, error = TRUE)
-knitr::opts_knit$set(root.dir = system.file('extdata/', package='voluModel'))
-load(system.file("data/smoothOxygen.RData", 
-                             package='voluModel'))
+knitr::opts_knit$set(root.dir = system.file('extdata', 
+                                            package='voluModel'))
+load(system.file("extdata/oxygenSmooth.RData", 
+                 package='voluModel'))
 ```
 
 # Introduction 
@@ -36,7 +39,17 @@ First thing's first. Distributional models are based on coordinates of species' 
 occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
                              package='voluModel'))
 head(occs)
+dotchart(occs$depth, main = "Distribution of depth measurements")
 ```
+
+Based on this plot, and what we know about the biology of luminous hakes and how these occurrence data are collected, I am going to remove occurrences that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not *in situ* or errors of some kind.
+
+```{r clean occurrence data, eval=T}
+occsClean <- occs[!occs$depth %in% c(0,2100),]
+head(occsClean)
+dotchart(occsClean$depth, main = "Distribution of depth clean measurements")
+```
+
 
 Next, we load two environmental datasets from the World Ocean Atlas (Garcia et al., 2019): temperature (Locarnini et al., 2018) and apparent oxygen utilization (Garcia et al., 2019). We have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. Our first task is to read in the shapefiles and convert each variable into a `RasterBrick`. While we are at it, we will generate a raster from the deepest value available for each point. While you might call this a "bottom" raster, it is important to note that in some cases, values are not available for the bottom.
 
@@ -45,7 +58,8 @@ library(rgdal)
 library(raster)
 library(voluModel)
 td <- tempdir()
-unzip("inst/extdata/woa18_decav_t00mn01_cropped.zip",
+unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
+                  package = "voluModel"),
       exdir = paste0(td, "/temperature"), junkpaths = T)
 temperature <- readOGR(dsn = paste0(td, "/temperature/"), 
                        layer ="woa18_decav_t00mn01_cropped")
@@ -75,10 +89,11 @@ plot(temperatureBottom,
 
 Apparent oxygen usage is more patchily sampled than temperature (it's generally measured from instrument casts on research cruises), so we use the `interpolateRaster()` function to produce statistically-interpolated layers using `TPS()` from the `fields` package. Be patient--this step can take a while, although as shown here, I am using the `fastTPS()` approximation. Maybe this will work ok for your data, maybe it won't. It depends on the data.
 
-```{r environmental data loading oxygen, eval=T, asis=T}
+```{r environmental data loading oxygen, eval=T, asis=T, warning=FALSE}
 library(fields)
 td <- tempdir()
-unzip("inst/extdata/woa18_all_A00mn01_cropped.zip",
+unzip(system.file("extdata/woa18_all_A00mn01_cropped.zip", 
+                  package = "voluModel"),
       exdir = paste0(td, "/oxygen"), junkpaths = T)
 # do something with the files
 oxygen <- readOGR(dsn = paste0(td, "/oxygen/"), 
@@ -131,18 +146,18 @@ plot(oxygenSmooth[[1]],
 ```{r bottom smoothed oxygen, eval = T, asis = T}
 oxygenSmoothBottom <- smoothRaster(oxygenBottom, lon.lat = T)
 oxygenSmoothBottom <- crop(mask(x = oxygenSmoothBottom, 
-                                mask = temperature[[i]]), 
-                           temperature[[i]])
+                                mask = temperature[[1]]), 
+                           temperature[[1]])
 plot(oxygenSmoothBottom, 
      main = "Smoothed Apparent Oxygen Utilization, bottom")
 ```
 
 # Sampling data for model generation
 
-The first step is down-sampling the occurrence data so that there is only one occurrence per voxel (i.e. 3D pixel) of environmental data. We do this to avoid over-fitting the model due to biased sampling. The resampled points are centered in each voxel. You will notice the original and cleaned datasets completely agree. This is because the dataset supplied was already cleaned.
+The first step is down-sampling the occurrence data so that there is only one occurrence per voxel (i.e. 3D pixel) of environmental data. We do this to avoid over-fitting the model due to biased sampling. The resampled points are centered in each voxel. You will notice that in this instance there was no re-centering of points, as the orignal dataset was already downsampled to the resolution of the environmental data. The red dots show occurrences from the original dataset that were removed when occurrences with depths of 0 and 2100m were removed, and had no occurrences at other depths.
 
-```{r downsample to voxel, eval=TRUE, warning=FALSE}
-occurrences <- occs[,c("decimalLatitude", "decimalLongitude", "depth")] 
+```{r downsample to voxel, eval=TRUE, warning=FALSE, message=FALSE}
+occurrences <- occsClean[,c("decimalLatitude", "decimalLongitude", "depth")] 
 
 # Preliminary cleaning
 occurrences <- dplyr::distinct(occurrences)
@@ -180,7 +195,7 @@ plot(temperature[[1]],
      col = viridisLite::mako(n= 11))
 plot(backgroundSamplingRegions, add = T, border = "orange", lwd = 2)
 points(occurrences[,c("decimalLongitude","decimalLatitude")], 
-       cex = 2, pch = 20, col = "red")
+       cex = 1, pch = 20, col = "red")
 ```
 
 Finally, we need to draw the environmental variable data from each occurrence voxel, as well as from the background sampling region. First, we sample data for occurrences. Then, we generate background data by drawing occurrences from the XY extent of the background shapefile and from user-specified depths from 100 to 1500m. Background points intersecting with occurrences are not returned. Finally, the environmental data at each background coordinate are drawn and stored in their own data object.
