@@ -74,7 +74,7 @@ The x and y column names of \code{occs1} and \code{occs2}
 must match.
 }
 \examples{
-occs <- read.csv(system.file("extdata/Aphanopus_intermedius.csv",
+occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
                              package='voluModel'))
 set.seed(0)
 occs1 <- occs[sample(1:nrow(occs),
@@ -83,7 +83,7 @@ set.seed(10)
 occs2 <- occs[sample(1:nrow(occs),
                      size = 24, replace = FALSE),]
 
-spName <- "Aphanopus intermedius"
+spName <- "Steindachneria argentea"
 
 
 pointCompMap(occs1 = occs1, occs2 = occs2,

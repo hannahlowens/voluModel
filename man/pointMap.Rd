@@ -47,9 +47,9 @@ A convenient wrapper around ggplot
 to generate formatted occurrence point plots.
 }
 \examples{
-occs <- read.csv(system.file("extdata/Aphanopus_intermedius.csv",
+occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
                              package='voluModel'))
-spName <- "Aphanopus intermedius"
+spName <- "Steindachneria argentea"
 pointMap(occs = occs, spName = spName, land = NA)
 
 }

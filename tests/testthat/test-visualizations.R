@@ -2,9 +2,9 @@ library(rnaturalearth)
 library(raster)
 library(ggplot2)
 
-occs <- read.csv(system.file("extdata/Aphanopus_intermedius.csv",
+occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
                              package='voluModel'))
-spName <- "Aphanopus intermedius"
+spName <- "Steindachneria argentea"
 land <- ne_countries(scale = "medium", returnclass = "sf")[1]
 
 test_that("input checks", {
@@ -23,7 +23,7 @@ test_that("pointMap checks", {
   expect_error(pointMap())
   expect_warning(pointMap(occs = "a",
                           spName = spName))
-  expect_warning(pointMap(occs = occs[,1:2],
+  expect_warning(pointMap(occs = occs[,c(1,3)],
                           spName = spName))
   expect_warning(pointMap(occs=occs, spName = 2))
   expect_warning(pointMap(occs = occs,
@@ -54,11 +54,11 @@ test_that("pointCompMap checks", {
   expect_error(pointCompMap())
   expect_warning(pointCompMap(occs1 = "a", occs2 = occs2,
                               spName = spName))
-  expect_warning(pointCompMap(occs1 = occs1[,1:2], occs2 = occs2,
+  expect_warning(pointCompMap(occs1 = occs1[,c(1,3)], occs2 = occs2,
                               spName = spName))
   expect_warning(pointCompMap(occs2 = "a", occs1 = occs1,
                               spName = spName))
-  expect_warning(pointCompMap(occs2 = occs2[,1:2], occs1 = occs1,
+  expect_warning(pointCompMap(occs2 = occs2[,c(1,3)], occs1 = occs1,
                               spName = spName))
   expect_warning(pointCompMap(occs1=occs1, occs2 = occs2,
                               spName = 2))
