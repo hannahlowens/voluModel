@@ -83,10 +83,10 @@ measurements for modeling species' distributions and/or niches.</p>
     <h2>Details</h2>
     <p><code>rawPointData</code> is a <code>SpatialPointsDataFrame</code> object that
 contains measurements of a single environmental variable (e.g.
-salinity, temperature, etc.) with x,y coordinates as well as depth.
-The measurements in the <code>data.frame</code> should be organized so that
-each column is a depth slice, increasing in depth from left to right.
-This was designed around the oceanographic data shapefiles supplied
+salinity, temperature, etc.) with x, y, and z coordinates. The
+measurements in the <code>data.frame</code> should be organized so that each
+column is a depth slice, increasing in depth from left to right. The
+function was designed around the oceanographic data shapefiles supplied
 by the World Ocean Atlas
 (<a href="https://www.ncei.noaa.gov/access/world-ocean-atlas-2018/" class="external-link">https://www.ncei.noaa.gov/access/world-ocean-atlas-2018/</a>).
 The function selects the "deepest" (rightmost) measurement at each
@@ -116,6 +116,8 @@ rasterized at the resolution and extent of the x,y coordinates.</p>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Here's the function</span></span>
 <span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">bottomRaster</span><span class="op">(</span>rawPointData <span class="op">=</span> <span class="va">sp</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in as.double(y):</span> cannot coerce type 'S4' to vector of type 'double'</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
