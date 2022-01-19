@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualizations.R
 \name{diversityStack}
 \alias{diversityStack}
-\title{Diversity Stack}
+\title{Diversity stack}
 \usage{
 diversityStack(rasterList, template)
 }
@@ -32,8 +32,10 @@ rast2 <- raster(ncol=10, nrow=10)
 values(rast2) <- c(rep(0, 50), rep(1,50))
 
 rastList <- list(rast1, rast2)
-diversityStack(rasterList = rastList,
-               template = rast2)
+result <- diversityStack(rasterList = rastList,
+                         template = rast2)
+result
+plot(result)
 
 }
 \keyword{plotting}

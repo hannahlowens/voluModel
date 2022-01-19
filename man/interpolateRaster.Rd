@@ -33,15 +33,18 @@ of a true thin plate spline.
 library(raster)
 library(fields)
 # Create sample raster
-r <- raster(ncol=100, nrow=100)
-values(r) <- 1:10000
+r <- raster(ncol=50, nrow=50)
+values(r) <- 1:2500
 
 # Introduce a "hole"
-values(r)[67:70] <- NA
+values(r)[c(117:127, 167:177, 500:550)] <- NA
+plot(r)
 
 # Patch hole with interpolateRaster
 interpolatedRaster <- interpolateRaster(r)
+plot(interpolatedRaster)
 fastInterp <- interpolateRaster(r, fast = TRUE, aRange = 3.0)
+plot(fastInterp)
 
 }
 \seealso{

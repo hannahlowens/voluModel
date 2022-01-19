@@ -2,7 +2,7 @@
 % Please edit documentation in R/BackgroundSamplingFunctions.R
 \name{mSampling2D}
 \alias{mSampling2D}
-\title{2D Background Sampling}
+\title{2D background sampling}
 \usage{
 mSampling2D(occs, rasterTemplate, mShp)
 }
@@ -56,6 +56,7 @@ mShp <- buffer(buffPts, width = 1, dissolve = TRUE)
 
 # Here's the function
 result <- mSampling2D(occs = occurrences, rasterTemplate = r, mShp = mShp)
+head(result)
 
 }
 \keyword{backgroundSampling}

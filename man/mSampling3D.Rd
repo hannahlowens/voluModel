@@ -2,7 +2,7 @@
 % Please edit documentation in R/BackgroundSamplingFunctions.R
 \name{mSampling3D}
 \alias{mSampling3D}
-\title{3D Background Sampling}
+\title{3D background sampling}
 \usage{
 mSampling3D(occs, envBrick, mShp, depthLimit = "all")
 }
@@ -80,6 +80,7 @@ mShp <- buffer(buffPts, width = 1, dissolve = TRUE)
 occSample3d <- mSampling3D(occurrences,
                            envBrick, mShp = mShp,
                            depthLimit = "occs")
+head(occSample3d)
 
 }
 \keyword{backgroundSampling}

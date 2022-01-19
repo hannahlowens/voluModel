@@ -64,6 +64,11 @@ occurrences <- as.data.frame(cbind(longitude,latitude,depth))
 # Test function
 occSample3d <- xyzSample(occurrences, envBrick)
 
+# How to use
+occurrences$envtValue <- occSample3d
+
+head(occurrences)
+
 
 }
 \keyword{dataPrep}

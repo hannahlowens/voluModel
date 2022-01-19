@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualizations.R
 \name{oneRasterPlot}
 \alias{oneRasterPlot}
-\title{Comparative raster mapping}
+\title{Single raster plot}
 \usage{
 oneRasterPlot(rast, land = NA, landCol = "black", title = "A Raster", ...)
 }
@@ -30,7 +30,10 @@ library(raster)
 rast <- raster(ncol=10, nrow=10)
 values(rast) <- seq(0,99, 1)
 
-oneRasterPlot(rast = rast)
+oneRasterPlot(rast = rast,
+              land = rnaturalearth::ne_countries(scale = "medium",
+                                                 returnclass = "sf")[1],
+              landCol = "black")
 
 }
 \seealso{

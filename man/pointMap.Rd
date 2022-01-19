@@ -50,7 +50,9 @@ to generate formatted occurrence point plots.
 occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
                              package='voluModel'))
 spName <- "Steindachneria argentea"
-pointMap(occs = occs, spName = spName, land = NA)
+pointMap(occs = occs, spName = spName,
+         land = rnaturalearth::ne_countries(scale = "medium",
+                                            returnclass = "sf")[1])
 
 }
 \seealso{

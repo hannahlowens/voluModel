@@ -26,7 +26,7 @@ occurrence points.}
 A plot of class \code{trellis}
 }
 \description{
-This script plots a transparent layer
+This script plots a semitransparent layer
 of suitable habitat for each depth layer. The redder
 the color, the shallower the layer, the bluer, the
 deeper. The more saturated the color, the more layers

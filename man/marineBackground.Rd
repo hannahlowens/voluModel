@@ -75,6 +75,8 @@ occurrences <- as.data.frame(cbind(longitude,latitude))
 
 # Here's the function
 result <- marineBackground(occs = occurrences, clipToOcean = TRUE)
+plot(result)
+points(occurrences, pch = 20)
 
 }
 \seealso{
