@@ -110,7 +110,9 @@ testIntersection <- function(a,b){
 #' occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
 #'                              package='voluModel'))
 #' spName <- "Steindachneria argentea"
-#' pointMap(occs = occs, spName = spName, land = NA)
+#' pointMap(occs = occs, spName = spName,
+#'          land = rnaturalearth::ne_countries(scale = "medium",
+#'                                             returnclass = "sf")[1])
 #'
 #' @import ggplot2
 #'
@@ -277,9 +279,12 @@ pointMap <- function(occs, spName, land = NA,
 #'              agreeCol = "purple",
 #'              occs1Name = "2D",
 #'              occs2Name = "3D",
-#'              landCol = "beige",
+#'              landCol = "black",
 #'              waterCol = "steelblue",
-#'              spName = spName, land = NA)
+#'              spName = spName,
+#'              ptSize = 2,
+#'              land = rnaturalearth::ne_countries(scale = "medium",
+#'                                                 returnclass = "sf")[1])
 #'
 #' @import ggplot2
 #' @importFrom dplyr inner_join anti_join
@@ -462,7 +467,7 @@ pointCompMap <- function(occs1, occs2,
       ylab("Latitude") +
       labs(
         title = paste0("***", spName,"***<p>
-    <span style='color:black;'>Overlapping</span>,
+    <span style='color:", agreeCol,";'>Overlapping</span>,
     <span style='color:", occs1Col, ";'>in ", occs1Name,
                        " dataset only</span>, and
     <span style='color:", occs2Col, ";'>in ", occs2Name,
@@ -738,7 +743,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
   }
 }
 
-#' @title Diversity Stack
+#' @title Diversity stack
 #'
 #' @description Takes list of rasters of species distributions
 #' (interpreted as 1 = presence, 0 = absence), which do not
@@ -763,8 +768,10 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
 #' values(rast2) <- c(rep(0, 50), rep(1,50))
 #'
 #' rastList <- list(rast1, rast2)
-#' diversityStack(rasterList = rastList,
-#'                template = rast2)
+#' result <- diversityStack(rasterList = rastList,
+#'                          template = rast2)
+#' result
+#' plot(result)
 #'
 #' @import raster
 #' @keywords plotting
@@ -802,7 +809,7 @@ diversityStack <- function(rasterList, template){
   return(diversityRaster)
 }
 
-#' @title Comparative raster mapping
+#' @title Single raster plot
 #'
 #' @description A convenient wrapper around `spplot`
 #' to generate a formatted plot of a single raster.
@@ -826,7 +833,10 @@ diversityStack <- function(rasterList, template){
 #' rast <- raster(ncol=10, nrow=10)
 #' values(rast) <- seq(0,99, 1)
 #'
-#' oneRasterPlot(rast = rast)
+#' oneRasterPlot(rast = rast,
+#'               land = rnaturalearth::ne_countries(scale = "medium",
+#'                                                  returnclass = "sf")[1],
+#'               landCol = "black")
 #'
 #' @import raster
 #' @import viridis
@@ -905,7 +915,7 @@ oneRasterPlot <- function(rast,
 
 #' @title Plotting 3D model in 2D
 #'
-#' @description This script plots a transparent layer
+#' @description This script plots a semitransparent layer
 #' of suitable habitat for each depth layer. The redder
 #' the color, the shallower the layer, the bluer, the
 #' deeper. The more saturated the color, the more layers

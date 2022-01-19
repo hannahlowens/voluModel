@@ -138,6 +138,7 @@ columnParse <- function(occs, wDepth = FALSE){
 #'
 #' # Here's the function
 #' result <- downsample(occs = occurrences, rasterTemplate = r)
+#' head(result)
 #'
 #' @import raster
 #'
@@ -194,10 +195,10 @@ downsample <- function(occs, rasterTemplate){
 #'
 #' @details `rawPointData` is a `SpatialPointsDataFrame` object that
 #' contains measurements of a single environmental variable (e.g.
-#' salinity, temperature, etc.) with x,y coordinates as well as depth.
-#' The measurements in the `data.frame` should be organized so that
-#' each column is a depth slice, increasing in depth from left to right.
-#' This was designed around the oceanographic data shapefiles supplied
+#' salinity, temperature, etc.) with x, y, and z coordinates. The
+#' measurements in the `data.frame` should be organized so that each
+#' column is a depth slice, increasing in depth from left to right. The
+#' function was designed around the oceanographic data shapefiles supplied
 #' by the World Ocean Atlas
 #' (\url{https://www.ncei.noaa.gov/access/world-ocean-atlas-2018/}).
 #' The function selects the "deepest" (rightmost) measurement at each
@@ -225,6 +226,7 @@ downsample <- function(occs, rasterTemplate){
 #'
 #' # Here's the function
 #' result <- bottomRaster(rawPointData = sp)
+#' plot(result)
 #'
 #' @import raster
 #' @importFrom stats complete.cases

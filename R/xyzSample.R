@@ -54,6 +54,11 @@
 #' # Test function
 #' occSample3d <- xyzSample(occurrences, envBrick)
 #'
+#' # How to use
+#' occurrences$envtValue <- occSample3d
+#'
+#' head(occurrences)
+#'
 #'
 #' @import raster
 #'

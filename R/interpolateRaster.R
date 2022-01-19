@@ -21,15 +21,18 @@
 #' library(raster)
 #' library(fields)
 #' # Create sample raster
-#' r <- raster(ncol=100, nrow=100)
-#' values(r) <- 1:10000
+#' r <- raster(ncol=50, nrow=50)
+#' values(r) <- 1:2500
 #'
 #' # Introduce a "hole"
-#' values(r)[67:70] <- NA
+#' values(r)[c(117:127, 167:177, 500:550)] <- NA
+#' plot(r)
 #'
 #' # Patch hole with interpolateRaster
 #' interpolatedRaster <- interpolateRaster(r)
+#' plot(interpolatedRaster)
 #' fastInterp <- interpolateRaster(r, fast = TRUE, aRange = 3.0)
+#' plot(fastInterp)
 #'
 #' @import raster
 #' @importFrom fields Tps fastTps
@@ -149,10 +152,14 @@ interpolateRaster <- function(inputRaster, fast = FALSE, ...){
 #'
 #' # Introduce a "bubble"
 #' values(r)[520:525] <- 9999
+#' plot(r)
 #'
 #' # Smooth bubble with smoothRaster
 #' smoothedRaster <- smoothRaster(r)
+#' plot(smoothedRaster)
+#'
 #' fastSmooth <- smoothRaster(r, fast = TRUE, aRange = 3.0)
+#' plot(fastSmooth)
 #'
 #' @import raster
 #' @importFrom fields Tps fastTps

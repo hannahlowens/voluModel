@@ -50,7 +50,7 @@ occCellRemoval <- function(occs, rasterTemplate){
   return(rasterTemplate)
 }
 
-#' @title 2D Background Sampling
+#' @title 2D background sampling
 #'
 #' @description Samples in 2D at resolution of raster
 #'
@@ -98,6 +98,7 @@ occCellRemoval <- function(occs, rasterTemplate){
 #'
 #' # Here's the function
 #' result <- mSampling2D(occs = occurrences, rasterTemplate = r, mShp = mShp)
+#' head(result)
 #'
 #' @import raster
 #'
@@ -143,7 +144,7 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
   return(mPts)
 }
 
-#' @title 3D Background Sampling
+#' @title 3D background sampling
 #'
 #' @description Samples XYZ coordinates from a shapefile
 #' from maximum to minimum occurrence depth at XYZ
@@ -215,6 +216,7 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 #' occSample3d <- mSampling3D(occurrences,
 #'                            envBrick, mShp = mShp,
 #'                            depthLimit = "occs")
+#' head(occSample3d)
 #'
 #' @import raster
 #'

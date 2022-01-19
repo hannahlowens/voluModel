@@ -9,9 +9,10 @@ version](https://www.r-pkg.org/badges/version/voluModel)](https://cran.r-project
 [![DOI](https://zenodo.org/badge/409153439.svg)](https://zenodo.org/badge/latestdoi/409153439)
 [![rstudio mirror
 downloads](https://cranlogs.r-pkg.org/badges/voluModel)](https://github.com/r-hub/cranlogs.app)
+
 <!-- badges: end -->
 
-# voluModel <img src='man/figures/logo.png' align="right" height="138" />
+# voluModel <img src="man/figures/logo.png" align="right" height="138" />
 
 ## Summary
 
