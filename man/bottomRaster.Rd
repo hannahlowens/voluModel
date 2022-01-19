@@ -32,6 +32,9 @@ x, y coordinate pair that contains data. These measurements are then
 rasterized at the resolution and extent of the x,y coordinates.
 }
 \examples{
+
+library(sp)
+
 # Create point grid
 coords <- data.frame(x = rep(seq(1:5), times = 5),
                     y = unlist(lapply(1:5, FUN = function(x) {
