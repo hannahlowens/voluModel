@@ -1,5 +1,5 @@
 ---
-title: "A simple example of how to use voluModel for niche modeling"
+title: "4. A Guide to `voluModel` Visualization Tools"
 author:
 - Hannah L. Owens
 - Carsten Rahbek
@@ -12,7 +12,7 @@ output:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{A simple example of how to use voluModel for niche modeling}
+  %\VignetteIndexEntry{4. A Guide to `voluModel` Visualization Tools}
   \usepackage[utf8]{inputenc}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
@@ -289,11 +289,14 @@ suitableCentroid <- apply(occsWdata[,c("Temperature", "AOU")],
                           MARGIN = 2, FUN = mean)
 backgroundWdata$distance <- apply(backgroundWdata[,c("Temperature", "AOU")], MARGIN = 1, 
                                   FUN = function(x) dist(rbind(suitableCentroid, x)))
-backgroundWdata$sampleWeight <- (backgroundWdata$distance - min(backgroundWdata$distance))/(max(backgroundWdata$distance)-min(backgroundWdata$distance))
+backgroundWdata$sampleWeight <- (backgroundWdata$distance - 
+                                 min(backgroundWdata$distance))/(max(backgroundWdata$distance)-
+                                                                 min(backgroundWdata$distance))
 sampleForAbsence <- sample(x = rownames(backgroundWdata), 
                            size = nrow(occsWdata) * 100, 
                            prob = backgroundWdata$sampleWeight)
-backgroundWdata <- backgroundWdata[match(sampleForAbsence, rownames(backgroundWdata)),]
+backgroundWdata <- backgroundWdata[match(sampleForAbsence, 
+                                         rownames(backgroundWdata)),]
 
 # Unite datasets
 datForMod <- rbind(occsWdata, backgroundWdata[,colnames(occsWdata)])
