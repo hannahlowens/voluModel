@@ -50,3 +50,8 @@ test_that("marineBackground input warnings behave as expected", {
                                   initialAlpha = 3, alphaIncrement = 1,
                                   clipToCoast = 1))
 })
+
+test_that("marineBackground results as expected", {
+  expect_equal(class(result)[[1]], "SpatialPolygons")
+  expect_equal(length(result@polygons), 1)
+})
