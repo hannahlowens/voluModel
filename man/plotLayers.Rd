@@ -4,7 +4,7 @@
 \alias{plotLayers}
 \title{Plotting 3D model in 2D}
 \usage{
-plotLayers(rast, land = NA, landCol = "black", title = "A Raster", ...)
+plotLayers(rast, land = NA, landCol = "black", title = NULL, ...)
 }
 \arguments{
 \item{rast}{A \verb{Raster*} with the 3D presence/absence
@@ -18,7 +18,10 @@ occurrence points.}
 
 \item{landCol}{Color for land on map.}
 
-\item{title}{A title for the plot.}
+\item{title}{A title for the plot. If not title is
+supplied, the title "Suitability from <<MINIMUM
+DEPTH>> to <<MAXIMUM DEPTH>>" is inferred from
+names of \code{RasterStack}.}
 
 \item{...}{Additional optional arguments.}
 }

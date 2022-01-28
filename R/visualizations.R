@@ -932,7 +932,10 @@ oneRasterPlot <- function(rast,
 #'
 #' @param landCol Color for land on map.
 #'
-#' @param title A title for the plot.
+#' @param title A title for the plot. If not title is
+#' supplied, the title "Suitability from <<MINIMUM
+#' DEPTH>> to <<MAXIMUM DEPTH>>" is inferred from
+#' names of `RasterStack`.
 #'
 #' @param ... Additional optional arguments.
 #'
@@ -970,7 +973,7 @@ oneRasterPlot <- function(rast,
 
 plotLayers <- function(rast,
                       land = NA, landCol = "black",
-                      title = "A Raster", ...){
+                      title = NULL, ...){
   #Input processing
   args <- list(...)
 
@@ -998,9 +1001,10 @@ plotLayers <- function(rast,
     return(NULL)
   }
 
-  if(!is.character(title)){
-    warning(paste0("'title' must be a 'character' string.\n"))
-    return(NULL)
+  if(is.null(title)){
+   title <- paste0("Suitability from ",
+           names(rast)[[1]]," to ",
+           names(rast)[[nlayers(rast)]])
   }
 
   #Function body
@@ -1012,9 +1016,7 @@ plotLayers <- function(rast,
                       col.regions = c(rgb(0,0,0,0),
                                       rgb(redVal,0,blueVal,stepSize)),
                       cuts = 1, colorkey = FALSE, col="transparent",
-                      main = paste0("Suitability from ",
-                                    names(rast)[[1]]," to ",
-                                    names(rast)[[nlayers(rast)]]),
+                      main = title,
                       par.settings = list(mai = c(0,0,0,0)),
                       maxpixels = maxpixels)
 
