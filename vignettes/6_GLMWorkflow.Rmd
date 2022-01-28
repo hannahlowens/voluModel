@@ -135,11 +135,11 @@ for(i in indices){
 occurrences <- downsampledOccs
 
 print(paste0("Original number of points: ", nrow(occs), "; number of downsampled occs: ", nrow(occurrences)))
+land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
 pointCompMap(occs1 = occs, occs2 = occurrences, 
              occs1Name = "Original", occs2Name = "Cleaned", 
              spName = "Steindachneria argentia", 
-             land = rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
-)
+             land = land)
 rm(indices, layerNames, tempPoints, i, downsampledOccs, occs)
 ```
 
@@ -182,7 +182,7 @@ backgroundWdata <- vals
 rm(oxyVals, tempVals, vals, backgroundVals)
 ```
 
-# Generalized linear models
+# Generalized linear model
 
 Once you have extracted environmental data for occurrences and pseudoabsence points, it's time to unite the presence and absence data into a single data frame with an additional column, "response", which will contain 1s for presences and 0s for absences. This is the dependent variable we will use environmental data to predict in a generalized linear model.
 
@@ -265,6 +265,46 @@ plotLayers(glmThresholded[[min(indices):max(indices)]],
 
 Of course, these are just two starting examples. We welcome submissions from the community for other types of models you would like to see. Submit your suggestions as issues [here](https://github.com/hannahlowens/voluModel/issues).
 
+# Cropping out extreme extrapolation
+
+Sometimes ecological models fail to extrapolate realistically when they are projected into environments that are not well-represented by the set of conditions used to calibrate the model (Owens *et al*, 2013). One convenient way to estimate extrapolation is via the Multivariate Environmental Suitability Surface (MESS; Elith *et al*. 2010). `voluModel` has a function, `MESS3D`, which calculates MESS for each depth layer in a projection dataset (supplied to the function as a named list of `RasterBrick` objects used for the model projection).
+
+```{r calculate MESS}
+# Prepare environmental data
+projList <- list("AOU" = oxygenSmooth[[min(indices):max(indices)]], 
+                 "Temperature" = temperature[[min(indices):max(indices)]])
+
+# Calculate MESS
+messBrick <- MESS3D(calibration = datForMod, projection = projList)
+```
+
+Now I will calculate two `rasterBricks`. In the first, `extrapolation`, MESS values zero and below (i.e. signalling extrapolation) will be reclassified as 1, which will allow me to easily map where extrapolation is occurring.
+
+```{r reclassify and plot extrapolation}
+# Reclassify MESS 
+extrapolation <- 0 >= messBrick
+
+# Plot Extrapolation
+plotLayers(extrapolation, land = land, landCol = "black", title = "Areas of extrapolation according to MESS,\n 0m to 800m")
+```
+
+In the second `RasterBrick`, `noExtrapolation`, I reclassify the layers so that positive MESS values = 1 and MESS values less than or equal to 0 equal 0. This will make plotting cropping out areas of extrapolation from the niche model projection easier. I simply multiply the thresholded GLM map by the `noExtrapolation` `RasterBrick`.
+
+```{r reclassify MESS and plot GLM with no extrapolation}
+# Reclassify MESS 
+noExtrapolation <- messBrick > 0
+
+glmThreshNoExtrapolation <- NULL
+for(i in 1:nlayers(noExtrapolation)){
+  croppedLayer <- glmThresholded[[i]] * noExtrapolation[[i]]
+  glmThreshNoExtrapolation <- stack(c(glmThreshNoExtrapolation, croppedLayer))
+}
+
+# Plot MESS
+plotLayers(glmThreshNoExtrapolation, land = land, landCol = "black", title = "Areas of suitable habitat with no model extrapolation,\n 0m to 800m")
+```
+
+
 # References
 
 Bakis Y (2021): TU_Fish. v1.1. No organization. Dataset/Occurrence. https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1 Accessed via OBIS on 2020-11-04.  
@@ -281,9 +321,11 @@ Chakrabarty P (2019). LSUMZ (LSU MNS) Fishes Collection. Version 2.2. Louisiana 
 
 Chamberlain S, Barve V, Mcglinn D, Oldoni D, Desmet P, Geffert L, Ram K (2021). rgbif: Interface to the Global Biodiversity Information Facility API. R package version 3.6.0, https://CRAN.R-project.org/package=rgbif.
 
-Chamberlain S, Boettiger C (2017). “R Python, and Ruby clients for GBIF species occurrence data.” PeerJ PrePrints. https://doi.org/10.7287/peerj.preprints.3304v1.
+Chamberlain S, Boettiger C (2017). “R Python, and Ruby clients for GBIF species occurrence data.” *PeerJ* PrePrints. https://doi.org/10.7287/peerj.preprints.3304v1.
 
-Davis Rabosky AR, Cox CL, Rabosky DL, Title PO, Holmes IA, Feldman A, McGuire JA (2016). Coral snakes predict the evolution of mimicry across New World snakes. Nature Communications 7:11484.
+Davis Rabosky AR, Cox CL, Rabosky DL, Title PO, Holmes IA, Feldman A, McGuire JA (2016). Coral snakes predict the evolution of mimicry across New World snakes. *Nature Communications* 7:11484.
+
+Elith J, Kearney M, Phillips S. 2010. The art of modelling range-shifting species. *Methods in Ecology and Evolution*, 1, 330-342.
 
 Espinosa Pérez H, Comisión nacional para el conocimiento y uso de la biodiversidad C (2021). Computarización de la Colección Nacional de Peces del Instituto de Biología UNAM. Version 1.9. Comisión nacional para el conocimiento y uso de la biodiversidad. https://doi.org/10.15468/zb2odl. Accessed via GBIF on 2020-10-13.
 
@@ -313,7 +355,7 @@ Locarnini RA, Mishonov AV, Baranova OK, Boyer TP, Zweng MM, Garcia HE, Reagan JR
 
 McLean, M.W. (2014). Straightforward Bibliography Management in R Using the RefManager Package. NA, NA. https://arxiv.org/abs/1403.2036.
 
-McLean, M.W. (2017). RefManageR: Import and Manage BibTeX and BibLaTeX References in R. The Journal of Open Source Software.
+McLean, M.W. (2017). RefManageR: Import and Manage BibTeX and BibLaTeX References in R. *The Journal of Open Source Software*.
 
 Mertz W (2021). LACM Vertebrate Collection. Version 18.9. Natural History Museum of Los Angeles County. https://doi.org/10.15468/77rmwd. Accessed via GBIF on 2020-10-13.
 
@@ -327,10 +369,11 @@ Norén M, Shah M (2017). Fishbase. FishBase. https://doi.org/10.15468/wk3zk7. Ac
 
 Norton B, Hogue G (2021). NCSM Ichthyology Collection. Version 22.8. North Carolina State Museum of Natural Sciences. https://doi.org/10.36102/dwc.1. Accessed via GBIF on 2020-10-13.
 
-Nychka D, Furrer R, Paige J, Sain S (2021). “fields: Tools for spatial data.” R package version 13.3, <URL:
-https://github.com/dnychka/fieldsRPackage>.
+Nychka D, Furrer R, Paige J, Sain S (2021). “fields: Tools for spatial data.” R package version 13.3, <URL: https://github.com/dnychka/fieldsRPackage>.
 
 Orrell T, Informatics Office (2021). NMNH Extant Specimen Records (USNM, US). Version 1.49. National Museum of Natural History, Smithsonian Institution. https://doi.org/10.15468/hnhrg3. Accessed via GBIF on 2020-10-13.
+
+Owens H, Campbell L, Dornak L, Saupe E, Barve N, Soberón J, Ingenloff K, Lira-Noriega A, Hensz C, Myers, C, Peterson AT (2013). Constraints on interpretation of ecological niche models by limited environmental ranges on calibration areas. *Ecological Modelling* 263: 10-18.
 
 Owens H, Merow C, Maitner B, Kass J, Barve V, Guralnick R (2021). occCite: Querying and Managing Large Biodiversity Occurrence Datasets_. doi: 10.5281/zenodo.4726676 (URL: https://doi.org/10.5281/zenodo.4726676), R package version 0.4.9.9000, (<URL: https://CRAN.R-project.org/package=occCite>).
 
