@@ -21,6 +21,7 @@ LazyData: true
 Depends: R (>= 4.0.0)
 Imports:
     dplyr,
+    dismo,
     fields,
     ggplot2,
     ggtext,
