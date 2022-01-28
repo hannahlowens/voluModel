@@ -290,7 +290,7 @@ plotLayers(extrapolation, land = land, landCol = "black", title = "Areas of extr
 
 In the second `RasterBrick`, `noExtrapolation`, I reclassify the layers so that positive MESS values = 1 and MESS values less than or equal to 0 equal 0. This will make plotting cropping out areas of extrapolation from the niche model projection easier. I simply multiply the thresholded GLM map by the `noExtrapolation` `RasterBrick`.
 
-```{r reclassify MESS and plot GLM with no extrapolation}
+```{r reclassify MESS and plot GLM with no extrapolation, warning=FALSE}
 # Reclassify MESS 
 noExtrapolation <- messBrick > 0
 
@@ -301,7 +301,9 @@ for(i in 1:nlayers(noExtrapolation)){
 }
 
 # Plot MESS
-plotLayers(glmThreshNoExtrapolation, land = land, landCol = "black", title = "Areas of suitable habitat with no model extrapolation,\n 0m to 800m")
+plotLayers(glmThreshNoExtrapolation, land = land, 
+           landCol = "black", 
+           title = "Areas of suitable habitat with no model extrapolation,\n 0m to 800m")
 ```
 
 
