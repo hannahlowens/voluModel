@@ -33,10 +33,10 @@ In this vignette, I will focus on demonstrating a basic workflow for generating 
 
 Here are the packages you will need.
 
-```{r packages}
+```{r packages, warning=FALSE}
 library(voluModel) # Because of course
 library(ggplot2) # For fancy plotting
-library(rgdal) # For vector stuff. Will eventually be replaced with sp.
+library(rgdal) # For vector stuff. Will eventually be replaced with sf.
 library(raster) # For raster stuff. Will eventually be replaced with terra.
 ```
 
@@ -49,7 +49,7 @@ occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
                              package='voluModel'))
 ggplot(occs, aes(x = 1, y=depth)) +
   geom_violin(fill="yellow", ) +
-  theme_classic(base_size = 40) +
+  theme_classic(base_size = 30) +
   theme(axis.title = element_blank(),
         text = element_text(family = "Arial"),
         axis.text = element_text(size = rel(1.1))) +
@@ -65,7 +65,7 @@ head(occsClean)
 
 ggplot(occsClean, aes(x = 1, y=depth)) +
   geom_violin(fill="yellow", ) +
-  theme_classic(base_size = 40) +
+  theme_classic(base_size = 30) +
   theme(axis.title = element_blank(),
         text = element_text(family = "Arial"),
         axis.text = element_text(size = rel(1.1))) +
@@ -111,7 +111,7 @@ names(oxygenSmooth) <- names(temperature)
 
 # Sampling data for model generation
 
-The first step is down-sampling the occurrence data so that there is only one occurrence per voxel (i.e. 3D pixel) of environmental data. We do this to avoid over-fitting the model due to biased sampling. The resampled points are centered in each voxel. You will notice that in this instance there was no re-centering of points, as the orignal dataset was already downsampled to the resolution of the environmental data. The red dots show occurrences from the original dataset that were removed when occurrences with depths of 0 and 2100m were removed, and had no occurrences at other depths.
+The first step is down-sampling the occurrence data so that there is only one occurrence per voxel (the 3D equivalent of a pixel) of environmental data. We do this to avoid over-fitting the model due to biased sampling. The resampled points are centered in each voxel. You will notice that in this instance there was no re-centering of points, as the original dataset was already downsampled to the resolution of the environmental data. The red dots show coordinates from the original dataset where there were only occurrences with depths of 0 and/or 2100m, which were removed in data cleaning.
 
 ```{r downsample to voxel, eval=TRUE, warning=FALSE, message=FALSE}
 occurrences <- occsClean[,c("decimalLatitude", "decimalLongitude", "depth")] 
@@ -145,7 +145,7 @@ rm(indices, layerNames, tempPoints, i, downsampledOccs, occs)
 
 Next, we generate a sampling region for the model based on occurrence points. Note that ideally when you're modeling you would carefully curate this background sampling region to make sure it truly approximates the area accessible to the species you are modeling. For more information, see [the environmental data processing tutorial](3_DataSampling.html).
 
-```{r environmental background sampling}
+```{r environmental background sampling, warning=FALSE}
 backgroundSamplingRegions <- marineBackground(occurrences)
 plot(temperature[[1]], 
      main = "Points and background sampling plotted on surface temperature",
@@ -155,9 +155,9 @@ points(occurrences[,c("decimalLongitude","decimalLatitude")],
        cex = 1, pch = 20, col = "red")
 ```
 
-Finally, we need to draw the environmental variable data from each occurrence voxel, as well as from the background sampling region. First, we sample data for occurrences. Then, we generate background data by drawing occurrences from the XY extent of the background shapefile and from user-specified depths from 0 to 800m. Background points intersecting with occurrences are not returned. Finally, the environmental data at each background coordinate are drawn and stored in their own data object.
+Finally, we need to draw the environmental variable data that will be used to generate the ecological niche model, from presence voxels as well as from the background sampling region. First, we sample environmental data for occurrences and add a "response" column filled with 1s, signifying these are considered "presences".
 
-```{r sampling}
+```{r presence sampling}
 # Presences
 oxyVals <- xyzSample(occs = occurrences, oxygenSmooth)
 tempVals <- xyzSample(occs = occurrences, temperature)
@@ -167,6 +167,13 @@ vals <- vals[complete.cases(vals),]
 row.names(vals) <- NULL
 occsWdata <- vals
 
+# Add response as a column
+occsWdata$response <- rep(1, times = nrow(occsWdata))
+```
+
+Then, we generate background data by drawing occurrences from the XY extent of the background shapefile and from user-specified depths from 0 to 800m. Background points intersecting with occurrences are not returned. Then the environmental data at each background coordinate are drawn and stored in their own data object, and the "response" column is added and filled with 0s, signifying that these are to be considered "absences" when training the model.
+
+```{r background sampling}
 # Background
 backgroundVals <- mSampling3D(occs = occurrences, 
                               envBrick = temperature, 
@@ -179,18 +186,14 @@ colnames(vals) <- c("decimalLongitude", "decimalLatitude", "depth", "AOU", "Temp
 vals <- vals[complete.cases(vals),]
 row.names(vals) <- NULL
 backgroundWdata <- vals
+
+# Add response as a column
+backgroundWdata$response <- rep(0, times = nrow(backgroundWdata))
+
 rm(oxyVals, tempVals, vals, backgroundVals)
 ```
 
 # Generalized linear model
-
-Once you have extracted environmental data for occurrences and pseudoabsence points, it's time to unite the presence and absence data into a single data frame with an additional column, "response", which will contain 1s for presences and 0s for absences. This is the dependent variable we will use environmental data to predict in a generalized linear model.
-
-```{r glm data prep part 1}
-# Add response as a column
-occsWdata$response <- rep(1, times = nrow(occsWdata))
-backgroundWdata$response <- rep(0, times = nrow(backgroundWdata))
-```
 
 If you are concerned about overfitting the model because you generated a lot more background points than presence points, you can sample from the background data however you think is logical. The example below samples 100 times the number of occurrence points from the background, weighted by distance form the suitable centroid of occurrence points. That is, the more environmentally-different a background point is from an occurrence point, the more likely it is to be sampled. This is helpful for GLMs, because background points are interpreted as "absences" unlike in methods like Maxent, where sampling the most dissimilar background may more likely lead to an overfit model.
 
@@ -208,7 +211,11 @@ sampleForAbsence <- sample(x = rownames(backgroundWdata),
                            prob = backgroundWdata$sampleWeight)
 backgroundWdata <- backgroundWdata[match(sampleForAbsence, 
                                          rownames(backgroundWdata)),]
+```
 
+Then we unit the presence and absence data into a single data object.
+
+```{r uniting datasets}
 # Unite datasets
 datForMod <- rbind(occsWdata, backgroundWdata[,colnames(occsWdata)])
 rm(suitableCentroid, sampleForAbsence, backgroundWdata, occsWdata)
@@ -252,7 +259,7 @@ glmThresholded <- reclassify(glmThresholded, c(NA, NA, 0), include.lowest = T)
 rm(glmThreshold, glmPred)
 ```
 
-And plotted like the envelope model.
+`plotLayers` plots a transparent layer of suitable habitat for each depth layer. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. Here, I am plotting suitability from 0m to 800m, the depth range of occurrences used to train the envelope model.
 
 ```{r thresholded glm niche model plotted}
 layerNames <- as.numeric(gsub("[X]", "", names(glmThresholded)))
@@ -263,13 +270,13 @@ plotLayers(glmThresholded[[min(indices):max(indices)]],
           land = land, landCol = "black")
 ```
 
-Of course, these are just two starting examples. We welcome submissions from the community for other types of models you would like to see. Submit your suggestions as issues [here](https://github.com/hannahlowens/voluModel/issues).
+Of course, this just a starting example. We welcome submissions from the community for examples of other types of models you would like to see. Submit your suggestions as issues [here](https://github.com/hannahlowens/voluModel/issues).
 
 # Cropping out extreme extrapolation
 
-Sometimes ecological models fail to extrapolate realistically when they are projected into environments that are not well-represented by the set of conditions used to calibrate the model (Owens *et al*, 2013). One convenient way to estimate extrapolation is via the Multivariate Environmental Suitability Surface (MESS; Elith *et al*. 2010). `voluModel` has a function, `MESS3D`, which calculates MESS for each depth layer in a projection dataset (supplied to the function as a named list of `RasterBrick` objects used for the model projection).
+Sometimes ecological models fail to extrapolate realistically when they are projected into environments that are not well-represented by the set of conditions used to calibrate the model (Owens *et al*, 2013). One convenient way to estimate extrapolation is via the Multivariate Environmental Suitability Surface (MESS; Elith *et al*. 2010). `voluModel` has a function, `MESS3D()`, which calculates MESS for each depth layer in a projection dataset (supplied to the function as a named list of `RasterBrick` objects used for the model projection).
 
-```{r calculate MESS}
+```{r calculate MESS, warning=FALSE}
 # Prepare environmental data
 projList <- list("AOU" = oxygenSmooth[[min(indices):max(indices)]], 
                  "Temperature" = temperature[[min(indices):max(indices)]])
@@ -278,7 +285,7 @@ projList <- list("AOU" = oxygenSmooth[[min(indices):max(indices)]],
 messBrick <- MESS3D(calibration = datForMod, projection = projList)
 ```
 
-Now I will calculate two `rasterBricks`. In the first, `extrapolation`, MESS values zero and below (i.e. signalling extrapolation) will be reclassified as 1, which will allow me to easily map where extrapolation is occurring.
+Now I will calculate two `rasterBrick` objects. In the first, `extrapolation`, MESS values zero and below (i.e. signalling extrapolation) will be reclassified as 1, which will allow me to easily map where extrapolation is occurring.
 
 ```{r reclassify and plot extrapolation}
 # Reclassify MESS 
