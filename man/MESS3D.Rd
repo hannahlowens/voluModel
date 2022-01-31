@@ -41,7 +41,6 @@ ecological niche model.
 \examples{
 library(raster)
 library(dplyr)
-library(magrittr)
 
 # Create sample rasterBricks
 r1 <- raster(ncol=10, nrow=10)

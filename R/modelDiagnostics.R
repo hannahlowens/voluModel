@@ -34,7 +34,6 @@
 #' @examples
 #' library(raster)
 #' library(dplyr)
-#' library(magrittr)
 #'
 #' # Create sample rasterBricks
 #' r1 <- raster(ncol=10, nrow=10)
@@ -76,6 +75,7 @@
 #' plot(messStack)
 #'
 #' @importFrom dismo mess
+#' @importFrom methods is
 #'
 #' @seealso \code{\link[dismo]{mess}}
 #'
