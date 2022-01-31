@@ -36,7 +36,22 @@ with suitable habitat."><meta property="og:image" content="/logo.png"><!-- mathj
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/Simple.html">A simple example of how to use voluModel for niche modeling</a>
+      <a href="../articles/1_Introduction.html">1. An Introduction to the `voluModel` Package</a>
+    </li>
+    <li>
+      <a href="../articles/2_RasterProcessing.html">2. A Tutorial on How to Use `voluModel` Tools to Process Raster Data</a>
+    </li>
+    <li>
+      <a href="../articles/3_DataSampling.html">3. A Tutorial on How to Use `voluModel` Tools for Data Sampling</a>
+    </li>
+    <li>
+      <a href="../articles/4_Visualization.html">4. A Guide to `voluModel` Visualization Tools</a>
+    </li>
+    <li>
+      <a href="../articles/5_MappingBiodiversity.html">5. A Tutorial on How to Generate Alpha Diversity Maps with `voluModel`</a>
+    </li>
+    <li>
+      <a href="../articles/6_GLMWorkflow.html">6. A Tutorial on How to Generate and Project a 3D Niche Model Using the GLM Algorithm</a>
     </li>
   </ul></li>
 <li>
@@ -71,7 +86,7 @@ with suitable habitat.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plotLayers</span><span class="op">(</span><span class="va">rast</span>, land <span class="op">=</span> <span class="cn">NA</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, title <span class="op">=</span> <span class="st">"A Raster"</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plotLayers</span><span class="op">(</span><span class="va">rast</span>, land <span class="op">=</span> <span class="cn">NA</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, title <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -88,7 +103,10 @@ occurrence points.</p></dd>
 <dt>landCol</dt>
 <dd><p>Color for land on map.</p></dd>
 <dt>title</dt>
-<dd><p>A title for the plot.</p></dd>
+<dd><p>A title for the plot. If not title is
+supplied, the title "Suitability from &lt;&lt;MINIMUM
+DEPTH&gt;&gt; to &lt;&lt;MAXIMUM DEPTH&gt;&gt;" is inferred from
+names of <code>RasterStack</code>.</p></dd>
 <dt>...</dt>
 <dd><p>Additional optional arguments.</p></dd>
 </dl></div>
