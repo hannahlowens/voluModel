@@ -116,43 +116,13 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>To date, distribution and ecological niche models of marine species have generally only considered distributions in two-dimensional space, not accounting for depth. This may lead to mis-estimation of species distributions and subsequent diversity estimates, especially among pelagic and benthic species. Here, we present a possible way forward: generating species distribution models based on environmental data extracted at the depths where individuals were observed, and calibrated with three-dimensional sampling of pseudo-absences. We also provide some methods to project these models back into three-dimensional space and visualize the results.</p>
-</div>
-<div class="section level2">
-<h2 id="data-inputs">Data Inputs<a class="anchor" aria-label="anchor" href="#data-inputs"></a>
-</h2>
-<p>First thing’s first. Distributional models are based on coordinates of species’ occurrences. Here is an example dataset of Steindachneria argentia, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain et al., 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens et al., 2021).</p>
+<p>Naturally, to build 3D distribution models, one needs three-dimensionally structured environmental data. These data may come in the form of interpolated <em>in situ</em> measurements (e.g. NOAA’s World Ocean Atlas dataset; Garcia et al. 2018a) or as outputs from climate models, either as stand-alone ocean components or as a component of coupled atmosphere-ocean models (e.g. CCSM3, Collins et al. 2006; HadCM3, Valdes et al. 2017). Typically, these data are organized as a series of horizontal layers that are stacked by depth.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">occs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/Steindachneria_argentea.csv"</span>, 
-                             package<span class="op">=</span><span class="st">'voluModel'</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">occs</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">##   decimalLongitude decimalLatitude depth</span>
-<span class="co">## 1            -97.5            22.5     0</span>
-<span class="co">## 2            -88.5            29.5     0</span>
-<span class="co">## 3            -90.5            28.5     0</span>
-<span class="co">## 4            -94.5            18.5     0</span>
-<span class="co">## 5            -97.5            23.5     0</span>
-<span class="co">## 6            -96.5            25.5     0</span></code></pre>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hannahlowens.github.io/voluModel/" class="external-link">voluModel</a></span><span class="op">)</span> <span class="co"># Since this is the package this vignette is about.</span></code></pre></div>
+<pre><code><span class="co">## Warning in register(): Can't find generic `scale_type` in package ggplot2 to</span>
+<span class="co">## register S3 method.</span></code></pre>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/dotchart.html" class="external-link">dotchart</a></span><span class="op">(</span><span class="va">occs</span><span class="op">$</span><span class="va">depth</span>, main <span class="op">=</span> <span class="st">"Distribution of depth measurements"</span><span class="op">)</span></code></pre></div>
-<p><img src="2_RasterProcessing_files/figure-html/occurrence%20data-1.png" width="700"></p>
-<p>Based on this plot, and what we know about the biology of luminous hakes and how these occurrence data are collected, I am going to remove occurrences that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not <em>in situ</em> or errors of some kind.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">occsClean</span> <span class="op">&lt;-</span> <span class="va">occs</span><span class="op">[</span><span class="op">!</span><span class="va">occs</span><span class="op">$</span><span class="va">depth</span> <span class="op"><a href="https://rdrr.io/pkg/raster/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">2100</span><span class="op">)</span>,<span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">occsClean</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">##    decimalLongitude decimalLatitude depth</span>
-<span class="co">## 28            -88.5            29.5   275</span>
-<span class="co">## 29            -59.5             9.5   275</span>
-<span class="co">## 30            -96.5            26.5   275</span>
-<span class="co">## 31            -67.5            18.5   275</span>
-<span class="co">## 32            -88.5            29.5    55</span>
-<span class="co">## 33            -88.5            29.5   100</span></code></pre>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/dotchart.html" class="external-link">dotchart</a></span><span class="op">(</span><span class="va">occsClean</span><span class="op">$</span><span class="va">depth</span>, main <span class="op">=</span> <span class="st">"Distribution of depth clean measurements"</span><span class="op">)</span></code></pre></div>
-<p><img src="2_RasterProcessing_files/figure-html/clean%20occurrence%20data-1.png" width="700"></p>
-<p>Next, we load two environmental datasets from the World Ocean Atlas (Garcia et al., 2019): temperature (Locarnini et al., 2018) and apparent oxygen utilization (Garcia et al., 2019). We have chosen these variables for simplified illustrative purposes–we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. Our first task is to read in the shapefiles and convert each variable into a <code>RasterBrick</code>. While we are at it, we will generate a raster from the deepest value available for each point. While you might call this a “bottom” raster, it is important to note that in some cases, values are not available for the bottom.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://rgdal.r-forge.r-project.org" class="external-link">rgdal</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://rgdal.r-forge.r-project.org" class="external-link">rgdal</a></span><span class="op">)</span> <span class="co"># For vector stuff. Will eventually be replaced with sf.</span></code></pre></div>
 <pre><code><span class="co">## Loading required package: sp</span></code></pre>
 <pre><code><span class="co">## Please note that rgdal will be retired by the end of 2023,</span>
 <span class="co">## plan transition to sf/stars/terra functions using GDAL and PROJ</span>
@@ -168,50 +138,11 @@
 <span class="co">## Linking to sp version:1.4-6</span>
 <span class="co">## To mute warnings of possible GDAL/OSR exportToProj4() degradation,</span>
 <span class="co">## use options("rgdal_show_exportToProj4_warnings"="none") before loading sp or rgdal.</span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hannahlowens.github.io/voluModel/" class="external-link">voluModel</a></span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Warning in register(): Can't find generic `scale_type` in package ggplot2 to</span>
-<span class="co">## register S3 method.</span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/woa18_decav_t00mn01_cropped.zip"</span>, 
-                  package <span class="op">=</span> <span class="st">"voluModel"</span><span class="op">)</span>,
-      exdir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, junkpaths <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
-<span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature/"</span><span class="op">)</span>, 
-                       layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpMpZPCl/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
-<span class="co">## with 2291 features</span>
-<span class="co">## It has 102 fields</span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature/"</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
-
-<span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">[</span><span class="va">temperature</span><span class="op">@</span><span class="va">data</span> <span class="op">==</span> <span class="op">-</span><span class="fl">999.999</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>
-
-<span class="co">#Creating a bottom raster</span>
-<span class="va">temperatureBottom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bottomRaster.html">bottomRaster</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span>
-
-<span class="co"># Creating a RasterBrick</span>
-<span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span>,
-                                   <span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Get names of depths</span>
-<span class="va">envtNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[d,M]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span><span class="op">)</span>
-<span class="va">envtNames</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"0"</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">envtNames</span>
-
-<span class="co"># How do these files look?</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, 
-     main <span class="op">=</span> <span class="st">"Temperature, surface"</span><span class="op">)</span></code></pre></div>
-<p><img src="2_RasterProcessing_files/figure-html/environmental%20data%20loading%20temperature-1.png" width="700"></p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">temperatureBottom</span>,
-     main <span class="op">=</span> <span class="st">"Temperature, bottom"</span><span class="op">)</span></code></pre></div>
-<p><img src="2_RasterProcessing_files/figure-html/environmental%20data%20loading%20temperature-2.png" width="700"></p>
-<p>Apparent oxygen usage is more patchily sampled than temperature (it’s generally measured from instrument casts on research cruises), so we use the <code><a href="../reference/interpolateRaster.html">interpolateRaster()</a></code> function to produce statistically-interpolated layers using <code>TPS()</code> from the <code>fields</code> package. Be patient–this step can take a while, although as shown here, I am using the <code>fastTPS()</code> approximation. Maybe this will work ok for your data, maybe it won’t. It depends on the data.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dnychka/fieldsRPackage" class="external-link">fields</a></span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span> <span class="co"># For raster stuff. Will eventually be replaced with terra.</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span> <span class="co"># For data organization</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span> <span class="co"># For supplementary visualization</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dnychka/fieldsRPackage" class="external-link">fields</a></span><span class="op">)</span> <span class="co"># For raster interpolation</span></code></pre></div>
 <pre><code><span class="co">## Loading required package: spam</span></code></pre>
 <pre><code><span class="co">## Spam version 2.8-0 (2022-01-05) is loaded.</span>
 <span class="co">## Type 'help( Spam)' or 'demo( spam)' for a short introduction </span>
@@ -227,7 +158,147 @@
 <pre><code><span class="co">## Loading required package: viridisLite</span></code></pre>
 <pre><code><span class="co">## </span>
 <span class="co">## Try help(fields) to get started.</span></code></pre>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+</div>
+<div class="section level2">
+<h2 id="data-inputs">Data Inputs<a class="anchor" aria-label="anchor" href="#data-inputs"></a>
+</h2>
+<p>First, let’s look at a relatively simple environmental variable from the World Ocean Atlas (Garcia et al, 2019): temperature (Locarnini et al, 2018). These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. Our first task is to read in the shapefile as a <code>SpatialPointsDataFrame</code>. Note that each row in <code>temperature@data</code> is a set of horizontal coordinates. Each column is a vertical position in the water column. Make sure to check the metadata of the data you use. Different sources may use vertical depth structures.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/woa18_decav_t00mn01_cropped.zip"</span>, 
+                  package <span class="op">=</span> <span class="st">"voluModel"</span><span class="op">)</span>,
+      exdir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, junkpaths <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+<span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature/"</span><span class="op">)</span>, 
+                       layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
+<span class="co">## Source: "/tmp/RtmpocbocM/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## with 2291 features</span>
+<span class="co">## It has 102 fields</span></code></pre>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature/"</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+
+<span class="co"># Specifying "no data" value</span>
+<span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">[</span><span class="va">temperature</span><span class="op">@</span><span class="va">data</span> <span class="op">==</span> <span class="op">-</span><span class="fl">999.999</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>
+
+<span class="co"># Looking at the dataset</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">##   SURFACE    d5M   d10M   d15M   d20M   d25M   d30M   d35M   d40M   d45M   d50M</span>
+<span class="co">## 1  25.330 25.296 25.265 25.222 25.149 24.958 24.641 24.314 23.894 23.341 22.670</span>
+<span class="co">## 2  25.118 25.111 25.091 25.067 24.995 24.855 24.736 24.254 23.779 23.009 22.246</span>
+<span class="co">## 3  25.032 24.992 24.978 24.922 24.770 24.594 24.251 23.725 23.081 22.464 21.684</span>
+<span class="co">## 4  24.952 24.914 24.835 24.753 24.620 24.389 23.992 23.447 22.884 22.250 21.481</span>
+<span class="co">## 5  24.791 24.761 24.726 24.678 24.521 24.243 23.922 23.443 22.812 22.059 21.282</span>
+<span class="co">## 6  24.889 24.870 24.823 24.736 24.637 24.426 23.925 23.223 22.521 21.734 20.924</span>
+<span class="co">##     d55M   d60M   d65M   d70M   d75M   d80M   d85M   d90M   d95M  d100M  d125M</span>
+<span class="co">## 1 21.995 21.350 20.586 19.760 18.922 18.124 17.359 16.725 15.862 15.323 13.823</span>
+<span class="co">## 2 21.408 20.541 19.727 18.959 18.067 17.246 16.548 15.957 15.261 14.807 13.659</span>
+<span class="co">## 3 20.782 19.916 18.923 18.060 17.330 16.675 16.095 15.637 15.089 14.649 13.639</span>
+<span class="co">## 4 20.709 19.780 18.831 17.993 17.236 16.629 15.967 15.570 15.053 14.711 13.609</span>
+<span class="co">## 5 20.365 19.491 18.532 17.640 16.934 16.291 15.735 15.210 14.783 14.495 13.665</span>
+<span class="co">## 6 20.276 19.532 18.748 17.913 17.053 16.504 15.951 15.385 14.897 14.605 13.736</span>
+<span class="co">##    d150M  d175M  d200M  d225M  d250M  d275M  d300M  d325M  d350M  d375M  d400M</span>
+<span class="co">## 1 13.228 12.929 12.749 12.561 12.208 11.955 11.688 11.400 10.971 10.506 10.087</span>
+<span class="co">## 2 13.240 12.997 12.783 12.580 12.357 12.096 11.777 11.401 10.957 10.493 10.019</span>
+<span class="co">## 3 13.278 13.007 12.799 12.580 12.350 12.077 11.774 11.418 11.004 10.536 10.083</span>
+<span class="co">## 4 13.207 12.940 12.742 12.532 12.307 12.053 11.766 11.422 10.994 10.537 10.066</span>
+<span class="co">## 5 13.286 13.015 12.802 12.597 12.361 12.107 11.802 11.444 11.031 10.555 10.066</span>
+<span class="co">## 6 13.320 13.084 12.877 12.665 12.447 12.201 11.904 11.541 11.132 10.646 10.120</span>
+<span class="co">##   d425M d450M d475M d500M d550M d600M d650M d700M d750M d800M d850M d900M d950M</span>
+<span class="co">## 1 9.581 9.134 8.703 8.514 7.724 7.138 6.644 6.235 5.867 5.545 5.252 4.997 4.762</span>
+<span class="co">## 2 9.626 9.199 8.778 8.419 7.750 7.142 6.638 6.224 5.883 5.550 5.249 4.961 4.738</span>
+<span class="co">## 3 9.607 9.192 8.769 8.386 7.742 7.147 6.637 6.203 5.827 5.487 5.208 4.966 4.733</span>
+<span class="co">## 4 9.597 9.158 8.736 8.344 7.659 7.045 6.561 6.152 5.815 5.503 5.179 4.915 4.691</span>
+<span class="co">## 5 9.579 9.161 8.730 8.346 7.688 7.106 6.621 6.185 5.808 5.504 5.197 4.941 4.716</span>
+<span class="co">## 6 9.641 9.158 8.749 8.337 7.651 7.088 6.590 6.168 5.804 5.503 5.211 4.964 4.748</span>
+<span class="co">##   d1000M d1050M d1100M d1150M d1200M d1250M d1300M d1350M d1400M d1450M d1500M</span>
+<span class="co">## 1  4.544  4.357  4.167  3.977  3.822  3.666  3.500  3.384  3.263  3.147  3.037</span>
+<span class="co">## 2  4.536  4.372  4.189  3.995  3.776  3.609  3.458  3.334  3.210  3.108  3.032</span>
+<span class="co">## 3  4.524  4.320  4.139  3.948  3.774  3.624  3.506  3.380  3.261  3.136  3.024</span>
+<span class="co">## 4  4.514  4.331  4.146  3.965  3.750  3.593  3.451  3.325  3.221  3.128  3.028</span>
+<span class="co">## 5  4.489  4.288  4.104  3.940  3.747  3.595  3.472  3.339  3.210  3.104  3.001</span>
+<span class="co">## 6  4.518  4.312  4.130  3.953  3.788  3.647  3.502  3.365  3.238  3.118  3.006</span>
+<span class="co">##   d1550M d1600M d1650M d1700M d1750M d1800M d1850M d1900M d1950M d2000M d2100M</span>
+<span class="co">## 1  2.930  2.842  2.741  2.654  2.580  2.504  2.442  2.380  2.332  2.258  2.174</span>
+<span class="co">## 2  2.954  2.862  2.764  2.647  2.555  2.472  2.417  2.360  2.301     NA     NA</span>
+<span class="co">## 3  2.924  2.827  2.720  2.637  2.567  2.505  2.431  2.365  2.315     NA     NA</span>
+<span class="co">## 4  2.908  2.813  2.725  2.649  2.576  2.515  2.461  2.394  2.342     NA     NA</span>
+<span class="co">## 5  2.919  2.826  2.731  2.666  2.594  2.527  2.455  2.406  2.353     NA     NA</span>
+<span class="co">## 6  2.902  2.805  2.720  2.642  2.565  2.492  2.431  2.373  2.323  2.272     NA</span>
+<span class="co">##   d2200M d2300M d2400M d2500M d2600M d2700M d2800M d2900M d3000M d3100M d3200M</span>
+<span class="co">## 1  2.107   2.05  1.987  1.914   1.87   1.82  1.766   1.72  1.678   1.65  1.597</span>
+<span class="co">## 2     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 3     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 4     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 5     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 6     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">##   d3300M d3400M d3500M d3600M d3700M d3800M d3900M d4000M d4100M d4200M d4300M</span>
+<span class="co">## 1  1.583  1.584  1.586     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 2     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 3     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 4     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 5     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 6     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">##   d4400M d4500M d4600M d4700M d4800M d4900M d5000M d5100M d5200M d5300M d5400M</span>
+<span class="co">## 1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 2     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 3     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 4     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 5     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 6     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">##   d5500M</span>
+<span class="co">## 1     NA</span>
+<span class="co">## 2     NA</span>
+<span class="co">## 3     NA</span>
+<span class="co">## 4     NA</span>
+<span class="co">## 5     NA</span>
+<span class="co">## 6     NA</span></code></pre>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"medium"</span>, 
+                                    returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
+<span class="va">ext</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/extent.html" class="external-link">extent</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">temperature</span>, main <span class="op">=</span> <span class="st">"Distribution of voluModel subset of WOA Temperature 2018"</span>,
+     pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span>, xlim <span class="op">=</span> <span class="va">ext</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>, ylim <span class="op">=</span> <span class="va">ext</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></code></pre></div>
+<p><img src="2_RasterProcessing_files/figure-html/environmental%20data%20loading%20temperature-1.png" width="700"></p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># What does the WOA depth structure look like?</span>
+<span class="va">depths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">)</span>
+<span class="va">depths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="va">depths</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>, pattern <span class="op">=</span> <span class="st">"[d,M]"</span>, replacement <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">depths</span>, pch <span class="op">=</span> <span class="fl">20</span>, main <span class="op">=</span> <span class="st">"Depth Intervals in WOA Temperature Dataset"</span>, xlab <span class="op">=</span> <span class="st">"Depth (m)"</span><span class="op">)</span></code></pre></div>
+<p><img src="2_RasterProcessing_files/figure-html/environmental%20data%20loading%20temperature-2.png" width="700"></p>
+<p>Next, we convert temperature into a <code>RasterBrick</code>. While we are at it, we will generate a raster from the deepest value available for each point. While you might call this a “bottom” raster, it is important to note that in some cases, values are not available for the bottom. After the <code>RasterBrick</code> is created, we give it the same depth names as the columns in the <code>SpatialPointsDataFrame</code>. This is important, because <code>voluModel</code> uses these names as z coordinates when handling 3D data. I am using <code><a href="../reference/oneRasterPlot.html">oneRasterPlot()</a></code> from voluModel to visualize the rasters using a uniform, high-contrast asthetic.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#Creating a bottom raster</span>
+<span class="va">temperatureBottom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bottomRaster.html">bottomRaster</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span>
+
+<span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">temperatureBottom</span>,land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
+              title <span class="op">=</span> <span class="st">"Temperature, bottom"</span><span class="op">)</span></code></pre></div>
+<p><img src="2_RasterProcessing_files/figure-html/bottom-1.png" width="700"></p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Creating a RasterBrick</span>
+<span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span>,
+                                   <span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>
+
+<span class="co"># Get names of depths</span>
+<span class="va">envtNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[d,M]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span><span class="op">)</span>
+<span class="va">envtNames</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"0"</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">envtNames</span>
+
+<span class="co"># How do these files look?</span>
+<span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
+              title<span class="op">=</span> <span class="st">"Temperature, surface"</span><span class="op">)</span></code></pre></div>
+<p><img src="2_RasterProcessing_files/figure-html/bottom-2.png" width="700"></p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># R won't let you name the layers numbers only--it pastes an X at the beginning</span>
+<span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">[[</span><span class="st">"X100"</span><span class="op">]</span><span class="op">]</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
+              title<span class="op">=</span> <span class="st">"Temperature, 100m"</span><span class="op">)</span></code></pre></div>
+<p><img src="2_RasterProcessing_files/figure-html/bottom-3.png" width="700"></p>
+</div>
+<div class="section level2">
+<h2 id="interpolation">Interpolation<a class="anchor" aria-label="anchor" href="#interpolation"></a>
+</h2>
+<p>Next, we have a bit of a more complicated example: apparent oxygen utilization (Garcia et al, 2019). Apparent oxygen usage is more patchily sampled than temperature (it’s generally measured from instrument casts on research cruises, and the coverage isn’t quite as dense as for temperature).</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/woa18_all_A00mn01_cropped.zip"</span>, 
                   package <span class="op">=</span> <span class="st">"voluModel"</span><span class="op">)</span>,
@@ -236,18 +307,32 @@
 <span class="va">oxygen</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/oxygen/"</span><span class="op">)</span>, 
                   layer <span class="op">=</span> <span class="st">"woa18_all_A00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpMpZPCl/oxygen", layer: "woa18_all_A00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpocbocM/oxygen", layer: "woa18_all_A00mn01_cropped"</span>
 <span class="co">## with 1967 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/oxygen/"</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 
 <span class="va">oxygen</span><span class="op">@</span><span class="va">data</span><span class="op">[</span><span class="va">oxygen</span><span class="op">@</span><span class="va">data</span> <span class="op">==</span> <span class="op">-</span><span class="fl">999.999</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>
 
-<span class="co">#Creating a bottom raster</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">oxygen</span>, main <span class="op">=</span> <span class="st">"Distribution of voluModel subset of WOA Apparent Oxygen Utilization 2018"</span>,
+     pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span>, xlim <span class="op">=</span> <span class="va">ext</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>, ylim <span class="op">=</span> <span class="va">ext</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></code></pre></div>
+<p><img src="2_RasterProcessing_files/figure-html/environmental%20data%20loading%20oxygen-1.png" width="700"></p>
+<p>There is a workaround for this, since we can reasonably expect some degree of spatial autocorrelation in apparent oxygen utilization. We use the <code><a href="../reference/interpolateRaster.html">interpolateRaster()</a></code> function to produce statistically-interpolated layers using <code>TPS()</code> from the <code>fields</code> package (this is a thin-plate spline interpolation). Be patient–this step can take a while, although as shown here, I am using the <code>fastTPS()</code> approximation, which only samples from nearby cells to speed things up. Maybe <code>fastTPS()</code> will work ok for your data, maybe it won’t. It depends on the data.</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#Creating a bottom raster</span>
 <span class="va">oxygenBottom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bottomRaster.html">bottomRaster</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">)</span>
-
-<span class="co"># Creating a RasterBrick</span>
+<span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">oxygenBottom</span>,land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
+              title <span class="op">=</span> <span class="st">"Apparent oxygen utilization, bottom"</span><span class="op">)</span></code></pre></div>
+<p><img src="2_RasterProcessing_files/figure-html/interpolate%20oxygen-1.png" width="700"></p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">oxygenBottomInterpolated</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/interpolateRaster.html">interpolateRaster</a></span><span class="op">(</span><span class="va">oxygenBottom</span>, lon.lat <span class="op">=</span> <span class="cn">T</span>, fast <span class="op">=</span> <span class="cn">T</span>, aRange <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="co">#Thin plate spline interpolation</span>
+<span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">oxygenBottomInterpolated</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
+              title <span class="op">=</span> <span class="st">"Apparent oxygen utilization, bottom, interpolated"</span><span class="op">)</span></code></pre></div>
+<p><img src="2_RasterProcessing_files/figure-html/interpolate%20oxygen-2.png" width="700"></p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Creating a RasterBrick</span>
 <span class="va">oxygen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">@</span><span class="va">coords</span>, <span class="va">oxygen</span><span class="op">@</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>
 
 <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/nlayers.html" class="external-link">nlayers</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
@@ -259,15 +344,16 @@
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">envtNames</span>
 <span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">envtNames</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, 
-     main <span class="op">=</span> <span class="st">"Apparent Oxygen Utilization, surface"</span><span class="op">)</span></code></pre></div>
-<p><img src="2_RasterProcessing_files/figure-html/environmental%20data%20loading%20oxygen-1.png" width="700"></p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">oxygenBottom</span>,
-     main <span class="op">=</span> <span class="st">"Apparent Oxygen Utilization, bottom"</span><span class="op">)</span></code></pre></div>
-<p><img src="2_RasterProcessing_files/figure-html/environmental%20data%20loading%20oxygen-2.png" width="700"></p>
+<span class="co"># How do these files look?</span>
+<span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
+              title<span class="op">=</span> <span class="st">"Apparent Oxygen Utilization, surface"</span><span class="op">)</span></code></pre></div>
+<p><img src="2_RasterProcessing_files/figure-html/interpolate%20oxygen-3.png" width="700"></p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">[[</span><span class="st">"X100"</span><span class="op">]</span><span class="op">]</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
+              title<span class="op">=</span> <span class="st">"Apparent Oxygen Utilization, 100m"</span><span class="op">)</span></code></pre></div>
+<p><img src="2_RasterProcessing_files/figure-html/interpolate%20oxygen-4.png" width="700"></p>
 <p>You can see from these plots that apparent oxygen utilization is “patchier” than temperature. If you are confident that there should be a strong spatial correlation in a “patchy” data layer, you can also statistically smooth it, again using <code>TPS()</code>, like this:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">oxygenSmooth</span> <span class="op">&lt;-</span> <span class="va">oxygen</span>
 <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/nlayers.html" class="external-link">nlayers</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
   <span class="va">oxygenSmooth</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/smoothRaster.html">smoothRaster</a></span><span class="op">(</span><span class="va">oxygenSmooth</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, lon.lat <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="co">#Thin plate spline interpolation</span>
@@ -277,301 +363,32 @@
 <span class="co"># Change names to match temperature</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">oxygenSmooth</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">oxygenSmooth</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, 
-     main <span class="op">=</span> <span class="st">"Apparent Oxygen Utilization, surface"</span><span class="op">)</span></code></pre></div>
-<p><img src="2_RasterProcessing_files/figure-html/smooth%20oxygen%20display-1.png" width="700"></p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">oxygenSmoothBottom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/smoothRaster.html">smoothRaster</a></span><span class="op">(</span><span class="va">oxygenBottom</span>, lon.lat <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Warning: </span>
-<span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span>
-<span class="co">##   (GCV) Generalized Cross-Validation </span>
-<span class="co">##    minimum at  right endpoint  lambda  =  0.03854437 (eff. df= 168.15 )</span></code></pre>
+<span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">oxygenSmooth</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
+              title<span class="op">=</span> <span class="st">"Apparent Oxygen Utilization, surface"</span><span class="op">)</span>
+
+<span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">oxygenSmooth</span><span class="op">[[</span><span class="st">"X100"</span><span class="op">]</span><span class="op">]</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
+              title<span class="op">=</span> <span class="st">"Apparent Oxygen Utilization, 100m"</span><span class="op">)</span></code></pre></div>
+<p><img src="2_RasterProcessing_files/figure-html/smooth%20oxygen%20display-1.png" width="700"><img src="2_RasterProcessing_files/figure-html/smooth%20oxygen%20display-2.png" width="700"></p>
+<p>Let’s smooth the bottom apparent oxygen utilization while we’re at it.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">oxygenSmoothBottom</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/crop.html" class="external-link">crop</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/mask.html" class="external-link">mask</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">oxygenSmoothBottom</span>, 
+<code class="sourceCode R"><span class="va">oxygenSmoothBottom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/smoothRaster.html">smoothRaster</a></span><span class="op">(</span><span class="va">oxygenBottomInterpolated</span>, lon.lat <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="co"># Not using fastTPS</span>
+<span class="va">oxygenSmoothBottom</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/crop.html" class="external-link">crop</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/mask.html" class="external-link">mask</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">oxygenSmoothBottom</span>, 
                                 mask <span class="op">=</span> <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, 
                            <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">oxygenSmoothBottom</span>, 
-     main <span class="op">=</span> <span class="st">"Smoothed Apparent Oxygen Utilization, bottom"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">oxygenSmoothBottom</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>,
+     title <span class="op">=</span> <span class="st">"Apparent Oxygen Utilization, bottom, interpolated and smoothed"</span><span class="op">)</span></code></pre></div>
 <p><img src="2_RasterProcessing_files/figure-html/bottom%20smoothed%20oxygen-1.png" width="700"></p>
-</div>
-<div class="section level2">
-<h2 id="sampling-data-for-model-generation">Sampling data for model generation<a class="anchor" aria-label="anchor" href="#sampling-data-for-model-generation"></a>
-</h2>
-<p>The first step is down-sampling the occurrence data so that there is only one occurrence per voxel (i.e. 3D pixel) of environmental data. We do this to avoid over-fitting the model due to biased sampling. The resampled points are centered in each voxel. You will notice that in this instance there was no re-centering of points, as the orignal dataset was already downsampled to the resolution of the environmental data. The red dots show occurrences from the original dataset that were removed when occurrences with depths of 0 and 2100m were removed, and had no occurrences at other depths.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">occurrences</span> <span class="op">&lt;-</span> <span class="va">occsClean</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLatitude"</span>, <span class="st">"decimalLongitude"</span>, <span class="st">"depth"</span><span class="op">)</span><span class="op">]</span> 
-
-<span class="co"># Preliminary cleaning</span>
-<span class="va">occurrences</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span>
-<span class="va">occurrences</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span>,<span class="op">]</span>
-
-<span class="co"># Gets the layer index for each occurrence by matching to depth</span>
-<span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[X]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">occurrences</span><span class="op">$</span><span class="va">index</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">$</span><span class="va">depth</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/which.minmax.html" class="external-link">which.min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">layerNames</span> <span class="op">-</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">indices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">$</span><span class="va">index</span><span class="op">)</span>
-<span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span>
-<span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="va">indices</span><span class="op">)</span><span class="op">{</span>
-  <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span><span class="va">occurrences</span><span class="op">$</span><span class="va">index</span><span class="op">==</span><span class="va">i</span>,<span class="op">]</span>
-  <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/downsample.html">downsample</a></span><span class="op">(</span><span class="va">tempPoints</span>, <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-  <span class="va">tempPoints</span><span class="op">$</span><span class="va">depth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">layerNames</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tempPoints</span><span class="op">)</span><span class="op">)</span>
-  <span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">downsampledOccs</span>, <span class="va">tempPoints</span><span class="op">)</span>
-<span class="op">}</span>
-
-<span class="va">occurrences</span> <span class="op">&lt;-</span> <span class="va">downsampledOccs</span>
-
-<span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Original number of points: "</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occs</span><span class="op">)</span>, <span class="st">"; number of downsampled occs: "</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "Original number of points: 110; number of downsampled occs: 82"</span></code></pre>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs2 <span class="op">=</span> <span class="va">occurrences</span>, 
-             occs1Name <span class="op">=</span> <span class="st">"Original"</span>, occs2Name <span class="op">=</span> <span class="st">"Cleaned"</span>, 
-             spName <span class="op">=</span> <span class="st">"Steindachneria argentia"</span>, 
-             land <span class="op">=</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"medium"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
-<span class="op">)</span></code></pre></div>
-<p><img src="2_RasterProcessing_files/figure-html/downsample%20to%20voxel-1.png" width="700"></p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">indices</span>, <span class="va">layerNames</span>, <span class="va">tempPoints</span>, <span class="va">i</span>, <span class="va">downsampledOccs</span>, <span class="va">occs</span><span class="op">)</span></code></pre></div>
-<p>Next, we generate a sampling region for the model based on occurrence points. Note that ideally when you’re modeling you would carefully curate this background sampling region to make sure it truly approximates the area accessible to the species you are modeling. However, if you do not have a lot of information regarding accessible areas, the function supplied here may be useful to at least generate something logical and repeatable. <code>marineBackground</code> is a special case wrapper around <code>getDynamicAlphaHull</code> from the <code>rangeBuilder</code> package. <code>getDynamicAlphaHull</code> generates an alpha hull polygon around occurrence points; it iteratively adjusts the alpha parameter (how tightly the hull adheres to the points) to fit a hull around the data per the user’s requirements. One can give it a buffer distance around points, as well as the minimum fraction of occurrences that must be found within the shapefile and the number of allowable distinct polygons. What <code>marineBackground</code> brings to the table is 1) robust functionality when the hull expands beyond 180 degrees East and/or West. Regions beyond this meridian are wrapped to the appropriate hemisphere instead of being deleted. If the user chooses to clip the hull to the oceans, <code>marineBackground</code> will also check to verify that all resulting shapefiles have occurrence points, so one is less likely to incorporate background data from an area inaccessible to the species (e.g. if a species is found only in the Atlantic, but the hull crosses over the Isthmus of Panama, <code>marineBackground</code> will remove hull shapes found in the Pacific).</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">backgroundSamplingRegions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Using decimalLongitude and decimalLatitude</span>
-<span class="co">##  as x and y coordinates, respectively.</span></code></pre>
-<pre><code><span class="co">## Registered S3 method overwritten by 'spatstat.geom':</span>
-<span class="co">##   method     from</span>
-<span class="co">##   print.boxx cli</span></code></pre>
-<pre><code><span class="co">## Warning in min(compl[ind[compl[ind, "r"] &gt; 0], "r"]): no non-missing arguments</span>
-<span class="co">## to min; returning Inf</span></code></pre>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, 
-     main <span class="op">=</span> <span class="st">"Points and background sampling plotted on surface temperature"</span>,
-     col <span class="op">=</span> <span class="fu">viridisLite</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">mako</a></span><span class="op">(</span>n<span class="op">=</span> <span class="fl">11</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">backgroundSamplingRegions</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>,<span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>, 
-       cex <span class="op">=</span> <span class="fl">1</span>, pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></code></pre></div>
-<p><img src="2_RasterProcessing_files/figure-html/environmental%20background%20sampling-1.png" width="700"></p>
-<p>Finally, we need to draw the environmental variable data from each occurrence voxel, as well as from the background sampling region. First, we sample data for occurrences. Then, we generate background data by drawing occurrences from the XY extent of the background shapefile and from user-specified depths from 100 to 1500m. Background points intersecting with occurrences are not returned. Finally, the environmental data at each background coordinate are drawn and stored in their own data object.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Presences</span>
-<span class="va">oxyVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, <span class="va">oxygenSmooth</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span>
-<span class="co">##  as x, y, and z coordinates, respectively.</span></code></pre>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tempVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, <span class="va">temperature</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span>
-<span class="co">##  as x, y, and z coordinates, respectively.</span></code></pre>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">occurrences</span>, <span class="va">oxyVals</span>, <span class="va">tempVals</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span>, <span class="st">"depth"</span>, <span class="st">"AOU"</span>, <span class="st">"Temperature"</span><span class="op">)</span>
-<span class="va">vals</span> <span class="op">&lt;-</span> <span class="va">vals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span>,<span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>
-<span class="va">occsWdata</span> <span class="op">&lt;-</span> <span class="va">vals</span>
-
-<span class="co"># Background</span>
-<span class="va">backgroundVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mSampling3D.html">mSampling3D</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, 
-                              envBrick <span class="op">=</span> <span class="va">temperature</span>, 
-                              mShp <span class="op">=</span> <span class="va">backgroundSamplingRegions</span>, 
-                              depthLimit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">1500</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span>
-<span class="co">##  as x, y, and z coordinates, respectively.</span></code></pre>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">oxyVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">backgroundVals</span>, <span class="va">oxygenSmooth</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span>
-<span class="co">##  as x, y, and z coordinates, respectively.</span></code></pre>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tempVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">backgroundVals</span>, <span class="va">temperature</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span>
-<span class="co">##  as x, y, and z coordinates, respectively.</span></code></pre>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">backgroundVals</span>, <span class="va">oxyVals</span>, <span class="va">tempVals</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span>, <span class="st">"depth"</span>, <span class="st">"AOU"</span>, <span class="st">"Temperature"</span><span class="op">)</span>
-<span class="va">vals</span> <span class="op">&lt;-</span> <span class="va">vals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span>,<span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>
-<span class="va">backgroundWdata</span> <span class="op">&lt;-</span> <span class="va">vals</span>
-<span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">oxyVals</span>, <span class="va">tempVals</span>, <span class="va">vals</span>, <span class="va">backgroundVals</span><span class="op">)</span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="niche-envelope-models">Niche envelope models<a class="anchor" aria-label="anchor" href="#niche-envelope-models"></a>
-</h2>
-<p>First, let’s generate a very simple envelope model, in which we define suitable conditions as those within the maximum and minimum conditions at which <em>Aphanopus intermedius</em> has been observed.</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Get limits</span>
-<span class="va">tempLims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">$</span><span class="va">Temperature</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
-<span class="va">aouLims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">$</span><span class="va">AOU</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Reclassify environmental bricks to presence/absence</span>
-<span class="va">temperaturePresence</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/reclassify.html" class="external-link">reclassify</a></span><span class="op">(</span><span class="va">temperature</span>, 
-                                  rcl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>,<span class="va">tempLims</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,<span class="fl">0</span>,
-                                          <span class="va">tempLims</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">tempLims</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, <span class="fl">1</span>,
-                                          <span class="va">tempLims</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, <span class="cn">Inf</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
-<span class="va">AOUpresence</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/reclassify.html" class="external-link">reclassify</a></span><span class="op">(</span><span class="va">oxygenSmooth</span>, 
-                          rcl <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="cn">Inf</span>, <span class="va">aouLims</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,<span class="fl">0</span>,
-                                  <span class="va">aouLims</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">aouLims</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, <span class="fl">1</span>,
-                                  <span class="va">aouLims</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, <span class="cn">Inf</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Put it all together</span>
-<span class="va">envelopeModel</span> <span class="op">&lt;-</span> <span class="va">temperaturePresence</span> <span class="op">*</span> <span class="va">AOUpresence</span>
-<span class="va">envelopeModel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/mask.html" class="external-link">mask</a></span><span class="op">(</span><span class="va">envelopeModel</span>, <span class="va">backgroundSamplingRegions</span><span class="op">)</span>
-<span class="va">envelopeModel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/crop.html" class="external-link">crop</a></span><span class="op">(</span><span class="va">envelopeModel</span>, <span class="va">backgroundSamplingRegions</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">envelopeModel</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">tempLims</span>, <span class="va">aouLims</span>, <span class="va">temperaturePresence</span>, <span class="va">AOUpresence</span><span class="op">)</span></code></pre></div>
-<p>It’s hard to visualize things in three dimensions, but here’s an attempt. <code>plotLayers</code> plots a transparent layer of suitable habitat for each depth layer. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. Here, I am plotting suitability from 55m to 1300m, the depth range of occurrences used to train the envelope model.</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Get indices of model-relevant layers</span>
-<span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[X]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">envelopeModel</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">occurrences</span><span class="op">$</span><span class="va">index</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">$</span><span class="va">depth</span>, 
-                                   FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> 
-                                     <span class="fu"><a href="https://rdrr.io/pkg/raster/man/which.minmax.html" class="external-link">which.min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">layerNames</span> <span class="op">-</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">indices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">$</span><span class="va">index</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Get continent shapefile</span>
-<span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"medium"</span>, 
-                                    returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
-
-<span class="fu"><a href="../reference/plotLayers.html">plotLayers</a></span><span class="op">(</span><span class="va">envelopeModel</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>, 
-          land <span class="op">=</span> <span class="va">land</span><span class="op">)</span></code></pre></div>
-<p><img src="2_RasterProcessing_files/figure-html/3D%20envelope%20model-1.png" width="700"></p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">layerNames</span>, <span class="va">indices</span><span class="op">)</span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="generalized-linear-models">Generalized linear models<a class="anchor" aria-label="anchor" href="#generalized-linear-models"></a>
-</h2>
-<p>Here’s another example of a more complicated application, generating a general linear model. For this, we will need to unite the presence and absence data into a single data frame with an additional column, “response”, which will contain 1s for presences and 0s for absences.</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Add response as a column</span>
-<span class="va">occsWdata</span><span class="op">$</span><span class="va">response</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">)</span><span class="op">)</span>
-<span class="va">backgroundWdata</span><span class="op">$</span><span class="va">response</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>If you are concerned about overfitting the model because you generated a lot more background points than presence points, you can sample from the background data however you think is logical. The example below samples twice the number of occurrence points from the background, weighted by distance form the suitable centroid of occurrence points. That is, the more environmentally-different a background point is from an occurrence point, the more likely it is to be sampled. This is helpful for GLMs, because background points are interpreted as “absences” unlike in methods like Maxent, where sampling the most dissimilar background is more likely to lead to an overfit model.</p>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Sample background points weighted by distance from centroid of occurrence environments</span>
-<span class="va">suitableCentroid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Temperature"</span>, <span class="st">"AOU"</span><span class="op">)</span><span class="op">]</span>, 
-                          MARGIN <span class="op">=</span> <span class="fl">2</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span>
-<span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Temperature"</span>, <span class="st">"AOU"</span><span class="op">)</span><span class="op">]</span>, MARGIN <span class="op">=</span> <span class="fl">1</span>, 
-                                  FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">suitableCentroid</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">backgroundWdata</span><span class="op">$</span><span class="va">sampleWeight</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span> <span class="op">-</span> 
-                                 <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span><span class="op">)</span><span class="op">-</span>
-                                                                 <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span><span class="op">)</span><span class="op">)</span>
-<span class="va">sampleForAbsence</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">)</span>, 
-                           size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, 
-                           prob <span class="op">=</span> <span class="va">backgroundWdata</span><span class="op">$</span><span class="va">sampleWeight</span><span class="op">)</span>
-<span class="va">backgroundWdata</span> <span class="op">&lt;-</span> <span class="va">backgroundWdata</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">sampleForAbsence</span>, 
-                                         <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span>
-
-<span class="co"># Unite datasets</span>
-<span class="va">datForMod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">occsWdata</span>, <span class="va">backgroundWdata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">suitableCentroid</span>, <span class="va">sampleForAbsence</span>, <span class="va">backgroundWdata</span>, <span class="va">occsWdata</span><span class="op">)</span></code></pre></div>
-<p>Now we are ready to make a generalized linear model. How does it look?</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">glmModel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">response</span> <span class="op">~</span> <span class="va">Temperature</span> <span class="op">*</span>  <span class="va">AOU</span>, 
-                  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span>,  data <span class="op">=</span> <span class="va">datForMod</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">glmModel</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## </span>
-<span class="co">## Call:</span>
-<span class="co">## glm(formula = response ~ Temperature * AOU, family = binomial(link = "logit"), </span>
-<span class="co">##     data = datForMod)</span>
-<span class="co">## </span>
-<span class="co">## Deviance Residuals: </span>
-<span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.8725  -0.1531  -0.1012  -0.0776   3.5643  </span>
-<span class="co">## </span>
-<span class="co">## Coefficients:</span>
-<span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -3.7498026  1.6948267  -2.212   0.0269 *  </span>
-<span class="co">## Temperature     -0.0916768  0.0790852  -1.159   0.2464    </span>
-<span class="co">## AOU             -0.0262137  0.0122824  -2.134   0.0328 *  </span>
-<span class="co">## Temperature:AOU  0.0030163  0.0007188   4.196 2.72e-05 ***</span>
-<span class="co">## ---</span>
-<span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
-<span class="co">## </span>
-<span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
-<span class="co">## </span>
-<span class="co">##     Null deviance: 291.73  on 2625  degrees of freedom</span>
-<span class="co">## Residual deviance: 264.39  on 2622  degrees of freedom</span>
-<span class="co">## AIC: 272.39</span>
-<span class="co">## </span>
-<span class="co">## Number of Fisher Scoring iterations: 8</span></code></pre>
-<p>Next we project the model back into geographic space.</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[X]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">index</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/match.html" class="external-link">match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">datForMod</span><span class="op">$</span><span class="va">depth</span><span class="op">)</span>, <span class="va">layerNames</span><span class="op">)</span>, 
-             to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/match.html" class="external-link">match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">datForMod</span><span class="op">$</span><span class="va">depth</span><span class="op">)</span>, <span class="va">layerNames</span><span class="op">)</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
-<span class="va">depthPred</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>
-<span class="kw">for</span><span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="va">index</span><span class="op">)</span><span class="op">{</span>
-  <span class="va">depthPreds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">[[</span><span class="va">j</span><span class="op">]</span><span class="op">]</span>, <span class="va">oxygenSmooth</span><span class="op">[[</span><span class="va">j</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/projection.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">depthPreds</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">depthPreds</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Temperature"</span>, <span class="st">"AOU"</span><span class="op">)</span>
-  <span class="va">depthPred</span><span class="op">[[</span><span class="va">j</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/mask.html" class="external-link">mask</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">depthPreds</span>, <span class="va">glmModel</span><span class="op">)</span>, <span class="va">backgroundSamplingRegions</span><span class="op">)</span>
-  <span class="va">depthPred</span><span class="op">[[</span><span class="va">j</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/crop.html" class="external-link">crop</a></span><span class="op">(</span><span class="va">depthPred</span><span class="op">[[</span><span class="va">j</span><span class="op">]</span><span class="op">]</span>, <span class="va">backgroundSamplingRegions</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">depthPred</span><span class="op">[[</span><span class="va">j</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">layerNames</span><span class="op">[[</span><span class="va">j</span><span class="op">]</span><span class="op">]</span>
-<span class="op">}</span>
-<span class="va">glmPred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="va">depthPred</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">depthPred</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">index</span>, <span class="va">j</span>, <span class="va">layerNames</span>, <span class="va">depthPred</span>, <span class="va">depthPreds</span>, <span class="va">backgroundSamplingRegions</span>, <span class="va">glmModel</span><span class="op">)</span></code></pre></div>
-<p>And here’s what it looks like threshholded to presences and absences. In this case, the threshold is the bottom tenth percentile of suitability scores.</p>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">glmThreshold</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span><span class="va">datForMod</span><span class="op">[</span><span class="va">datForMod</span><span class="op">$</span><span class="va">response</span> <span class="op">==</span> <span class="fl">1</span>,
-                                             <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"depth"</span>, <span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>, 
-                                   <span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html" class="external-link">brick</a></span><span class="op">(</span><span class="va">glmPred</span><span class="op">)</span><span class="op">)</span>, <span class="fl">.1</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="co"># MS90</span></code></pre></div>
-<pre><code><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span>
-<span class="co">##  as x, y, and z coordinates, respectively.</span></code></pre>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">glmThresholded</span> <span class="op">&lt;-</span> <span class="va">glmPred</span> <span class="op">&gt;</span> <span class="va">glmThreshold</span>
-<span class="va">glmThresholded</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/reclassify.html" class="external-link">reclassify</a></span><span class="op">(</span><span class="va">glmThresholded</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">0</span><span class="op">)</span>, include.lowest <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">glmThreshold</span>, <span class="va">glmPred</span><span class="op">)</span></code></pre></div>
-<p>And plotted like the envelope model.</p>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[X]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">glmThresholded</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">datForMod</span><span class="op">$</span><span class="va">index</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">datForMod</span><span class="op">$</span><span class="va">depth</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/which.minmax.html" class="external-link">which.min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">layerNames</span> <span class="op">-</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">indices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">datForMod</span><span class="op">$</span><span class="va">index</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/plotLayers.html">plotLayers</a></span><span class="op">(</span><span class="va">glmThresholded</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>, 
-          land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></code></pre></div>
-<p><img src="2_RasterProcessing_files/figure-html/thresholded%20glm%20niche%20model%20plotted-1.png" width="700"></p>
-<p>Of course, these are just two starting examples. We welcome submissions from the community for other types of models you would like to see. Submit your suggestions as issues <a href="https://github.com/hannahlowens/voluModel/issues" class="external-link">here</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<p>Bakis Y (2021): TU_Fish. v1.1. No organization. Dataset/Occurrence. <a href="https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1" class="external-link uri">https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1</a> Accessed via OBIS on 2020-11-04.</p>
-<p>Bentley A (2022). KUBI Ichthyology Collection. Version 17.80. University of Kansas Biodiversity Institute. <a href="https://doi.org/10.15468/mgjasg" class="external-link uri">https://doi.org/10.15468/mgjasg</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Bentley A (2022). KUBI Ichthyology Tissue Collection. Version 18.68. University of Kansas Biodiversity Institute. <a href="https://doi.org/10.15468/jmsnwg" class="external-link uri">https://doi.org/10.15468/jmsnwg</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Buckup P A (2022). Coleção Ictiológica (MNRJ), Museu Nacional (MN), Universidade Federal do Rio de Janeiro(UFRJ). Version 157.1487. Museu Nacional / UFRJ. <a href="https://doi.org/10.15468/lluzfl" class="external-link uri">https://doi.org/10.15468/lluzfl</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Catania D, Fong J (2022). CAS Ichthyology (ICH). Version 150.300. California Academy of Sciences. <a href="https://doi.org/10.15468/efh2ib" class="external-link uri">https://doi.org/10.15468/efh2ib</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Chakrabarty P (2019). LSUMZ (LSU MNS) Fishes Collection. Version 2.2. Louisiana State University Museum of Natural Science. <a href="https://doi.org/10.15468/gbnym3" class="external-link uri">https://doi.org/10.15468/gbnym3</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Chamberlain S, Barve V, Mcglinn D, Oldoni D, Desmet P, Geffert L, Ram K (2021). rgbif: Interface to the Global Biodiversity Information Facility API. R package version 3.6.0, <a href="https://CRAN.R-project.org/package=rgbif" class="external-link uri">https://CRAN.R-project.org/package=rgbif</a>.</p>
-<p>Chamberlain S, Boettiger C (2017). “R Python, and Ruby clients for GBIF species occurrence data.” PeerJ PrePrints. <a href="https://doi.org/10.7287/peerj.preprints.3304v1" class="external-link uri">https://doi.org/10.7287/peerj.preprints.3304v1</a>.</p>
-<p>Davis Rabosky AR, Cox CL, Rabosky DL, Title PO, Holmes IA, Feldman A, McGuire JA (2016). Coral snakes predict the evolution of mimicry across New World snakes. Nature Communications 7:11484.</p>
-<p>Espinosa Pérez H, Comisión nacional para el conocimiento y uso de la biodiversidad C (2021). Computarización de la Colección Nacional de Peces del Instituto de Biología UNAM. Version 1.9. Comisión nacional para el conocimiento y uso de la biodiversidad. <a href="https://doi.org/10.15468/zb2odl" class="external-link uri">https://doi.org/10.15468/zb2odl</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Frable B (2019). SIO Marine Vertebrate Collection. Version 1.7. Scripps Institution of Oceanography. <a href="https://doi.org/10.15468/ad1ovc" class="external-link uri">https://doi.org/10.15468/ad1ovc</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Fishnet2 Portal, <a href="http://www.fishnet2.net" class="external-link uri">http://www.fishnet2.net</a>, [Access date] Accessed via OBIS on 2020-11-04.</p>
-<p>Froese, R. and D. Pauly. Editors. 200x. FishBase. World Wide Web electronic publication. www.fishbase.org, version (xx/200x). Accessed via OBIS on 2020-11-04.</p>
-<p>Gall L (2021). Vertebrate Zoology Division - Ichthyology, Yale Peabody Museum. Yale University Peabody Museum. <a href="https://doi.org/10.15468/mgyhok" class="external-link uri">https://doi.org/10.15468/mgyhok</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>García, CB, and Duarte, LO, ‘Columbian Caribbean Sea’, in J.H. Nicholls (comp.) HMAP Data Pages (<a href="https://oceanspast.org/hmap_db.php" class="external-link uri">https://oceanspast.org/hmap_db.php</a>) Accessed via OBIS on 2020-11-04.</p>
-<p>Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA, Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018). World Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen Utilization, and Oxygen Saturation. A Mishonov Technical Ed.; NOAA Atlas NESDIS 83, 38pp.</p>
-<p>GBIF.org (24 September 2020) GBIF Occurrence Download <a href="https://doi.org/10.15468/dl.efuutj" class="external-link uri">https://doi.org/10.15468/dl.efuutj</a>.</p>
-<p>Grant S, McMahan C (2020). Field Museum of Natural History (Zoology) Fish Collection. Version 13.12. Field Museum. <a href="https://doi.org/10.15468/alz7wu" class="external-link uri">https://doi.org/10.15468/alz7wu</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Harvard University M, Morris P J (2022). Museum of Comparative Zoology, Harvard University. Version 162.296. Museum of Comparative Zoology, Harvard University. <a href="https://doi.org/10.15468/p5rupv" class="external-link uri">https://doi.org/10.15468/p5rupv</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Hendrickson D A, Cohen A E, Casarez M J (2022). University of Texas, Biodiversity Center, Ichthyology Collection (TNHCi). Version 5.175. University of Texas at Austin, Biodiversity Collections. <a href="https://doi.org/10.15468/h8gxdr" class="external-link uri">https://doi.org/10.15468/h8gxdr</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>INVEMAR. SIBM en línea: Sistema de Información sobre Biodiversidad Marina. Santa Marta: Instituto de investigaciones Marinas y Costeras José Benito Vives de Andréis,. <a href="http://www.invemar.org.co/siam/sibm/index.htm" class="external-link uri">http://www.invemar.org.co/siam/sibm/index.htm</a> Accessed via OBIS on 2020-11-04.</p>
+<p>Collins WD, Bitz CM, Blackmon ML, Bonan GB, Bretherton CS, Carton JA, Chang P, Doney SC, Hack JJ, Henderson TB, Kiehl JT, Large WG, McKenna DS, Santer BD, Smith RD. (2006) The Community Climate System Model Version 3 (CCSM3) Journal of Climate, 19(11), 2122–2143 <a href="https://doi.org/10.1175/jcli3761.1" class="external-link uri">https://doi.org/10.1175/jcli3761.1</a></p>
+<p>Garcia HE, Boyer P, Baranova OK, Locarnini RA, Mishonov AV, Grodsky A, Paver CR, Weathers KW, Smolyar IV, Reagan JR, Seidov D, Zweng MM. (2018a). World Ocean Atlas 2018 (A. Mishonov, Ed.). NOAA National Centers for Environmental Information. <a href="https://accession.nodc.noaa.gov/NCEI-WOA18" class="external-link uri">https://accession.nodc.noaa.gov/NCEI-WOA18</a></p>
+<p>Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA, Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018b). World Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen Utilization, and Oxygen Saturation. A Mishonov Technical Ed.; NOAA Atlas NESDIS 83, 38pp.</p>
 <p>Locarnini RA, Mishonov AV, Baranova OK, Boyer TP, Zweng MM, Garcia HE, Reagan JR, Seidov D, Weathers K, Paver CR, Smolyar I (2018). World Ocean Atlas 2018, Volume 1: Temperature. A. Mishonov Technical Ed.; NOAA Atlas NESDIS 81, 52pp.</p>
-<p>McLean, M.W. (2014). Straightforward Bibliography Management in R Using the RefManager Package. NA, NA. <a href="https://arxiv.org/abs/1403.2036" class="external-link uri">https://arxiv.org/abs/1403.2036</a>.</p>
-<p>McLean, M.W. (2017). RefManageR: Import and Manage BibTeX and BibLaTeX References in R. The Journal of Open Source Software.</p>
-<p>Mertz W (2021). LACM Vertebrate Collection. Version 18.9. Natural History Museum of Los Angeles County. <a href="https://doi.org/10.15468/77rmwd" class="external-link uri">https://doi.org/10.15468/77rmwd</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Nakae M, Shinohara G (2018). Fish collection of National Museum of Nature and Science. National Museum of Nature and Science, Japan. Occurrence dataset <a href="https://doi.org/10.15468/w3dzv1" class="external-link uri">https://doi.org/10.15468/w3dzv1</a> accessed via GBIF.org on yyyy-mm-dd. Accessed via OBIS on 2020-11-04.</p>
-<p>Natural History Museum (2021). Natural History Museum (London) Collection Specimens. <a href="https://doi.org/10.5519/0002965" class="external-link uri">https://doi.org/10.5519/0002965</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>National Museum of Natural History, Smithsonian Institution NMNH Fishes Collection Database. National Museum of Natural History, Smithsonian Institution, 10th and Constitution Ave. N.W., Washington, DC 20560-0193, 2007. Accessed via OBIS on 2020-11-04.</p>
-<p>Norén M, Shah M (2017). Fishbase. FishBase. <a href="https://doi.org/10.15468/wk3zk7" class="external-link uri">https://doi.org/10.15468/wk3zk7</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Norton B, Hogue G (2021). NCSM Ichthyology Collection. Version 22.8. North Carolina State Museum of Natural Sciences. <a href="https://doi.org/10.36102/dwc.1" class="external-link uri">https://doi.org/10.36102/dwc.1</a>. Accessed via GBIF on 2020-10-13.</p>
 <p>Nychka D, Furrer R, Paige J, Sain S (2021). “fields: Tools for spatial data.” R package version 13.3, &lt;URL: <a href="https://github.com/dnychka/fieldsRPackage" class="external-link uri">https://github.com/dnychka/fieldsRPackage</a>&gt;.</p>
-<p>Orrell T, Informatics Office (2021). NMNH Extant Specimen Records (USNM, US). Version 1.49. National Museum of Natural History, Smithsonian Institution. <a href="https://doi.org/10.15468/hnhrg3" class="external-link uri">https://doi.org/10.15468/hnhrg3</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Owens H, Merow C, Maitner B, Kass J, Barve V, Guralnick R (2021). occCite: Querying and Managing Large Biodiversity Occurrence Datasets_. doi: 10.5281/zenodo.4726676 (URL: <a href="https://doi.org/10.5281/zenodo.4726676" class="external-link uri">https://doi.org/10.5281/zenodo.4726676</a>), R package version 0.4.9.9000, (&lt;URL: <a href="https://CRAN.R-project.org/package=occCite" class="external-link uri">https://CRAN.R-project.org/package=occCite</a>&gt;).</p>
-<p>Prestridge H (2021). Biodiversity Research and Teaching Collections - TCWC Vertebrates. Version 9.4. Texas A&amp;M University Biodiversity Research and Teaching Collections. <a href="https://doi.org/10.15468/szomia" class="external-link uri">https://doi.org/10.15468/szomia</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Provoost P, Bosch S (2019). “robis: R Client to access data from the OBIS API.” Ocean Biogeographic Information System. Intergovernmental Oceanographic Commission of UNESCO. R package version 2.1.8, <a href="https://cran.r-project.org/package=robis" class="external-link uri">https://cran.r-project.org/package=robis</a>.</p>
-<p>Pugh W (2021). UAIC Ichthyological Collection. Version 3.3. University of Alabama Biodiversity and Systematics. <a href="https://doi.org/10.15468/a2laag" class="external-link uri">https://doi.org/10.15468/a2laag</a>. Accessed via GBIF on 2020-10-13.</p>
 <p>R Core Team (2017). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL <a href="https://www.R-project.org/" class="external-link uri">https://www.R-project.org/</a>.</p>
-<p>Robins R (2021). UF FLMNH Ichthyology. Version 117.342. Florida Museum of Natural History. <a href="https://doi.org/10.15468/8mjsel" class="external-link uri">https://doi.org/10.15468/8mjsel</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Tavera L, Tavera M. L (2021). Biodiversidad de los recursos marinos y costeros entre Cartagena y el Golfo de Urabá, Caribe colombiano. Version 2.4. Instituto de Investigaciones Marinas y Costeras - Invemar. <a href="https://doi.org/10.15472/d2jusp" class="external-link uri">https://doi.org/10.15472/d2jusp</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>UNIBIO, IBUNAM. CNPE/Coleccion Nacional de Peces. <a href="https://doi.org/10.15468/o5d48z" class="external-link uri">https://doi.org/10.15468/o5d48z</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Wagner M (2017). MMNS Ichthyology Collection. Mississippi Museum of Natural Science. <a href="https://doi.org/10.15468/4c3qeq" class="external-link uri">https://doi.org/10.15468/4c3qeq</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Werneke D (2019). AUM Fish Collection. Version 8.1. Auburn University Museum. <a href="https://doi.org/10.15468/dm3oyz" class="external-link uri">https://doi.org/10.15468/dm3oyz</a>. Accessed via GBIF on 2020-10-13.</p>
+<p>Valdes PJ, Armstrong E, Badger MPS, Bradshaw CD, Bragg F, Crucifix M, Davies-Barnard T, Day JJ, Farnsworth A, Gordon C, Hopcroft PO, Kennedy AT, Lord NS, Lunt DJ, Marzocchi A, Parry LM, Pope V, Roberts WHG, Stone EJ, … Williams JHT. (2017). The BRIDGE HadCM3 family of climate models: <a href="mailto:HadCM3@Bristol" class="email">HadCM3@Bristol</a> v1.0. Geoscientific Model Development, 10(10), 3715–3743. <a href="https://doi.org/10.5194/gmd-10-3715-2017" class="external-link uri">https://doi.org/10.5194/gmd-10-3715-2017</a></p>
 </div>
   </div>
 

@@ -182,7 +182,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature/"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpM8ldzD/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpjE3TbZ/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 2291 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
@@ -237,7 +237,7 @@
 <span class="va">oxygen</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/oxygen/"</span><span class="op">)</span>, 
                   layer <span class="op">=</span> <span class="st">"woa18_all_A00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpM8ldzD/oxygen", layer: "woa18_all_A00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpjE3TbZ/oxygen", layer: "woa18_all_A00mn01_cropped"</span>
 <span class="co">## with 1967 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
@@ -451,11 +451,11 @@
 <span class="va">backgroundWdata</span><span class="op">$</span><span class="va">sampleWeight</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span> <span class="op">-</span> 
                                  <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span><span class="op">)</span><span class="op">-</span>
                                                                  <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span><span class="op">)</span><span class="op">)</span>
-<span class="va">sampleForAbsence</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">)</span>, 
+<span class="va">sampleForAbsence</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">)</span>, 
                            size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, 
                            prob <span class="op">=</span> <span class="va">backgroundWdata</span><span class="op">$</span><span class="va">sampleWeight</span><span class="op">)</span>
 <span class="va">backgroundWdata</span> <span class="op">&lt;-</span> <span class="va">backgroundWdata</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">sampleForAbsence</span>, 
-                                         <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span>
+                                         <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span>
 
 <span class="co"># Unite datasets</span>
 <span class="va">datForMod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">occsWdata</span>, <span class="va">backgroundWdata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
@@ -472,22 +472,22 @@
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.8073  -0.1505  -0.0989  -0.0754   3.5629  </span>
+<span class="co">## -0.6978  -0.1497  -0.0959  -0.0718   3.6046  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -4.0851184  1.6749669  -2.439   0.0147 *  </span>
-<span class="co">## Temperature     -0.0786095  0.0778760  -1.009   0.3128    </span>
-<span class="co">## AOU             -0.0252776  0.0120799  -2.093   0.0364 *  </span>
-<span class="co">## Temperature:AOU  0.0030912  0.0007156   4.320 1.56e-05 ***</span>
+<span class="co">## (Intercept)     -4.0360731  1.7442695  -2.314   0.0207 *  </span>
+<span class="co">## Temperature     -0.0856580  0.0812020  -1.055   0.2915    </span>
+<span class="co">## AOU             -0.0270944  0.0126017  -2.150   0.0316 *  </span>
+<span class="co">## Temperature:AOU  0.0032992  0.0007635   4.321 1.55e-05 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 291.73  on 2625  degrees of freedom</span>
-<span class="co">## Residual deviance: 262.27  on 2622  degrees of freedom</span>
-<span class="co">## AIC: 270.27</span>
+<span class="co">## Residual deviance: 261.42  on 2622  degrees of freedom</span>
+<span class="co">## AIC: 269.42</span>
 <span class="co">## </span>
 <span class="co">## Number of Fisher Scoring iterations: 8</span></code></pre>
 <p>Next we project the model back into geographic space.</p>
