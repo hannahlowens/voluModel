@@ -42,7 +42,7 @@ head(occs)
 dotchart(occs$depth, main = "Distribution of depth measurements")
 ```
 
-Based on this plot, and what we know about the biology of luminous hakes and how these occurrence data are collected, I am going to remove occurrences that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not *in situ* or errors of some kind.
+Based on this plot, and what we know about the biology of Luminous Hakes and how these occurrence data are collected, I am going to remove occurrences that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not *in situ* or errors of some kind.
 
 ```{r clean occurrence data, eval=T}
 occsClean <- occs[!occs$depth %in% c(0,2100),]
