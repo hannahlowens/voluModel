@@ -708,28 +708,28 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
     }
   } else {
     if (all(cellStats(rast2, sum) > 0, cellStats(rast1, sum) > 0)){
-      compPlot <- spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1,
-                         colorkey = FALSE,
-                         key=list(space="right",
-                                  points=list(pch = 22, cex = 2,
-                                              fill=c("white",myCols[c(2:4)])),
-                        text=list(c("Neither", rast1Name, rast2Name, "Both"))),
-                        col="transparent",
-                        par.settings = list(mai = c(0,0,0,0)),
-                        maxpixels = maxpixels) +
-                        as.layer(spplot(rast2, col.regions = myCols[c(1,3)],
-                                        cuts = 1, col="transparent")) +
-        latticeExtra::layer(sp.polygons(as(land, "Spatial"),
-                                        fill=landCol, main = title))
+      spplot(rast1, col.regions = myCols[c(1,2)],
+             cuts = 1, colorkey = FALSE,
+             key=list(space="right",
+                      points=list(pch = 22, cex = 2,
+                                  fill=c("white", myCols[c(2:4)])),
+                      text=list(c("Neither", rast1Name, rast2Name, "Both"))),
+             col="transparent",  main = title,
+             maxpixels = maxpixels,
+             par.settings = list(mai = c(0,0,0,0))) +
+        as.layer(spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, col="transparent")) +
+        as.layer(spplot(as(land,"Spatial"), fill=landCol))
     } else if (cellStats(rast2, sum) == 0){
-      spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = FALSE,
-             key=list(space="right", points=list(pch = 22, cex = 2,
-                                                 fill=c("white",myCols[2])),
+      spplot(rast1, col.regions = myCols[c(1,2)],
+             cuts = 1, colorkey = FALSE,
+             key=list(space="right",
+                      points=list(pch = 22, cex = 2,
+                                  fill=c("white",myCols[2])),
                       text=list(c("Neither", rast1Name))),
              col="transparent", main = title,
              maxpixels = maxpixels,
              par.settings = list(mai = c(0,0,0,0))) +
-        latticeExtra::layer(sp.polygons(as(land, "Spatial"), fill=landCol))
+        as.layer(spplot(as(land,"Spatial"), fill=landCol))
     } else{
       spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = FALSE,
              key=list(space="right", points=list(pch = 22, cex = 2,
@@ -738,7 +738,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
              col="transparent", main = title,
              maxpixels = maxpixels,
              par.settings = list(mai = c(0,0,0,0))) +
-        latticeExtra::layer(sp.polygons(as(land, "Spatial"), fill=landCol))
+        as.layer(spplot(as(land,"Spatial"), fill=landCol))
     }
   }
 }
@@ -840,6 +840,7 @@ diversityStack <- function(rasterList, template){
 #'
 #' @import raster
 #' @import viridis
+#' @importFrom latticeExtra as.layer
 #'
 #' @seealso \code{\link[viridis:viridis]{viridis}} \code{\link[raster:spplot]{spplot}}
 #'
