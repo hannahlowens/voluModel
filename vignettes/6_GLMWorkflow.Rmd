@@ -214,7 +214,7 @@ backgroundWdata <- backgroundWdata[match(sampleForAbsence,
                                          rownames(backgroundWdata)),]
 ```
 
-Then we unit the presence and absence data into a single data object.
+Then we unite the presence and absence data into a single data object.
 
 ```{r uniting datasets}
 # Unite datasets
