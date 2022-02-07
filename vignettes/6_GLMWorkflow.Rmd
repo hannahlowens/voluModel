@@ -88,9 +88,6 @@ unlink(paste0(td, "/temperature/"), recursive = T)
 
 temperature@data[temperature@data == -999.999] <- NA
 
-#Creating a bottom raster
-temperatureBottom <- bottomRaster(temperature)
-
 # Creating a RasterBrick
 temperature <- rasterFromXYZ(cbind(temperature@coords,
                                    temperature@data))
