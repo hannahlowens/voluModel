@@ -49,7 +49,7 @@ occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
                              package='voluModel'))
 ggplot(occs, aes(x = 1, y=depth)) +
   geom_violin(fill="yellow", ) +
-  theme_classic(base_size = 30) +
+  theme_classic(base_size = 15) +
   theme(axis.title = element_blank(),
         text = element_text(family = "Arial"),
         axis.text = element_text(size = rel(1.1))) +
@@ -67,7 +67,7 @@ head(occsClean)
 
 ggplot(occsClean, aes(x = 1, y=depth)) +
   geom_violin(fill="yellow", ) +
-  theme_classic(base_size = 30) +
+  theme_classic(base_size = 15) +
   theme(axis.title = element_blank(),
         text = element_text(family = "Arial"),
         axis.text = element_text(size = rel(1.1))) +
