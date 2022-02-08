@@ -19,8 +19,8 @@ occurrence points.}
 \item{landCol}{Color for land on map.}
 
 \item{title}{A title for the plot. If not title is
-supplied, the title "Suitability from <<MINIMUM
-DEPTH>> to <<MAXIMUM DEPTH>>" is inferred from
+supplied, the title "Suitability from (MINIMUM
+DEPTH) to (MAXIMUM DEPTH)" is inferred from
 names of \code{RasterStack}.}
 
 \item{...}{Additional optional arguments.}

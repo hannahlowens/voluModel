@@ -934,8 +934,8 @@ oneRasterPlot <- function(rast,
 #' @param landCol Color for land on map.
 #'
 #' @param title A title for the plot. If not title is
-#' supplied, the title "Suitability from <<MINIMUM
-#' DEPTH>> to <<MAXIMUM DEPTH>>" is inferred from
+#' supplied, the title "Suitability from (MINIMUM
+#' DEPTH) to (MAXIMUM DEPTH)" is inferred from
 #' names of `RasterStack`.
 #'
 #' @param ... Additional optional arguments.
