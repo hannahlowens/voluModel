@@ -320,7 +320,7 @@ AOUpresence <- reclassify(oxygenSmooth,
 envelopeModel3D <- temperaturePresence * AOUpresence
 envelopeModel3D <- mask(crop(envelopeModel3D, studyRegion), 
                         mask = studyRegion)
-names(envelopeModel) <- names(temperature)
+names(envelopeModel3D) <- names(temperature)
 rm(tempLims, aouLims, temperaturePresence, AOUpresence)
 ```
 
