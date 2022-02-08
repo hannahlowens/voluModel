@@ -1,5 +1,5 @@
 ---
-title: "1. An Introduction to the `voluModel` Package"
+title: "1. Introduction to `voluModel`"
 author:
 - Hannah L. Owens
 - Carsten Rahbek
@@ -169,7 +169,7 @@ allTemp$Temperature <- as.numeric(allTemp$Temperature)
 groups <- c("Surface", "Bottom", "3D")
 ggplot(allTemp, aes(x=Group, y=Temperature)) + 
   geom_boxplot(fill="#9C179EFF", notch = T) +
-  theme_classic(base_size = 30) +
+  theme_classic(base_size = 15) +
   theme(axis.title = element_blank(), 
         text = element_text(family = "Arial"), 
         axis.text = element_text(size = rel(1.1))) +
@@ -200,7 +200,7 @@ allOxy$Oxygen <- as.numeric(allOxy$Oxygen)
 groups <- c("Surface", "Bottom", "3D")
 ggplot(allOxy, aes(x=Group, y=Oxygen)) + 
   geom_boxplot(fill="#ED7953FF", notch = T) +
-  theme_classic(base_size = 30) +
+  theme_classic(base_size = 15) +
   theme(axis.title = element_blank(), 
         text = element_text(family = "Arial"), 
         axis.text = element_text(size = rel(1.1))) +

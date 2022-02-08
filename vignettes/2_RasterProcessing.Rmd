@@ -1,5 +1,5 @@
 ---
-title: "2. A Tutorial on How to Use `voluModel` Tools to Process Raster Data"
+title: "2. How to Use `voluModel` Tools to Process Raster Data"
 author:
 - Hannah L. Owens
 - Carsten Rahbek

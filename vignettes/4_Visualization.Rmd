@@ -1,5 +1,5 @@
 ---
-title: "4. A Guide to `voluModel` Visualization Tools"
+title: "4. `voluModel` Visualization Tools"
 author:
 - Hannah L. Owens
 - Carsten Rahbek

@@ -1,5 +1,5 @@
 ---
-title: "3. A Tutorial on How to Use `voluModel` Tools for Data Sampling"
+title: "3. How to Use `voluModel` Tools for Data Sampling"
 author:
 - Hannah L. Owens
 - Carsten Rahbek
@@ -12,7 +12,7 @@ output:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{3. A Tutorial on How to Use `voluModel` Tools for Data Sampling}
+  %\VignetteIndexEntry{3. How to Use `voluModel` Tools for Environmental Data Sampling}
   \usepackage[utf8]{inputenc}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}

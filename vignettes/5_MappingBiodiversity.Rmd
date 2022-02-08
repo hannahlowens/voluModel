@@ -1,5 +1,5 @@
 ---
-title: "5. A Tutorial on How to Generate Alpha Diversity Maps with `voluModel`"
+title: "5. How to Generate Alpha Diversity Maps with `voluModel`"
 author:
 - Hannah L. Owens
 - Carsten Rahbek

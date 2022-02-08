@@ -1,5 +1,5 @@
 ---
-title: "6. A Tutorial on How to Generate and Project a 3D Niche Model Using the GLM Algorithm"
+title: "6. How to Generate and Project a 3D Niche Model Using the GLM Algorithm"
 author:
 - Hannah L. Owens
 - Carsten Rahbek
