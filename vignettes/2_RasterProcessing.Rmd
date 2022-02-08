@@ -43,7 +43,7 @@ library(fields) # For raster interpolation
 
 # Data Inputs
 
-First, let's look at a relatively simple environmental variable from the World Ocean Atlas (Garcia et al, 2019): temperature (Locarnini et al, 2018). These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. Our first task is to read in the shapefile as a `SpatialPointsDataFrame`. Note that each row in `temperature@data` is a set of horizontal coordinates. Each column is a vertical position in the water column. Make sure to check the metadata of the data you use. Different sources may use vertical depth structures.
+First, let's look at a relatively simple environmental variable from the World Ocean Atlas (Garcia et al, 2018a): temperature (Locarnini et al, 2018). These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. Our first task is to read in the shapefile as a `SpatialPointsDataFrame`. Note that each row in `temperature@data` is a set of horizontal coordinates. Each column is a vertical position in the water column. Make sure to check the metadata of the data you use. Different sources may use vertical depth structures.
 
 ```{r environmental data loading temperature, eval=T, asis=T}
 td <- tempdir()
@@ -63,7 +63,7 @@ land <- rnaturalearth::ne_countries(scale = "medium",
                                     returnclass = "sf")[1]
 ext <- extent(temperature@coords)
 plot(temperature, main = "Distribution of voluModel subset of WOA Temperature 2018",
-     pch = 20, col = "red", xlim = ext[1:2], ylim = ext[3:4])
+     pch = 20, col = "red", xlim = ext[1:2], ylim = ext[3:4], cex = .6)
 plot(land, col = "black", add = T)
 
 # What does the WOA depth structure look like?
@@ -74,14 +74,11 @@ plot(depths, pch = 20, main = "Depth Intervals in WOA Temperature Dataset", xlab
 
 Next, we convert temperature into a `RasterBrick`. While we are at it, we will generate a raster from the deepest value available for each point. While you might call this a "bottom" raster, it is important to note that in some cases, values are not available for the bottom. After the `RasterBrick` is created, we give it the same depth names as the columns in the `SpatialPointsDataFrame`. This is important, because `voluModel` uses these names as z coordinates when handling 3D data. I am using `oneRasterPlot()` from voluModel to visualize the rasters using a uniform, high-contrast asthetic.
 
-```{r bottom}
-#Creating a bottom raster
+```{r temperature processing}
+#Creating a bottom raster from the point shapefile
 temperatureBottom <- bottomRaster(temperature)
 
-oneRasterPlot(temperatureBottom,land = land, landCol = "black", 
-              title = "Temperature, bottom")
-
-# Creating a RasterBrick
+# Creating a 3D temperature RasterBrick from the point shapefile
 temperature <- rasterFromXYZ(cbind(temperature@coords,
                                    temperature@data))
 
@@ -97,11 +94,14 @@ oneRasterPlot(temperature[[1]], land = land, landCol = "black",
 # R won't let you name the layers numbers only--it pastes an X at the beginning
 oneRasterPlot(temperature[["X100"]], land = land, landCol = "black", 
               title= "Temperature, 100m")
+
+oneRasterPlot(temperatureBottom,land = land, landCol = "black", 
+              title = "Temperature, bottom")
 ```
 
 # Interpolation
 
-Next, we have a bit of a more complicated example: apparent oxygen utilization (Garcia et al, 2019). Apparent oxygen usage is more patchily sampled than temperature (it's generally measured from instrument casts on research cruises, and the coverage isn't quite as dense as for temperature).
+Next, we have a bit of a more complicated example: apparent oxygen utilization (AOU; Garcia et al, 2018b). Apparent oxygen usage is more patchily sampled than temperature (it's generally measured from instrument casts on research cruises, and the coverage isn't quite as dense as for temperature).
 
 ```{r environmental data loading oxygen, eval=T, asis=T, warning=FALSE}
 td <- tempdir()
@@ -115,8 +115,8 @@ unlink(paste0(td, "/oxygen/"), recursive = T)
 
 oxygen@data[oxygen@data == -999.999] <- NA
 
-plot(oxygen, main = "Distribution of voluModel subset of WOA Apparent Oxygen Utilization 2018",
-     pch = 20, col = "red", xlim = ext[1:2], ylim = ext[3:4])
+plot(oxygen, main = "Distribution of voluModel subset of WOA AOU 2018",
+     pch = 20, col = "red", xlim = ext[1:2], ylim = ext[3:4], cex = .6)
 plot(land, col = "black", add = T)
 ```
 
@@ -145,10 +145,10 @@ rm(envtNames)
 
 # How do these files look?
 oneRasterPlot(oxygen[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization, surface")
+              title= "Apparent Oxygen Utilization, surface\ninterpolated")
 
 oneRasterPlot(oxygen[["X100"]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization, 100m")
+              title= "Apparent Oxygen Utilization, 100m\ninterpolated")
 ```
 
 You can see from these plots that apparent oxygen utilization is "patchier" than temperature. If you are confident that there should be a strong spatial correlation in a "patchy" data layer, you can also statistically smooth it, again using `TPS()`, like this:
@@ -164,17 +164,17 @@ for (i in 1:nlayers(oxygen)){
 names(oxygenSmooth) <- names(temperature)
 
 oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization, surface")
+              title= "Apparent Oxygen Utilization, surface\ninterpolated and smoothed")
 
 oneRasterPlot(oxygenSmooth[["X100"]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization, 100m")
+              title= "Apparent Oxygen Utilization, 100m\ninterpolated and smoothed")
 ```
 ```{r smooth oxygen display, echo=FALSE}
 oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization, surface")
+              title= "Apparent Oxygen Utilization, surface\ninterpolated and smoothed")
 
 oneRasterPlot(oxygenSmooth[["X100"]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization, 100m")
+              title= "Apparent Oxygen Utilization, 100m\ninterpolated and smoothed")
 ```
 
 Let's smooth the bottom apparent oxygen utilization while we're at it.
@@ -185,7 +185,7 @@ oxygenSmoothBottom <- crop(mask(x = oxygenSmoothBottom,
                                 mask = temperature[[1]]), 
                            temperature[[1]])
 oneRasterPlot(oxygenSmoothBottom, land = land, landCol = "black",
-     title = "Apparent Oxygen Utilization, bottom, interpolated and smoothed")
+     title = "Apparent Oxygen Utilization, bottom, \ninterpolated and smoothed")
 ```
 
 # References
