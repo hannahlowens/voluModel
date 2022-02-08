@@ -19,14 +19,234 @@ vignette: >
 editor_options: 
   chunk_output_type: console
 ---
+# Introduction 
+To date, distribution and ecological niche models of marine species have generally only considered distributions in two-dimensional space, not accounting for depth. This may lead to mis-estimation of species distributions and subsequent diversity estimates, especially among pelagic and benthic species. Here, we present a possible way forward: generating species distribution models based on environmental data extracted at the depths where individuals were observed, and calibrated with three-dimensional sampling of pseudo-absences. We also provide some methods to project these models back into three-dimensional space and visualize the results. 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error = TRUE)
-knitr::opts_knit$set(root.dir = system.file('extdata', 
-                                            package='voluModel'))
+Here are the packages you will need.
+
+```{r packages, warning=FALSE}
+library(voluModel) # Because of course
+library(ggplot2) # For fancy plotting
+library(rgdal) # For vector stuff. Will eventually be replaced with sf.
+library(raster) # For raster stuff. Will eventually be replaced with terra.
+```
+
+# Data Inputs
+
+First thing's first. Distributional models are based on coordinates of species' occurrences. Here is an example dataset of *Steindachneria argentia*, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens *et al.*, 2021).
+
+```{r occurrence data, warning=FALSE, eval=T}
+occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
+                             package='voluModel'))
+
+ggplot(occs, aes(x = 1, y=depth)) +
+  geom_violin(fill="yellow", ) +
+  theme_classic(base_size = 15) +
+  theme(axis.title = element_blank(),
+        text = element_text(family = "Arial"),
+        axis.text = element_text(size = rel(1.1))) +
+  ggtitle("Depth") +
+  geom_boxplot(width=0.1)
+```
+
+Based on this plot and what we know about the biology of Luminous Hakes and how these occurrence data are collected, I am going to remove occurrences that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not *in situ* or errors of some kind.
+
+```{r clean occurrence data, eval=T}
+occsClean <- occs[complete.cases(occs$depth),]
+occsClean <- occsClean[occsClean$depth > 0.0,]
+occsClean <- occsClean[occsClean$depth < 2000.0,]
+head(occsClean)
+
+ggplot(occsClean, aes(x = 1, y=depth)) +
+  geom_violin(fill="yellow", ) +
+  theme_classic(base_size = 15) +
+  theme(axis.title = element_blank(),
+        text = element_text(family = "Arial"),
+        axis.text = element_text(size = rel(1.1))) +
+  ggtitle("Depth") +
+  geom_boxplot(width=0.1)
+```
+
+Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (AOU; Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. For more details on how to process environmental data, see [the raster data tutorial](2_RasterProcessing.html). Temperature processing is shown below for illustrative purposes.
+
+```{r environmental data loading, eval=T, asis=T}
+td <- tempdir()
+unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
+                  package = "voluModel"),
+      exdir = paste0(td, "/temperature"), junkpaths = T)
+temperature <- readOGR(dsn = paste0(td, "/temperature/"), 
+                       layer ="woa18_decav_t00mn01_cropped")
+unlink(paste0(td, "/temperature/"), recursive = T)
+
+temperature@data[temperature@data == -999.999] <- NA
+
+#Creating a bottom raster
+temperatureBottom <- bottomRaster(temperature)
+
+# Creating a RasterBrick
+temperature <- rasterFromXYZ(cbind(temperature@coords,
+                                   temperature@data))
+
+# Get names of depths
+envtNames <- gsub("[d,M]", "", names(temperature))
+envtNames[[1]] <- "0"
+names(temperature) <- envtNames
+```
+
+Pre-processed AOU data are loaded from `.Rdata` files for speed. Again, see [the raster data tutorial](2_RasterProcessing.html) for further details.
+
+```{r environmental data loading oxygen, eval=T, asis=T, warning=FALSE}
 load(system.file("extdata/oxygenSmooth.RData", 
                  package='voluModel'))
+load(system.file("extdata/oxygenBottom.RData",
+                 package='voluModel'))
+
+# Change names to match temperature
+names(oxygenSmooth) <- names(temperature)
 ```
+
+# Sampling data for model generation
+
+The first step is down-sampling the occurrence data so that there is only one occurrence per voxel (i.e. 3D pixel) of environmental data. We do this to avoid over-fitting the model due to biased sampling. The resampled points are centered in each voxel. The red dots show occurrences from the original dataset; the orange dots show the downsampled dataset.
+
+```{r downsample to voxel, eval=TRUE, warning=FALSE, message=FALSE}
+occurrences <- occsClean[,c("decimalLatitude", "decimalLongitude", "depth")] 
+
+# Preliminary cleaning
+occurrences <- dplyr::distinct(occurrences)
+occurrences <- occurrences[complete.cases(occurrences),]
+
+# Gets the layer index for each occurrence by matching to depth
+layerNames <- as.numeric(gsub("[X]", "", names(temperature)))
+occurrences$index <- unlist(lapply(occurrences$depth, FUN = function(x) which.min(abs(layerNames - x))))
+indices <- unique(occurrences$index)
+downsampledOccs <- data.frame()
+for(i in indices){
+  tempPoints <- occurrences[occurrences$index==i,]
+  tempPoints <- downsample(tempPoints, temperature[[1]])
+  tempPoints$depth <- rep(layerNames[[i]], times = nrow(tempPoints))
+  downsampledOccs <- rbind(downsampledOccs, tempPoints)
+}
+
+occurrences <- downsampledOccs
+
+print(paste0("Original number of points: ", nrow(occs), "; number of downsampled occs: ", nrow(occurrences)))
+pointCompMap(occs1 = occs, occs2 = occurrences, 
+             occs1Name = "Original", occs2Name = "Cleaned", 
+             spName = "Steindachneria argentia", 
+             land = rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
+)
+rm(indices, layerNames, tempPoints, i, downsampledOccs, occs)
+```
+
+At this point, we can demonstrate one of the key contributions of `voluModel`-- an improvement in how the environmental data are extracted at species' occurrences. `voluModel` samples environmental conditions at the depth where each record was located, instead of extrapolating to surface or bottom conditions. How important is this? First, let's look at temperature.
+
+```{r temperature violin plots}
+# Extraction
+threeDimTemp <- xyzSample(occs = occurrences, temperature)
+threeDimTemp <- cbind(rep("3D", length(threeDimTemp)), threeDimTemp)
+surfTemp <- extract(x = temperature[[1]], occurrences[,c("decimalLongitude", "decimalLatitude")])
+surfTemp <- cbind(rep("Surface", length(surfTemp)), surfTemp)
+bottomTemp <- extract(x = temperatureBottom, occurrences[,c("decimalLongitude", "decimalLatitude")])
+bottomTemp <- cbind(rep("Bottom", length(bottomTemp)), bottomTemp)
+
+# Collation
+allTemp <- rbind(threeDimTemp, surfTemp, bottomTemp)
+colnames(allTemp) <- c("Group", "Temperature")
+allTemp <- as.data.frame(allTemp)
+allTemp$Temperature <- as.numeric(allTemp$Temperature)
+
+# Plotting
+groups <- c("Surface", "Bottom", "3D")
+ggplot(allTemp, aes(x=Group, y=Temperature)) + 
+  geom_boxplot(fill="#9C179EFF", notch = T) +
+  theme_classic(base_size = 15) +
+  theme(axis.title = element_blank(), 
+        text = element_text(family = "Arial"), 
+        axis.text = element_text(size = rel(1.1))) +
+  scale_x_discrete(limits = groups) +
+  ggtitle("Temperature (C)")
+```
+
+Temperature extracted at the appropriate depth (3D) is significantly lower than temperature extracted at the surface. The mean value of temperature is similar between the bottom and the 3D extractions, but the range of 3D values is narrower than those extracted at the bottom.
+
+How does AOU look?
+
+```{r oxygen violin plots}
+# Extraction
+threeDimOxy <- xyzSample(occs = occurrences, oxygenSmooth)
+threeDimOxy <- cbind(rep("3D", length(threeDimOxy)), threeDimOxy)
+surfOxy <- extract(x = oxygenSmooth[[1]], occurrences[,c("decimalLongitude", "decimalLatitude")])
+surfOxy <- cbind(rep("Surface", length(surfOxy)), surfOxy)
+bottomOxy <- extract(x = oxygenBottom, occurrences[,c("decimalLongitude", "decimalLatitude")])
+bottomOxy <- cbind(rep("Bottom", length(bottomOxy)), bottomOxy)
+
+# Collation
+allOxy <- rbind(threeDimOxy, surfOxy, bottomOxy)
+colnames(allOxy) <- c("Group", "Oxygen")
+allOxy <- as.data.frame(allOxy)
+allOxy$Oxygen <- as.numeric(allOxy$Oxygen)
+
+# Plotting
+groups <- c("Surface", "Bottom", "3D")
+ggplot(allOxy, aes(x=Group, y=Oxygen)) + 
+  geom_boxplot(fill="#ED7953FF", notch = T) +
+  theme_classic(base_size = 15) +
+  theme(axis.title = element_blank(), 
+        text = element_text(family = "Arial"), 
+        axis.text = element_text(size = rel(1.1))) +
+  scale_x_discrete(limits = groups) +
+  ggtitle("Apparent Oxygen Utilization (µmol/kg)")
+```
+
+AOU based on 3D extraction is significantly higher than AOU extracted at the surface. The mean value of AOU is again similar between the bottom and the 3D extractions; the range of 3D values is broader than those extracted at the bottom, but contains no statistical outliers, i.e. greater than 1.5 * interquartile range from the hinge of the boxplot (black dots).
+
+Some modeling methods require the generation of a sampling region from which pseudoabsence or background points are drawn. For this introduction, we are showing you a simple envelope method that does not require background sampling. Instead, I will be applying the same principle to define the study region to which I project the envelope model, so we have a product that makes biological sense in terms of the question "Where are we most likely to encounter Lumious Hakes?" See [the background sampling tutorial](3_DataSampling.html) for more information on `voluModel`'s `marineBackground()` function, and [the generalized linear model tutorial](6_GLMWorkflow.html) for an example of a modelling application that uses a background sampling region. 
+
+```{r study region, warning=FALSE}
+studyRegion <- marineBackground(occurrences)
+plot(temperature[[1]], 
+     main = "Points and background sampling plotted on surface temperature",
+     col = viridisLite::mako(n= 11))
+plot(studyRegion, add = T, border = "orange", lwd = 2)
+points(occurrences[,c("decimalLongitude","decimalLatitude")], 
+       cex = 1, pch = 20, col = "red")
+```
+
+For our simple niche envelope models, we need to draw the environmental variable data from each occurrence voxel. For comparison with previous modeling approaches, I will extract data from the surface, from the bottom, and from the 3D coordinate for each variable.
+
+```{r sampling}
+# Surface Presences
+oxyVals <- extract(x = oxygenSmooth[[1]], occurrences[,c("decimalLongitude", "decimalLatitude")])
+tempVals <- extract(x = temperature[[1]], occurrences[,c("decimalLongitude", "decimalLatitude")])
+vals <- cbind(occurrences, oxyVals, tempVals)
+colnames(vals) <- c("decimalLongitude", "decimalLatitude", "depth", "AOU", "Temperature")
+vals <- vals[complete.cases(vals),]
+row.names(vals) <- NULL
+occsWdataSurface <- vals
+
+# Bottom Presences
+oxyVals <- extract(x = oxygenBottom, occurrences[,c("decimalLongitude", "decimalLatitude")])
+tempVals <- extract(x = temperatureBottom, occurrences[,c("decimalLongitude", "decimalLatitude")])
+vals <- cbind(occurrences, oxyVals, tempVals)
+colnames(vals) <- c("decimalLongitude", "decimalLatitude", "depth", "AOU", "Temperature")
+vals <- vals[complete.cases(vals),]
+row.names(vals) <- NULL
+occsWdataBottom <- vals
+
+# 3D Presences
+oxyVals <- xyzSample(occs = occurrences, oxygenSmooth)
+tempVals <- xyzSample(occs = occurrences, temperature)
+vals <- cbind(occurrences, oxyVals, tempVals)
+colnames(vals) <- c("decimalLongitude", "decimalLatitude", "depth", "AOU", "Temperature")
+vals <- vals[complete.cases(vals),]
+row.names(vals) <- NULL
+occsWdata3D <- vals
+
+rm(oxyVals, tempVals, vals)
+```
+
+# OLD CRAP
 
 # Introduction 
 To date, distribution and ecological niche models of marine species have generally only considered distributions in two-dimensional space, not accounting for depth. This may lead to mis-estimation of species distributions and subsequent diversity estimates, especially among pelagic and benthic species. Here, we present a possible way forward: generating species distribution models based on environmental data extracted at the depths where individuals were observed, and calibrated with three-dimensional sampling of pseudo-absences. We also provide some methods to project these models back into three-dimensional space and visualize the results. 
@@ -35,7 +255,7 @@ To date, distribution and ecological niche models of marine species have general
 
 First thing's first. Distributional models are based on coordinates of species' occurrences. Here is an example dataset of Steindachneria argentia, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain et al., 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens et al., 2021).
 
-```{r occurrence data, eval=T}
+```{r OLD occurrence data, eval=T}
 occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
                              package='voluModel'))
 head(occs)
@@ -44,7 +264,7 @@ dotchart(occs$depth, main = "Distribution of depth measurements")
 
 Based on this plot, and what we know about the biology of luminous hakes and how these occurrence data are collected, I am going to remove occurrences that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not *in situ* or errors of some kind.
 
-```{r clean occurrence data, eval=T}
+```{r OLD clean occurrence data, eval=T}
 occsClean <- occs[!occs$depth %in% c(0,2100),]
 head(occsClean)
 dotchart(occsClean$depth, main = "Distribution of depth clean measurements")
@@ -53,7 +273,7 @@ dotchart(occsClean$depth, main = "Distribution of depth clean measurements")
 
 Next, we load two environmental datasets from the World Ocean Atlas (Garcia et al., 2019): temperature (Locarnini et al., 2018) and apparent oxygen utilization (Garcia et al., 2019). We have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. Our first task is to read in the shapefiles and convert each variable into a `RasterBrick`. While we are at it, we will generate a raster from the deepest value available for each point. While you might call this a "bottom" raster, it is important to note that in some cases, values are not available for the bottom.
 
-```{r environmental data loading temperature, eval=T, asis=T}
+```{r OLD environmental data loading temperature, eval=T, asis=T}
 library(rgdal)
 library(raster)
 library(voluModel)
@@ -89,7 +309,7 @@ plot(temperatureBottom,
 
 Apparent oxygen usage is more patchily sampled than temperature (it's generally measured from instrument casts on research cruises), so we use the `interpolateRaster()` function to produce statistically-interpolated layers using `TPS()` from the `fields` package. Be patient--this step can take a while, although as shown here, I am using the `fastTPS()` approximation. Maybe this will work ok for your data, maybe it won't. It depends on the data.
 
-```{r environmental data loading oxygen, eval=T, asis=T, warning=FALSE}
+```{r OLD environmental data loading oxygen, eval=T, asis=T, warning=FALSE}
 library(fields)
 td <- tempdir()
 unzip(system.file("extdata/woa18_all_A00mn01_cropped.zip", 
@@ -116,47 +336,18 @@ for (i in 1:nlayers(oxygen)){
 # Change names to match temperature
 names(oxygen) <- envtNames
 rm(envtNames)
-
-plot(oxygen[[1]], 
-     main = "Apparent Oxygen Utilization, surface")
-
-plot(oxygenBottom,
-     main = "Apparent Oxygen Utilization, bottom")
 ```
 
-You can see from these plots that apparent oxygen utilization is "patchier" than temperature. If you are confident that there should be a strong spatial correlation in a "patchy" data layer, you can also statistically smooth it, again using `TPS()`, like this:
-
-```{r smoothing oxygen, eval=FALSE}
-oxygenSmooth <- oxygen
-for (i in 1:nlayers(oxygen)){
-  oxygenSmooth[[i]] <- smoothRaster(oxygenSmooth[[i]], lon.lat = T) #Thin plate spline interpolation
-  oxygenSmooth[[i]] <- crop(mask(x = oxygenSmooth[[i]], mask = temperature[[i]]), temperature[[i]])
-}
-
-# Change names to match temperature
-names(oxygenSmooth) <- names(temperature)
-
-plot(oxygenSmooth[[1]], 
-     main = "Apparent Oxygen Utilization, surface")
-```
-```{r smooth oxygen display, echo=FALSE}
+```{r OLD smooth oxygen display, echo=FALSE}
 plot(oxygenSmooth[[1]], 
      main = "Smoothed Apparent Oxygen Utilization, surface")
-```
-```{r bottom smoothed oxygen, eval = T, asis = T}
-oxygenSmoothBottom <- smoothRaster(oxygenBottom, lon.lat = T)
-oxygenSmoothBottom <- crop(mask(x = oxygenSmoothBottom, 
-                                mask = temperature[[1]]), 
-                           temperature[[1]])
-plot(oxygenSmoothBottom, 
-     main = "Smoothed Apparent Oxygen Utilization, bottom")
 ```
 
 # Sampling data for model generation
 
 The first step is down-sampling the occurrence data so that there is only one occurrence per voxel (i.e. 3D pixel) of environmental data. We do this to avoid over-fitting the model due to biased sampling. The resampled points are centered in each voxel. You will notice that in this instance there was no re-centering of points, as the orignal dataset was already downsampled to the resolution of the environmental data. The red dots show occurrences from the original dataset that were removed when occurrences with depths of 0 and 2100m were removed, and had no occurrences at other depths.
 
-```{r downsample to voxel, eval=TRUE, warning=FALSE, message=FALSE}
+```{r OLD downsample to voxel, eval=TRUE, warning=FALSE, message=FALSE}
 occurrences <- occsClean[,c("decimalLatitude", "decimalLongitude", "depth")] 
 
 # Preliminary cleaning
@@ -188,7 +379,7 @@ rm(indices, layerNames, tempPoints, i, downsampledOccs, occs)
 
 Next, we generate a sampling region for the model based on occurrence points. Note that ideally when you're modeling you would carefully curate this background sampling region to make sure it truly approximates the area accessible to the species you are modeling. However, if you do not have a lot of information regarding accessible areas, the function supplied here may be useful to at least generate something logical and repeatable. `marineBackground` is a special case wrapper around `getDynamicAlphaHull` from the `rangeBuilder` package. `getDynamicAlphaHull` generates an alpha hull polygon around occurrence points; it iteratively adjusts the alpha parameter (how tightly the hull adheres to the points) to fit a hull around the data per the user's requirements. One can give it a buffer distance around points, as well as the minimum fraction of occurrences that must be found within the shapefile and the number of allowable distinct polygons. What `marineBackground` brings to the table is 1) robust functionality when the hull expands beyond 180 degrees East and/or West. Regions beyond this meridian are wrapped to the appropriate hemisphere instead of being deleted. If the user chooses to clip the hull to the oceans, `marineBackground` will also check to verify that all resulting shapefiles have occurrence points, so one is less likely to incorporate background data from an area inaccessible to the species (e.g. if a species is found only in the Atlantic, but the hull crosses over the Isthmus of Panama, `marineBackground` will remove hull shapes found in the Pacific). 
 
-```{r environmental background sampling}
+```{r OLD environmental background sampling}
 backgroundSamplingRegions <- marineBackground(occurrences)
 plot(temperature[[1]], 
      main = "Points and background sampling plotted on surface temperature",
@@ -200,7 +391,7 @@ points(occurrences[,c("decimalLongitude","decimalLatitude")],
 
 Finally, we need to draw the environmental variable data from each occurrence voxel, as well as from the background sampling region. First, we sample data for occurrences. Then, we generate background data by drawing occurrences from the XY extent of the background shapefile and from user-specified depths from 100 to 1500m. Background points intersecting with occurrences are not returned. Finally, the environmental data at each background coordinate are drawn and stored in their own data object.
 
-```{r sampling}
+```{r OLD sampling}
 # Presences
 oxyVals <- xyzSample(occs = occurrences, oxygenSmooth)
 tempVals <- xyzSample(occs = occurrences, temperature)
@@ -225,134 +416,6 @@ backgroundWdata <- vals
 rm(oxyVals, tempVals, vals, backgroundVals)
 ```
 
-# Niche envelope models
-
-First, let's generate a very simple envelope model, in which we define suitable conditions as those within the maximum and minimum conditions at which *Aphanopus intermedius* has been observed.
-
-```{r generate envelope niche model}
-# Get limits
-tempLims <- quantile(occsWdata$Temperature,c(0, 1))
-aouLims <- quantile(occsWdata$AOU,c(0, 1))
-
-# Reclassify environmental bricks to presence/absence
-temperaturePresence <- reclassify(temperature, 
-                                  rcl = c(-Inf,tempLims[[1]],0,
-                                          tempLims[[1]], tempLims[[2]], 1,
-                                          tempLims[[2]], Inf, 0))
-AOUpresence <- reclassify(oxygenSmooth, 
-                          rcl = c(-Inf, aouLims[[1]],0,
-                                  aouLims[[1]], aouLims[[2]], 1,
-                                  aouLims[[2]], Inf, 0))
-
-# Put it all together
-envelopeModel <- temperaturePresence * AOUpresence
-envelopeModel <- mask(envelopeModel, backgroundSamplingRegions)
-envelopeModel <- crop(envelopeModel, backgroundSamplingRegions)
-names(envelopeModel) <- names(temperature)
-rm(tempLims, aouLims, temperaturePresence, AOUpresence)
-```
-
-It's hard to visualize things in three dimensions, but here's an attempt. `plotLayers` plots a transparent layer of suitable habitat for each depth layer. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. Here, I am plotting suitability from 55m to 1300m, the depth range of occurrences used to train the envelope model.
-
-```{r 3D envelope model}
-# Get indices of model-relevant layers
-layerNames <- as.numeric(gsub("[X]", "", names(envelopeModel)))
-occurrences$index <- unlist(lapply(occurrences$depth, 
-                                   FUN = function(x) 
-                                     which.min(abs(layerNames - x))))
-indices <- sort(unique(occurrences$index))
-
-# Get continent shapefile
-land <- rnaturalearth::ne_countries(scale = "medium", 
-                                    returnclass = "sf")[1]
-
-plotLayers(envelopeModel[[min(indices):max(indices)]], 
-          land = land)
-rm(layerNames, indices)
-```
-
-# Generalized linear models
-
-Here's another example of a more complicated application, generating a general linear model. For this, we will need to unite the presence and absence data into a single data frame with an additional column, "response", which will contain 1s for presences and 0s for absences.
-
-```{r glm data prep part 1}
-# Add response as a column
-occsWdata$response <- rep(1, times = nrow(occsWdata))
-backgroundWdata$response <- rep(0, times = nrow(backgroundWdata))
-```
-
-If you are concerned about overfitting the model because you generated a lot more background points than presence points, you can sample from the background data however you think is logical. The example below samples twice the number of occurrence points from the background, weighted by distance form the suitable centroid of occurrence points. That is, the more environmentally-different a background point is from an occurrence point, the more likely it is to be sampled. This is helpful for GLMs, because background points are interpreted as "absences" unlike in methods like Maxent, where sampling the most dissimilar background is more likely to lead to an overfit model.
-
-```{r glm data prep part 2}
-# Sample background points weighted by distance from centroid of occurrence environments
-suitableCentroid <- apply(occsWdata[,c("Temperature", "AOU")], 
-                          MARGIN = 2, FUN = mean)
-backgroundWdata$distance <- apply(backgroundWdata[,c("Temperature", "AOU")], MARGIN = 1, 
-                                  FUN = function(x) dist(rbind(suitableCentroid, x)))
-backgroundWdata$sampleWeight <- (backgroundWdata$distance - 
-                                 min(backgroundWdata$distance))/(max(backgroundWdata$distance)-
-                                                                 min(backgroundWdata$distance))
-sampleForAbsence <- sample(x = rownames(backgroundWdata), 
-                           size = nrow(occsWdata) * 100, 
-                           prob = backgroundWdata$sampleWeight)
-backgroundWdata <- backgroundWdata[match(sampleForAbsence, 
-                                         rownames(backgroundWdata)),]
-
-# Unite datasets
-datForMod <- rbind(occsWdata, backgroundWdata[,colnames(occsWdata)])
-rm(suitableCentroid, sampleForAbsence, backgroundWdata, occsWdata)
-```
-
-Now we are ready to make a generalized linear model. How does it look?
-
-```{r generate glm niche model}
-glmModel <- glm(formula = response ~ Temperature *  AOU, 
-                  family = binomial(link = "logit"),  data = datForMod)
-summary(glmModel)
-```
-
-Next we project the model back into geographic space.
-
-```{r project glm niche model}
-layerNames <- as.numeric(gsub("[X]", "", names(temperature)))
-index <- seq(from = match(min(datForMod$depth), layerNames), 
-             to = match(max(datForMod$depth), layerNames), by = 1)
-depthPred <- NULL
-for(j in index){
-  depthPreds <- stack(temperature[[j]], oxygenSmooth[[j]])
-  crs(depthPreds) <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
-  names(depthPreds) <- c("Temperature", "AOU")
-  depthPred[[j]] <- mask(predict(depthPreds, glmModel), backgroundSamplingRegions)
-  depthPred[[j]] <- crop(depthPred[[j]], backgroundSamplingRegions)
-  names(depthPred[[j]]) <- layerNames[[j]]
-}
-glmPred <- stack(depthPred[!unlist(lapply(depthPred, FUN = function(x) is.null(x)))])
-rm(index, j, layerNames, depthPred, depthPreds, backgroundSamplingRegions, glmModel)
-```
-
-And here's what it looks like threshholded to presences and absences. In this case, the threshold is the bottom tenth percentile of suitability scores.
-
-```{r glm niche threshold}
-glmThreshold <- quantile(xyzSample(datForMod[datForMod$response == 1,
-                                             c("depth", "decimalLongitude", "decimalLatitude")], 
-                                   brick(glmPred)), .1, na.rm = T)[[1]] # MS90
-glmThresholded <- glmPred > glmThreshold
-glmThresholded <- reclassify(glmThresholded, c(NA, NA, 0), include.lowest = T)
-rm(glmThreshold, glmPred)
-```
-
-And plotted like the envelope model.
-
-```{r thresholded glm niche model plotted}
-layerNames <- as.numeric(gsub("[X]", "", names(glmThresholded)))
-datForMod$index <- unlist(lapply(datForMod$depth, FUN = function(x) which.min(abs(layerNames - x))))
-indices <- unique(datForMod$index)
-
-plotLayers(glmThresholded[[min(indices):max(indices)]], 
-          land = land, landCol = "black")
-```
-
-Of course, these are just two starting examples. We welcome submissions from the community for other types of models you would like to see. Submit your suggestions as issues [here](https://github.com/hannahlowens/voluModel/issues).
 
 # References
 
