@@ -26,6 +26,8 @@ knitr::opts_knit$set(root.dir = system.file('extdata',
                                             package='voluModel'))
 load(system.file("extdata/oxygenSmooth.RData", 
                  package='voluModel'))
+load(system.file("extdata/oxygenBottom.RData",
+                 package = 'voluModel'))
 ```
 
 # Introduction 
@@ -42,43 +44,10 @@ library(raster) # For raster stuff. Will eventually be replaced with terra.
 
 # Data Inputs
 
-First thing's first. Distributional models are based on coordinates of species' occurrences. Here is an example dataset of *Steindachneria argentia*, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens *et al.*, 2021).
+First thing's first. Distributional models are based on coordinates of species' occurrences. We start with and example occurrence dataset of *Steindachneria argentia*, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens *et al.*, 2021).
 
-```{r occurrence data, warning=FALSE, eval=T}
-occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
-                             package='voluModel'))
-
-ggplot(occs, aes(x = 1, y=depth)) +
-  geom_violin(fill="yellow", ) +
-  theme_classic(base_size = 15) +
-  theme(axis.title = element_blank(),
-        text = element_text(family = "Arial"),
-        axis.text = element_text(size = rel(1.1))) +
-  ggtitle("Depth") +
-  geom_boxplot(width=0.1)
-```
-
-Based on this plot and what we know about the biology of Luminous Hakes and how these occurrence data are collected, I am going to remove occurrences that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not *in situ* or errors of some kind.
-
-```{r clean occurrence data, eval=T}
-occsClean <- occs[complete.cases(occs$depth),]
-occsClean <- occsClean[occsClean$depth > 0.0,]
-occsClean <- occsClean[occsClean$depth < 2000.0,]
-head(occsClean)
-
-ggplot(occsClean, aes(x = 1, y=depth)) +
-  geom_violin(fill="yellow", ) +
-  theme_classic(base_size = 15) +
-  theme(axis.title = element_blank(),
-        text = element_text(family = "Arial"),
-        axis.text = element_text(size = rel(1.1))) +
-  ggtitle("Depth") +
-  geom_boxplot(width=0.1)
-```
-
-Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (AOU; Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. For more details on how to process environmental data, see [the raster data tutorial](2_RasterProcessing.html). Temperature processing is shown below for illustrative purposes.
-
-```{r environmental data loading, eval=T, asis=T}
+```{r loading data, eval=T, echo=FALSE, message=FALSE, warning=FALSE}
+# Temperature
 td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),
@@ -89,7 +58,7 @@ unlink(paste0(td, "/temperature/"), recursive = T)
 
 temperature@data[temperature@data == -999.999] <- NA
 
-#Creating a bottom raster
+# Creating a bottom raster
 temperatureBottom <- bottomRaster(temperature)
 
 # Creating a RasterBrick
@@ -100,25 +69,19 @@ temperature <- rasterFromXYZ(cbind(temperature@coords,
 envtNames <- gsub("[d,M]", "", names(temperature))
 envtNames[[1]] <- "0"
 names(temperature) <- envtNames
-```
 
-Pre-processed AOU data are loaded from `.Rdata` files for speed. Again, see [the raster data tutorial](2_RasterProcessing.html) for further details.
-
-```{r environmental data loading oxygen, eval=T, asis=T, warning=FALSE}
-load(system.file("extdata/oxygenSmooth.RData", 
-                 package='voluModel'))
-load(system.file("extdata/oxygenBottom.RData",
-                 package='voluModel'))
-
-# Change names to match temperature
+# Oxygen processing
 names(oxygenSmooth) <- names(temperature)
-```
 
-# Sampling data for model generation
+# Points ----
+occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
+                             package='voluModel'))
 
-The first step is down-sampling the occurrence data so that there is only one occurrence per voxel (i.e. 3D pixel) of environmental data. We do this to avoid over-fitting the model due to biased sampling. The resampled points are centered in each voxel. The red dots show occurrences from the original dataset; the orange dots show the downsampled dataset.
+#Clean points
+occsClean <- occs[complete.cases(occs$depth),]
+occsClean <- occsClean[occsClean$depth > 0.0,]
+occsClean <- occsClean[occsClean$depth < 2000.0,]
 
-```{r downsample to voxel, eval=TRUE, warning=FALSE, message=FALSE}
 occurrences <- occsClean[,c("decimalLatitude", "decimalLongitude", "depth")] 
 
 # Preliminary cleaning
@@ -136,22 +99,42 @@ for(i in indices){
   tempPoints$depth <- rep(layerNames[[i]], times = nrow(tempPoints))
   downsampledOccs <- rbind(downsampledOccs, tempPoints)
 }
+occurrences <- occurrences[,c("decimalLatitude", "decimalLongitude", "depth")] 
+```
 
-occurrences <- downsampledOccs
+Here is how the occurrence data file is structured, and where the occurrences we will be using are located.
 
-print(paste0("Original number of points: ", nrow(occs), "; number of downsampled occs: ", nrow(occurrences)))
-pointCompMap(occs1 = occs, occs2 = occurrences, 
-             occs1Name = "Original", occs2Name = "Cleaned", 
-             spName = "Steindachneria argentia", 
-             land = rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
+```{r show points, warning=FALSE, echo=FALSE, message=FALSE}
+head(occurrences)
+
+land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
+pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
+             spName = "Steindachneria argentia", ptSize = 3,
+             land = land
 )
 rm(indices, layerNames, tempPoints, i, downsampledOccs, occs)
 ```
 
-At this point, we can demonstrate one of the key contributions of `voluModel`-- an improvement in how the environmental data are extracted at species' occurrences. `voluModel` samples environmental conditions at the depth where each record was located, instead of extrapolating to surface or bottom conditions. How important is this? First, let's look at temperature.
+Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (AOU; Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. 
 
-```{r temperature violin plots}
-# Extraction
+Here you see plots at the sea surface and the bottom. The AOU dataset has been interpolated and smoothed using a thin plate spline algorithm. For more details on how to process environmental data, see [the raster data tutorial](2_RasterProcessing.html). 
+
+```{r environmental data plotting, echo=FALSE, message=FALSE, warning=FALSE}
+oneRasterPlot(temperature[[1]], land = land, landCol = "black", 
+              title= "Temperature, surface")
+oneRasterPlot(temperatureBottom,land = land, landCol = "black", 
+              title = "Temperature, bottom")
+
+oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
+              title= "Apparent Oxygen Utilization, surface\ninterpolated and smoothed")
+oneRasterPlot(oxygenBottom, land = land, landCol = "black",
+     title = "Apparent Oxygen Utilization, bottom, \ninterpolated and smoothed")
+```
+
+# A point about 3D environmental data extraction
+
+```{r data extraction, echo=FALSE, warning=FALSE}
+# Extract temperature
 threeDimTemp <- xyzSample(occs = occurrences, temperature)
 threeDimTemp <- cbind(rep("3D", length(threeDimTemp)), threeDimTemp)
 surfTemp <- extract(x = temperature[[1]], occurrences[,c("decimalLongitude", "decimalLatitude")])
@@ -159,6 +142,18 @@ surfTemp <- cbind(rep("Surface", length(surfTemp)), surfTemp)
 bottomTemp <- extract(x = temperatureBottom, occurrences[,c("decimalLongitude", "decimalLatitude")])
 bottomTemp <- cbind(rep("Bottom", length(bottomTemp)), bottomTemp)
 
+# Extract AOU
+threeDimOxy <- xyzSample(occs = occurrences, oxygenSmooth)
+threeDimOxy <- cbind(rep("3D", length(threeDimOxy)), threeDimOxy)
+surfOxy <- extract(x = oxygenSmooth[[1]], occurrences[,c("decimalLongitude", "decimalLatitude")])
+surfOxy <- cbind(rep("Surface", length(surfOxy)), surfOxy)
+bottomOxy <- extract(x = oxygenBottom, occurrences[,c("decimalLongitude", "decimalLatitude")])
+bottomOxy <- cbind(rep("Bottom", length(bottomOxy)), bottomOxy)
+```
+
+At this point, we can demonstrate one of the key contributions of `voluModel`-- an improvement in how the environmental data are extracted at species' occurrences. `voluModel` samples environmental conditions at the depth where each record was located, instead of extrapolating to surface or bottom conditions. How important is this? First, let's look at temperature.
+
+```{r temperature violin plots, echo=FALSE}
 # Collation
 allTemp <- rbind(threeDimTemp, surfTemp, bottomTemp)
 colnames(allTemp) <- c("Group", "Temperature")
@@ -181,15 +176,7 @@ Temperature extracted at the appropriate depth (3D) is significantly lower than 
 
 How does AOU look?
 
-```{r oxygen violin plots}
-# Extraction
-threeDimOxy <- xyzSample(occs = occurrences, oxygenSmooth)
-threeDimOxy <- cbind(rep("3D", length(threeDimOxy)), threeDimOxy)
-surfOxy <- extract(x = oxygenSmooth[[1]], occurrences[,c("decimalLongitude", "decimalLatitude")])
-surfOxy <- cbind(rep("Surface", length(surfOxy)), surfOxy)
-bottomOxy <- extract(x = oxygenBottom, occurrences[,c("decimalLongitude", "decimalLatitude")])
-bottomOxy <- cbind(rep("Bottom", length(bottomOxy)), bottomOxy)
-
+```{r oxygen violin plots, echo=FALSE}
 # Collation
 allOxy <- rbind(threeDimOxy, surfOxy, bottomOxy)
 colnames(allOxy) <- c("Group", "Oxygen")
@@ -209,6 +196,8 @@ ggplot(allOxy, aes(x=Group, y=Oxygen)) +
 ```
 
 AOU based on 3D extraction is significantly higher than AOU extracted at the surface. The mean value of AOU is again similar between the bottom and the 3D extractions; the range of 3D values is broader than those extracted at the bottom, but contains no statistical outliers, i.e. greater than 1.5 * interquartile range from the hinge of the boxplot (black dots).
+
+# Data sampling
 
 Some modeling methods require the generation of a sampling region from which pseudoabsence or background points are drawn. For this introduction, we are showing you a simple envelope method that does not require background sampling. Instead, I will be applying the same principle to define the study region to which I project the envelope model, so we have a product that makes biological sense in terms of the question "Where are we most likely to encounter Lumious Hakes?" See [the background sampling tutorial](3_DataSampling.html) for more information on `voluModel`'s `marineBackground()` function, and [the generalized linear model tutorial](6_GLMWorkflow.html) for an example of a modelling application that uses a background sampling region. 
 
