@@ -53,7 +53,22 @@ and Biogeography 30: 1876-88.
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/Simple.html">A simple example of how to use voluModel for niche modeling</a>
+      <a href="../articles/1_Introduction.html">1. Introduction to `voluModel`</a>
+    </li>
+    <li>
+      <a href="../articles/2_RasterProcessing.html">2. How to Use `voluModel` Tools to Process Raster Data</a>
+    </li>
+    <li>
+      <a href="../articles/3_DataSampling.html">3. How to Use `voluModel` Tools for Data Sampling</a>
+    </li>
+    <li>
+      <a href="../articles/4_Visualization.html">4. `voluModel` Visualization Tools</a>
+    </li>
+    <li>
+      <a href="../articles/5_MappingBiodiversity.html">5. How to Generate Alpha Diversity Maps with `voluModel`</a>
+    </li>
+    <li>
+      <a href="../articles/6_GLMWorkflow.html">6. How to Generate and Project a 3D Niche Model Using the GLM Algorithm</a>
     </li>
   </ul></li>
 <li>
@@ -161,6 +176,9 @@ deleted.</p>
 <span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">marineBackground</span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, clipToOcean <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Using longitude and latitude</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  as x and y coordinates, respectively.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Registered S3 method overwritten by 'spatstat.geom':</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   method     from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   print.boxx cli </span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">occurrences</span>, pch <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="marineBackground-1.png" alt="" width="700" height="433"></span>

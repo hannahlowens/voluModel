@@ -34,7 +34,22 @@ resolution of envBrick."><meta property="og:image" content="/logo.png"><!-- math
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/Simple.html">A simple example of how to use voluModel for niche modeling</a>
+      <a href="../articles/1_Introduction.html">1. Introduction to `voluModel`</a>
+    </li>
+    <li>
+      <a href="../articles/2_RasterProcessing.html">2. How to Use `voluModel` Tools to Process Raster Data</a>
+    </li>
+    <li>
+      <a href="../articles/3_DataSampling.html">3. How to Use `voluModel` Tools for Data Sampling</a>
+    </li>
+    <li>
+      <a href="../articles/4_Visualization.html">4. `voluModel` Visualization Tools</a>
+    </li>
+    <li>
+      <a href="../articles/5_MappingBiodiversity.html">5. How to Generate Alpha Diversity Maps with `voluModel`</a>
+    </li>
+    <li>
+      <a href="../articles/6_GLMWorkflow.html">6. How to Generate and Project a 3D Niche Model Using the GLM Algorithm</a>
     </li>
   </ul></li>
 <li>
@@ -130,7 +145,7 @@ which to sample.</p></li>
 <span class="r-in">                   size <span class="op">=</span> <span class="fl">10</span>, replace <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">depth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">35</span>, size <span class="op">=</span> <span class="fl">10</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">occurrences</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">longitude</span>,<span class="va">latitude</span>,<span class="va">depth</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">occurrences</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">longitude</span>,<span class="va">latitude</span>,<span class="va">depth</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Generate background sampling buffer</span></span>
 <span class="r-in"><span class="va">buffPts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sp/man/SpatialPoints.html" class="external-link">SpatialPoints</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"longitude"</span>, <span class="st">"latitude"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
