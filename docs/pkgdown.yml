@@ -2,6 +2,11 @@ pandoc: 2.14.0.3
 pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
-  Simple: Simple.html
-last_built: 2022-01-19T09:11Z
+  1_Introduction: 1_Introduction.html
+  2_RasterProcessing: 2_RasterProcessing.html
+  3_DataSampling: 3_DataSampling.html
+  4_Visualization: 4_Visualization.html
+  5_MappingBiodiversity: 5_MappingBiodiversity.html
+  6_GLMWorkflow: 6_GLMWorkflow.html
+last_built: 2022-02-08T13:13Z
 
