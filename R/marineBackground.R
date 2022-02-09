@@ -46,7 +46,9 @@
 #' one wants to automatically generate training regions that overlap
 #' the international date line. Regions that exceed the line are cut
 #' and pasted into the appropriate hemisphere instead of being
-#' deleted.
+#' deleted.\n\n If the argument `buff` is not supplied, a buffer is
+#' calculated by taking the mean between the 10th and 90th percentile
+#' of horizontal distances between occurrence points.
 #'
 #' @examples
 #' library(raster)
@@ -99,7 +101,8 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
   if("buff" %in% names(args)){
     buff <- args$buff
   } else{
-    buff <- 10000
+    pDist <- raster::pointDistance(occs[,c(xIndex, yIndex)], lonlat = TRUE)
+    buff <- mean(quantile(pDist, c(.1, .9), na.rm = TRUE))/2
   }
 
   if("initialAlpha" %in% names(args)){
@@ -165,10 +168,6 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
   interp <- colParse$reportMessage
 
   message(interp)
-
-  # Calculate buffer
-  pDist <- raster::pointDistance(occs[,c(xIndex, yIndex)], lonlat = TRUE)
-  buff <- mean(quantile(pDist, c(.1, .9), na.rm = TRUE))/2
 
   # Hull part
   hull <- try(rangeBuilder::getDynamicAlphaHull(occs,

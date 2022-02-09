@@ -56,7 +56,9 @@ The function documented here is especially useful in cases where
 one wants to automatically generate training regions that overlap
 the international date line. Regions that exceed the line are cut
 and pasted into the appropriate hemisphere instead of being
-deleted.
+deleted.\n\n If the argument \code{buff} is not supplied, a buffer is
+calculated by taking the mean between the 10th and 90th percentile
+of horizontal distances between occurrence points.
 }
 \examples{
 library(raster)
