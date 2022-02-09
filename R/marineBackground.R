@@ -46,7 +46,9 @@
 #' one wants to automatically generate training regions that overlap
 #' the international date line. Regions that exceed the line are cut
 #' and pasted into the appropriate hemisphere instead of being
-#' deleted.\n\n If the argument `buff` is not supplied, a buffer is
+#' deleted.
+#'
+#' If the argument `buff` is not supplied, a buffer is
 #' calculated by taking the mean between the 10th and 90th percentile
 #' of horizontal distances between occurrence points.
 #'
@@ -98,13 +100,6 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
     partCount <- 1
   }
 
-  if("buff" %in% names(args)){
-    buff <- args$buff
-  } else{
-    pDist <- raster::pointDistance(occs[,c(xIndex, yIndex)], lonlat = TRUE)
-    buff <- mean(quantile(pDist, c(.1, .9), na.rm = TRUE))/2
-  }
-
   if("initialAlpha" %in% names(args)){
     initialAlpha <- args$initialAlpha
   } else{
@@ -140,6 +135,27 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
     warning(message("Argument 'partCount' is not of type 'numeric'.\n"))
     return(NULL)
   }
+
+  # Parse columns
+  colNames <- colnames(occs)
+  colParse <- columnParse(occs)
+  if(is.null(colParse)){
+    return(NULL)
+  }
+  xIndex <- colParse$xIndex
+  yIndex <- colParse$yIndex
+  interp <- colParse$reportMessage
+
+  message(interp)
+
+  # Calculate buffer
+  if("buff" %in% names(args)){
+    buff <- args$buff
+  } else{
+    pDist <- raster::pointDistance(occs[,c(xIndex, yIndex)], lonlat = TRUE)
+    buff <- mean(quantile(pDist, c(.1, .9), na.rm = TRUE))/2
+  }
+
   if (!is.numeric(buff)) {
     warning(message("Argument 'buff' is not of type 'numeric'.\n"))
     return(NULL)
@@ -156,18 +172,6 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
     warning(message("Argument 'alphaIncrement' is not of type 'numeric'.\n"))
     return(NULL)
   }
-
-  # Parse columns
-  colNames <- colnames(occs)
-  colParse <- columnParse(occs)
-  if(is.null(colParse)){
-    return(NULL)
-  }
-  xIndex <- colParse$xIndex
-  yIndex <- colParse$yIndex
-  interp <- colParse$reportMessage
-
-  message(interp)
 
   # Hull part
   hull <- try(rangeBuilder::getDynamicAlphaHull(occs,
