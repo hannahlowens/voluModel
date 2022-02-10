@@ -65,10 +65,7 @@ and Biogeography 30: 1876-88.
       <a href="../articles/4_Visualization.html">4. `voluModel` Visualization Tools</a>
     </li>
     <li>
-      <a href="../articles/5_MappingBiodiversity.html">5. How to Generate Alpha Diversity Maps with `voluModel`</a>
-    </li>
-    <li>
-      <a href="../articles/6_GLMWorkflow.html">6. How to Generate and Project a 3D Niche Model Using the GLM Algorithm</a>
+      <a href="../articles/5_GLMWorkflow.html">5. How to Generate and Project a 3D Niche Model Using the GLM Algorithm</a>
     </li>
   </ul></li>
 <li>
@@ -150,6 +147,9 @@ one wants to automatically generate training regions that overlap
 the international date line. Regions that exceed the line are cut
 and pasted into the appropriate hemisphere instead of being
 deleted.</p>
+<p>If the argument <code>buff</code> is not supplied, a buffer is
+calculated by taking the mean between the 10th and 90th percentile
+of horizontal distances between occurrence points.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
