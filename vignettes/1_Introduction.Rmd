@@ -73,7 +73,7 @@ names(temperature) <- envtNames
 # Oxygen processing
 names(oxygenSmooth) <- names(temperature)
 
-# Points ----
+# Points
 occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
                              package='voluModel'))
 
