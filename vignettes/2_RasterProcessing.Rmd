@@ -30,7 +30,7 @@ load(system.file("extdata/oxygenSmooth.RData",
 
 # Introduction 
 
-Naturally, to build 3D distribution models, one needs three-dimensionally structured environmental data. These data may come in the form of interpolated *in situ* measurements (e.g. NOAA's World Ocean Atlas dataset; Garcia et al. 2018a) or as outputs from climate models, either as stand-alone ocean components or as a component of coupled atmosphere-ocean models (e.g. CCSM3, Collins et al. 2006; HadCM3, Valdes et al. 2017). Typically, these data are organized as a series of horizontal layers that are stacked by depth. 
+Naturally, to build 3D distribution models, one needs three-dimensionally structured environmental data. These data may come in the form of interpolated *in situ* measurements (e.g. [NOAA's World Ocean Atlas dataset](https://www.ncei.noaa.gov/access/world-ocean-atlas-2018/); Garcia et al. 2018a) or as outputs from climate models, either as stand-alone ocean components or as a component of coupled atmosphere-ocean models (e.g. CCSM3, Collins et al. 2006; HadCM3, Valdes et al. 2017). Typically, these data are organized as a series of horizontal layers that are stacked by depth. 
 
 ```{r load packages}
 library(voluModel) # Since this is the package this vignette is about.
@@ -43,7 +43,7 @@ library(fields) # For raster interpolation
 
 # Data Inputs
 
-First, let's look at a relatively simple environmental variable from the World Ocean Atlas (Garcia et al, 2018a): temperature (Locarnini et al, 2018). These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. Our first task is to read in the shapefile as a `SpatialPointsDataFrame`. Note that each row in `temperature@data` is a set of horizontal coordinates. Each column is a vertical position in the water column. Make sure to check the metadata of the data you use. Different sources may use vertical depth structures.
+First, let's look at a relatively simple environmental variable from the WOA: temperature (Locarnini et al, 2018). These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. You can download the full dataset via the WOA website. Our first task is to read in the shapefile as a `SpatialPointsDataFrame`. Note that each row in `temperature@data` is a set of horizontal coordinates. Each column is a vertical position in the water column. Make sure to check the metadata of the data you use. Different sources may use vertical depth structures.
 
 ```{r environmental data loading temperature, eval=T, asis=T}
 td <- tempdir()
