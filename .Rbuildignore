@@ -15,4 +15,3 @@
 ^CRAN-RELEASE$
 ComplementaryDataProcessing.R
 ^data-raw$
-^inst/doc$

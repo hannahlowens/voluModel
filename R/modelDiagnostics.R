@@ -50,7 +50,7 @@
 #' r2 <- raster(ncol=10, nrow=10)
 #' values(r2) <- c(rep(10, times = 50), rep(20, times = 50))
 #' r3 <- raster(ncol=10, nrow=10)
-#' values(r3) <- c(10,20,30)
+#' values(r3) <- c(rep(c(10,20,30,25), times = 25)
 #' envBrick2 <- brick(r1, r2, r3)
 #' names(envBrick2) <- c(0, 10, 30)
 #'
