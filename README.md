@@ -50,16 +50,17 @@ Currently, there is only a development version.
 
 ``` r
 devtools::install_github("hannahlowens/voluModel")
-```
 
-``` r
 library("voluModel")
 ```
 
 ## Getting Started
 
--   voluModel introduction vignette
-    (<https://hannahlowens.github.io/voluModel/articles/Simple.html>)
+1. [Introduction](https://hannahlowens.github.io/voluModel/articles/1_Introduction.html)
+2. [Processing Rasters](https://hannahlowens.github.io/voluModel/articles/2_RasterProcessing.html)
+3. [Sampling Environtmental Data in 3D](https://hannahlowens.github.io/voluModel/articles/3_DataSampling.html)
+4. [Visualization Tools](https://hannahlowens.github.io/voluModel/articles/4_Visualization.html)
+5. [Generalized Linear Model Workflow](https://hannahlowens.github.io/voluModel/articles/5_GLMWorkflow.html)
 
 ## Meta
 
