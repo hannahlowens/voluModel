@@ -1,5 +1,5 @@
 ---
-title: "4. `voluModel` Visualization Tools"
+title: "4. Visualization Tools"
 author:
 - Hannah L. Owens
 - Carsten Rahbek
@@ -12,7 +12,7 @@ output:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{4. A Guide to `voluModel` Visualization Tools}
+  %\VignetteIndexEntry{4. Visualization Tools}
   \usepackage[utf8]{inputenc}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}

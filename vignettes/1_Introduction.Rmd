@@ -12,7 +12,7 @@ output:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{1. An Introduction to the `voluModel` Package}
+  %\VignetteIndexEntry{1. Introduction to `voluModel`}
   \usepackage[utf8]{inputenc}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}

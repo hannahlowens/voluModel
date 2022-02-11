@@ -1,5 +1,5 @@
 ---
-title: "5. How to Generate and Project a 3D Niche Model Using the GLM Algorithm"
+title: "5. 3D Niche Modeling with the GLM Algorithm"
 author:
 - Hannah L. Owens
 - Carsten Rahbek
@@ -12,7 +12,7 @@ output:
     toc: true
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{6. A Tutorial on How to Generate and Project a 3D Niche Model Using the GLM Algorithm}
+  %\VignetteIndexEntry{5. 3D Niche Modeling with the GLM Algorithm}
   \usepackage[utf8]{inputenc}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
