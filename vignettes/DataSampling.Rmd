@@ -44,7 +44,7 @@ occurrences <- occurrences[complete.cases(occurrences),]
 
 # Introduction
 
-As stated in the [introduction to this package](1_Introduction.html), one of the key contributions of `voluModel` is the way it handles the extraction of environmental data for niche modeling. Specifically, environmental data at presences, absences, pseudoabsences, and/or background points can be extracted from environmental data `RasterBrick` objects based on depth in addition to horizontal coordinates. Another useful tool provided with `voluModel` is `marineBackground()`, which helps the user generate training regions from which background or pseudoabsence data are drawn. This is where we will start, so let's get into it.
+As stated in the [introduction to this package](Introduction.html), one of the key contributions of `voluModel` is the way it handles the extraction of environmental data for niche modeling. Specifically, environmental data at presences, absences, pseudoabsences, and/or background points can be extracted from environmental data `RasterBrick` objects based on depth in addition to horizontal coordinates. Another useful tool provided with `voluModel` is `marineBackground()`, which helps the user generate training regions from which background or pseudoabsence data are drawn. This is where we will start, so let's get into it.
 
 Here are the packages you will need.
 
@@ -182,7 +182,7 @@ temperature@data[temperature@data == -999.999] <- NA
 head(temperature@data)
 ```
 
-As you can see, each point is a line in the `SpatialPointsDataFrame`; each column is a depth layer at that point--"d5M" translates to "5 meters deep". For more details on how to process environmental data, see [the raster data tutorial](2_RasterProcessing.html). This next chunk converts the `SpatialPointsDataFrame` to a `RasterBrick`; the layers of the `RasterBrick` are then named the same as the column names of the `SpatialPointsDataFrame`. I strip the "d" and "M" from the column names so they are a little easier to use as depth coordinates. Note that `R` will not allow the raster names to be numeric, so it adds an "X" to the beginning of each column name. Don't worry about this--`voluModel` can handle numbers preceded by "X"s without user intervention.
+As you can see, each point is a line in the `SpatialPointsDataFrame`; each column is a depth layer at that point--"d5M" translates to "5 meters deep". For more details on how to process environmental data, see [the raster data tutorial](RasterProcessing.html). This next chunk converts the `SpatialPointsDataFrame` to a `RasterBrick`; the layers of the `RasterBrick` are then named the same as the column names of the `SpatialPointsDataFrame`. I strip the "d" and "M" from the column names so they are a little easier to use as depth coordinates. Note that `R` will not allow the raster names to be numeric, so it adds an "X" to the beginning of each column name. Don't worry about this--`voluModel` can handle numbers preceded by "X"s without user intervention.
 
 ```{r temperature to compatible RasterBrick}
 # Creating a RasterBrick
@@ -318,7 +318,7 @@ ggplot(dataForModeling, aes(x = temperature, fill = response, color = response))
   theme_classic()
 ```
 
-For a more complex, multivariate example of environmental dissimilarity weighting, refer to the [GLM workflow](5_GLMWorkflow.html).
+For a more complex, multivariate example of environmental dissimilarity weighting, refer to the [GLM workflow](GLMWorkflow.html).
 
 # References
 

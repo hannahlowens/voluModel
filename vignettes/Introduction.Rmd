@@ -117,7 +117,7 @@ rm(indices, layerNames, tempPoints, i, downsampledOccs, occs)
 
 Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (AOU; Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. 
 
-Here you see plots at the sea surface and the bottom. The AOU dataset has been interpolated and smoothed using a thin plate spline algorithm. For more details on how to process environmental data, see [the raster data tutorial](2_RasterProcessing.html). 
+Here you see plots at the sea surface and the bottom. The AOU dataset has been interpolated and smoothed using a thin plate spline algorithm. For more details on how to process environmental data, see [the raster data tutorial](RasterProcessing.html). 
 
 ```{r environmental data plotting, echo=FALSE, message=FALSE, warning=FALSE}
 oneRasterPlot(temperature[[1]], land = land, landCol = "black", 
@@ -199,7 +199,7 @@ AOU based on 3D extraction is significantly higher than AOU extracted at the sur
 
 # Data sampling
 
-Some modeling methods require the generation of a sampling region from which pseudoabsence or background points are drawn. For this introduction, we are showing you a simple envelope method that does not require background sampling. Instead, I will be applying the same principle to define the study region to which I project the envelope model, so we have a product that makes biological sense in terms of the question "Where are we most likely to encounter Lumious Hakes?" See [the background sampling tutorial](3_DataSampling.html) for more information on `voluModel`'s `marineBackground()` function, and [the generalized linear model tutorial](5_GLMWorkflow.html) for an example of a modelling application that uses a background sampling region. 
+Some modeling methods require the generation of a sampling region from which pseudoabsence or background points are drawn. For this introduction, we are showing you a simple envelope method that does not require background sampling. Instead, I will be applying the same principle to define the study region to which I project the envelope model, so we have a product that makes biological sense in terms of the question "Where are we most likely to encounter Lumious Hakes?" See [the background sampling tutorial](DataSampling.html) for more information on `voluModel`'s `marineBackground()` function, and [the generalized linear model tutorial](GLMWorkflow.html) for an example of a modelling application that uses a background sampling region. 
 
 ```{r study region, warning=FALSE}
 studyRegion <- marineBackground(occurrences)

@@ -75,7 +75,7 @@ ggplot(occsClean, aes(x = 1, y=depth)) +
   geom_boxplot(width=0.1)
 ```
 
-Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. For more details on how to process environmental data, see [the raster data tutorial](2_RasterProcessing.html). Temperature processing is shown below for illustrative purposes.
+Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. For more details on how to process environmental data, see [the raster data tutorial](RasterProcessing.html). Temperature processing is shown below for illustrative purposes.
 
 ```{r environmental data loading, eval=T, asis=T}
 td <- tempdir()
@@ -144,7 +144,7 @@ pointCompMap(occs1 = occsClean, occs2 = occurrences,
 rm(indices, layerNames, tempPoints, i, downsampledOccs, occs)
 ```
 
-Next, we generate a sampling region for the model based on occurrence points. Note that ideally when you're modeling you would carefully curate this background sampling region to make sure it truly approximates the area accessible to the species you are modeling. If you write the shapefile to disk, you can open and edit it in any GIS software you choose, if you have reason to believe `marineBackground()` falls short of estimating the true accessible are for a species. For more information, see [the environmental data processing tutorial](3_DataSampling.html).
+Next, we generate a sampling region for the model based on occurrence points. Note that ideally when you're modeling you would carefully curate this background sampling region to make sure it truly approximates the area accessible to the species you are modeling. If you write the shapefile to disk, you can open and edit it in any GIS software you choose, if you have reason to believe `marineBackground()` falls short of estimating the true accessible are for a species. For more information, see [the environmental data processing tutorial](DataSampling.html).
 
 ```{r environmental background sampling, warning=FALSE}
 backgroundSamplingRegions <- marineBackground(occurrences)
