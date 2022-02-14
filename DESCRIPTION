@@ -18,6 +18,7 @@ URL: https://hannahlowens.github.io/voluModel/
 BugReports: https://github.com/hannahlowens/voluModel/issues
 Encoding: UTF-8
 LazyData: true
+LazyDataCompression: xz
 Depends: R (>= 4.0.0)
 Imports:
     dplyr,
@@ -28,11 +29,13 @@ Imports:
     grDevices,
     latticeExtra,
     methods,
+    magrittr,
     raster,
     rangeBuilder,
     rgdal,
     rgeos,
     rmarkdown,
+    tibble,
     viridis,
     viridisLite,
     sp
