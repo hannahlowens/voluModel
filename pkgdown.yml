@@ -2,10 +2,10 @@ pandoc: 2.7.3
 pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
-  DataSampling: DataSampling.html
-  GLMWorkflow: GLMWorkflow.html
-  Introduction: Introduction.html
-  RasterProcessing: RasterProcessing.html
-  Visualization: Visualization.html
-last_built: 2022-02-14T09:39Z
+  a_Introduction: a_Introduction.html
+  b_RasterProcessing: b_RasterProcessing.html
+  c_DataSampling: c_DataSampling.html
+  d_Visualization: d_Visualization.html
+  e_GLMWorkflow: e_GLMWorkflow.html
+last_built: 2022-02-14T10:18Z
 

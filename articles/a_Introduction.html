@@ -57,19 +57,19 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/DataSampling.html">3. Environmental Data Sampling</a>
+      <a href="../articles/a_Introduction.html">1. Introduction to `voluModel`</a>
     </li>
     <li>
-      <a href="../articles/GLMWorkflow.html">5. 3D Niche Modeling with the GLM Algorithm</a>
+      <a href="../articles/b_RasterProcessing.html">2. Processing Raster Data</a>
     </li>
     <li>
-      <a href="../articles/Introduction.html">1. Introduction to `voluModel`</a>
+      <a href="../articles/c_DataSampling.html">3. Environmental Data Sampling</a>
     </li>
     <li>
-      <a href="../articles/RasterProcessing.html">2. Processing Raster Data</a>
+      <a href="../articles/d_Visualization.html">4. Visualization Tools</a>
     </li>
     <li>
-      <a href="../articles/Visualization.html">4. Visualization Tools</a>
+      <a href="../articles/e_GLMWorkflow.html">5. 3D Niche Modeling with the GLM Algorithm</a>
     </li>
   </ul>
 </li>
@@ -94,7 +94,7 @@
 
       
 
-      </header><script src="Introduction_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="a_Introduction_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>1. Introduction to <code>voluModel</code>
@@ -104,8 +104,8 @@
             
             <h4 data-toc-skip class="date">2022-02-14</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/Introduction.Rmd" class="external-link"><code>vignettes/Introduction.Rmd</code></a></small>
-      <div class="hidden name"><code>Introduction.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/a_Introduction.Rmd" class="external-link"><code>vignettes/a_Introduction.Rmd</code></a></small>
+      <div class="hidden name"><code>a_Introduction.Rmd</code></div>
 
     </div>
 
@@ -143,7 +143,7 @@
 </h2>
 <p>First thing’s first. Distributional models are based on coordinates of species’ occurrences. We start with and example occurrence dataset of <em>Steindachneria argentia</em>, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain <em>et al.</em>, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens <em>et al.</em>, 2021).</p>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpbClyTy/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpfiR7U9/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 2291 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <p>Here is how the occurrence data file is structured, and where the occurrences we will be using are located.</p>
@@ -154,10 +154,10 @@
 <span class="co">## 4        7.741667        -56.87500 365.76</span>
 <span class="co">## 5        9.300000        -80.43333  82.00</span>
 <span class="co">## 6        9.683300        -59.78330 274.00</span></code></pre>
-<p><img src="Introduction_files/figure-html/show%20points-1.png" width="700"></p>
+<p><img src="a_Introduction_files/figure-html/show%20points-1.png" width="700"></p>
 <p>Next, we load two environmental datasets from the World Ocean Atlas (Garcia <em>et al.</em>, 2019): temperature (Locarnini <em>et al.</em>, 2018) and apparent oxygen utilization (AOU; Garcia <em>et al.</em>, 2019). I have chosen these variables for simplified illustrative purposes–we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient.</p>
 <p>Here you see plots at the sea surface and the bottom. The AOU dataset has been interpolated and smoothed using a thin plate spline algorithm. For more details on how to process environmental data, see <a href="RasterProcessing.html">the raster data tutorial</a>.</p>
-<p><img src="Introduction_files/figure-html/environmental%20data%20plotting-1.png" width="700"><img src="Introduction_files/figure-html/environmental%20data%20plotting-2.png" width="700"><img src="Introduction_files/figure-html/environmental%20data%20plotting-3.png" width="700"><img src="Introduction_files/figure-html/environmental%20data%20plotting-4.png" width="700"></p>
+<p><img src="a_Introduction_files/figure-html/environmental%20data%20plotting-1.png" width="700"><img src="a_Introduction_files/figure-html/environmental%20data%20plotting-2.png" width="700"><img src="a_Introduction_files/figure-html/environmental%20data%20plotting-3.png" width="700"><img src="a_Introduction_files/figure-html/environmental%20data%20plotting-4.png" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="a-point-about-3d-environmental-data-extraction">A point about 3D environmental data extraction<a class="anchor" aria-label="anchor" href="#a-point-about-3d-environmental-data-extraction"></a>
@@ -168,11 +168,11 @@
 <span class="co">##  as x, y, and z coordinates, respectively.</span></code></pre>
 <p>At this point, we can demonstrate one of the key contributions of <code>voluModel</code>– an improvement in how the environmental data are extracted at species’ occurrences. <code>voluModel</code> samples environmental conditions at the depth where each record was located, instead of extrapolating to surface or bottom conditions. How important is this? First, let’s look at temperature.</p>
 <pre><code><span class="co">## Warning: Removed 174 rows containing non-finite values (stat_boxplot).</span></code></pre>
-<p><img src="Introduction_files/figure-html/temperature%20violin%20plots-1.png" width="700"></p>
+<p><img src="a_Introduction_files/figure-html/temperature%20violin%20plots-1.png" width="700"></p>
 <p>Temperature extracted at the appropriate depth (3D) is significantly lower than temperature extracted at the surface. The mean value of temperature is similar between the bottom and the 3D extractions, but the range of 3D values is narrower than those extracted at the bottom.</p>
 <p>How does AOU look?</p>
 <pre><code><span class="co">## Warning: Removed 174 rows containing non-finite values (stat_boxplot).</span></code></pre>
-<p><img src="Introduction_files/figure-html/oxygen%20violin%20plots-1.png" width="700"></p>
+<p><img src="a_Introduction_files/figure-html/oxygen%20violin%20plots-1.png" width="700"></p>
 <p>AOU based on 3D extraction is significantly higher than AOU extracted at the surface. The mean value of AOU is again similar between the bottom and the 3D extractions; the range of 3D values is broader than those extracted at the bottom, but contains no statistical outliers, i.e. greater than 1.5 * interquartile range from the hinge of the boxplot (black dots).</p>
 </div>
 <div class="section level2">
@@ -193,7 +193,7 @@
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">studyRegion</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>,<span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>, 
        cex <span class="op">=</span> <span class="fl">1</span>, pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></code></pre></div>
-<p><img src="Introduction_files/figure-html/study%20region-1.png" width="700"></p>
+<p><img src="a_Introduction_files/figure-html/study%20region-1.png" width="700"></p>
 <p>For our simple niche envelope models, we need to draw the environmental variable data from each occurrence voxel. For comparison with previous modeling approaches, I will extract data from the surface, from the bottom, and from the 3D coordinate for each variable.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Surface Presences</span>
@@ -281,7 +281,7 @@
 <span class="fu"><a href="../reference/rasterComp.html">rasterComp</a></span><span class="op">(</span>rast1 <span class="op">=</span> <span class="va">envelopeModelSurface</span>, rast2 <span class="op">=</span> <span class="va">envelopeModelBottom</span>, 
            rast1Name <span class="op">=</span> <span class="st">"Surface"</span>, rast2Name <span class="op">=</span> <span class="st">"Bottom"</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
            title <span class="op">=</span> <span class="st">"Comparison between surface and bottom envelope models"</span><span class="op">)</span></code></pre></div>
-<p><img src="Introduction_files/figure-html/comparing%202D%20maps-1.png" width="700"></p>
+<p><img src="a_Introduction_files/figure-html/comparing%202D%20maps-1.png" width="700"></p>
 <p>Now I’ll demonstrate how to make a 3D envelope model. Generating the model is exactly the same–any conditions between the maximum and minimum values at which Luminous Hakes were observed are considered suitable. The estimates are, of course, based on 3D environmental data extractions. The other key difference is that the envelope model is projected to each layer in each of the raster bricks (essentially generating a single variable model for each variable). The single-variable models are then multiplied together to generate a full model.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Get limits</span>
@@ -315,7 +315,7 @@
 
 <span class="fu"><a href="../reference/plotLayers.html">plotLayers</a></span><span class="op">(</span><span class="va">envelopeModel3D</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>, 
           land <span class="op">=</span> <span class="va">land</span><span class="op">)</span></code></pre></div>
-<p><img src="Introduction_files/figure-html/plot%203D%20envelope%20model-1.png" width="700"></p>
+<p><img src="a_Introduction_files/figure-html/plot%203D%20envelope%20model-1.png" width="700"></p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">layerNames</span>, <span class="va">indices</span><span class="op">)</span></code></pre></div>
 <p>In the 3D model, an area of deep suitable habitat is found in the western Gulf of Mexico that was recovered by the bottom model but not the surface model. The bottom model did not predict the suitable habitat recovered by the surface and 3D models in the Sargasso Sea.</p>
