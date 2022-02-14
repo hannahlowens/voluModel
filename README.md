@@ -49,7 +49,7 @@ citation(package = "voluModel")
 Currently, there is only a development version.
 
 ``` r
-devtools::install_github("hannahlowens/voluModel")
+devtools::install_github("hannahlowens/voluModel", build_vignettes = TRUE)
 
 library("voluModel")
 ```
