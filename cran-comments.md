@@ -18,10 +18,9 @@
 
 * One NOTE occurred in all rhub environments and local OS X:
 
-    Examples with CPU (user + system) or elapsed time > 5s
-                     user system elapsed
-  marineBackground 204.20   0.72  211.33
-  oneRasterPlot      5.86   0.31    6.22
+   Examples with CPU (user + system) or elapsed time > 5s
+                       user system elapsed
+   marineBackground 143.882  1.084 150.746
    
     We chose as small a realistic dataset for this example as possible to ensure it would run as quickly as possible. Time elapsed varied +/- 50s depending on environment.
 
