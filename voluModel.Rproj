@@ -19,6 +19,6 @@ LineEndingConversion: Posix
 BuildType: Package
 PackageUseDevtools: Yes
 PackageInstallArgs: --no-multiarch --with-keep.source
-PackageBuildArgs: --resave-data="best" --compact-vignettes="gs+qpdf"
+PackageBuildArgs: --resave-data="best" --compact-vignettes="qpdf"
 PackageBuildBinaryArgs: --resave-data --compact-docs
 PackageRoxygenize: rd,collate,namespace
