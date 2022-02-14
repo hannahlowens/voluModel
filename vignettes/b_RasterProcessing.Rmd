@@ -141,7 +141,6 @@ for (i in 1:nlayers(oxygen)){
 
 # Change names to match temperature
 names(oxygen) <- envtNames
-rm(envtNames)
 
 # How do these files look?
 oneRasterPlot(oxygen[[1]], land = land, landCol = "black", 
