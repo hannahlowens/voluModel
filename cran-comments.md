@@ -8,7 +8,7 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+0 errors | 0 warnings | 3 notes
 
 * One NOTE occurred in all test environments:
 
@@ -16,14 +16,14 @@
 
     This is the smallest file size possible, balancing file size with speed of vignette build and extent of vignette-based documentation. Every test environment had some version of this note, although the installed file size varied +/- 1Mb among the environments.
 
-* One NOTE occurred in all test environments except local OS X:
+* One NOTE occurred in all rhub environments and local OS X:
 
-    NOTE: Examples with CPU (user + system) or elapsed time > 5s
-
-                         user system elapsed
-      marineBackground 152.34   0.74  153.14
+    Examples with CPU (user + system) or elapsed time > 5s
+                     user system elapsed
+  marineBackground 204.20   0.72  211.33
+  oneRasterPlot      5.86   0.31    6.22
    
-    We chose as small a realistic dataset for this example as possible to ensure it would run as quickly as possible. Every test environmental had some version of this note, although the elapsed time varied +/- 10s.
+    We chose as small a realistic dataset for this example as possible to ensure it would run as quickly as possible. Time elapsed varied +/- 50s depending on environment.
 
 * One NOTE occurred in rhub, win-devel, and win-release:
 
