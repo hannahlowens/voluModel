@@ -839,10 +839,10 @@ diversityStack <- function(rasterList, template){
 #'               landCol = "black")
 #'
 #' @import raster
-#' @import viridis
+#' @importFrom viridisLite viridis
 #' @importFrom latticeExtra as.layer
 #'
-#' @seealso \code{\link[viridis:viridis]{viridis}} \code{\link[raster:spplot]{spplot}}
+#' @seealso \code{\link[viridisLite:viridis]{viridis}} \code{\link[raster:spplot]{spplot}}
 #'
 #' @keywords plotting
 #' @export
@@ -900,14 +900,14 @@ oneRasterPlot <- function(rast,
 
   if(any(is.na(land))){
     spplot(rast, col = "transparent",
-           col.regions = viridis::viridis(11, alpha = alpha,
-                                          option = option),
+           col.regions = viridis(11, alpha = alpha,
+                                 option = option),
            at = at, main = title,
            maxpixels = maxpixels)
   } else {
     spplot(rast, col = "transparent",
-           col.regions = viridis::viridis(11, alpha = alpha,
-                                          option = option),
+           col.regions = viridis(11, alpha = alpha,
+                                 option = option),
            at = at, main = title,
            maxpixels = maxpixels) +
       as.layer(spplot(as(land,"Spatial"), fill=landCol, main = title))
@@ -960,10 +960,10 @@ oneRasterPlot <- function(rast,
 #' plotLayers(distBrick)
 #'
 #' @import raster
-#' @import viridis
+#' @importFrom viridisLite viridis
 #' @importFrom latticeExtra as.layer
 #'
-#' @seealso \code{\link[viridis:viridis]{viridis}} \code{\link[raster:spplot]{spplot}}
+#' @seealso \code{\link[viridisLite:viridis]{viridis}} \code{\link[raster:spplot]{spplot}}
 #'
 #' @keywords plotting
 #'

@@ -29,6 +29,7 @@ library(voluModel) # Because of course
 library(ggplot2) # For fancy plotting
 library(rgdal) # For vector stuff. Will eventually be replaced with sf.
 library(raster) # For raster stuff. Will eventually be replaced with terra.
+library(viridisLite) # For high-contrast plotting palettes
 
 # Load data
 load(system.file("extdata/oxygenSmooth.RData", 
@@ -128,6 +129,7 @@ library(voluModel) # Because of course
 library(ggplot2) # For fancy plotting
 library(rgdal) # For vector stuff. Will eventually be replaced with sf.
 library(raster) # For raster stuff. Will eventually be replaced with terra.
+library(viridisLite) # For high-contrast plotting palettes
 ```
 
 Here is a shapefile of the continents, which we can conveniently use to provide some context for all the maps we are about to make.
@@ -156,7 +158,7 @@ pointCompMap(occs1 = occs, occs1Col = "red", occs1Name = "Raw",
 
 # Plotting rasters
 
-If you have a horizontal raster you would like to map that contains continuous data, the function for you might be `oneRasterPlot()`. It is a wrapper around `spplot()` from `sp` (Pebesma and Bivand, 2005; Bivand *et al.* 2013) that implements the high-contrast, colorblind-friendly color palettes offered in `viridis()` from `viridis` (Garnier *et al.*, 2021). The function optionally takes arguments to the `spplot()` and `viridis()` functions (so, for example, you can choose a palette other than the default).
+If you have a horizontal raster you would like to map that contains continuous data, the function for you might be `oneRasterPlot()`. It is a wrapper around `spplot()` from `sp` (Pebesma and Bivand, 2005; Bivand *et al.* 2013) that implements the high-contrast, colorblind-friendly color palettes offered in `viridis()` from `viridisLite` (Garnier *et al.*, 2021). The function optionally takes arguments to the `spplot()` and `viridis()` functions (so, for example, you can choose a palette other than the default).
 
 ```{r oneRasterPlot}
 oneRasterPlot(rast = temperature[[1]],

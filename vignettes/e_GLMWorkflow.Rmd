@@ -38,6 +38,7 @@ library(voluModel) # Because of course
 library(ggplot2) # For fancy plotting
 library(rgdal) # For vector stuff. Will eventually be replaced with sf.
 library(raster) # For raster stuff. Will eventually be replaced with terra.
+library(viridisLite) # For high-contrast plotting palettes
 ```
 
 # Data Inputs
@@ -150,7 +151,7 @@ Next, we generate a sampling region for the model based on occurrence points. No
 backgroundSamplingRegions <- marineBackground(occurrences)
 plot(temperature[[1]], 
      main = "Points and background sampling plotted on surface temperature",
-     col = viridisLite::mako(n= 11))
+     col = viridis(n= 11, option = "mako"))
 plot(backgroundSamplingRegions, add = T, border = "orange", lwd = 2)
 points(occurrences[,c("decimalLongitude","decimalLatitude")], 
        cex = 1, pch = 20, col = "red")
