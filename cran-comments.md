@@ -1,5 +1,5 @@
 ## Test environments
-* local OS X 10.15.7, R 4.0.2
+* local OS X 10.15.7, R 4.1.2
 * win-builder (devel and release)
 * ubuntu 20.04 (devel and release; on GitHub Actions), R 4.1.2
 * windows-latest (on GitHub Actions), R 4.1.2
@@ -8,14 +8,13 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 3 notes
+0 errors | 0 warnings | 1 note
 
-* This is a new release.
 * One NOTE occurred in all test environments:
 
-    NOTE: installed size is 110.8Mb
+    NOTE: installed size is 6.9Mb
 
-    This is the smallest file size possible, balancing file size with speed of vignette build. Every test environment had some version of this note, although the installed file size varied +/- 5Mb among the environments.
+    This is the smallest file size possible, balancing file size with speed of vignette build and extent of vignette-based documentation. Every test environment had some version of this note, although the installed file size varied +/- 1Mb among the environments.
 
 * One NOTE occurred in all test environments except local OS X:
 
