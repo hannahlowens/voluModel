@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voluModel</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
       </span>
     </div>
 
@@ -153,7 +153,7 @@
 <span class="co">##  as x and y coordinates, respectively.</span></code></pre>
 <pre><code><span class="co">## Warning: Use of `occs[[xIndex]]` is discouraged. Use `.data[[xIndex]]` instead.</span></code></pre>
 <pre><code><span class="co">## Warning: Use of `occs[[yIndex]]` is discouraged. Use `.data[[yIndex]]` instead.</span></code></pre>
-<p><img src="c_DataSampling_files/figure-html/occurrence%20dataset-1.png" width="700"></p>
+<p><img src="c_DataSampling_files/figure-html/occurrence%20dataset-1.png"><!-- --></p>
 <p><code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>, which is run within <code><a href="../reference/marineBackground.html">marineBackground()</a></code> generates a polygon (or polygons) that can be used as a training region by fitting an alpha hull (or hulls) around an occurrence dataset. Alpha is a parameter that controls the complexity of the polygon(s) that is being fit around the occurrences. <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> adjusts the alpha parameter iteratively, until it meets criteria the user can set via the arguments <code>fraction</code>, which is the minimum fraction of occurrences that must be contained within the polygon(s), <code>partCount</code>, which is the maximum number of polygons generated to fit the data, and <code>buff</code>, which is the permissible distance from a point to the edge of a polyon in meters. Here’s how it works.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Hull example 1</span>
@@ -173,7 +173,7 @@
      xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">110</span>, <span class="op">-</span><span class="fl">40</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">trainingRegion</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="c_DataSampling_files/figure-html/alpha%20hull%20demonstration-1.png" width="700"></p>
+<p><img src="c_DataSampling_files/figure-html/alpha%20hull%20demonstration-1.png"><!-- --></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Hull example 1</span>
 <span class="va">trainingRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occurrences</span>, 
@@ -189,7 +189,7 @@
      xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">110</span>, <span class="op">-</span><span class="fl">40</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">trainingRegion</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="c_DataSampling_files/figure-html/alpha%20hull%20demonstration-2.png" width="700"></p>
+<p><img src="c_DataSampling_files/figure-html/alpha%20hull%20demonstration-2.png"><!-- --></p>
 <p>What parameters you choose to fit the alpha hull will depend on the biology of the organism you are trying to model (e.g. you may choose a much smaller buffer for a sessile organism than you would for a highly vagile migratory species), your data, and the particulars of your study system and the geography of your study area. You may need to experiment to find something that looks sensible. <code><a href="../reference/marineBackground.html">marineBackground()</a></code> takes many of the same arguments as <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>, although it will calculate a buffer that is the mean of the top and bottom 10% of distances between points in the dataset.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Hull example 1</span>
@@ -206,7 +206,7 @@
      xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">110</span>, <span class="op">-</span><span class="fl">40</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">trainingRegion</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="c_DataSampling_files/figure-html/basic%20marineBackground%20demonstration-1.png" width="700"></p>
+<p><img src="c_DataSampling_files/figure-html/basic%20marineBackground%20demonstration-1.png"><!-- --></p>
 <p>You may have noticed that the training regions in the above examples include some areas of the Pacific where the species has not been observed, and cannot access. This could cause problems if it is used to train your model. You <em>could</em> delete this area by hand in your favorite GIS software, OR you could change <code>clipToOcean</code> to <code>TRUE</code> in <code><a href="../reference/marineBackground.html">marineBackground()</a></code>, and any polygon fragments that do not contain an occurrence will be deleted automatically. This is a key difference from <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Hull example 1</span>
@@ -223,7 +223,7 @@
      xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">110</span>, <span class="op">-</span><span class="fl">40</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">trainingRegion</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="c_DataSampling_files/figure-html/clipToOcean%20demo-1.png" width="700"></p>
+<p><img src="c_DataSampling_files/figure-html/clipToOcean%20demo-1.png"><!-- --></p>
 <p>The last major difference between <code><a href="../reference/marineBackground.html">marineBackground()</a></code> and <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> is how the functions handle training regions that are adjacent to the antimeridian (i.e. 180° E or W). <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> truncates polygons at this line, which can lead to some strange-looking training areas or fatal errors. <code><a href="../reference/marineBackground.html">marineBackground()</a></code>, on the other hand, wraps polygons across the meridian and merges them if they overlap. For this example, I am going to subtract 100 from the longitudinal coordinate of our Luminous Hake dataset to generate a quick fictional example</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Fictional example occurrences</span>
@@ -258,7 +258,7 @@
      pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pacificTrainingRegion</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="c_DataSampling_files/figure-html/meridian%20wrap%20demo-1.png" width="700"></p>
+<p><img src="c_DataSampling_files/figure-html/meridian%20wrap%20demo-1.png"><!-- --></p>
 </div>
 <div class="section level2">
 <h2 id="d-data-extraction">3D Data Extraction<a class="anchor" aria-label="anchor" href="#d-data-extraction"></a>
@@ -273,7 +273,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpWQBnUP/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/Rtmp9KTxwR/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 2291 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
@@ -366,7 +366,7 @@
 
 <span class="co"># Here's a sampling of depth plots from the 102 depth layers available</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">50</span>, <span class="fl">100</span><span class="op">)</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
-<p><img src="c_DataSampling_files/figure-html/temperature%20to%20compatible%20RasterBrick-1.png" width="700"></p>
+<p><img src="c_DataSampling_files/figure-html/temperature%20to%20compatible%20RasterBrick-1.png"><!-- --></p>
 <p>At this point, you may have noticed a message popping up about which columns <code>voluModel</code> is interpreting as coordinates. <code>voluModel</code> is fairly flexible in how the coordinate columns are named, and it relies on names instead of column position to interpret x, y, and z (or latitude, longitude, and depth) coordinates. We do this to make <code>voluModel</code> as flexible as possible to a diversity of input formats, although English is the only supported language at the moment. Here are some examples of names that work.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">occsTest</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="op">]</span>
@@ -440,7 +440,7 @@
 <span class="co">## `.data[[occ_datIndices$xIndex]]` instead.</span></code></pre>
 <pre><code><span class="co">## Warning: Use of `occ_dat[[occ_datIndices$yIndex]]` is discouraged. Use</span>
 <span class="co">## `.data[[occ_datIndices$yIndex]]` instead.</span></code></pre>
-<p><img src="c_DataSampling_files/figure-html/plot%20downsample-1.png" width="700"></p>
+<p><img src="c_DataSampling_files/figure-html/plot%20downsample-1.png"><!-- --></p>
 <p>At this point, we can demonstrate one of the key contributions of <code>voluModel</code>– an improvement in how the environmental data are extracted at species’ occurrences. <code>voluModel</code> samples environmental conditions at the depth where each record was located, instead of extrapolating to surface or bottom conditions. Finally, we add a column called “response” and fill it by repeating “1”, to signify that these occurrences should be interpreted as presences for the purposes of modeling.</p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Extraction</span>
@@ -520,7 +520,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title<span class="op">=</span><span class="st">"Temperature Sampling Density,\nOccurrences vs. Pseudoabsences"</span>,
        x<span class="op">=</span><span class="st">"Temperature (C)"</span>, y <span class="op">=</span> <span class="st">"Density"</span><span class="op">)</span><span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p><img src="c_DataSampling_files/figure-html/glm%20data%20prep%20part%202-1.png" width="700"></p>
+<p><img src="c_DataSampling_files/figure-html/glm%20data%20prep%20part%202-1.png"><!-- --></p>
 <p>For a more complex, multivariate example of environmental dissimilarity weighting, refer to the <a href="GLMWorkflow.html">GLM workflow</a>.</p>
 </div>
 <div class="section level2">

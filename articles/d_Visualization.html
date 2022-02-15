@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voluModel</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
       </span>
     </div>
 
@@ -137,7 +137,7 @@
 <span class="co">##  as x and y coordinates, respectively.</span></code></pre>
 <pre><code><span class="co">## Warning: Use of `occs[[xIndex]]` is discouraged. Use `.data[[xIndex]]` instead.</span></code></pre>
 <pre><code><span class="co">## Warning: Use of `occs[[yIndex]]` is discouraged. Use `.data[[yIndex]]` instead.</span></code></pre>
-<p><img src="d_Visualization_files/figure-html/pointMap-1.png" width="700"></p>
+<p><img src="d_Visualization_files/figure-html/pointMap-1.png"><!-- --></p>
 <p>The second, <code><a href="../reference/pointCompMap.html">pointCompMap()</a></code> plots a map that maps the extents of two sets of horizontal geographic points in different colors. This might be useful, for example, if you want to compare a raw dataset to a cleaned dataset. If any points overlap, they can be plotted as a third color.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs1Col <span class="op">=</span> <span class="st">"red"</span>, occs1Name <span class="op">=</span> <span class="st">"Raw"</span>, 
@@ -155,7 +155,7 @@
 <span class="co">## `.data[[occ_datIndices$xIndex]]` instead.</span></code></pre>
 <pre><code><span class="co">## Warning: Use of `occ_dat[[occ_datIndices$yIndex]]` is discouraged. Use</span>
 <span class="co">## `.data[[occ_datIndices$yIndex]]` instead.</span></code></pre>
-<p><img src="d_Visualization_files/figure-html/pointCompMap-1.png" width="700"></p>
+<p><img src="d_Visualization_files/figure-html/pointCompMap-1.png"><!-- --></p>
 </div>
 <div class="section level2">
 <h2 id="plotting-rasters">Plotting rasters<a class="anchor" aria-label="anchor" href="#plotting-rasters"></a>
@@ -165,19 +165,19 @@
 <code class="sourceCode R"><span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span>rast <span class="op">=</span> <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,
               land <span class="op">=</span> <span class="va">land</span>, title <span class="op">=</span> <span class="st">"Sea Surface Temperature, WOA 2018"</span>,
               landCol <span class="op">=</span> <span class="st">"black"</span>, option <span class="op">=</span> <span class="st">"mako"</span><span class="op">)</span></code></pre></div>
-<p><img src="d_Visualization_files/figure-html/oneRasterPlot-1.png" width="700"></p>
+<p><img src="d_Visualization_files/figure-html/oneRasterPlot-1.png"><!-- --></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span>rast <span class="op">=</span> <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,
               land <span class="op">=</span> <span class="va">land</span>, title <span class="op">=</span> <span class="st">"Sea Surface Temperature, WOA 2018"</span>,
               landCol <span class="op">=</span> <span class="st">"black"</span>, option <span class="op">=</span> <span class="st">"inferno"</span><span class="op">)</span></code></pre></div>
-<p><img src="d_Visualization_files/figure-html/oneRasterPlot-2.png" width="700"></p>
+<p><img src="d_Visualization_files/figure-html/oneRasterPlot-2.png"><!-- --></p>
 <p>Suppose you want to compare the extents of two presence-absence rasters–perhaps you are comparing two species distribution model method outputs, or comparing potential distributions at two different depths. We have a function for that, too.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/rasterComp.html">rasterComp</a></span><span class="op">(</span>rast1 <span class="op">=</span> <span class="va">envelopeModel3D</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, rast1Name <span class="op">=</span> <span class="st">"Surface"</span>,
            rast2 <span class="op">=</span> <span class="va">envelopeModel3D</span><span class="op">[[</span><span class="fl">10</span><span class="op">]</span><span class="op">]</span>, rast2Name <span class="op">=</span> <span class="st">"45m"</span>, 
            land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
            title <span class="op">=</span> <span class="st">"Suitability of Habitat for Luminous Hake\nAt Two Different Depths"</span><span class="op">)</span></code></pre></div>
-<p><img src="d_Visualization_files/figure-html/rasterComp-1.png" width="700"></p>
+<p><img src="d_Visualization_files/figure-html/rasterComp-1.png"><!-- --></p>
 <p>Of course, 3D models such as the ones <code>voluModel</code> is designed to help you produce, are difficult to visualize. We have given it a try, though. <code><a href="../reference/plotLayers.html">plotLayers()</a></code> plots a transparent layer of suitable habitat for each depth layer. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. Here, I am plotting suitability from 20 to 700 m, the depth range of occurrences used to train the envelope model.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[X]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">envelopeModel3D</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
@@ -187,7 +187,7 @@
 <span class="fu"><a href="../reference/plotLayers.html">plotLayers</a></span><span class="op">(</span><span class="va">envelopeModel3D</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>, 
            title <span class="op">=</span> <span class="st">"Envelope Model of Luminous Hake,\n 20 to 700m"</span>,
            land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></code></pre></div>
-<p><img src="d_Visualization_files/figure-html/plotLayers-1.png" width="700"></p>
+<p><img src="d_Visualization_files/figure-html/plotLayers-1.png"><!-- --></p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voluModel</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
       </span>
     </div>
 
@@ -155,7 +155,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span>width<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Warning: Removed 113 rows containing non-finite values (stat_ydensity).</span></code></pre>
 <pre><code><span class="co">## Warning: Removed 113 rows containing non-finite values (stat_boxplot).</span></code></pre>
-<p><img src="e_GLMWorkflow_files/figure-html/occurrence%20data-1.png" width="700"></p>
+<p><img src="e_GLMWorkflow_files/figure-html/occurrence%20data-1.png"><!-- --></p>
 <p>Based on this plot, and what we know about the biology of Luminous Hakes and how these occurrence data are collected, I am going to remove occurrences that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not <em>in situ</em> or errors of some kind.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">occsClean</span> <span class="op">&lt;-</span> <span class="va">occs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">occs</span><span class="op">$</span><span class="va">depth</span><span class="op">)</span>,<span class="op">]</span>
@@ -206,7 +206,7 @@
         axis.text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">rel</a></span><span class="op">(</span><span class="fl">1.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Depth"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span>width<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></code></pre></div>
-<p><img src="e_GLMWorkflow_files/figure-html/clean%20occurrence%20data-1.png" width="700"></p>
+<p><img src="e_GLMWorkflow_files/figure-html/clean%20occurrence%20data-1.png"><!-- --></p>
 <p>Next, we load two environmental datasets from the World Ocean Atlas (Garcia <em>et al.</em>, 2019): temperature (Locarnini <em>et al.</em>, 2018) and apparent oxygen utilization (Garcia <em>et al.</em>, 2019). I have chosen these variables for simplified illustrative purposes–we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. For more details on how to process environmental data, see <a href="RasterProcessing.html">the raster data tutorial</a>. Temperature processing is shown below for illustrative purposes.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>
@@ -216,7 +216,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/Rtmp3CZiff/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpMlaUi5/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 2291 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -275,7 +275,7 @@
              occs1Name <span class="op">=</span> <span class="st">"Original"</span>, occs2Name <span class="op">=</span> <span class="st">"Cleaned"</span>, 
              spName <span class="op">=</span> <span class="st">"Steindachneria argentia"</span>, 
              land <span class="op">=</span> <span class="va">land</span><span class="op">)</span></code></pre></div>
-<p><img src="e_GLMWorkflow_files/figure-html/downsample%20to%20voxel-1.png" width="700"></p>
+<p><img src="e_GLMWorkflow_files/figure-html/downsample%20to%20voxel-1.png"><!-- --></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">indices</span>, <span class="va">layerNames</span>, <span class="va">tempPoints</span>, <span class="va">i</span>, <span class="va">downsampledOccs</span>, <span class="va">occs</span><span class="op">)</span></code></pre></div>
 <p>Next, we generate a sampling region for the model based on occurrence points. Note that ideally when you’re modeling you would carefully curate this background sampling region to make sure it truly approximates the area accessible to the species you are modeling. If you write the shapefile to disk, you can open and edit it in any GIS software you choose, if you have reason to believe <code><a href="../reference/marineBackground.html">marineBackground()</a></code> falls short of estimating the true accessible are for a species. For more information, see <a href="DataSampling.html">the environmental data processing tutorial</a>.</p>
@@ -290,7 +290,7 @@
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">backgroundSamplingRegions</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>,<span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>, 
        cex <span class="op">=</span> <span class="fl">1</span>, pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></code></pre></div>
-<p><img src="e_GLMWorkflow_files/figure-html/environmental%20background%20sampling-1.png" width="700"></p>
+<p><img src="e_GLMWorkflow_files/figure-html/environmental%20background%20sampling-1.png"><!-- --></p>
 <p>Finally, we need to draw the environmental variable data that will be used to generate the ecological niche model, from presence voxels as well as from the background sampling region. First, we sample environmental data for occurrences and add a “response” column filled with 1s, signifying these are considered “presences”.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Presences</span>
@@ -374,22 +374,22 @@
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.5925  -0.1508  -0.0745  -0.0523   3.6663  </span>
+<span class="co">## -0.5657  -0.1528  -0.0760  -0.0512   3.6813  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -3.1834900  1.4609658  -2.179  0.02933 *  </span>
-<span class="co">## Temperature     -0.1259069  0.0675430  -1.864  0.06231 .  </span>
-<span class="co">## AOU             -0.0281844  0.0105210  -2.679  0.00739 ** </span>
-<span class="co">## Temperature:AOU  0.0033816  0.0007206   4.693  2.7e-06 ***</span>
+<span class="co">## (Intercept)     -3.0198999  1.5634049  -1.932  0.05341 .  </span>
+<span class="co">## Temperature     -0.1341152  0.0721091  -1.860  0.06290 .  </span>
+<span class="co">## AOU             -0.0290342  0.0108454  -2.677  0.00743 ** </span>
+<span class="co">## Temperature:AOU  0.0034084  0.0007283   4.680 2.87e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 291.73  on 2625  degrees of freedom</span>
-<span class="co">## Residual deviance: 249.75  on 2622  degrees of freedom</span>
-<span class="co">## AIC: 257.75</span>
+<span class="co">## Residual deviance: 250.29  on 2622  degrees of freedom</span>
+<span class="co">## AIC: 258.29</span>
 <span class="co">## </span>
 <span class="co">## Number of Fisher Scoring iterations: 8</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage, the niche model is being used to model the species’ distribution (an ENM becomes an SDM).</p>
@@ -427,7 +427,7 @@
 
 <span class="fu"><a href="../reference/plotLayers.html">plotLayers</a></span><span class="op">(</span><span class="va">glmThresholded</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">indices</span><span class="op">)</span><span class="op">]</span><span class="op">]</span>, 
           land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></code></pre></div>
-<p><img src="e_GLMWorkflow_files/figure-html/thresholded%20glm%20niche%20model%20plotted-1.png" width="700"></p>
+<p><img src="e_GLMWorkflow_files/figure-html/thresholded%20glm%20niche%20model%20plotted-1.png"><!-- --></p>
 <p>Of course, this just a starting example. We welcome submissions from the community for examples of other types of models you would like to see. Submit your suggestions as issues <a href="https://github.com/hannahlowens/voluModel/issues" class="external-link">here</a>.</p>
 </div>
 <div class="section level2">
@@ -448,7 +448,7 @@
 
 <span class="co"># Plot Extrapolation</span>
 <span class="fu"><a href="../reference/plotLayers.html">plotLayers</a></span><span class="op">(</span><span class="va">extrapolation</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, title <span class="op">=</span> <span class="st">"Areas of extrapolation according to MESS,\n 5m to 800m"</span><span class="op">)</span></code></pre></div>
-<p><img src="e_GLMWorkflow_files/figure-html/reclassify%20and%20plot%20extrapolation-1.png" width="700"></p>
+<p><img src="e_GLMWorkflow_files/figure-html/reclassify%20and%20plot%20extrapolation-1.png"><!-- --></p>
 <p>In the second <code>RasterBrick</code>, <code>noExtrapolation</code>, I reclassify the layers so that positive MESS values = 1 and MESS values less than or equal to 0 = 0. This will make plotting cropping out areas of extrapolation from the niche model projection easier. I simply multiply the thresholded GLM map by the <code>noExtrapolation</code> <code>RasterBrick</code>.</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Reclassify MESS </span>
@@ -464,7 +464,7 @@
 <span class="fu"><a href="../reference/plotLayers.html">plotLayers</a></span><span class="op">(</span><span class="va">glmThreshNoExtrapolation</span>, land <span class="op">=</span> <span class="va">land</span>, 
            landCol <span class="op">=</span> <span class="st">"black"</span>, 
            title <span class="op">=</span> <span class="st">"Areas of suitable habitat with no model extrapolation,\n 5m to 800m"</span><span class="op">)</span></code></pre></div>
-<p><img src="e_GLMWorkflow_files/figure-html/reclassify%20MESS%20and%20plot%20GLM%20with%20no%20extrapolation-1.png" width="700"></p>
+<p><img src="e_GLMWorkflow_files/figure-html/reclassify%20MESS%20and%20plot%20GLM%20with%20no%20extrapolation-1.png"><!-- --></p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
