@@ -213,14 +213,14 @@
 <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/woa18_decav_t00mn01_cropped.zip"</span>, 
                   package <span class="op">=</span> <span class="st">"voluModel"</span><span class="op">)</span>,
       exdir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, junkpaths <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
-<span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature/"</span><span class="op">)</span>, 
+<span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpReTPdn/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/Rtmp3CZiff/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 2291 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature/"</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 
 <span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">[</span><span class="va">temperature</span><span class="op">@</span><span class="va">data</span> <span class="op">==</span> <span class="op">-</span><span class="fl">999.999</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>
 
@@ -374,22 +374,22 @@
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.5654  -0.1538  -0.0755  -0.0523   3.6801  </span>
+<span class="co">## -0.5925  -0.1508  -0.0745  -0.0523   3.6663  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -2.8669869  1.6178057  -1.772  0.07637 .  </span>
-<span class="co">## Temperature     -0.1396982  0.0742667  -1.881  0.05997 .  </span>
-<span class="co">## AOU             -0.0304519  0.0112292  -2.712  0.00669 ** </span>
-<span class="co">## Temperature:AOU  0.0034555  0.0007285   4.743  2.1e-06 ***</span>
+<span class="co">## (Intercept)     -3.1834900  1.4609658  -2.179  0.02933 *  </span>
+<span class="co">## Temperature     -0.1259069  0.0675430  -1.864  0.06231 .  </span>
+<span class="co">## AOU             -0.0281844  0.0105210  -2.679  0.00739 ** </span>
+<span class="co">## Temperature:AOU  0.0033816  0.0007206   4.693  2.7e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 291.73  on 2625  degrees of freedom</span>
-<span class="co">## Residual deviance: 250.83  on 2622  degrees of freedom</span>
-<span class="co">## AIC: 258.83</span>
+<span class="co">## Residual deviance: 249.75  on 2622  degrees of freedom</span>
+<span class="co">## AIC: 257.75</span>
 <span class="co">## </span>
 <span class="co">## Number of Fisher Scoring iterations: 8</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage, the niche model is being used to model the species’ distribution (an ENM becomes an SDM).</p>
