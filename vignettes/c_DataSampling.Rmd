@@ -73,7 +73,7 @@ pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
 `getDynamicAlphaHull()`, which is run within `marineBackground()` generates a polygon (or polygons) that can be used as a training region by fitting an alpha hull (or hulls) around an occurrence dataset. Alpha is a parameter that controls the complexity of the polygon(s) that is being fit around the occurrences. `getDynamicAlphaHull()` adjusts the alpha parameter iteratively, until it meets criteria the user can set via the arguments `fraction`, which is the minimum fraction of occurrences that must be contained within the polygon(s), `partCount`, which is the maximum number of polygons generated to fit the data, and `buff`, which is the permissible distance from a point to the edge of a polyon in meters. Here's how it works.
 
 ```{r alpha hull demonstration}
-# Hull example 1
+# Get dynamic alpha hull example
 trainingRegion <- getDynamicAlphaHull(x = occurrences[,c("decimalLongitude", "decimalLatitude")],
                                    fraction = 1, partCount = 1, buff = 1000000, 
                                    clipToCoast = "aquatic")
@@ -85,12 +85,12 @@ plot(occurrences[,c("decimalLongitude", "decimalLatitude")],
 plot(land, col = "black", add = T)
 plot(trainingRegion[[1]], add = T, border = "orange", lwd = 2)
 
-# Hull example 1
+# Marine background comparison
 trainingRegion <- marineBackground(occurrences, 
-                                fraction = .95, partCount = 2, buff = 500000, 
+                                fraction = 1, partCount = 1, buff = 1000000,
                                 clipToOcean = F)
 plot(occurrences[,c("decimalLongitude", "decimalLatitude")],
-     main = "Minimum of 95% Points in Training Region,\nMaximum of 2 Polygons Permitted, 50 km Buffer",
+     main = "Mimimum of 100% Points in Training Region,\nMaximum of 1 Polygon Permitted, 100 km Buffer",
      xlab = "Longitude", ylab = "Latitude",
      pch = 20, col = "red",
      xlim = c(-110, -40), ylim = c(0, 50))

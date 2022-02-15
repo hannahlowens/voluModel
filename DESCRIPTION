@@ -12,7 +12,7 @@ Authors@R:
              role="aut",
              comment = c(ORCID = "0000-0003-4585-0300")))
 Maintainer: Hannah L. Owens <hannah.owens@gmail.com>           
-Description: The `voluModel` package is designed to facilitate modeling species' ecological niches and geographic distributions based on occurrences and environments that have a vertical as well as horizontal component, and projecting models into three-dimensional geographic space. Working in three dimensions is useful in an aquatic context when the organisms one wishes to model can be found across a wide range of depths in the water column.
+Description: Facilitates modeling species' ecological niches and geographic distributions based on occurrences and environments that have a vertical as well as horizontal component, and projecting models into three-dimensional geographic space. Working in three dimensions is useful in an aquatic context when the organisms one wishes to model can be found across a wide range of depths in the water column.
 License: ACM
 URL: https://hannahlowens.github.io/voluModel/
 BugReports: https://github.com/hannahlowens/voluModel/issues

@@ -60,15 +60,16 @@
 #'
 #' # Create test occurrences
 #' set.seed(0)
-#' longitude <- sample(extent(r)[1]:extent(r)[2],
-#'                     size = 10, replace = FALSE)
+#' longitude <- sample(-50:50,
+#'                     size = 20, replace = FALSE)
 #' set.seed(0)
-#' latitude <- sample(extent(r)[3]:extent(r)[4],
-#'                    size = 10, replace = FALSE)
+#' latitude <- sample(-30:30,
+#'                    size = 20, replace = FALSE)
 #' occurrences <- as.data.frame(cbind(longitude,latitude))
 #'
 #' # Here's the function
-#' result <- marineBackground(occs = occurrences, clipToOcean = TRUE)
+#' result <- marineBackground(occs = occurrences, buff = 100000,
+#'                            fraction = .9, partCount = 2, clipToOcean = T)
 #' plot(result)
 #' points(occurrences, pch = 20)
 #'

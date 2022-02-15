@@ -212,17 +212,6 @@ update(temp, strip  = strip.custom(strip.levels = TRUE,
                              par.strip.text = list(col = "white", cex = 1.2, font = 2)))
 ```
 
-Let's smooth the bottom apparent oxygen utilization while we're at it.
-
-```{r bottom smoothed oxygen, eval = T, asis = T, warning=FALSE}
-oxygenSmoothBottom <- smoothRaster(oxygenBottomInterpolated, lon.lat = T) # Not using fastTPS
-oxygenSmoothBottom <- crop(mask(x = oxygenSmoothBottom, 
-                                mask = temperature[[1]]), 
-                           temperature[[1]])
-oneRasterPlot(oxygenSmoothBottom, land = land, landCol = "black",
-     title = "Apparent Oxygen Utilization, bottom, \ninterpolated and smoothed")
-```
-
 # References
 
 Collins WD, Bitz CM, Blackmon ML, Bonan GB, Bretherton CS, Carton JA, Chang P, Doney SC, Hack JJ, Henderson TB, Kiehl JT, Large WG, McKenna DS, Santer BD, Smith RD. (2006) The Community Climate System Model Version 3 (CCSM3) Journal of Climate, 19(11), 2122–2143 https://doi.org/10.1175/jcli3761.1

@@ -48,17 +48,11 @@ First thing's first. Distributional models are based on coordinates of species' 
 ```{r occurrence data, eval=T}
 occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
                              package='voluModel'))
-ggplot(occs, aes(x = 1, y=depth)) +
-  geom_violin(fill="yellow", ) +
-  theme_classic(base_size = 15) +
-  theme(axis.title = element_blank(),
-        text = element_text(family = "Arial"),
-        axis.text = element_text(size = rel(1.1))) +
-  ggtitle("Depth") +
-  geom_boxplot(width=0.1)
+summary(occs$depth)
+boxplot.stats(occs$depth)
 ```
 
-Based on this plot, and what we know about the biology of Luminous Hakes and how these occurrence data are collected, I am going to remove occurrences that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not *in situ* or errors of some kind.
+Based on this information and what we know about the biology of Luminous Hakes and how these occurrence data are collected, I am going to remove occurrences that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not *in situ* or errors of some kind.
 
 ```{r clean occurrence data, eval=T}
 occsClean <- occs[complete.cases(occs$depth),]
