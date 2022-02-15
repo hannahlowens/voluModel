@@ -29,12 +29,9 @@ Imports:
     grDevices,
     latticeExtra,
     methods,
-    magrittr,
     raster,
     rangeBuilder,
     rgeos,
-    rmarkdown,
-    tibble,
     viridisLite,
     sp
 Suggests:
@@ -43,8 +40,10 @@ Suggests:
     knitr,
     covr,
     rgdal,
+    rmarkdown,
     rnaturalearth,
-    rnaturalearthdata
+    rnaturalearthdata,
+    tibble
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2

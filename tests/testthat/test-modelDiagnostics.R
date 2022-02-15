@@ -1,6 +1,5 @@
 library(raster)
 library(dplyr)
-library(magrittr)
 
 # Create first rasterBrick
 r1 <- raster(ncol=10, nrow=10)
