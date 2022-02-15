@@ -21,7 +21,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error = FALSE)
+knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 96)
 knitr::opts_knit$set(root.dir = system.file('extdata', 
                                             package='voluModel'))
 load(system.file("extdata/oxygenSmooth.RData", 

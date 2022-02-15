@@ -30,7 +30,7 @@ citation for the version you’re using:
 citation(package = "voluModel")
 ```
     ## Owens H, Rahbek C (2021). _voluModel: Modeling Species Distributions in Three Dimensions_. doi:
-    ## 10.5281/zenodo.5568785 (URL: https://doi.org/10.5281/zenodo.5568785), R package version 0.1.0, <URL:
+    ## 10.5281/zenodo.5568785 (URL: https://doi.org/10.5281/zenodo.5568785), R package version 0.1.1, <URL:
     ## http://CRAN.R-project.org/package=voluModel>.
     ##
     ## A BibTeX entry for LaTeX users is

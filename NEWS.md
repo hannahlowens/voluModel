@@ -1,3 +1,8 @@
+# voluModel 0.1.1
+
+- Overhauled vignettes--more detailed, special topics
+- Reduced space footprint
+
 # voluModel 0.1.0
 
 - First release for CRAN
