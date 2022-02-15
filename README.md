@@ -56,11 +56,11 @@ library("voluModel")
 
 ## Getting Started
 
-1. [Introduction](https://hannahlowens.github.io/voluModel/articles/Introduction.html)
-2. [Processing Rasters](https://hannahlowens.github.io/voluModel/articles/RasterProcessing.html)
-3. [Sampling Environtmental Data in 3D](https://hannahlowens.github.io/voluModel/articles/DataSampling.html)
-4. [Visualization Tools](https://hannahlowens.github.io/voluModel/articles/Visualization.html)
-5. [Generalized Linear Model Workflow](https://hannahlowens.github.io/voluModel/articles/GLMWorkflow.html)
+1. [Introduction](https://hannahlowens.github.io/voluModel/articles/a_Introduction.html)
+2. [Processing Rasters](https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html)
+3. [Sampling Environtmental Data in 3D](https://hannahlowens.github.io/voluModel/articles/c_DataSampling.html)
+4. [Visualization Tools](https://hannahlowens.github.io/voluModel/articles/d_Visualization.html)
+5. [Generalized Linear Model Workflow](https://hannahlowens.github.io/voluModel/articles/e_GLMWorkflow.html)
 
 ## Meta
 
