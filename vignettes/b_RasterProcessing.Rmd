@@ -39,6 +39,7 @@ library(raster) # For raster stuff. Will eventually be replaced with terra.
 library(tibble) # For data organization
 library(ggplot2) # For supplementary visualization
 library(fields) # For raster interpolation
+library(latticeExtra) # Some fancy plotting
 ```
 
 # Data Inputs
@@ -50,9 +51,9 @@ td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),
       exdir = paste0(td, "/temperature"), junkpaths = T)
-temperature <- readOGR(dsn = paste0(td, "/temperature/"), 
+temperature <- readOGR(dsn = paste0(td, "/temperature"), 
                        layer ="woa18_decav_t00mn01_cropped")
-unlink(paste0(td, "/temperature/"), recursive = T)
+unlink(paste0(td, "/temperature"), recursive = T)
 
 # Specifying "no data" value
 temperature@data[temperature@data == -999.999] <- NA
@@ -88,15 +89,22 @@ envtNames[[1]] <- "0"
 names(temperature) <- envtNames
 
 # How do these files look?
-oneRasterPlot(temperature[[1]], land = land, landCol = "black", 
+p1 <- oneRasterPlot(temperature[[1]], land = land, landCol = "black", 
               title= "Temperature, surface")
 
 # R won't let you name the layers numbers only--it pastes an X at the beginning
-oneRasterPlot(temperature[["X100"]], land = land, landCol = "black", 
+p2 <- oneRasterPlot(temperature[["X100"]], land = land, landCol = "black", 
               title= "Temperature, 100m")
 
-oneRasterPlot(temperatureBottom,land = land, landCol = "black", 
+p3 <- oneRasterPlot(temperatureBottom,land = land, landCol = "black", 
               title = "Temperature, bottom")
+
+temp <- c("Surface" = p1, "100m Depth" = p2, "Bottom" = p3)
+update(temp, strip  = strip.custom(strip.levels = TRUE,
+                             horizontal = TRUE,
+                             bg = "black",
+                             fg = "white",
+                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
 ```
 
 # Interpolation
@@ -109,9 +117,9 @@ unzip(system.file("extdata/woa18_all_A00mn01_cropped.zip",
                   package = "voluModel"),
       exdir = paste0(td, "/oxygen"), junkpaths = T)
 # do something with the files
-oxygen <- readOGR(dsn = paste0(td, "/oxygen/"), 
+oxygen <- readOGR(dsn = paste0(td, "/oxygen"), 
                   layer = "woa18_all_A00mn01_cropped")
-unlink(paste0(td, "/oxygen/"), recursive = T)
+unlink(paste0(td, "/oxygen"), recursive = T)
 
 oxygen@data[oxygen@data == -999.999] <- NA
 
@@ -125,11 +133,18 @@ There is a workaround for this, since we can reasonably expect some degree of sp
 ```{r interpolate oxygen, warning=FALSE}
 #Creating a bottom raster
 oxygenBottom <- bottomRaster(oxygen)
-oneRasterPlot(oxygenBottom,land = land, landCol = "black", 
+p1 <- oneRasterPlot(oxygenBottom,land = land, landCol = "black", 
               title = "Apparent oxygen utilization, bottom")
 oxygenBottomInterpolated <- interpolateRaster(oxygenBottom, lon.lat = T, fast = T, aRange = 5) #Thin plate spline interpolation
-oneRasterPlot(oxygenBottomInterpolated, land = land, landCol = "black", 
-              title = "Apparent oxygen utilization, bottom, interpolated")
+p2 <- oneRasterPlot(oxygenBottomInterpolated, land = land, landCol = "black", 
+              title = "Apparent oxygen utilization, bottom")
+
+temp <- c("Raw" = p1, "Interpolated" = p2)
+update(temp, strip  = strip.custom(strip.levels = TRUE,
+                             horizontal = TRUE,
+                             bg = "black",
+                             fg = "white",
+                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
 
 # Creating a RasterBrick
 oxygen <- rasterFromXYZ(cbind(oxygen@coords, oxygen@data))
@@ -143,11 +158,18 @@ for (i in 1:nlayers(oxygen)){
 names(oxygen) <- envtNames
 
 # How do these files look?
-oneRasterPlot(oxygen[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization, surface\ninterpolated")
+p1 <- oneRasterPlot(oxygen[[1]], land = land, landCol = "black", 
+              title= "Apparent Oxygen Utilization, interpolated")
 
-oneRasterPlot(oxygen[["X100"]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization, 100m\ninterpolated")
+p2 <- oneRasterPlot(oxygen[["X100"]], land = land, landCol = "black", 
+              title= "Apparent Oxygen Utilization, interpolated")
+
+temp <- c("Surface" = p1, "100m Depth" = p2)
+update(temp, strip  = strip.custom(strip.levels = TRUE,
+                             horizontal = TRUE,
+                             bg = "black",
+                             fg = "white",
+                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
 ```
 
 You can see from these plots that apparent oxygen utilization is "patchier" than temperature. If you are confident that there should be a strong spatial correlation in a "patchy" data layer, you can also statistically smooth it, again using `TPS()`, like this:
@@ -162,18 +184,32 @@ for (i in 1:nlayers(oxygen)){
 # Change names to match temperature
 names(oxygenSmooth) <- names(temperature)
 
-oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization, surface\ninterpolated and smoothed")
+p1 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
+              title= "Apparent Oxygen Utilization, interpolated and smoothed")
 
-oneRasterPlot(oxygenSmooth[["X100"]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization, 100m\ninterpolated and smoothed")
+p2 <- oneRasterPlot(oxygenSmooth[["X100"]], land = land, landCol = "black", 
+              title= "Apparent Oxygen Utilization, interpolated and smoothed")
+
+temp <- c("Surface" = p1, "100m Depth" = p2)
+update(temp, strip  = strip.custom(strip.levels = TRUE,
+                             horizontal = TRUE,
+                             bg = "black",
+                             fg = "white",
+                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
 ```
 ```{r smooth oxygen display, echo=FALSE}
-oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization, surface\ninterpolated and smoothed")
+p1 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
+              title= "Apparent Oxygen Utilization, interpolated and smoothed")
 
-oneRasterPlot(oxygenSmooth[["X100"]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization, 100m\ninterpolated and smoothed")
+p2 <- oneRasterPlot(oxygenSmooth[["X100"]], land = land, landCol = "black", 
+              title= "Apparent Oxygen Utilization, interpolated and smoothed")
+
+temp <- c("Surface" = p1, "100m Depth" = p2)
+update(temp, strip  = strip.custom(strip.levels = TRUE,
+                             horizontal = TRUE,
+                             bg = "black",
+                             fg = "white",
+                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
 ```
 
 Let's smooth the bottom apparent oxygen utilization while we're at it.

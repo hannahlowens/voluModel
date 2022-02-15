@@ -172,9 +172,9 @@ td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),
       exdir = paste0(td, "/temperature"), junkpaths = T)
-temperature <- readOGR(dsn = paste0(td, "/temperature/"), 
+temperature <- readOGR(dsn = paste0(td, "/temperature"), 
                        layer ="woa18_decav_t00mn01_cropped")
-unlink(paste0(td, "/temperature/"), recursive = T)
+unlink(paste0(td, "/temperature"), recursive = T)
 
 temperature@data[temperature@data == -999.999] <- NA
 

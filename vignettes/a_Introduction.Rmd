@@ -41,6 +41,7 @@ library(ggplot2) # For fancy plotting
 library(rgdal) # For vector stuff. Will eventually be replaced with sf.
 library(raster) # For raster stuff. Will eventually be replaced with terra.
 library(viridisLite) # For high-contrast plotting palettes
+library(latticeExtra) # Some fancy plotting
 ```
 
 # Data Inputs
@@ -116,20 +117,33 @@ pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
 rm(indices, layerNames, tempPoints, i, downsampledOccs, occs)
 ```
 
-Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (AOU; Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. 
+Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (AOU; Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more space-efficient. 
 
 Here you see plots at the sea surface and the bottom. The AOU dataset has been interpolated and smoothed using a thin plate spline algorithm. For more details on how to process environmental data, see [the raster data tutorial](RasterProcessing.html). 
 
 ```{r environmental data plotting, echo=FALSE, message=FALSE, warning=FALSE}
-oneRasterPlot(temperature[[1]], land = land, landCol = "black", 
-              title= "Temperature, surface")
-oneRasterPlot(temperatureBottom,land = land, landCol = "black", 
-              title = "Temperature, bottom")
+p1 <- oneRasterPlot(temperature[[1]], land = land, landCol = "black", 
+              title= "Temperature (C)")
+p2 <- oneRasterPlot(temperatureBottom,land = land, landCol = "black", 
+              title = "Temperature (C)")
 
-oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization, surface\ninterpolated and smoothed")
-oneRasterPlot(oxygenBottom, land = land, landCol = "black",
-     title = "Apparent Oxygen Utilization, bottom, \ninterpolated and smoothed")
+p3 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
+              title= "Apparent Oxygen Utilization, interpolated and smoothed")
+p4 <- oneRasterPlot(oxygenBottom, land = land, landCol = "black",
+     title = "Apparent Oxygen Utilization, interpolated and smoothed")
+
+temp <- c("Surface" = p1, "Bottom" = p2)
+update(temp, strip  = strip.custom(strip.levels = TRUE,
+                             horizontal = TRUE,
+                             bg = "black",
+                             fg = "white",
+                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
+temp <- c("Surface" = p3, "Bottom" = p4)
+update(temp, strip  = strip.custom(strip.levels = TRUE,
+                             horizontal = TRUE,
+                             bg = "black",
+                             fg = "white",
+                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
 ```
 
 # A point about 3D environmental data extraction
@@ -177,7 +191,7 @@ Temperature extracted at the appropriate depth (3D) is significantly lower than 
 
 How does AOU look?
 
-```{r oxygen violin plots, echo=FALSE}
+```{r oxygen violin plots, echo=FALSE, warning=FALSE}
 # Collation
 allOxy <- rbind(threeDimOxy, surfOxy, bottomOxy)
 colnames(allOxy) <- c("Group", "Oxygen")
@@ -337,7 +351,6 @@ indices <- sort(unique(occurrences$index))
 
 plotLayers(envelopeModel3D[[min(indices):max(indices)]], 
           land = land)
-rm(layerNames, indices)
 ```
 
 In the 3D model, an area of deep suitable habitat is found in the western Gulf of Mexico that was recovered by the bottom model but not the surface model. The bottom model did not predict the suitable habitat recovered by the surface and 3D models in the Sargasso Sea.
