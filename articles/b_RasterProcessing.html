@@ -115,11 +115,8 @@
 </h2>
 <p>Naturally, to build 3D distribution models, one needs three-dimensionally structured environmental data. These data may come in the form of interpolated <em>in situ</em> measurements (e.g. <a href="https://www.ncei.noaa.gov/access/world-ocean-atlas-2018/" class="external-link">NOAA’s World Ocean Atlas dataset</a>; Garcia et al. 2018a) or as outputs from climate models, either as stand-alone ocean components or as a component of coupled atmosphere-ocean models (e.g. CCSM3, Collins et al. 2006; HadCM3, Valdes et al. 2017). Typically, these data are organized as a series of horizontal layers that are stacked by depth.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hannahlowens.github.io/voluModel/" class="external-link">voluModel</a></span><span class="op">)</span> <span class="co"># Since this is the package this vignette is about.</span></code></pre></div>
-<pre><code><span class="co">## Warning: replacing previous import 'ggplot2::arrow' by 'terra::arrow' when</span>
-<span class="co">## loading 'voluModel'</span></code></pre>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://rgdal.r-forge.r-project.org" class="external-link">rgdal</a></span><span class="op">)</span> <span class="co"># For vector stuff. Will eventually be replaced with sf.</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hannahlowens.github.io/voluModel/" class="external-link">voluModel</a></span><span class="op">)</span> <span class="co"># Since this is the package this vignette is about.</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://rgdal.r-forge.r-project.org" class="external-link">rgdal</a></span><span class="op">)</span> <span class="co"># For vector stuff. Will eventually be replaced with sf.</span></code></pre></div>
 <pre><code><span class="co">## Loading required package: sp</span></code></pre>
 <pre><code><span class="co">## Please note that rgdal will be retired by the end of 2023,</span>
 <span class="co">## plan transition to sf/stars/terra functions using GDAL and PROJ</span>
@@ -135,7 +132,7 @@
 <span class="co">## Linking to sp version:1.4-6</span>
 <span class="co">## To mute warnings of possible GDAL/OSR exportToProj4() degradation,</span>
 <span class="co">## use options("rgdal_show_exportToProj4_warnings"="none") before loading sp or rgdal.</span></code></pre>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span> <span class="co"># For raster stuff. Will eventually be replaced with terra.</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span> <span class="co"># For data organization</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span> <span class="co"># For supplementary visualization</span>
@@ -155,7 +152,7 @@
 <pre><code><span class="co">## Loading required package: viridisLite</span></code></pre>
 <pre><code><span class="co">## </span>
 <span class="co">## Try help(fields) to get started.</span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://latticeextra.r-forge.r-project.org/" class="external-link">latticeExtra</a></span><span class="op">)</span> <span class="co"># Some fancy plotting</span></code></pre></div>
 <pre><code><span class="co">## Loading required package: lattice</span></code></pre>
 <pre><code><span class="co">## </span>
@@ -168,7 +165,7 @@
 <h2 id="data-inputs">Data Inputs<a class="anchor" aria-label="anchor" href="#data-inputs"></a>
 </h2>
 <p>First, let’s look at a relatively simple environmental variable from the WOA: temperature (Locarnini et al, 2018). These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. You can download the full dataset via the WOA website. Our first task is to read in the shapefile as a <code>SpatialPointsDataFrame</code>. Note that each row in <code>temperature@data</code> is a set of horizontal coordinates. Each column is a vertical position in the water column. Make sure to check the metadata of the data you use. Different sources may use vertical depth structures.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/woa18_decav_t00mn01_cropped.zip"</span>, 
                   package <span class="op">=</span> <span class="st">"voluModel"</span><span class="op">)</span>,
@@ -176,10 +173,10 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpSmHXhD/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpemK8Gb/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 2291 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 
 <span class="co"># Specifying "no data" value</span>
@@ -257,7 +254,7 @@
 <span class="co">## 4     NA</span>
 <span class="co">## 5     NA</span>
 <span class="co">## 6     NA</span></code></pre>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"medium"</span>, 
                                     returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
 <span class="va">ext</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/extent.html" class="external-link">extent</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span><span class="op">)</span>
@@ -265,14 +262,14 @@
      pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span>, xlim <span class="op">=</span> <span class="va">ext</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>, ylim <span class="op">=</span> <span class="va">ext</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>, cex <span class="op">=</span> <span class="fl">.6</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></code></pre></div>
 <p><img src="b_RasterProcessing_files/figure-html/environmental%20data%20loading%20temperature-1.png"><!-- --></p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># What does the WOA depth structure look like?</span>
 <span class="va">depths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">)</span>
 <span class="va">depths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="va">depths</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>, pattern <span class="op">=</span> <span class="st">"[d,M]"</span>, replacement <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">depths</span>, pch <span class="op">=</span> <span class="fl">20</span>, main <span class="op">=</span> <span class="st">"Depth Intervals in WOA Temperature Dataset"</span>, xlab <span class="op">=</span> <span class="st">"Depth (m)"</span><span class="op">)</span></code></pre></div>
 <p><img src="b_RasterProcessing_files/figure-html/environmental%20data%20loading%20temperature-2.png"><!-- --></p>
 <p>Next, we convert temperature into a <code>RasterBrick</code>. While we are at it, we will generate a raster from the deepest value available for each point. While you might call this a “bottom” raster, it is important to note that in some cases, values are not available for the bottom. After the <code>RasterBrick</code> is created, we give it the same depth names as the columns in the <code>SpatialPointsDataFrame</code>. This is important, because <code>voluModel</code> uses these names as z coordinates when handling 3D data. I am using <code><a href="../reference/oneRasterPlot.html">oneRasterPlot()</a></code> from voluModel to visualize the rasters using a uniform, high-contrast asthetic.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Creating a bottom raster from the point shapefile</span>
 <span class="va">temperatureBottom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bottomRaster.html">bottomRaster</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span>
 
@@ -308,7 +305,7 @@
 <h2 id="interpolation">Interpolation<a class="anchor" aria-label="anchor" href="#interpolation"></a>
 </h2>
 <p>Next, we have a bit of a more complicated example: apparent oxygen utilization (AOU; Garcia et al, 2018b). Apparent oxygen usage is more patchily sampled than temperature (it’s generally measured from instrument casts on research cruises, and the coverage isn’t quite as dense as for temperature).</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/woa18_all_A00mn01_cropped.zip"</span>, 
                   package <span class="op">=</span> <span class="st">"voluModel"</span><span class="op">)</span>,
@@ -317,10 +314,10 @@
 <span class="va">oxygen</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/oxygen"</span><span class="op">)</span>, 
                   layer <span class="op">=</span> <span class="st">"woa18_all_A00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpSmHXhD/oxygen", layer: "woa18_all_A00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpemK8Gb/oxygen", layer: "woa18_all_A00mn01_cropped"</span>
 <span class="co">## with 1967 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/oxygen"</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 
 <span class="va">oxygen</span><span class="op">@</span><span class="va">data</span><span class="op">[</span><span class="va">oxygen</span><span class="op">@</span><span class="va">data</span> <span class="op">==</span> <span class="op">-</span><span class="fl">999.999</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>
@@ -330,7 +327,7 @@
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></code></pre></div>
 <p><img src="b_RasterProcessing_files/figure-html/environmental%20data%20loading%20oxygen-1.png"><!-- --></p>
 <p>There is a workaround for this, since we can reasonably expect some degree of spatial autocorrelation in apparent oxygen utilization. We use the <code><a href="../reference/interpolateRaster.html">interpolateRaster()</a></code> function to produce statistically-interpolated layers using <code>TPS()</code> from the <code>fields</code> package (this is a thin-plate spline interpolation). Be patient–this step can take a while, although as shown here, I am using the <code>fastTPS()</code> approximation, which only samples from nearby cells to speed things up. Maybe <code>fastTPS()</code> will work ok for your data, maybe it won’t. It depends on the data.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Creating a bottom raster</span>
 <span class="va">oxygenBottom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bottomRaster.html">bottomRaster</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">)</span>
 <span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">oxygenBottom</span>,land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
@@ -346,7 +343,7 @@
                              fg <span class="op">=</span> <span class="st">"white"</span>,
                              par.strip.text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"white"</span>, cex <span class="op">=</span> <span class="fl">1.2</span>, font <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="b_RasterProcessing_files/figure-html/interpolate%20oxygen-1.png"><!-- --></p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Creating a RasterBrick</span>
 <span class="va">oxygen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">@</span><span class="va">coords</span>, <span class="va">oxygen</span><span class="op">@</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>
 
@@ -373,7 +370,7 @@
                              par.strip.text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"white"</span>, cex <span class="op">=</span> <span class="fl">1.2</span>, font <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="b_RasterProcessing_files/figure-html/interpolate%20oxygen-2.png"><!-- --></p>
 <p>You can see from these plots that apparent oxygen utilization is “patchier” than temperature. If you are confident that there should be a strong spatial correlation in a “patchy” data layer, you can also statistically smooth it, again using <code>TPS()</code>, like this:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">oxygenSmooth</span> <span class="op">&lt;-</span> <span class="va">oxygen</span>
 <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/nlayers.html" class="external-link">nlayers</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
   <span class="va">oxygenSmooth</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/smoothRaster.html">smoothRaster</a></span><span class="op">(</span><span class="va">oxygenSmooth</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, lon.lat <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="co">#Thin plate spline interpolation</span>
