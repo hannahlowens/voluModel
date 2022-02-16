@@ -77,7 +77,7 @@
 #' @import rangeBuilder
 #' @import rgeos
 #' @import sp
-#' @import terra
+#' @importFrom terra distance buffer shift
 #' @importFrom methods as slot<-
 #'
 #' @seealso \code{\link[rangeBuilder:getDynamicAlphaHull]{getDynamicAlphaHull}}
@@ -213,9 +213,8 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
   wholeM <- rgeos::gUnion(occBuff, hullBuff)
 
   # Crop out land
-  load(system.file("extdata/smallLand.RData",
-                           package='voluModel'))
-  land <- smallLand
+  land <- readRDS(system.file("extdata/smallLand.RData",
+                              package='voluModel'))
   wholeM <- try(rgeos::gDifference(wholeM,land), silent = T)
 
   # Optional removal of unoccupied polygons
