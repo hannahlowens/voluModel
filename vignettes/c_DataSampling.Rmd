@@ -70,21 +70,9 @@ pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
              land = land)
 ```
 
-`getDynamicAlphaHull()`, which is run within `marineBackground()` generates a polygon (or polygons) that can be used as a training region by fitting an alpha hull (or hulls) around an occurrence dataset. Alpha is a parameter that controls the complexity of the polygon(s) that is being fit around the occurrences. `getDynamicAlphaHull()` adjusts the alpha parameter iteratively, until it meets criteria the user can set via the arguments `fraction`, which is the minimum fraction of occurrences that must be contained within the polygon(s), `partCount`, which is the maximum number of polygons generated to fit the data, and `buff`, which is the permissible distance from a point to the edge of a polyon in meters. Here's how it works.
+`getDynamicAlphaHull()`, which is run within `marineBackground()` generates a polygon (or polygons) that can be used as a training region by fitting an alpha hull (or hulls) around an occurrence dataset. Alpha is a parameter that controls the complexity of the polygon(s) that is being fit around the occurrences. `getDynamicAlphaHull()` adjusts the alpha parameter iteratively, until it meets criteria the user can set via the arguments `fraction`, which is the minimum fraction of occurrences that must be contained within the polygon(s), `partCount`, which is the maximum number of polygons generated to fit the data, and `buff`, which is the permissible distance from a point to the edge of a polyon in meters. `marineBackground()` takes these and many of the same other arguments as `getDynamicAlphaHull()`. Here's how it works.
 
 ```{r alpha hull demonstration}
-# Get dynamic alpha hull example
-trainingRegion <- getDynamicAlphaHull(x = occurrences[,c("decimalLongitude", "decimalLatitude")],
-                                   fraction = 1, partCount = 1, buff = 1000000, 
-                                   clipToCoast = "aquatic")
-plot(occurrences[,c("decimalLongitude", "decimalLatitude")],
-     main = "Mimimum of 100% Points in Training Region,\nMaximum of 1 Polygon Permitted, 100 km Buffer",
-     xlab = "Longitude", ylab = "Latitude",
-     pch = 20, col = "red",
-     xlim = c(-110, -40), ylim = c(0, 50))
-plot(land, col = "black", add = T)
-plot(trainingRegion[[1]], add = T, border = "orange", lwd = 2)
-
 # Marine background comparison
 trainingRegion <- marineBackground(occurrences, 
                                 fraction = 1, partCount = 1, buff = 1000000,
@@ -93,12 +81,12 @@ plot(occurrences[,c("decimalLongitude", "decimalLatitude")],
      main = "Mimimum of 100% Points in Training Region,\nMaximum of 1 Polygon Permitted, 100 km Buffer",
      xlab = "Longitude", ylab = "Latitude",
      pch = 20, col = "red",
-     xlim = c(-110, -40), ylim = c(0, 50))
+     xlim = c(-105, -40), ylim = c(0, 45))
 plot(land, col = "black", add = T)
 plot(trainingRegion, add = T, border = "orange", lwd = 2)
 ```
 
-What parameters you choose to fit the alpha hull will depend on the biology of the organism you are trying to model (e.g. you may choose a much smaller buffer for a sessile organism than you would for a highly vagile migratory species), your data, and the particulars of your study system and the geography of your study area. You may need to experiment to find something that looks sensible. `marineBackground()` takes many of the same arguments as `getDynamicAlphaHull()`, although it will calculate a buffer that is the mean of the top and bottom 10% of distances between points in the dataset.
+What parameters you choose to fit the alpha hull will depend on the biology of the organism you are trying to model (e.g. you may choose a much smaller buffer for a sessile organism than you would for a highly vagile migratory species), your data, and the particulars of your study system and the geography of your study area. You may need to experiment to find something that looks sensible. If you do not provide a pre-defined buffer, `marineBackground()` will calculate a buffer that is the mean of the top and bottom 10% of distances between points in the dataset.
 
 ```{r basic marineBackground demonstration}
 # Hull example 1
@@ -109,7 +97,7 @@ plot(occurrences[,c("decimalLongitude", "decimalLatitude")],
      main = "Mimimum of 100% Points in Training Region,\nMaximum of 1 Polygon Permitted, Automatic Buffer",
      xlab = "Longitude", ylab = "Latitude",
      pch = 20, col = "red",
-     xlim = c(-110, -40), ylim = c(0, 50))
+     xlim = c(-105, -40), ylim = c(0, 45))
 plot(land, col = "black", add = T)
 plot(trainingRegion, add = T, border = "orange", lwd = 2)
 ```
@@ -125,12 +113,12 @@ plot(occurrences[,c("decimalLongitude", "decimalLatitude")],
      main = "Minimum of 95% Points in Training Region,\nMaximum of 2 Polygons Permitted, 100 km Buffer",
      xlab = "Longitude", ylab = "Latitude",
      pch = 20, col = "red",
-     xlim = c(-110, -40), ylim = c(0, 50))
+     xlim = c(-105, -40), ylim = c(0, 45))
 plot(land, col = "black", add = T)
 plot(trainingRegion, add = T, border = "orange", lwd = 2)
 ```
 
-The last major difference between `marineBackground()` and `getDynamicAlphaHull()` is how the functions handle training regions that are adjacent to the antimeridian (i.e. 180° E or W). `getDynamicAlphaHull()` truncates polygons at this line, which can lead to some strange-looking training areas or fatal errors. `marineBackground()`, on the other hand, wraps polygons across the meridian and merges them if they overlap. For this example, I am going to subtract 100 from the longitudinal coordinate of our Luminous Hake dataset to generate a quick fictional example
+The last major difference between `marineBackground()` and `getDynamicAlphaHull()` is how the functions handle training regions that are adjacent to the antimeridian (i.e. 180° E or W). `getDynamicAlphaHull()` truncates polygons at this line, which can lead to some strange-looking training areas or fatal errors. `marineBackground()`, on the other hand, wraps polygons across the meridian and merges them if they overlap. For this example, I am going to manipulate the longitudinal coordinates of our Luminous Hake dataset to generate a quick fictional example.
 
 ```{r meridian wrap demo, warning=FALSE}
 # Fictional example occurrences
@@ -141,12 +129,6 @@ for (i in 1:length(pacificOccs$decimalLongitude)){
     pacificOccs$decimalLongitude[[i]] <- pacificOccs$decimalLongitude[[i]] + 360
   }
 }
-
-# getDynamicAlphaHull causes an error
-pacificTrainingRegion <- try(getDynamicAlphaHull(x = pacificOccs[,c("decimalLongitude", "decimalLatitude")],
-                                   fraction = 1, partCount = 2, buff = 1000000, 
-                                   clipToCoast = "aquatic"), silent = T)
-paste("getDynamicAlphaHull error:", pacificTrainingRegion[1])
 
 # marine Background
 pacificTrainingRegion <- marineBackground(pacificOccs, 
