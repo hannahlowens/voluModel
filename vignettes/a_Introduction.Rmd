@@ -112,8 +112,7 @@ head(occurrences)
 land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
 pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
              spName = "Steindachneria argentia", ptSize = 3,
-             land = land
-)
+             land = land)
 rm(indices, layerNames, tempPoints, i, downsampledOccs, occs)
 ```
 
