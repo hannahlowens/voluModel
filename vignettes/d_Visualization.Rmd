@@ -164,10 +164,6 @@ If you have a horizontal raster you would like to map that contains continuous d
 oneRasterPlot(rast = temperature[[1]],
               land = land, title = "Sea Surface Temperature, WOA 2018",
               landCol = "black", option = "mako")
-
-oneRasterPlot(rast = temperature[[1]],
-              land = land, title = "Sea Surface Temperature, WOA 2018",
-              landCol = "black", option = "inferno")
 ```
 
 Suppose you want to compare the extents of two presence-absence rasters--perhaps you are comparing two species distribution model method outputs, or comparing potential distributions at two different depths. We have a function for that, too.

@@ -131,21 +131,6 @@ plot(land, col = "black", add = T)
 There is a workaround for this, since we can reasonably expect some degree of spatial autocorrelation in apparent oxygen utilization. We use the `interpolateRaster()` function to produce statistically-interpolated layers using `TPS()` from the `fields` package (this is a thin-plate spline interpolation). Be patient--this step can take a while, although as shown here, I am using the `fastTPS()` approximation, which only samples from nearby cells to speed things up. Maybe `fastTPS()` will work ok for your data, maybe it won't. It depends on the data.
 
 ```{r interpolate oxygen, warning=FALSE}
-#Creating a bottom raster
-oxygenBottom <- bottomRaster(oxygen)
-p1 <- oneRasterPlot(oxygenBottom,land = land, landCol = "black", 
-              title = "Apparent oxygen utilization, bottom")
-oxygenBottomInterpolated <- interpolateRaster(oxygenBottom, lon.lat = T, fast = T, aRange = 5) #Thin plate spline interpolation
-p2 <- oneRasterPlot(oxygenBottomInterpolated, land = land, landCol = "black", 
-              title = "Apparent oxygen utilization, bottom")
-
-temp <- c("Raw" = p1, "Interpolated" = p2)
-update(temp, strip  = strip.custom(strip.levels = TRUE,
-                             horizontal = TRUE,
-                             bg = "black",
-                             fg = "white",
-                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
-
 # Creating a RasterBrick
 oxygen <- rasterFromXYZ(cbind(oxygen@coords, oxygen@data))
 
