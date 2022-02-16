@@ -213,7 +213,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
   wholeM <- rgeos::gUnion(occBuff, hullBuff)
 
   # Crop out land
-  land <- readRDS(system.file("extdata/smallLand.RData",
+  land <- readRDS(system.file("extdata/smallLand.rds",
                               package='voluModel'))
   wholeM <- try(rgeos::gDifference(wholeM,land), silent = T)
 

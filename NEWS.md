@@ -1,7 +1,7 @@
 # voluModel 0.1.1
 
 - Overhauled vignettes--more detailed, special topics
-- Reduced space footprint
+- Reduced space footprint, increased speed
 
 # voluModel 0.1.0
 
