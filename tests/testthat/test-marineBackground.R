@@ -16,7 +16,7 @@ occurrences <- as.data.frame(cbind(longitude,latitude))
 
 # Here's the function
 result <- marineBackground(occs = occurrences, buff = 100000,
-                           fraction = .9, partCount = 2, clipToOcean = T)
+                           fraction = .9, partCount = 2, clipToOcean = TRUE)
 
 test_that("marineBackground input warnings behave as expected", {
   expect_error(marineBackground())

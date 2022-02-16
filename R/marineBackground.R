@@ -69,7 +69,7 @@
 #'
 #' # Here's the function
 #' result <- marineBackground(occs = occurrences, buff = 100000,
-#'                            fraction = .9, partCount = 2, clipToOcean = T)
+#'                            fraction = .9, partCount = 2, clipToOcean = TRUE)
 #' plot(result)
 #' points(occurrences, pch = 20)
 #'
@@ -77,6 +77,7 @@
 #' @import rangeBuilder
 #' @import rgeos
 #' @import sp
+#' @import terra
 #' @importFrom methods as slot<-
 #'
 #' @seealso \code{\link[rangeBuilder:getDynamicAlphaHull]{getDynamicAlphaHull}}
@@ -152,15 +153,15 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
   # Calculate buffer
   if("buff" %in% names(args)){
     buff <- args$buff
+    if (!is.numeric(buff)) {
+      warning(message("Argument 'buff' is not of type 'numeric'.\n"))
+      return(NULL)
+    }
   } else{
-    pDist <- raster::pointDistance(occs[,c(xIndex, yIndex)], lonlat = TRUE)
+    pDist <- terra::distance(as.matrix(occs[,c(xIndex, yIndex)]), lonlat = TRUE)
     buff <- mean(quantile(pDist, c(.1, .9), na.rm = TRUE))/2
   }
 
-  if (!is.numeric(buff)) {
-    warning(message("Argument 'buff' is not of type 'numeric'.\n"))
-    return(NULL)
-  }
   if (!is.numeric(initialAlpha)) {
     warning(message("Argument 'initialAlpha' is not of type 'numeric'.\n"))
     return(NULL)
@@ -182,7 +183,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
                                                                               yIndex)],
                                                 clipToCoast = clipToCoast,
                                                 fraction = fraction,
-                                                partCount = partCount),
+                                                partCount = partCount, buff = 0),
               silent = TRUE)
   if("try-error" %in% class(hull)){
     x1 <- min(occs[xIndex])
@@ -200,23 +201,22 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
                             CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
   }
 
-  hullBuff <- raster::buffer(hull, width = buff, dissolve = TRUE)
+  hullBuff <- terra::buffer(hull, width = buff, dissolve = TRUE)
 
   # Point part
   occsForM <- suppressWarnings(sp::SpatialPoints(occs[,c(xIndex, yIndex)],
                                                  proj4string = sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")))
   occsForM <- sp::spTransform(occsForM,
                               CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
-  occBuff <- suppressWarnings(raster::buffer(occsForM,
-                                             width = buff, dissolve = TRUE))
-
-  # Unite and crop out land
+  occBuff <- suppressWarnings(terra::buffer(occsForM,
+                                            width = buff, dissolve = TRUE))
   wholeM <- rgeos::gUnion(occBuff, hullBuff)
-  land <- suppressWarnings(aggregate(buffer(sp::spTransform(rangeBuilder::gshhs,
-                                                     CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs")),
-                                            width = 500, dissolve = TRUE),
-                                    dissolve = TRUE))
-  wholeM <- suppressWarnings(rgeos::gDifference(wholeM,land))
+
+  # Crop out land
+  load(system.file("extdata/smallLand.RData",
+                           package='voluModel'))
+  land <- smallLand
+  wholeM <- try(rgeos::gDifference(wholeM,land), silent = T)
 
   # Optional removal of unoccupied polygons
   if(clipToOcean){
@@ -246,19 +246,19 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
     ends <- disaggregate(ends)
     if(length(ends) == 1){
       if(xmin(ends) < -20037508){
-        ends <- raster::shift(ends, dx = 20037508*2)
+        ends <- terra::shift(ends, dx = 20037508*2)
       }
       if(xmax(ends) > 20037508){
-        ends <- raster::shift(ends, dx = -20037508*2)
+        ends <- terra::shift(ends, dx = -20037508*2)
       }
     } else{
       result <- list()
       for(j in 1:length(ends)){
         if(xmin(ends[j,]) < -20037508){
-          endTemp <- raster::shift(ends[j,], dx = 20037508*2)
+          endTemp <- terra::shift(ends[j,], dx = 20037508*2)
           slot(endTemp@polygons[[1]], "ID") <- paste0(j)
         } else if(xmax(ends[j,]) > 20037508){
-          endTemp <- raster::shift(ends[j,], dx = -20037508*2)
+          endTemp <- terra::shift(ends[j,], dx = -20037508*2)
           slot(endTemp@polygons[[1]], "ID") <- paste0(j)
         }
         result[[j]] <- endTemp
