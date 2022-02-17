@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-02-16</h4>
+            <h4 data-toc-skip class="date">2022-02-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/c_DataSampling.Rmd" class="external-link"><code>vignettes/c_DataSampling.Rmd</code></a></small>
       <div class="hidden name"><code>c_DataSampling.Rmd</code></div>
@@ -118,24 +118,8 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hannahlowens.github.io/voluModel/" class="external-link">voluModel</a></span><span class="op">)</span> <span class="co"># Because of course</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span> <span class="co"># For fancy plotting</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://rgdal.r-forge.r-project.org" class="external-link">rgdal</a></span><span class="op">)</span> <span class="co"># For vector stuff. Will eventually be replaced with sf.</span></code></pre></div>
-<pre><code><span class="co">## Loading required package: sp</span></code></pre>
-<pre><code><span class="co">## Please note that rgdal will be retired by the end of 2023,</span>
-<span class="co">## plan transition to sf/stars/terra functions using GDAL and PROJ</span>
-<span class="co">## at your earliest convenience.</span>
-<span class="co">## </span>
-<span class="co">## rgdal: version: 1.5-28, (SVN revision 1158)</span>
-<span class="co">## Geospatial Data Abstraction Library extensions to R successfully loaded</span>
-<span class="co">## Loaded GDAL runtime: GDAL 3.0.4, released 2020/01/28</span>
-<span class="co">## Path to GDAL shared files: /usr/share/gdal</span>
-<span class="co">## GDAL binary built with GEOS: TRUE </span>
-<span class="co">## Loaded PROJ runtime: Rel. 6.3.1, February 10th, 2020, [PJ_VERSION: 631]</span>
-<span class="co">## Path to PROJ shared files: /usr/share/proj</span>
-<span class="co">## Linking to sp version:1.4-6</span>
-<span class="co">## To mute warnings of possible GDAL/OSR exportToProj4() degradation,</span>
-<span class="co">## use options("rgdal_show_exportToProj4_warnings"="none") before loading sp or rgdal.</span></code></pre>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span> <span class="co"># For raster stuff. Will eventually be replaced with terra.</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://rgdal.r-forge.r-project.org" class="external-link">rgdal</a></span><span class="op">)</span> <span class="co"># For vector stuff. Will eventually be replaced with sf.</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span> <span class="co"># For raster stuff. Will eventually be replaced with terra.</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ptitle/rangeBuilder" class="external-link">rangeBuilder</a></span><span class="op">)</span> <span class="co"># To compare marineBackground to getDynamicAlphaHull</span></code></pre></div>
 </div>
 <div class="section level2">
@@ -143,27 +127,20 @@
 </h2>
 <p>To generate a sample of pseudoabsences and/or background points, it is important to consider the environments the species of interest can access (Barve <em>et al.</em>, 2011). There is ample discussion in the literature on how to best delimit a niche model training region (also variously called M or the background region), and we will not review the issue here. In the absence of specific information on species’ dispersal capabilities, algorithmically generating a repeatable sampling background from a clear set of rules may be suitable approximation, or a jumping-off point for hand-curating training regions in a GIS software of choice.</p>
 <p>We designed <code><a href="../reference/marineBackground.html">marineBackground()</a></code> as a wrapper around , a function provided by the <code>rangeBuilder</code> package (Davis-Rabosky <em>et al.</em>, 2016) which generates background sampling regions by fitting an alpha hull polygon around an occurrence point dataset. Let’s look at how <code><a href="../reference/marineBackground.html">marineBackground()</a></code> (and by extension <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>) fits alpha hull polygons, based on species occurrence data. The occurrence dataset is our <em>Steindachneria argentia</em>, Luminous Hake, data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain <em>et al.</em>, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via <code>occCite</code> (Owens <em>et al.</em>, 2021).</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Map occurrences</span>
 <span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"medium"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
 <span class="fu"><a href="../reference/pointMap.html">pointMap</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, ptCol <span class="op">=</span> <span class="st">"orange"</span>, landCol <span class="op">=</span> <span class="st">"black"</span>,
              spName <span class="op">=</span> <span class="st">"Steindachneria argentia"</span>, ptSize <span class="op">=</span> <span class="fl">3</span>,
              land <span class="op">=</span> <span class="va">land</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Using decimalLongitude and decimalLatitude</span>
-<span class="co">##  as x and y coordinates, respectively.</span></code></pre>
-<pre><code><span class="co">## Warning: Use of `occs[[xIndex]]` is discouraged. Use `.data[[xIndex]]` instead.</span></code></pre>
-<pre><code><span class="co">## Warning: Use of `occs[[yIndex]]` is discouraged. Use `.data[[yIndex]]` instead.</span></code></pre>
 <p><img src="c_DataSampling_files/figure-html/occurrence%20dataset-1.png"><!-- --></p>
 <p><code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>, which is run within <code><a href="../reference/marineBackground.html">marineBackground()</a></code> generates a polygon (or polygons) that can be used as a training region by fitting an alpha hull (or hulls) around an occurrence dataset. Alpha is a parameter that controls the complexity of the polygon(s) that is being fit around the occurrences. <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> adjusts the alpha parameter iteratively, until it meets criteria the user can set via the arguments <code>fraction</code>, which is the minimum fraction of occurrences that must be contained within the polygon(s), <code>partCount</code>, which is the maximum number of polygons generated to fit the data, and <code>buff</code>, which is the permissible distance from a point to the edge of a polyon in meters. <code><a href="../reference/marineBackground.html">marineBackground()</a></code> takes these and many of the same other arguments as <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>. Here’s how it works.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Marine background comparison</span>
 <span class="va">trainingRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occurrences</span>, 
                                 fraction <span class="op">=</span> <span class="fl">1</span>, partCount <span class="op">=</span> <span class="fl">1</span>, buff <span class="op">=</span> <span class="fl">1000000</span>,
-                                clipToOcean <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Using decimalLongitude and decimalLatitude</span>
-<span class="co">##  as x and y coordinates, respectively.</span></code></pre>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>,
+                                clipToOcean <span class="op">=</span> <span class="cn">F</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>,
      main <span class="op">=</span> <span class="st">"Mimimum of 100% Points in Training Region,\nMaximum of 1 Polygon Permitted, 100 km Buffer"</span>,
      xlab <span class="op">=</span> <span class="st">"Longitude"</span>, ylab <span class="op">=</span> <span class="st">"Latitude"</span>,
      pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span>,
@@ -172,15 +149,12 @@
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">trainingRegion</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <p><img src="c_DataSampling_files/figure-html/alpha%20hull%20demonstration-1.png"><!-- --></p>
 <p>What parameters you choose to fit the alpha hull will depend on the biology of the organism you are trying to model (e.g. you may choose a much smaller buffer for a sessile organism than you would for a highly vagile migratory species), your data, and the particulars of your study system and the geography of your study area. You may need to experiment to find something that looks sensible. If you do not provide a pre-defined buffer, <code><a href="../reference/marineBackground.html">marineBackground()</a></code> will calculate a buffer that is the mean of the top and bottom 10% of distances between points in the dataset.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Hull example 1</span>
 <span class="va">trainingRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occurrences</span>,
                                 fraction <span class="op">=</span> <span class="fl">1</span>, partCount <span class="op">=</span> <span class="fl">1</span>, 
-                                clipToOcean <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Using decimalLongitude and decimalLatitude</span>
-<span class="co">##  as x and y coordinates, respectively.</span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>,
+                                clipToOcean <span class="op">=</span> <span class="cn">F</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>,
      main <span class="op">=</span> <span class="st">"Mimimum of 100% Points in Training Region,\nMaximum of 1 Polygon Permitted, Automatic Buffer"</span>,
      xlab <span class="op">=</span> <span class="st">"Longitude"</span>, ylab <span class="op">=</span> <span class="st">"Latitude"</span>,
      pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span>,
@@ -189,15 +163,12 @@
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">trainingRegion</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <p><img src="c_DataSampling_files/figure-html/basic%20marineBackground%20demonstration-1.png"><!-- --></p>
 <p>You may have noticed that the training regions in the above examples include some areas of the Pacific where the species has not been observed, and cannot access. This could cause problems if it is used to train your model. You <em>could</em> delete this area by hand in your favorite GIS software, OR you could change <code>clipToOcean</code> to <code>TRUE</code> in <code><a href="../reference/marineBackground.html">marineBackground()</a></code>, and any polygon fragments that do not contain an occurrence will be deleted automatically. This is a key difference from <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Hull example 1</span>
 <span class="va">trainingRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occurrences</span>, 
                                 fraction <span class="op">=</span> <span class="fl">.95</span>, partCount <span class="op">=</span> <span class="fl">2</span>, buff <span class="op">=</span> <span class="fl">1000000</span>, 
-                                clipToOcean <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Using decimalLongitude and decimalLatitude</span>
-<span class="co">##  as x and y coordinates, respectively.</span></code></pre>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>,
+                                clipToOcean <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>,
      main <span class="op">=</span> <span class="st">"Minimum of 95% Points in Training Region,\nMaximum of 2 Polygons Permitted, 100 km Buffer"</span>,
      xlab <span class="op">=</span> <span class="st">"Longitude"</span>, ylab <span class="op">=</span> <span class="st">"Latitude"</span>,
      pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span>,
@@ -206,7 +177,7 @@
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">trainingRegion</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <p><img src="c_DataSampling_files/figure-html/clipToOcean%20demo-1.png"><!-- --></p>
 <p>The last major difference between <code><a href="../reference/marineBackground.html">marineBackground()</a></code> and <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> is how the functions handle training regions that are adjacent to the antimeridian (i.e. 180° E or W). <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> truncates polygons at this line, which can lead to some strange-looking training areas or fatal errors. <code><a href="../reference/marineBackground.html">marineBackground()</a></code>, on the other hand, wraps polygons across the meridian and merges them if they overlap. For this example, I am going to manipulate the longitudinal coordinates of our Luminous Hake dataset to generate a quick fictional example.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Fictional example occurrences</span>
 <span class="va">pacificOccs</span> <span class="op">&lt;-</span> <span class="va">occurrences</span>
 <span class="va">pacificOccs</span><span class="op">$</span><span class="va">decimalLongitude</span> <span class="op">&lt;-</span> <span class="va">pacificOccs</span><span class="op">$</span><span class="va">decimalLongitude</span> <span class="op">-</span> <span class="fl">100</span>
@@ -219,11 +190,8 @@
 <span class="co"># marine Background</span>
 <span class="va">pacificTrainingRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">pacificOccs</span>, 
                                           fraction <span class="op">=</span> <span class="fl">1</span>, partCount <span class="op">=</span> <span class="fl">2</span>, 
-                                          clipToOcean <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Using decimalLongitude and decimalLatitude</span>
-<span class="co">##  as x and y coordinates, respectively.</span></code></pre>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pacificOccs</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>,
+                                          clipToOcean <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pacificOccs</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>,
      main <span class="op">=</span> <span class="st">"marineBackground Antimeridian Wrap"</span>,
      xlab <span class="op">=</span> <span class="st">"Longitude"</span>, ylab <span class="op">=</span> <span class="st">"Latitude"</span>,
      ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">40</span>,<span class="fl">60</span><span class="op">)</span>,
@@ -237,7 +205,7 @@
 </h2>
 <p>Next, we will cover how to extract environmental data from a <code>RasterBrick</code> object using 3D occurrence coordinates. The occurrences I will use to demonstrate this are the Luminous Hake occurrences from the previous section. The environmental dataset I will use as an example is temperature (Locarnini <em>et al.</em>, 2018) from the World Ocean Atlas (WOA; Garcia <em>et al.</em>, 2019). I have chosen to focus on temperature for simple illustrative purposes–we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient.</p>
 <p>This chunk of code loads the example shapefile, which results in a <code>SpatialPointsDataFrame</code>:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/woa18_decav_t00mn01_cropped.zip"</span>, 
                   package <span class="op">=</span> <span class="st">"voluModel"</span><span class="op">)</span>,
@@ -245,10 +213,10 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpTOHq7f/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
-<span class="co">## with 2291 features</span>
+<span class="co">## Source: "/tmp/RtmpdkBXcM/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 
 <span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">[</span><span class="va">temperature</span><span class="op">@</span><span class="va">data</span> <span class="op">==</span> <span class="op">-</span><span class="fl">999.999</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>
@@ -256,56 +224,56 @@
 <span class="co"># How are the data structured?</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##   SURFACE    d5M   d10M   d15M   d20M   d25M   d30M   d35M   d40M   d45M   d50M</span>
-<span class="co">## 1  25.330 25.296 25.265 25.222 25.149 24.958 24.641 24.314 23.894 23.341 22.670</span>
-<span class="co">## 2  25.118 25.111 25.091 25.067 24.995 24.855 24.736 24.254 23.779 23.009 22.246</span>
-<span class="co">## 3  25.032 24.992 24.978 24.922 24.770 24.594 24.251 23.725 23.081 22.464 21.684</span>
-<span class="co">## 4  24.952 24.914 24.835 24.753 24.620 24.389 23.992 23.447 22.884 22.250 21.481</span>
-<span class="co">## 5  24.791 24.761 24.726 24.678 24.521 24.243 23.922 23.443 22.812 22.059 21.282</span>
-<span class="co">## 6  24.889 24.870 24.823 24.736 24.637 24.426 23.925 23.223 22.521 21.734 20.924</span>
+<span class="co">## 1  23.514 23.266 22.969 22.373 21.832 21.320 20.839 20.309 19.780 19.264 18.715</span>
+<span class="co">## 2  23.542 23.222 22.915 22.430 21.938 21.343 20.747 20.182 19.584 18.984 18.394</span>
+<span class="co">## 3  23.575 23.392 22.919 22.318 21.766 21.117 20.531 19.860 19.266 18.673 18.161</span>
+<span class="co">## 4  23.204 22.979 22.559 22.057 21.401 20.651 19.978 19.433 18.835 18.247 17.691</span>
+<span class="co">## 5  23.451 23.125 22.726 22.134 21.520 20.828 20.128 19.472 18.875 18.353 17.875</span>
+<span class="co">## 6  23.261 22.968 22.559 22.052 21.528 20.945 20.337 19.759 19.198 18.669 18.162</span>
 <span class="co">##     d55M   d60M   d65M   d70M   d75M   d80M   d85M   d90M   d95M  d100M  d125M</span>
-<span class="co">## 1 21.995 21.350 20.586 19.760 18.922 18.124 17.359 16.725 15.862 15.323 13.823</span>
-<span class="co">## 2 21.408 20.541 19.727 18.959 18.067 17.246 16.548 15.957 15.261 14.807 13.659</span>
-<span class="co">## 3 20.782 19.916 18.923 18.060 17.330 16.675 16.095 15.637 15.089 14.649 13.639</span>
-<span class="co">## 4 20.709 19.780 18.831 17.993 17.236 16.629 15.967 15.570 15.053 14.711 13.609</span>
-<span class="co">## 5 20.365 19.491 18.532 17.640 16.934 16.291 15.735 15.210 14.783 14.495 13.665</span>
-<span class="co">## 6 20.276 19.532 18.748 17.913 17.053 16.504 15.951 15.385 14.897 14.605 13.736</span>
-<span class="co">##    d150M  d175M  d200M  d225M  d250M  d275M  d300M  d325M  d350M  d375M  d400M</span>
-<span class="co">## 1 13.228 12.929 12.749 12.561 12.208 11.955 11.688 11.400 10.971 10.506 10.087</span>
-<span class="co">## 2 13.240 12.997 12.783 12.580 12.357 12.096 11.777 11.401 10.957 10.493 10.019</span>
-<span class="co">## 3 13.278 13.007 12.799 12.580 12.350 12.077 11.774 11.418 11.004 10.536 10.083</span>
-<span class="co">## 4 13.207 12.940 12.742 12.532 12.307 12.053 11.766 11.422 10.994 10.537 10.066</span>
-<span class="co">## 5 13.286 13.015 12.802 12.597 12.361 12.107 11.802 11.444 11.031 10.555 10.066</span>
-<span class="co">## 6 13.320 13.084 12.877 12.665 12.447 12.201 11.904 11.541 11.132 10.646 10.120</span>
+<span class="co">## 1 18.164 17.671 17.179 16.743 16.284 15.861 15.622 15.217 14.949 14.767 14.020</span>
+<span class="co">## 2 17.843 17.343 16.906 16.497 16.113 15.800 15.488 15.187 14.927 14.720 13.958</span>
+<span class="co">## 3 17.675 17.174 16.689 16.236 15.919 15.619 15.391 15.165 14.931 14.699 13.993</span>
+<span class="co">## 4 17.177 16.744 16.395 16.074 15.633 15.361 15.172 14.891 14.735 14.556 13.907</span>
+<span class="co">## 5 17.425 16.966 16.536 16.184 15.881 15.588 15.335 15.110 14.875 14.686 14.084</span>
+<span class="co">## 6 17.727 17.306 16.856 16.491 16.135 15.794 15.530 15.219 15.031 14.822 14.159</span>
+<span class="co">##    d150M  d175M  d200M  d225M  d250M  d275M  d300M  d325M  d350M  d375M d400M</span>
+<span class="co">## 1 13.552 13.277 13.096 12.912 12.678 12.306 11.736 11.055 10.482  9.987 9.504</span>
+<span class="co">## 2 13.598 13.302 13.106 12.928 12.667 12.272 11.675 11.060 10.469  9.908 9.476</span>
+<span class="co">## 3 13.574 13.328 13.123 12.928 12.693 12.278 11.729 11.155 10.538  9.984 9.504</span>
+<span class="co">## 4 13.528 13.305 13.117 12.926 12.655 12.275 11.745 11.064 10.454  9.927 9.559</span>
+<span class="co">## 5 13.720 13.465 13.216 13.032 12.682 12.247 11.732 11.089 10.423  9.892 9.668</span>
+<span class="co">## 6 13.757 13.515 13.299 13.123 12.759 12.287 11.760 11.087 10.540 10.019 9.684</span>
 <span class="co">##   d425M d450M d475M d500M d550M d600M d650M d700M d750M d800M d850M d900M d950M</span>
-<span class="co">## 1 9.581 9.134 8.703 8.514 7.724 7.138 6.644 6.235 5.867 5.545 5.252 4.997 4.762</span>
-<span class="co">## 2 9.626 9.199 8.778 8.419 7.750 7.142 6.638 6.224 5.883 5.550 5.249 4.961 4.738</span>
-<span class="co">## 3 9.607 9.192 8.769 8.386 7.742 7.147 6.637 6.203 5.827 5.487 5.208 4.966 4.733</span>
-<span class="co">## 4 9.597 9.158 8.736 8.344 7.659 7.045 6.561 6.152 5.815 5.503 5.179 4.915 4.691</span>
-<span class="co">## 5 9.579 9.161 8.730 8.346 7.688 7.106 6.621 6.185 5.808 5.504 5.197 4.941 4.716</span>
-<span class="co">## 6 9.641 9.158 8.749 8.337 7.651 7.088 6.590 6.168 5.804 5.503 5.211 4.964 4.748</span>
+<span class="co">## 1 9.061 8.696 8.413 8.119 7.570 7.117 6.676 6.241 5.894 5.618 5.313 5.062 4.828</span>
+<span class="co">## 2 9.071 8.712 8.431 8.134 7.621 7.136 6.644 6.255 5.891 5.574 5.262 4.994 4.787</span>
+<span class="co">## 3 9.093 8.765 8.442 8.101 7.620 7.180 6.687 6.267 5.875 5.566 5.293 5.052 4.811</span>
+<span class="co">## 4 9.118 8.732 8.421 8.182 7.663 7.176 6.712 6.270 5.912 5.598 5.330 5.094 4.844</span>
+<span class="co">## 5 9.063 8.720 8.404 8.156 7.593 7.114 6.662 6.249 5.869 5.553 5.301 5.038 4.781</span>
+<span class="co">## 6 9.142 8.805 8.477 8.217 7.654 7.170 6.760 6.335 5.927 5.590 5.327 5.088 4.847</span>
 <span class="co">##   d1000M d1050M d1100M d1150M d1200M d1250M d1300M d1350M d1400M d1450M d1500M</span>
-<span class="co">## 1  4.544  4.357  4.167  3.977  3.822  3.666  3.500  3.384  3.263  3.147  3.037</span>
-<span class="co">## 2  4.536  4.372  4.189  3.995  3.776  3.609  3.458  3.334  3.210  3.108  3.032</span>
-<span class="co">## 3  4.524  4.320  4.139  3.948  3.774  3.624  3.506  3.380  3.261  3.136  3.024</span>
-<span class="co">## 4  4.514  4.331  4.146  3.965  3.750  3.593  3.451  3.325  3.221  3.128  3.028</span>
-<span class="co">## 5  4.489  4.288  4.104  3.940  3.747  3.595  3.472  3.339  3.210  3.104  3.001</span>
-<span class="co">## 6  4.518  4.312  4.130  3.953  3.788  3.647  3.502  3.365  3.238  3.118  3.006</span>
+<span class="co">## 1  4.618  4.410  4.223  4.054  3.868  3.727  3.563  3.410  3.278  3.144  3.050</span>
+<span class="co">## 2  4.562  4.379  4.207  4.048  3.876  3.731  3.560  3.428  3.297  3.167  3.040</span>
+<span class="co">## 3  4.571  4.397  4.218  4.048  3.896  3.737  3.592  3.440  3.286  3.149  3.044</span>
+<span class="co">## 4  4.614  4.415  4.219  4.048  3.899  3.743  3.581  3.426  3.279  3.153  3.049</span>
+<span class="co">## 5  4.587  4.395  4.233  4.062  3.911  3.727  3.555  3.404  3.279  3.150  3.045</span>
+<span class="co">## 6  4.617  4.441  4.243  4.060  3.905  3.747  3.573  3.424  3.294  3.172  3.050</span>
 <span class="co">##   d1550M d1600M d1650M d1700M d1750M d1800M d1850M d1900M d1950M d2000M d2100M</span>
-<span class="co">## 1  2.930  2.842  2.741  2.654  2.580  2.504  2.442  2.380  2.332  2.258  2.174</span>
-<span class="co">## 2  2.954  2.862  2.764  2.647  2.555  2.472  2.417  2.360  2.301     NA     NA</span>
-<span class="co">## 3  2.924  2.827  2.720  2.637  2.567  2.505  2.431  2.365  2.315     NA     NA</span>
-<span class="co">## 4  2.908  2.813  2.725  2.649  2.576  2.515  2.461  2.394  2.342     NA     NA</span>
-<span class="co">## 5  2.919  2.826  2.731  2.666  2.594  2.527  2.455  2.406  2.353     NA     NA</span>
-<span class="co">## 6  2.902  2.805  2.720  2.642  2.565  2.492  2.431  2.373  2.323  2.272     NA</span>
+<span class="co">## 1  2.949  2.858  2.769  2.692  2.618  2.540  2.470  2.406  2.329  2.320  2.227</span>
+<span class="co">## 2  2.950  2.856  2.765  2.686  2.606  2.527  2.455  2.376  2.308     NA     NA</span>
+<span class="co">## 3  2.946  2.860  2.759  2.682  2.605  2.531  2.456  2.392  2.326  2.351  2.193</span>
+<span class="co">## 4  2.938  2.843  2.754  2.675  2.602  2.528  2.463  2.398  2.335  2.223  2.130</span>
+<span class="co">## 5  2.936  2.845  2.760  2.666  2.579  2.513  2.453  2.395  2.340  2.254  2.165</span>
+<span class="co">## 6  2.946  2.845  2.758  2.679  2.600  2.526  2.459  2.397  2.338  2.276  2.165</span>
 <span class="co">##   d2200M d2300M d2400M d2500M d2600M d2700M d2800M d2900M d3000M d3100M d3200M</span>
-<span class="co">## 1  2.107   2.05  1.987  1.914   1.87   1.82  1.766   1.72  1.678   1.65  1.597</span>
+<span class="co">## 1  2.147  2.075  2.012  1.960  1.908  1.864  1.826  1.794  1.770     NA     NA</span>
 <span class="co">## 2     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
-<span class="co">## 3     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
-<span class="co">## 4     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
-<span class="co">## 5     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
-<span class="co">## 6     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 3  2.081  1.993  1.921  1.862  1.813  1.777  1.753  1.754  1.755     NA     NA</span>
+<span class="co">## 4  2.046  1.962  1.891  1.834  1.789  1.795  1.745     NA     NA     NA     NA</span>
+<span class="co">## 5  2.047  1.985  1.921  1.870  1.812  1.769  1.746  1.743  1.753  1.766     NA</span>
+<span class="co">## 6  2.076  2.003  1.936  1.886  1.843  1.796  1.761  1.751  1.753  1.759   1.78</span>
 <span class="co">##   d3300M d3400M d3500M d3600M d3700M d3800M d3900M d4000M d4100M d4200M d4300M</span>
-<span class="co">## 1  1.583  1.584  1.586     NA     NA     NA     NA     NA     NA     NA     NA</span>
+<span class="co">## 1     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
 <span class="co">## 2     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
 <span class="co">## 3     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
 <span class="co">## 4     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA     NA</span>
@@ -326,7 +294,7 @@
 <span class="co">## 5     NA</span>
 <span class="co">## 6     NA</span></code></pre>
 <p>As you can see, each point is a line in the <code>SpatialPointsDataFrame</code>; each column is a depth layer at that point–“d5M” translates to “5 meters deep”. For more details on how to process environmental data, see <a href="RasterProcessing.html">the raster data tutorial</a>. This next chunk converts the <code>SpatialPointsDataFrame</code> to a <code>RasterBrick</code>; the layers of the <code>RasterBrick</code> are then named the same as the column names of the <code>SpatialPointsDataFrame</code>. I strip the “d” and “M” from the column names so they are a little easier to use as depth coordinates. Note that <code>R</code> will not allow the raster names to be numeric, so it adds an “X” to the beginning of each column name. Don’t worry about this–<code>voluModel</code> can handle numbers preceded by “X”s without user intervention.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Creating a RasterBrick</span>
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span>,
                                    <span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>
@@ -340,19 +308,19 @@
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">50</span>, <span class="fl">100</span><span class="op">)</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <p><img src="c_DataSampling_files/figure-html/temperature%20to%20compatible%20RasterBrick-1.png"><!-- --></p>
 <p>At this point, you may have noticed a message popping up about which columns <code>voluModel</code> is interpreting as coordinates. <code>voluModel</code> is fairly flexible in how the coordinate columns are named, and it relies on names instead of column position to interpret x, y, and z (or latitude, longitude, and depth) coordinates. We do this to make <code>voluModel</code> as flexible as possible to a diversity of input formats, although English is the only supported language at the moment. Here are some examples of names that work.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">occsTest</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="op">]</span>
 <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occsTest</span>, envBrick <span class="op">=</span> <span class="va">temperature</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span>
 <span class="co">##  as x, y, and z coordinates, respectively.</span></code></pre>
 <pre><code><span class="co">## [1] NA NA NA NA NA</span></code></pre>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">occsTest</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"z"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occsTest</span>, envBrick <span class="op">=</span> <span class="va">temperature</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Using x, y, and z</span>
 <span class="co">##  as x, y, and z coordinates, respectively.</span></code></pre>
 <pre><code><span class="co">## [1] NA NA NA NA NA</span></code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Of course, the names have to be somewhat interpretable</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">occsTest</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ham"</span>, <span class="st">"eggs"</span>, <span class="st">"cheese"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occsTest</span>, envBrick <span class="op">=</span> <span class="va">temperature</span><span class="op">)</span></code></pre></div>
@@ -361,10 +329,10 @@
 <span class="co">##  into x and/or y coordinates.</span></code></pre>
 <pre><code><span class="co">## Warning in columnParse(occs, wDepth = TRUE):</span></code></pre>
 <pre><code><span class="co">## NULL</span></code></pre>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">occsTest</span><span class="op">)</span></code></pre></div>
 <p>One optional step in a niche modeling workflow is to down-sample occurrence data to the same resolution as the environmental data. We do this to avoid over-fitting the model due to biased sampling. The next chunk of code downsamples occurrence points so that there is only one per voxel (i.e. 3D pixel) of environmental data. It does this by looping through each layer of the <code>RasterBrick</code>, selecting the occurrence points with depths closest to the depths represented by that layer in the raster brick. I then downsample these points using <code>voluModel</code>’s <code><a href="../reference/downsample.html">downsample()</a></code> function.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">occurrences</span> <span class="op">&lt;-</span> <span class="va">occsClean</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLatitude"</span>, <span class="st">"decimalLongitude"</span>, <span class="st">"depth"</span><span class="op">)</span><span class="op">]</span> 
 
 <span class="co"># Preliminary cleaning</span>
@@ -392,11 +360,11 @@
 <span class="co">## 4            -93.5            19.5   450</span>
 <span class="co">## 5            -97.5            22.5   450</span>
 <span class="co">## 6            -82.5            23.5   450</span></code></pre>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Original number of points: "</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occs</span><span class="op">)</span>, <span class="st">"; number of downsampled occs: "</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] "Original number of points: 301; number of downsampled occs: 82"</span></code></pre>
 <p>The resampled points returned by <code><a href="../reference/downsample.html">downsample()</a></code> are horizontally centered in each voxel. The red dots in the plot show occurrences from the original dataset; the orange dots show the downsampled dataset. Not all of the orange dots may be visible underneath the red dots.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs2 <span class="op">=</span> <span class="va">occurrences</span>, 
              occs1Name <span class="op">=</span> <span class="st">"Original"</span>, occs2Name <span class="op">=</span> <span class="st">"Cleaned"</span>, 
              spName <span class="op">=</span> <span class="st">"Steindachneria argentia"</span>, 
@@ -414,12 +382,12 @@
 <span class="co">## `.data[[occ_datIndices$yIndex]]` instead.</span></code></pre>
 <p><img src="c_DataSampling_files/figure-html/plot%20downsample-1.png"><!-- --></p>
 <p>At this point, we can demonstrate one of the key contributions of <code>voluModel</code>– an improvement in how the environmental data are extracted at species’ occurrences. <code>voluModel</code> samples environmental conditions at the depth where each record was located, instead of extrapolating to surface or bottom conditions. Finally, we add a column called “response” and fill it by repeating “1”, to signify that these occurrences should be interpreted as presences for the purposes of modeling.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Extraction</span>
 <span class="va">occurrences</span><span class="op">$</span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, envBrick <span class="op">=</span> <span class="va">temperature</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span>
 <span class="co">##  as x, y, and z coordinates, respectively.</span></code></pre>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Add "response" column for modeling</span>
 <span class="va">occurrences</span><span class="op">$</span><span class="va">response</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span><span class="op">)</span>
 <span class="va">occurrences</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span>,<span class="op">]</span>
@@ -439,7 +407,7 @@
 </h2>
 <p>As discussed above, some modeling methods require the generation of a sampling region from which training/pseudoabsence/background points are drawn. The training region should approximately answer the question “What environments are most likely to have been experienced by Lumious Hakes?” Our answer to this question for the purposes of this tutorial is represented in <code>trainingRegion</code>, which we generated above using <code><a href="../reference/marineBackground.html">marineBackground()</a></code>. Next, we generate 3D training points within this region using the <code><a href="../reference/mSampling3D.html">mSampling3D()</a></code> function. The function takes an occurrence <code>data.frame</code>, a <code>RasterBrick</code> that will serve as a template for the resolution of the training points, a <code>SpatialPolygons</code> object representing the training region, and, optionally, information on the range of depths from which the function should sample. If you have reason to believe the species you are modeling can access depths higher or lower than those represented by occurrences, you can specify a maximum and minimum training depth from which to draw occurrence points. <code><a href="../reference/mSampling3D.html">mSampling3D()</a></code> by default draws training points from the full depth extent of the supplied <code>RasterBrick</code>.</p>
 <p>For this example, I am sampling training points from 50 to 1500 m.</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Background</span>
 <span class="va">backgroundVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mSampling3D.html">mSampling3D</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, 
                               envBrick <span class="op">=</span> <span class="va">temperature</span>, 
@@ -447,12 +415,12 @@
                               depthLimit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">1500</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span>
 <span class="co">##  as x, y, and z coordinates, respectively.</span></code></pre>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">backgroundVals</span><span class="op">$</span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">backgroundVals</span>, <span class="va">temperature</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span>
 <span class="co">##  as x, y, and z coordinates, respectively.</span></code></pre>
 <p>Once the points are sampled, we add a column called “response” and fill it by repeating “0”, to signify that these occurrences should be interpreted as absences for the purposes of modeling.</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Add "response" column for modeling</span>
 <span class="va">backgroundVals</span><span class="op">$</span><span class="va">response</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">)</span><span class="op">)</span>
 <span class="va">backgroundVals</span> <span class="op">&lt;-</span> <span class="va">backgroundVals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">)</span>,<span class="op">]</span>
@@ -466,7 +434,7 @@
 <span class="co">## 5            -69.5            42.5    50       6.187        0</span>
 <span class="co">## 6            -68.5            42.5    50       6.422        0</span></code></pre>
 <p>It is important to note that this background data represents EVERY voxel within the training region that is not occupied by observances. Depending on your study design and the modeling algorithm you are using, these data will need to be subsampled. You could choose a random sample, select points based on geography, or any number of other strategies. Below is just one example–weighting the background points by their environmental dissimilarity to the Luminous Hake occurrence points. This manner of downsampling may be appropriate for modeling methods that interpret training points as pseudoabsences, such as generalized linear modeling, but will lead to overfit models when using algorithms like Maxent.</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Sample background points weighted by distance from mean of occurrence temperatures</span>
 <span class="va">meanTemp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temperature"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
 <span class="va">backgroundVals</span><span class="op">$</span><span class="va">distance</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">[</span>,<span class="st">"temperature"</span><span class="op">]</span> <span class="op">-</span> <span class="va">meanTemp</span><span class="op">)</span>
