@@ -8,27 +8,21 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 3 notes
-
-* One NOTE occurred in all test environments:
-
-    NOTE: installed size is 5.4Mb
-
-    This is the smallest file size possible, balancing file size with speed of vignette build and extent of vignette-based documentation. Every test environment had some version of this note, although the installed file size varied +/- 1Mb among the environments.
-
-* One NOTE occurred in all rhub environments and local OS X:
-
-   Examples with CPU (user + system) or elapsed time > 5s
-                       user system elapsed
-   marineBackground 143.882  1.084 150.746
-   
-    We chose as small a realistic dataset for this example as possible to ensure it would run as quickly as possible. Time elapsed varied +/- 50s depending on environment.
+0 errors | 0 warnings | 2 notes
 
 * One NOTE occurred in rhub, win-devel, and win-release:
 
     NOTE: Non-FOSS package license (ACM)
 
-    This is necessary, as a package on which this package depends has an ACM license.
+    This is necessary, unfortunately. The problem is that a function in voluModel relies on generating alpha hulls. The only available package to do this, to my knowledge, is alphahull, which relies on a FORTRAN algorithm that has an ACM license. I have searched exhaustively for replacements, but there are none that I could find.
+    
+* One NOTE occurred in rhub Windows Server 2022, R-devel, 64 bit:
+
+  NOTE: Examples with CPU (user + system) or elapsed time > 5s
+                   user system elapsed
+  marineBackground 4.95   0.27    5.21
+
+  
 
 ## Downstream dependencies
 * There are no downstream dependencies at this time.
