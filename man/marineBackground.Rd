@@ -79,7 +79,7 @@ occurrences <- as.data.frame(cbind(longitude,latitude))
 
 # Here's the function
 result <- marineBackground(occs = occurrences, buff = 100000,
-                           fraction = .9, partCount = 2, clipToOcean = TRUE)
+                           fraction = .9, partCount = 2, clipToOcean = FALSE)
 plot(result)
 points(occurrences, pch = 20)
 

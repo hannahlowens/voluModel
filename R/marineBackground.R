@@ -69,7 +69,7 @@
 #'
 #' # Here's the function
 #' result <- marineBackground(occs = occurrences, buff = 100000,
-#'                            fraction = .9, partCount = 2, clipToOcean = TRUE)
+#'                            fraction = .9, partCount = 2, clipToOcean = FALSE)
 #' plot(result)
 #' points(occurrences, pch = 20)
 #'
@@ -183,7 +183,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
                                                                               yIndex)],
                                                 clipToCoast = clipToCoast,
                                                 fraction = fraction,
-                                                partCount = partCount, buff = 0),
+                                                partCount = partCount),
               silent = TRUE)
   if("try-error" %in% class(hull)){
     x1 <- min(occs[xIndex])

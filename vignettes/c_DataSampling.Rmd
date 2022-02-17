@@ -21,7 +21,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 96)
+knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 72)
 knitr::opts_knit$set(root.dir = system.file('extdata', 
                                             package='voluModel'))
 load(system.file("extdata/oxygenSmooth.RData", 
@@ -48,7 +48,7 @@ As stated in the [introduction to this package](Introduction.html), one of the k
 
 Here are the packages you will need.
 
-```{r packages, warning=FALSE}
+```{r packages, message=FALSE, warning=FALSE}
 library(voluModel) # Because of course
 library(ggplot2) # For fancy plotting
 library(rgdal) # For vector stuff. Will eventually be replaced with sf.
@@ -62,7 +62,7 @@ To generate a sample of pseudoabsences and/or background points, it is important
 
 We designed `marineBackground()` as a wrapper around \code{\link[rangeBuilder:getDynamicAlphaHull]{getDynamicAlphaHull}}, a function provided by the `rangeBuilder` package (Davis-Rabosky *et al.*, 2016) which generates background sampling regions by fitting an alpha hull polygon around an occurrence point dataset. Let's look at how `marineBackground()` (and by extension `getDynamicAlphaHull()`) fits alpha hull polygons, based on species occurrence data. The occurrence dataset is our *Steindachneria argentia*, Luminous Hake, data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via `occCite` (Owens *et al.*, 2021).
 
-```{r occurrence dataset}
+```{r occurrence dataset, message=FALSE, warning = FALSE}
 # Map occurrences
 land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
 pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
@@ -72,7 +72,7 @@ pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
 
 `getDynamicAlphaHull()`, which is run within `marineBackground()` generates a polygon (or polygons) that can be used as a training region by fitting an alpha hull (or hulls) around an occurrence dataset. Alpha is a parameter that controls the complexity of the polygon(s) that is being fit around the occurrences. `getDynamicAlphaHull()` adjusts the alpha parameter iteratively, until it meets criteria the user can set via the arguments `fraction`, which is the minimum fraction of occurrences that must be contained within the polygon(s), `partCount`, which is the maximum number of polygons generated to fit the data, and `buff`, which is the permissible distance from a point to the edge of a polyon in meters. `marineBackground()` takes these and many of the same other arguments as `getDynamicAlphaHull()`. Here's how it works.
 
-```{r alpha hull demonstration}
+```{r alpha hull demonstration, message=FALSE, warning=FALSE}
 # Marine background comparison
 trainingRegion <- marineBackground(occurrences, 
                                 fraction = 1, partCount = 1, buff = 1000000,
@@ -88,7 +88,7 @@ plot(trainingRegion, add = T, border = "orange", lwd = 2)
 
 What parameters you choose to fit the alpha hull will depend on the biology of the organism you are trying to model (e.g. you may choose a much smaller buffer for a sessile organism than you would for a highly vagile migratory species), your data, and the particulars of your study system and the geography of your study area. You may need to experiment to find something that looks sensible. If you do not provide a pre-defined buffer, `marineBackground()` will calculate a buffer that is the mean of the top and bottom 10% of distances between points in the dataset.
 
-```{r basic marineBackground demonstration}
+```{r basic marineBackground demonstration, message=FALSE, warning=FALSE}
 # Hull example 1
 trainingRegion <- marineBackground(occurrences,
                                 fraction = 1, partCount = 1, 
@@ -104,7 +104,7 @@ plot(trainingRegion, add = T, border = "orange", lwd = 2)
 
 You may have noticed that the training regions in the above examples include some areas of the Pacific where the species has not been observed, and cannot access. This could cause problems if it is used to train your model. You *could* delete this area by hand in your favorite GIS software, OR you could change `clipToOcean` to `TRUE` in `marineBackground()`, and any polygon fragments that do not contain an occurrence will be deleted automatically. This is a key difference from `getDynamicAlphaHull()`.
 
-```{r clipToOcean demo}
+```{r clipToOcean demo, message=FALSE, warning=FALSE}
 # Hull example 1
 trainingRegion <- marineBackground(occurrences, 
                                 fraction = .95, partCount = 2, buff = 1000000, 
@@ -120,7 +120,7 @@ plot(trainingRegion, add = T, border = "orange", lwd = 2)
 
 The last major difference between `marineBackground()` and `getDynamicAlphaHull()` is how the functions handle training regions that are adjacent to the antimeridian (i.e. 180° E or W). `getDynamicAlphaHull()` truncates polygons at this line, which can lead to some strange-looking training areas or fatal errors. `marineBackground()`, on the other hand, wraps polygons across the meridian and merges them if they overlap. For this example, I am going to manipulate the longitudinal coordinates of our Luminous Hake dataset to generate a quick fictional example.
 
-```{r meridian wrap demo, warning=FALSE}
+```{r meridian wrap demo, warning=FALSE, message=FALSE}
 # Fictional example occurrences
 pacificOccs <- occurrences
 pacificOccs$decimalLongitude <- pacificOccs$decimalLongitude - 100
@@ -149,7 +149,7 @@ Next, we will cover how to extract environmental data from a `RasterBrick` objec
 
 This chunk of code loads the example shapefile, which results in a `SpatialPointsDataFrame`:
 
-```{r environmental data loading, eval=T, asis=T}
+```{r environmental data loading, eval=T, asis=T, message = FALSE}
 td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),

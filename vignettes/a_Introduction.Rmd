@@ -21,7 +21,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 96)
+knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 72)
 knitr::opts_knit$set(root.dir = system.file('extdata', 
                                             package='voluModel'))
 load(system.file("extdata/oxygenSmooth.RData", 
@@ -35,7 +35,7 @@ To date, distribution and ecological niche models of marine species have general
 
 Here are the packages you will need.
 
-```{r packages, warning=FALSE}
+```{r packages, message=FALSE, warning=FALSE}
 library(voluModel) # Because of course
 library(ggplot2) # For fancy plotting
 library(rgdal) # For vector stuff. Will eventually be replaced with sf.
@@ -48,7 +48,7 @@ library(latticeExtra) # Some fancy plotting
 
 First thing's first. Distributional models are based on coordinates of species' occurrences. We start with and example occurrence dataset of *Steindachneria argentia*, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens *et al.*, 2021).
 
-```{r loading data, eval=T, echo=FALSE, message=FALSE, warning=FALSE}
+```{r loading data, message=FALSE, warning=FALSE, include=FALSE}
 # Temperature
 td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
@@ -127,9 +127,9 @@ p2 <- oneRasterPlot(temperatureBottom,land = land, landCol = "black",
               title = "Temperature (C)")
 
 p3 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization, interpolated and smoothed")
+              title= "Apparent Oxygen Utilization (µmol/kg), interpolated and smoothed")
 p4 <- oneRasterPlot(oxygenBottom, land = land, landCol = "black",
-     title = "Apparent Oxygen Utilization, interpolated and smoothed")
+     title = "Apparent Oxygen Utilization (µmol/kg), interpolated and smoothed")
 
 temp <- c("Surface" = p1, "Bottom" = p2)
 update(temp, strip  = strip.custom(strip.levels = TRUE,
@@ -147,7 +147,7 @@ update(temp, strip  = strip.custom(strip.levels = TRUE,
 
 # A point about 3D environmental data extraction
 
-```{r data extraction, echo=FALSE, warning=FALSE}
+```{r data extraction, echo=FALSE, message=FALSE, warning=FALSE}
 # Extract temperature
 threeDimTemp <- xyzSample(occs = occurrences, temperature)
 threeDimTemp <- cbind(rep("3D", length(threeDimTemp)), threeDimTemp)
@@ -167,31 +167,13 @@ bottomOxy <- cbind(rep("Bottom", length(bottomOxy)), bottomOxy)
 
 At this point, we can demonstrate one of the key contributions of `voluModel`-- an improvement in how the environmental data are extracted at species' occurrences. `voluModel` samples environmental conditions at the depth where each record was located, instead of extrapolating to surface or bottom conditions. How important is this? First, let's look at temperature.
 
-```{r temperature violin plots, echo=FALSE}
+```{r temperature violin plots, echo=FALSE, message=FALSE, warning=FALSE}
 # Collation
 allTemp <- rbind(threeDimTemp, surfTemp, bottomTemp)
 colnames(allTemp) <- c("Group", "Temperature")
 allTemp <- as.data.frame(allTemp)
 allTemp$Temperature <- as.numeric(allTemp$Temperature)
 
-# Plotting
-groups <- c("Surface", "Bottom", "3D")
-ggplot(allTemp, aes(x=Group, y=Temperature)) + 
-  geom_boxplot(fill="#9C179EFF", notch = T) +
-  theme_classic(base_size = 15) +
-  theme(axis.title = element_blank(), 
-        text = element_text(family = "Arial"), 
-        axis.text = element_text(size = rel(1.1))) +
-  scale_x_discrete(limits = groups) +
-  ggtitle("Temperature (C)")
-```
-
-Temperature extracted at the appropriate depth (3D) is significantly lower than temperature extracted at the surface. The mean value of temperature is similar between the bottom and the 3D extractions, but the range of 3D values is narrower than those extracted at the bottom.
-
-How does AOU look?
-
-```{r oxygen violin plots, echo=FALSE, warning=FALSE}
-# Collation
 allOxy <- rbind(threeDimOxy, surfOxy, bottomOxy)
 colnames(allOxy) <- c("Group", "Oxygen")
 allOxy <- as.data.frame(allOxy)
@@ -199,15 +181,28 @@ allOxy$Oxygen <- as.numeric(allOxy$Oxygen)
 
 # Plotting
 groups <- c("Surface", "Bottom", "3D")
-ggplot(allOxy, aes(x=Group, y=Oxygen)) + 
-  geom_boxplot(fill="#ED7953FF", notch = T) +
+tempPlot <- ggplot(allTemp, aes(x=Group, y=Temperature)) + 
+  geom_boxplot(fill="#9C179EFF", notch = T) +
   theme_classic(base_size = 15) +
-  theme(axis.title = element_blank(), 
+  theme(axis.title.x = element_blank(), 
         text = element_text(family = "Arial"), 
         axis.text = element_text(size = rel(1.1))) +
   scale_x_discrete(limits = groups) +
-  ggtitle("Apparent Oxygen Utilization (µmol/kg)")
+  ylab("Temperature (C)")
+
+oxyPlot <- ggplot(allOxy, aes(x=Group, y=Oxygen)) + 
+  geom_boxplot(fill="#ED7953FF", notch = T) +
+  theme_classic(base_size = 15) +
+  theme(axis.title.x = element_blank(), 
+        text = element_text(family = "Arial"), 
+        axis.text = element_text(size = rel(1.1))) +
+  scale_x_discrete(limits = groups) +
+  ylab("Apparent Oxygen Utilization (µmol/kg)")
+
+gridExtra::grid.arrange(tempPlot, oxyPlot, nrow = 1)
 ```
+
+Temperature extracted at the appropriate depth (3D) is significantly lower than temperature extracted at the surface. The mean value of temperature is similar between the bottom and the 3D extractions, but the range of 3D values is narrower than those extracted at the bottom.
 
 AOU based on 3D extraction is significantly higher than AOU extracted at the surface. The mean value of AOU is again similar between the bottom and the 3D extractions; the range of 3D values is broader than those extracted at the bottom, but contains no statistical outliers, i.e. greater than 1.5 * interquartile range from the hinge of the boxplot (black dots).
 
@@ -215,7 +210,7 @@ AOU based on 3D extraction is significantly higher than AOU extracted at the sur
 
 Some modeling methods require the generation of a sampling region from which pseudoabsence or background points are drawn. For this introduction, we are showing you a simple envelope method that does not require background sampling. Instead, I will be applying the same principle to define the study region to which I project the envelope model, so we have a product that makes biological sense in terms of the question "Where are we most likely to encounter Lumious Hakes?" See [the background sampling tutorial](DataSampling.html) for more information on `voluModel`'s `marineBackground()` function, and [the generalized linear model tutorial](GLMWorkflow.html) for an example of a modelling application that uses a background sampling region. 
 
-```{r study region, warning=FALSE}
+```{r study region, message=FALSE, warning=FALSE}
 studyRegion <- marineBackground(occurrences)
 plot(temperature[[1]], 
      main = "Points and background sampling plotted on surface temperature",
@@ -282,7 +277,6 @@ envelopeModelSurface <- temperaturePresence * AOUpresence
 envelopeModelSurface <- mask(crop(envelopeModelSurface, studyRegion), 
                              mask = studyRegion)
 
-
 # Get limits, bottom
 tempLims <- quantile(occsWdataBottom$Temperature,c(0, 1))
 aouLims <- quantile(occsWdataBottom$AOU,c(0, 1))
@@ -300,8 +294,6 @@ AOUpresence <- reclassify(oxygenBottom,
 # Put it all together, bottom
 envelopeModelBottom <- temperaturePresence * AOUpresence
 envelopeModelSurface <- mask(crop(envelopeModelSurface, studyRegion), mask = studyRegion)
-
-rm(tempLims, aouLims, temperaturePresence, AOUpresence)
 ```
 
 How do these 2D models compare? `voluModel` has a function to conveniently generate a formatted comparison between two presence/absence distribution rasters `rasterComp()`.
@@ -335,7 +327,6 @@ envelopeModel3D <- temperaturePresence * AOUpresence
 envelopeModel3D <- mask(crop(envelopeModel3D, studyRegion), 
                         mask = studyRegion)
 names(envelopeModel3D) <- names(temperature)
-rm(tempLims, aouLims, temperaturePresence, AOUpresence)
 ```
 
 How does the projection look? `plotLayers` plots a transparent layer of suitable habitat for each depth layer. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. We will only look at projections within the study area and at depths the species was observed.

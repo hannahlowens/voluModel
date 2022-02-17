@@ -21,7 +21,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error = TRUE, fig.retina = 1, dpi = 96)
+knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 72)
 knitr::opts_knit$set(root.dir = system.file('extdata', 
                                             package='voluModel'))
 load(system.file("extdata/oxygenSmooth.RData", 
@@ -72,7 +72,7 @@ ggplot(occsClean, aes(x = 1, y=depth)) +
 
 Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. For more details on how to process environmental data, see [the raster data tutorial](RasterProcessing.html). Temperature processing is shown below for illustrative purposes.
 
-```{r environmental data loading, eval=T, asis=T}
+```{r environmental data loading, eval=T, asis=T, message=FALSE}
 td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),
@@ -136,7 +136,6 @@ pointCompMap(occs1 = occsClean, occs2 = occurrences,
              occs1Name = "Original", occs2Name = "Cleaned", 
              spName = "Steindachneria argentia", 
              land = land)
-rm(indices, layerNames, tempPoints, i, downsampledOccs, occs)
 ```
 
 Next, we generate a sampling region for the model based on occurrence points. Note that ideally when you're modeling you would carefully curate this background sampling region to make sure it truly approximates the area accessible to the species you are modeling. If you write the shapefile to disk, you can open and edit it in any GIS software you choose, if you have reason to believe `marineBackground()` falls short of estimating the true accessible are for a species. For more information, see [the environmental data processing tutorial](DataSampling.html).
@@ -185,8 +184,6 @@ backgroundWdata <- vals
 
 # Add response as a column
 backgroundWdata$response <- rep(0, times = nrow(backgroundWdata))
-
-rm(oxyVals, tempVals, vals, backgroundVals)
 ```
 
 # Generalized linear model
@@ -241,7 +238,6 @@ for(j in index){
   names(depthPred[[j]]) <- layerNames[[j]]
 }
 glmPred <- stack(depthPred[!unlist(lapply(depthPred, FUN = function(x) is.null(x)))])
-rm(index, j, layerNames, depthPred, depthPreds, backgroundSamplingRegions, glmModel)
 ```
 
 And here's what the SDM looks like threshholded to presences and absences; raw ENM suitability values above the threshold value become presences, values below the threshold become absences. This is useful in a variety of applications, including, but not limited to visualizing the model. In this case, the threshold is the bottom tenth percentile of suitability scores at occurrences. What this means is that we are interpreting about 10% of the occurrence points to be erroneous. It is important to remember that there are MANY different thresholds you may choose based on your dataset and the goals of your analysis. Try to choose wisely.
@@ -252,7 +248,6 @@ glmThreshold <- quantile(xyzSample(datForMod[datForMod$response == 1,
                                    brick(glmPred)), .1, na.rm = T)[[1]] # MS90
 glmThresholded <- glmPred > glmThreshold
 glmThresholded <- reclassify(glmThresholded, c(NA, NA, 0), include.lowest = T)
-rm(glmThreshold, glmPred)
 ```
 
 `plotLayers()` plots a transparent layer of suitable habitat for each depth layer. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. Here, I am plotting suitability from 0m to 800m, the depth range of occurrences used to train the envelope model.

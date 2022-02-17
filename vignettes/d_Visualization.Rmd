@@ -21,7 +21,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 96)
+knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 72)
 knitr::opts_knit$set(root.dir = system.file('extdata', 
                                             package='voluModel'))
 
@@ -134,7 +134,7 @@ library(viridisLite) # For high-contrast plotting palettes
 
 Here is a shapefile of the continents, which we can conveniently use to provide some context for all the maps we are about to make.
 
-```{r loading land data}
+```{r loading land data, warning=FALSE, message=FALSE}
 land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
 ```
 
@@ -142,14 +142,14 @@ land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
 
 There are two functions in `voluModel` for plotting occurrence points. The first, `pointMap()`, plots a single set of horizontal geographic points. The title generated is the species name the user supplies and a count of the number of points that have been plotted.
 
-```{r pointMap}
+```{r pointMap, warning=FALSE, message=FALSE}
 pointMap(occs = occs, land = land, landCol = "black", spName = "Steindachneria argentea", 
          ptSize = 2, ptCol = "orange")
 ```
 
 The second, `pointCompMap()` plots a map that maps the extents of two sets of horizontal geographic points in different colors. This might be useful, for example, if you want to compare a raw dataset to a cleaned dataset. If any points overlap, they can be plotted as a third color.
 
-```{r pointCompMap}
+```{r pointCompMap, warning=FALSE, message=FALSE}
 pointCompMap(occs1 = occs, occs1Col = "red", occs1Name = "Raw", 
              occs2 = occsWdata, occs2Col = "orange", occs2Name = "Clean",
              spName = "Steindachneria argentea", agreeCol = "purple",
