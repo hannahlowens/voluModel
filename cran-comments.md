@@ -22,7 +22,7 @@
                    user system elapsed
   marineBackground 4.64   0.39    5.05
 
-  Total CPU time estimates were up to 5s slower, depending on operating system. I have optimized the function as much as I can, but would prefer to have the example run than not.
+  Total CPU time estimates were up to 4s slower, depending on operating system. I have optimized the function as much as I can, but would prefer to have the example run than not.
 
 ## Downstream dependencies
 * There are no downstream dependencies at this time.
