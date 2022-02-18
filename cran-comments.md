@@ -8,21 +8,13 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 2 notes
+0 errors | 0 warnings | 1 note
 
-* One NOTE occurred in rhub, win-devel, and win-release:
+* One NOTE occurred in all rhub environments, win-devel, and win-release:
 
     NOTE: Non-FOSS package license (ACM)
 
     This is necessary, unfortunately. The problem is that a function in voluModel relies on generating alpha hulls. The only available package to do this, to my knowledge, is alphahull, which relies on a FORTRAN algorithm that has an ACM license. I have searched exhaustively for replacements, but there are none that I could find.
     
-* One NOTE occurred in rhub Windows Server 2022, R-devel, 64 bit; github ubuntu-latest:
-
-  NOTE: Examples with CPU (user + system) or elapsed time > 5s
-                   user system elapsed
-  marineBackground 4.64   0.39    5.05
-
-  Total CPU time estimates were up to 4s slower, depending on operating system. I have optimized the function as much as I can, but would prefer to have the example run than not.
-
 ## Downstream dependencies
 * There are no downstream dependencies at this time.
