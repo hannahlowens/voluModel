@@ -343,7 +343,7 @@ plotLayers(envelopeModel3D[[min(indices):max(indices)]],
           land = land)
 ```
 
-In the 3D model, an area of deep suitable habitat is found in the western Gulf of Mexico that was recovered by the bottom model but not the surface model. The bottom model did not predict the suitable habitat recovered by the surface and 3D models in the Sargasso Sea.
+Interestingly, the bottom model did not predict the suitable habitat recovered by the surface model in the Sargasso Sea. The 3D model predicts suitable habitat in the Sargasso Sea, but only at lower depths.
 
 Of course, this is just the introduction. Please explore the other vignettes for more features and workflow examples. We welcome submissions from the community for other types of modeling algorithms, functions, and/or features you would like to see. Submit your suggestions as issues [here](https://github.com/hannahlowens/voluModel/issues).
 
