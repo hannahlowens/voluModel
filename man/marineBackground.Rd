@@ -63,6 +63,7 @@ calculated by taking the mean between the 10th and 90th percentile
 of horizontal distances between occurrence points.
 }
 \examples{
+\donttest{
 library(raster)
 # Create sample raster
 r <- raster(ncol=10, nrow=10)
@@ -80,6 +81,7 @@ occurrences <- as.data.frame(cbind(longitude,latitude))
 # Here's the function
 result <- marineBackground(occs = occurrences, buff = 100000,
                            fraction = .9, partCount = 2, clipToOcean = FALSE)
+}
 
 }
 \seealso{

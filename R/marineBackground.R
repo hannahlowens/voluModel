@@ -53,6 +53,7 @@
 #' of horizontal distances between occurrence points.
 #'
 #' @examples
+#' \donttest{
 #' library(raster)
 #' # Create sample raster
 #' r <- raster(ncol=10, nrow=10)
@@ -70,6 +71,7 @@
 #' # Here's the function
 #' result <- marineBackground(occs = occurrences, buff = 100000,
 #'                            fraction = .9, partCount = 2, clipToOcean = FALSE)
+#' }
 #'
 #' @import raster
 #' @import rangeBuilder
