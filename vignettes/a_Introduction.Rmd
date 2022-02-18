@@ -293,7 +293,7 @@ AOUpresence <- reclassify(oxygenBottom,
 
 # Put it all together, bottom
 envelopeModelBottom <- temperaturePresence * AOUpresence
-envelopeModelSurface <- mask(crop(envelopeModelSurface, studyRegion), mask = studyRegion)
+envelopeModelBottom <- mask(crop(envelopeModelBottom, studyRegion), mask = studyRegion)
 ```
 
 How do these 2D models compare? `voluModel` has a function to conveniently generate a formatted comparison between two presence/absence distribution rasters `rasterComp()`.
