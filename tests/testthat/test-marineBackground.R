@@ -62,18 +62,25 @@ test_that("marineBackground results as expected", {
 # Test Pacific wraparound
 # Create test occurrences
 set.seed(0)
-longitude <- c(sample(-179:-160,
-                      size = 10, replace = FALSE),
-               sample(160:179,
-                      size = 10, replace = FALSE))
+longitude <- c(sample(-180:-175,
+                      size = 10, replace = TRUE),
+               sample(175:180,
+                      size = 10, replace = TRUE))
 set.seed(0)
-latitude <- sample(-30:30,
-                   size = 20, replace = FALSE)
+latitude <- sample(-20:20,
+                   size = 20, replace = TRUE)
 occurrences <- as.data.frame(cbind(longitude,latitude))
 
 test_that("marineBackground Pacific results as expected", {
-  result <- marineBackground(occs = occurrences, buff = 100000,
-                             fraction = .9, partCount = 2, clipToOcean = TRUE)
+  # Both sides
+  result <- marineBackground(occs = occurrences, buff = 1000000,
+                             fraction = .95, partCount = 2, clipToOcean = TRUE)
+  expect_equal(class(result)[[1]], "SpatialPolygons")
+  expect_equal(length(result@polygons), 1)
+
+  #One side
+  result <- marineBackground(occs = occurrences[1:10,], buff = 1000000,
+                             fraction = .95, partCount = 2, clipToOcean = TRUE)
   expect_equal(class(result)[[1]], "SpatialPolygons")
   expect_equal(length(result@polygons), 1)
 })
