@@ -21,7 +21,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 72)
+knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
 knitr::opts_knit$set(root.dir = system.file('extdata', 
                                             package='voluModel'))
 load(system.file("extdata/oxygenSmooth.RData", 
@@ -203,7 +203,7 @@ update(temp, strip  = strip.custom(strip.levels = TRUE,
 
 # References
 
-Collins WD, Bitz CM, Blackmon ML, Bonan GB, Bretherton CS, Carton JA, Chang P, Doney SC, Hack JJ, Henderson TB, Kiehl JT, Large WG, McKenna DS, Santer BD, Smith RD. (2006) The Community Climate System Model Version 3 (CCSM3) Journal of Climate, 19(11), 2122–2143 https://doi.org/10.1175/jcli3761.1
+Collins WD, Bitz CM, Blackmon ML, Bonan GB, Bretherton CS, Carton JA, Chang P, Doney SC, Hack JJ, Henderson TB, Kiehl JT, Large WG, McKenna DS, Santer BD, Smith RD. (2006) The Community Climate System Model Version 3 (CCSM3) Journal of Climate, 19(11), 2122–2143 DOI: 10.1175/jcli3761.1
 
 Garcia HE, Boyer P, Baranova OK, Locarnini RA, Mishonov AV, Grodsky A, Paver CR, Weathers KW, Smolyar IV, Reagan JR, Seidov D, Zweng MM. (2018a). World Ocean Atlas 2018 (A. Mishonov, Ed.). NOAA National Centers for Environmental Information. https://accession.nodc.noaa.gov/NCEI-WOA18
 
@@ -216,4 +216,4 @@ https://github.com/dnychka/fieldsRPackage>.
 
 R Core Team (2017). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 
-Valdes PJ, Armstrong E, Badger MPS, Bradshaw CD, Bragg F, Crucifix M, Davies-Barnard T, Day JJ, Farnsworth A, Gordon C, Hopcroft PO, Kennedy AT, Lord NS, Lunt DJ, Marzocchi A, Parry LM, Pope V, Roberts WHG, Stone EJ, … Williams JHT. (2017). The BRIDGE HadCM3 family of climate models: HadCM3@Bristol v1.0. Geoscientific Model Development, 10(10), 3715–3743. https://doi.org/10.5194/gmd-10-3715-2017
+Valdes PJ, Armstrong E, Badger MPS, Bradshaw CD, Bragg F, Crucifix M, Davies-Barnard T, Day JJ, Farnsworth A, Gordon C, Hopcroft PO, Kennedy AT, Lord NS, Lunt DJ, Marzocchi A, Parry LM, Pope V, Roberts WHG, Stone EJ, … Williams JHT. (2017). The BRIDGE HadCM3 family of climate models: HadCM3@Bristol v1.0. Geoscientific Model Development, 10(10), 3715–3743. DOI: 10.5194/gmd-10-3715-2017
