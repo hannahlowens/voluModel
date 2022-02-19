@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-02-18</h4>
+            <h4 data-toc-skip class="date">2022-02-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/c_DataSampling.Rmd" class="external-link"><code>vignettes/c_DataSampling.Rmd</code></a></small>
       <div class="hidden name"><code>c_DataSampling.Rmd</code></div>
@@ -113,7 +113,7 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>As stated in the <a href="Introduction.html">introduction to this package</a>, one of the key contributions of <code>voluModel</code> is the way it handles the extraction of environmental data for niche modeling. Specifically, environmental data at presences, absences, pseudoabsences, and/or background points can be extracted from environmental data <code>RasterBrick</code> objects based on depth in addition to horizontal coordinates. Another useful tool provided with <code>voluModel</code> is <code><a href="../reference/marineBackground.html">marineBackground()</a></code>, which helps the user generate training regions from which background or pseudoabsence data are drawn. This is where we will start, so let’s get into it.</p>
+<p>As stated in the <a href="https://hannahlowens.github.io/voluModel/articles/a_Introduction.html" class="external-link">introduction to this package</a>, one of the key contributions of <code>voluModel</code> is the way it handles the extraction of environmental data for niche modeling. Specifically, environmental data at presences, absences, pseudoabsences, and/or background points can be extracted from environmental data <code>RasterBrick</code> objects based on depth in addition to horizontal coordinates. Another useful tool provided with <code>voluModel</code> is <code><a href="../reference/marineBackground.html">marineBackground()</a></code>, which helps the user generate training regions from which background or pseudoabsence data are drawn. This is where we will start, so let’s get into it.</p>
 <p>Here are the packages you will need.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hannahlowens.github.io/voluModel/" class="external-link">voluModel</a></span><span class="op">)</span> <span class="co"># Because of course</span>
@@ -213,7 +213,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/Rtmp4ABK1i/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpLiJBHZ/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -293,7 +293,7 @@
 <span class="co">## 4     NA</span>
 <span class="co">## 5     NA</span>
 <span class="co">## 6     NA</span></code></pre>
-<p>As you can see, each point is a line in the <code>SpatialPointsDataFrame</code>; each column is a depth layer at that point–“d5M” translates to “5 meters deep”. For more details on how to process environmental data, see <a href="RasterProcessing.html">the raster data tutorial</a>. This next chunk converts the <code>SpatialPointsDataFrame</code> to a <code>RasterBrick</code>; the layers of the <code>RasterBrick</code> are then named the same as the column names of the <code>SpatialPointsDataFrame</code>. I strip the “d” and “M” from the column names so they are a little easier to use as depth coordinates. Note that <code>R</code> will not allow the raster names to be numeric, so it adds an “X” to the beginning of each column name. Don’t worry about this–<code>voluModel</code> can handle numbers preceded by “X”s without user intervention.</p>
+<p>As you can see, each point is a line in the <code>SpatialPointsDataFrame</code>; each column is a depth layer at that point–“d5M” translates to “5 meters deep”. For more details on how to process environmental data, see <a href="https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html" class="external-link">the raster data tutorial</a>. This next chunk converts the <code>SpatialPointsDataFrame</code> to a <code>RasterBrick</code>; the layers of the <code>RasterBrick</code> are then named the same as the column names of the <code>SpatialPointsDataFrame</code>. I strip the “d” and “M” from the column names so they are a little easier to use as depth coordinates. Note that <code>R</code> will not allow the raster names to be numeric, so it adds an “X” to the beginning of each column name. Don’t worry about this–<code>voluModel</code> can handle numbers preceded by “X”s without user intervention.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Creating a RasterBrick</span>
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span>,
@@ -461,53 +461,53 @@
        x<span class="op">=</span><span class="st">"Temperature (C)"</span>, y <span class="op">=</span> <span class="st">"Density"</span><span class="op">)</span><span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="c_DataSampling_files/figure-html/glm%20data%20prep%20part%202-1.png"><!-- --></p>
-<p>For a more complex, multivariate example of environmental dissimilarity weighting, refer to the <a href="GLMWorkflow.html">GLM workflow</a>.</p>
+<p>For a more complex, multivariate example of environmental dissimilarity weighting, refer to the <a href="https://hannahlowens.github.io/voluModel/articles/e_GLMWorkflow.html" class="external-link">GLM workflow</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <p>Bakis Y (2021): TU_Fish. v1.1. No organization. Dataset/Occurrence. <a href="https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1" class="external-link uri">https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1</a> Accessed via OBIS on 2020-11-04.</p>
-<p>Bentley A (2022). KUBI Ichthyology Collection. Version 17.80. University of Kansas Biodiversity Institute. <a href="https://doi.org/10.15468/mgjasg" class="external-link uri">https://doi.org/10.15468/mgjasg</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Bentley A (2022). KUBI Ichthyology Tissue Collection. Version 18.68. University of Kansas Biodiversity Institute. <a href="https://doi.org/10.15468/jmsnwg" class="external-link uri">https://doi.org/10.15468/jmsnwg</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Buckup P A (2022). Coleção Ictiológica (MNRJ), Museu Nacional (MN), Universidade Federal do Rio de Janeiro(UFRJ). Version 157.1487. Museu Nacional / UFRJ. <a href="https://doi.org/10.15468/lluzfl" class="external-link uri">https://doi.org/10.15468/lluzfl</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Catania D, Fong J (2022). CAS Ichthyology (ICH). Version 150.300. California Academy of Sciences. <a href="https://doi.org/10.15468/efh2ib" class="external-link uri">https://doi.org/10.15468/efh2ib</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Chakrabarty P (2019). LSUMZ (LSU MNS) Fishes Collection. Version 2.2. Louisiana State University Museum of Natural Science. <a href="https://doi.org/10.15468/gbnym3" class="external-link uri">https://doi.org/10.15468/gbnym3</a>. Accessed via GBIF on 2020-10-13.</p>
+<p>Bentley A (2022). KUBI Ichthyology Collection. Version 17.80. University of Kansas Biodiversity Institute. DOI: 10.15468/mgjasg. Accessed via GBIF on 2020-10-13.</p>
+<p>Bentley A (2022). KUBI Ichthyology Tissue Collection. Version 18.68. University of Kansas Biodiversity Institute. DOI: 10.15468/jmsnwg. Accessed via GBIF on 2020-10-13.</p>
+<p>Buckup P A (2022). Coleção Ictiológica (MNRJ), Museu Nacional (MN), Universidade Federal do Rio de Janeiro(UFRJ). Version 157.1487. Museu Nacional / UFRJ. DOI: 10.15468/lluzfl. Accessed via GBIF on 2020-10-13.</p>
+<p>Catania D, Fong J (2022). CAS Ichthyology (ICH). Version 150.300. California Academy of Sciences. DOI: 10.15468/efh2ib. Accessed via GBIF on 2020-10-13.</p>
+<p>Chakrabarty P (2019). LSUMZ (LSU MNS) Fishes Collection. Version 2.2. Louisiana State University Museum of Natural Science. DOI: 10.15468/gbnym3. Accessed via GBIF on 2020-10-13.</p>
 <p>Chamberlain S, Barve V, Mcglinn D, Oldoni D, Desmet P, Geffert L, Ram K (2021). rgbif: Interface to the Global Biodiversity Information Facility API. R package version 3.6.0, <a href="https://CRAN.R-project.org/package=rgbif" class="external-link uri">https://CRAN.R-project.org/package=rgbif</a>.</p>
-<p>Chamberlain S, Boettiger C (2017). “R Python, and Ruby clients for GBIF species occurrence data.” PeerJ PrePrints. <a href="https://doi.org/10.7287/peerj.preprints.3304v1" class="external-link uri">https://doi.org/10.7287/peerj.preprints.3304v1</a>.</p>
-<p>Davis-Rabosky AR, Cox CL, Rabosky DL, Title PO, Holmes IA, Feldman A, McGuire JA (2016). Coral snakes predict the evolution of mimicry across New World snakes. <em>Nature Communications</em> 7:11484. <a href="https://doi.org/10.1038/ncomms11484" class="external-link uri">https://doi.org/10.1038/ncomms11484</a></p>
-<p>Espinosa Pérez H, Comisión nacional para el conocimiento y uso de la biodiversidad C (2021). Computarización de la Colección Nacional de Peces del Instituto de Biología UNAM. Version 1.9. Comisión nacional para el conocimiento y uso de la biodiversidad. <a href="https://doi.org/10.15468/zb2odl" class="external-link uri">https://doi.org/10.15468/zb2odl</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Frable B (2019). SIO Marine Vertebrate Collection. Version 1.7. Scripps Institution of Oceanography. <a href="https://doi.org/10.15468/ad1ovc" class="external-link uri">https://doi.org/10.15468/ad1ovc</a>. Accessed via GBIF on 2020-10-13.</p>
+<p>Chamberlain S, Boettiger C (2017). “R Python, and Ruby clients for GBIF species occurrence data.” PeerJ PrePrints. DOI: 10.7287/peerj.preprints.3304v1.</p>
+<p>Davis-Rabosky AR, Cox CL, Rabosky DL, Title PO, Holmes IA, Feldman A, McGuire JA (2016). Coral snakes predict the evolution of mimicry across New World snakes. <em>Nature Communications</em> 7:11484. DOI: 10.1038/ncomms11484</p>
+<p>Espinosa Pérez H, Comisión nacional para el conocimiento y uso de la biodiversidad C (2021). Computarización de la Colección Nacional de Peces del Instituto de Biología UNAM. Version 1.9. Comisión nacional para el conocimiento y uso de la biodiversidad. DOI: 10.15468/zb2odl. Accessed via GBIF on 2020-10-13.</p>
+<p>Frable B (2019). SIO Marine Vertebrate Collection. Version 1.7. Scripps Institution of Oceanography. DOI: 10.15468/ad1ovc. Accessed via GBIF on 2020-10-13.</p>
 <p>Fishnet2 Portal, <a href="http://www.fishnet2.net" class="external-link uri">http://www.fishnet2.net</a>, Accessed via OBIS on 2020-11-04.</p>
 <p>Froese, R. and D. Pauly. Editors. 2020. FishBase. World Wide Web electronic publication. www.fishbase.org, version (xx/200x). Accessed via OBIS on 2020-11-04.</p>
-<p>Gall L (2021). Vertebrate Zoology Division - Ichthyology, Yale Peabody Museum. Yale University Peabody Museum. <a href="https://doi.org/10.15468/mgyhok" class="external-link uri">https://doi.org/10.15468/mgyhok</a>. Accessed via GBIF on 2020-10-13.</p>
+<p>Gall L (2021). Vertebrate Zoology Division - Ichthyology, Yale Peabody Museum. Yale University Peabody Museum. DOI: 10.15468/mgyhok. Accessed via GBIF on 2020-10-13.</p>
 <p>García, CB, and Duarte, LO, ‘Columbian Caribbean Sea’, in J.H. Nicholls (comp.) HMAP Data Pages (<a href="https://oceanspast.org/hmap_db.php" class="external-link uri">https://oceanspast.org/hmap_db.php</a>) Accessed via OBIS on 2020-11-04.</p>
 <p>Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA, Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018). World Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen Utilization, and Oxygen Saturation. A Mishonov Technical Ed.; NOAA Atlas NESDIS 83, 38pp.</p>
-<p>GBIF.org (24 September 2020) GBIF Occurrence Download <a href="https://doi.org/10.15468/dl.efuutj" class="external-link uri">https://doi.org/10.15468/dl.efuutj</a>.</p>
-<p>Grant S, McMahan C (2020). Field Museum of Natural History (Zoology) Fish Collection. Version 13.12. Field Museum. <a href="https://doi.org/10.15468/alz7wu" class="external-link uri">https://doi.org/10.15468/alz7wu</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Harvard University M, Morris P J (2022). Museum of Comparative Zoology, Harvard University. Version 162.296. Museum of Comparative Zoology, Harvard University. <a href="https://doi.org/10.15468/p5rupv" class="external-link uri">https://doi.org/10.15468/p5rupv</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Hendrickson D A, Cohen A E, Casarez M J (2022). University of Texas, Biodiversity Center, Ichthyology Collection (TNHCi). Version 5.175. University of Texas at Austin, Biodiversity Collections. <a href="https://doi.org/10.15468/h8gxdr" class="external-link uri">https://doi.org/10.15468/h8gxdr</a>. Accessed via GBIF on 2020-10-13.</p>
+<p>GBIF.org (24 September 2020) GBIF Occurrence Download DOI: 10.15468/dl.efuutj.</p>
+<p>Grant S, McMahan C (2020). Field Museum of Natural History (Zoology) Fish Collection. Version 13.12. Field Museum. DOI: 10.15468/alz7wu. Accessed via GBIF on 2020-10-13.</p>
+<p>Harvard University M, Morris P J (2022). Museum of Comparative Zoology, Harvard University. Version 162.296. Museum of Comparative Zoology, Harvard University. DOI: 10.15468/p5rupv. Accessed via GBIF on 2020-10-13.</p>
+<p>Hendrickson D A, Cohen A E, Casarez M J (2022). University of Texas, Biodiversity Center, Ichthyology Collection (TNHCi). Version 5.175. University of Texas at Austin, Biodiversity Collections. DOI: 10.15468/h8gxdr. Accessed via GBIF on 2020-10-13.</p>
 <p>INVEMAR (2022). SIBM en línea: Sistema de Información sobre Biodiversidad Marina. Santa Marta: Instituto de investigaciones Marinas y Costeras José Benito Vives de Andréis,. <a href="http://www.invemar.org.co/siam/sibm/index.htm" class="external-link uri">http://www.invemar.org.co/siam/sibm/index.htm</a> Accessed via OBIS on 2020-11-04.</p>
 <p>Locarnini RA, Mishonov AV, Baranova OK, Boyer TP, Zweng MM, Garcia HE, Reagan JR, Seidov D, Weathers K, Paver CR, Smolyar I (2018). World Ocean Atlas 2018, Volume 1: Temperature. A. Mishonov Technical Ed.; NOAA Atlas NESDIS 81, 52pp.</p>
 <p>McLean, M.W. (2014). Straightforward Bibliography Management in R Using the RefManager Package. NA, NA. <a href="https://arxiv.org/abs/1403.2036" class="external-link uri">https://arxiv.org/abs/1403.2036</a>.</p>
 <p>McLean, M.W. (2017). RefManageR: Import and Manage BibTeX and BibLaTeX References in R. The Journal of Open Source Software.</p>
-<p>Mertz W (2021). LACM Vertebrate Collection. Version 18.9. Natural History Museum of Los Angeles County. <a href="https://doi.org/10.15468/77rmwd" class="external-link uri">https://doi.org/10.15468/77rmwd</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Nakae M, Shinohara G (2018). Fish collection of National Museum of Nature and Science. National Museum of Nature and Science, Japan. Occurrence dataset <a href="https://doi.org/10.15468/w3dzv1" class="external-link uri">https://doi.org/10.15468/w3dzv1</a> accessed via GBIF.org on yyyy-mm-dd. Accessed via OBIS on 2020-11-04.</p>
-<p>Natural History Museum (2021). Natural History Museum (London) Collection Specimens. <a href="https://doi.org/10.5519/0002965" class="external-link uri">https://doi.org/10.5519/0002965</a>. Accessed via GBIF on 2020-10-13.</p>
+<p>Mertz W (2021). LACM Vertebrate Collection. Version 18.9. Natural History Museum of Los Angeles County. DOI: 10.15468/77rmwd. Accessed via GBIF on 2020-10-13.</p>
+<p>Nakae M, Shinohara G (2018). Fish collection of National Museum of Nature and Science. National Museum of Nature and Science, Japan. Occurrence dataset DOI: 10.15468/w3dzv1 accessed via GBIF.org on yyyy-mm-dd. Accessed via OBIS on 2020-11-04.</p>
+<p>Natural History Museum (2021). Natural History Museum (London) Collection Specimens. DOI: 10.5519/0002965. Accessed via GBIF on 2020-10-13.</p>
 <p>National Museum of Natural History, Smithsonian Institution NMNH Fishes Collection Database (2007). National Museum of Natural History, Smithsonian Institution, 10th and Constitution Ave. N.W., Washington, DC 20560-0193. Accessed via OBIS on 2020-11-04.</p>
-<p>Norén M, Shah M (2017). Fishbase. FishBase. <a href="https://doi.org/10.15468/wk3zk7" class="external-link uri">https://doi.org/10.15468/wk3zk7</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Norton B, Hogue G (2021). NCSM Ichthyology Collection. Version 22.8. North Carolina State Museum of Natural Sciences. <a href="https://doi.org/10.36102/dwc.1" class="external-link uri">https://doi.org/10.36102/dwc.1</a>. Accessed via GBIF on 2020-10-13.</p>
+<p>Norén M, Shah M (2017). Fishbase. FishBase. DOI: 10.15468/wk3zk7. Accessed via GBIF on 2020-10-13.</p>
+<p>Norton B, Hogue G (2021). NCSM Ichthyology Collection. Version 22.8. North Carolina State Museum of Natural Sciences. DOI: 10.36102/dwc.1. Accessed via GBIF on 2020-10-13.</p>
 <p>Nychka D, Furrer R, Paige J, Sain S (2021). “fields: Tools for spatial data.” R package version 13.3. <a href="https://github.com/dnychka/fieldsRPackage" class="external-link uri">https://github.com/dnychka/fieldsRPackage</a>.</p>
-<p>Orrell T, Informatics Office (2021). NMNH Extant Specimen Records (USNM, US). Version 1.49. National Museum of Natural History, Smithsonian Institution. <a href="https://doi.org/10.15468/hnhrg3" class="external-link uri">https://doi.org/10.15468/hnhrg3</a>. Accessed via GBIF on 2020-10-13.</p>
+<p>Orrell T, Informatics Office (2021). NMNH Extant Specimen Records (USNM, US). Version 1.49. National Museum of Natural History, Smithsonian Institution. DOI: 10.15468/hnhrg3. Accessed via GBIF on 2020-10-13.</p>
 <p>Owens H, Merow C, Maitner B, Kass J, Barve V, Guralnick R (2021). occCite: Querying and Managing Large Biodiversity Occurrence Datasets. doi: 10.5281/zenodo.4726676, R package version 0.4.9.9000, <a href="https://CRAN.R-project.org/package=occCite" class="external-link uri">https://CRAN.R-project.org/package=occCite</a>.</p>
-<p>Prestridge H (2021). Biodiversity Research and Teaching Collections - TCWC Vertebrates. Version 9.4. Texas A&amp;M University Biodiversity Research and Teaching Collections. <a href="https://doi.org/10.15468/szomia" class="external-link uri">https://doi.org/10.15468/szomia</a>. Accessed via GBIF on 2020-10-13.</p>
+<p>Prestridge H (2021). Biodiversity Research and Teaching Collections - TCWC Vertebrates. Version 9.4. Texas A&amp;M University Biodiversity Research and Teaching Collections. DOI: 10.15468/szomia. Accessed via GBIF on 2020-10-13.</p>
 <p>Provoost P, Bosch S (2019). “robis: R Client to access data from the OBIS API.” Ocean Biogeographic Information System. Intergovernmental Oceanographic Commission of UNESCO. R package version 2.1.8, <a href="https://cran.r-project.org/package=robis" class="external-link uri">https://cran.r-project.org/package=robis</a>.</p>
-<p>Pugh W (2021). UAIC Ichthyological Collection. Version 3.3. University of Alabama Biodiversity and Systematics. <a href="https://doi.org/10.15468/a2laag" class="external-link uri">https://doi.org/10.15468/a2laag</a>. Accessed via GBIF on 2020-10-13.</p>
+<p>Pugh W (2021). UAIC Ichthyological Collection. Version 3.3. University of Alabama Biodiversity and Systematics. DOI: 10.15468/a2laag. Accessed via GBIF on 2020-10-13.</p>
 <p>R Core Team (2017). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL <a href="https://www.R-project.org/" class="external-link uri">https://www.R-project.org/</a>.</p>
-<p>Robins R (2021). UF FLMNH Ichthyology. Version 117.342. Florida Museum of Natural History. <a href="https://doi.org/10.15468/8mjsel" class="external-link uri">https://doi.org/10.15468/8mjsel</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Tavera L, Tavera M. L (2021). Biodiversidad de los recursos marinos y costeros entre Cartagena y el Golfo de Urabá, Caribe colombiano. Version 2.4. Instituto de Investigaciones Marinas y Costeras - Invemar. <a href="https://doi.org/10.15472/d2jusp" class="external-link uri">https://doi.org/10.15472/d2jusp</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>UNIBIO, IBUNAM (2020). CNPE/Coleccion Nacional de Peces. <a href="https://doi.org/10.15468/o5d48z" class="external-link uri">https://doi.org/10.15468/o5d48z</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Wagner M (2017). MMNS Ichthyology Collection. Mississippi Museum of Natural Science. <a href="https://doi.org/10.15468/4c3qeq" class="external-link uri">https://doi.org/10.15468/4c3qeq</a>. Accessed via GBIF on 2020-10-13.</p>
-<p>Werneke D (2019). AUM Fish Collection. Version 8.1. Auburn University Museum. <a href="https://doi.org/10.15468/dm3oyz" class="external-link uri">https://doi.org/10.15468/dm3oyz</a>. Accessed via GBIF on 2020-10-13.</p>
+<p>Robins R (2021). UF FLMNH Ichthyology. Version 117.342. Florida Museum of Natural History. DOI: 10.15468/8mjsel. Accessed via GBIF on 2020-10-13.</p>
+<p>Tavera L, Tavera M. L (2021). Biodiversidad de los recursos marinos y costeros entre Cartagena y el Golfo de Urabá, Caribe colombiano. Version 2.4. Instituto de Investigaciones Marinas y Costeras - Invemar. DOI: 10.15472/d2jusp. Accessed via GBIF on 2020-10-13.</p>
+<p>UNIBIO, IBUNAM (2020). CNPE/Coleccion Nacional de Peces. DOI: 10.15468/o5d48z. Accessed via GBIF on 2020-10-13.</p>
+<p>Wagner M (2017). MMNS Ichthyology Collection. Mississippi Museum of Natural Science. DOI: 10.15468/4c3qeq. Accessed via GBIF on 2020-10-13.</p>
+<p>Werneke D (2019). AUM Fish Collection. Version 8.1. Auburn University Museum. DOI: 10.15468/dm3oyz. Accessed via GBIF on 2020-10-13.</p>
 </div>
   </div>
 
