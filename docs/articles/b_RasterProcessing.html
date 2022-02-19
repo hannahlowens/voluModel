@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-02-18</h4>
+            <h4 data-toc-skip class="date">2022-02-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/b_RasterProcessing.Rmd" class="external-link"><code>vignettes/b_RasterProcessing.Rmd</code></a></small>
       <div class="hidden name"><code>b_RasterProcessing.Rmd</code></div>
@@ -135,7 +135,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpxKPskW/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/xn/_tk36pd5517g_xxb5t9gh2qr0000gn/T/RtmpzmChy6/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -278,7 +278,7 @@
 <span class="va">oxygen</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/oxygen"</span><span class="op">)</span>, 
                   layer <span class="op">=</span> <span class="st">"woa18_all_A00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpxKPskW/oxygen", layer: "woa18_all_A00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/xn/_tk36pd5517g_xxb5t9gh2qr0000gn/T/RtmpzmChy6/oxygen", layer: "woa18_all_A00mn01_cropped"</span>
 <span class="co">## with 1490 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -345,13 +345,13 @@
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<p>Collins WD, Bitz CM, Blackmon ML, Bonan GB, Bretherton CS, Carton JA, Chang P, Doney SC, Hack JJ, Henderson TB, Kiehl JT, Large WG, McKenna DS, Santer BD, Smith RD. (2006) The Community Climate System Model Version 3 (CCSM3) Journal of Climate, 19(11), 2122–2143 <a href="https://doi.org/10.1175/jcli3761.1" class="external-link uri">https://doi.org/10.1175/jcli3761.1</a></p>
+<p>Collins WD, Bitz CM, Blackmon ML, Bonan GB, Bretherton CS, Carton JA, Chang P, Doney SC, Hack JJ, Henderson TB, Kiehl JT, Large WG, McKenna DS, Santer BD, Smith RD. (2006) The Community Climate System Model Version 3 (CCSM3) Journal of Climate, 19(11), 2122–2143 DOI: 10.1175/jcli3761.1</p>
 <p>Garcia HE, Boyer P, Baranova OK, Locarnini RA, Mishonov AV, Grodsky A, Paver CR, Weathers KW, Smolyar IV, Reagan JR, Seidov D, Zweng MM. (2018a). World Ocean Atlas 2018 (A. Mishonov, Ed.). NOAA National Centers for Environmental Information. <a href="https://accession.nodc.noaa.gov/NCEI-WOA18" class="external-link uri">https://accession.nodc.noaa.gov/NCEI-WOA18</a></p>
 <p>Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA, Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018b). World Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen Utilization, and Oxygen Saturation. A Mishonov Technical Ed.; NOAA Atlas NESDIS 83, 38pp.</p>
 <p>Locarnini RA, Mishonov AV, Baranova OK, Boyer TP, Zweng MM, Garcia HE, Reagan JR, Seidov D, Weathers K, Paver CR, Smolyar I (2018). World Ocean Atlas 2018, Volume 1: Temperature. A. Mishonov Technical Ed.; NOAA Atlas NESDIS 81, 52pp.</p>
 <p>Nychka D, Furrer R, Paige J, Sain S (2021). “fields: Tools for spatial data.” R package version 13.3, &lt;URL: <a href="https://github.com/dnychka/fieldsRPackage" class="external-link uri">https://github.com/dnychka/fieldsRPackage</a>&gt;.</p>
 <p>R Core Team (2017). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL <a href="https://www.R-project.org/" class="external-link uri">https://www.R-project.org/</a>.</p>
-<p>Valdes PJ, Armstrong E, Badger MPS, Bradshaw CD, Bragg F, Crucifix M, Davies-Barnard T, Day JJ, Farnsworth A, Gordon C, Hopcroft PO, Kennedy AT, Lord NS, Lunt DJ, Marzocchi A, Parry LM, Pope V, Roberts WHG, Stone EJ, … Williams JHT. (2017). The BRIDGE HadCM3 family of climate models: <a href="mailto:HadCM3@Bristol" class="email">HadCM3@Bristol</a> v1.0. Geoscientific Model Development, 10(10), 3715–3743. <a href="https://doi.org/10.5194/gmd-10-3715-2017" class="external-link uri">https://doi.org/10.5194/gmd-10-3715-2017</a></p>
+<p>Valdes PJ, Armstrong E, Badger MPS, Bradshaw CD, Bragg F, Crucifix M, Davies-Barnard T, Day JJ, Farnsworth A, Gordon C, Hopcroft PO, Kennedy AT, Lord NS, Lunt DJ, Marzocchi A, Parry LM, Pope V, Roberts WHG, Stone EJ, … Williams JHT. (2017). The BRIDGE HadCM3 family of climate models: <a href="mailto:HadCM3@Bristol" class="email">HadCM3@Bristol</a> v1.0. Geoscientific Model Development, 10(10), 3715–3743. DOI: 10.5194/gmd-10-3715-2017</p>
 </div>
   </div>
 
