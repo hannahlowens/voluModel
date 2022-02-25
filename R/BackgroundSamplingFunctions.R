@@ -117,7 +117,7 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
     return(NULL)
   }
 
-  if(class(mShp) != "SpatialPolygons"){
+  if(!is(mShp, "SpatialPolygons")){
     warning(paste0("'mShp' must be of class 'SpatialPolygons'.\n"))
     return(NULL)
   }
@@ -235,12 +235,12 @@ mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all"){
     return(NULL)
   }
 
-  if(class(envBrick) != "RasterBrick"){
+  if(!is(envBrick, "RasterBrick")){
     warning(paste0("'envBrick' must be of class 'RasterBrick'.\n"))
     return(NULL)
   }
 
-  if(class(mShp) != "SpatialPolygons"){
+  if(!is(mShp, "SpatialPolygons")){
     warning(paste0("'mShp' must be of class 'SpatialPolygons'.\n"))
     return(NULL)
   }
@@ -250,14 +250,14 @@ mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all"){
     return(NULL)
   }
 
-  if(class(depthLimit) == "numeric"){
+  if(is(depthLimit, "numeric")){
     if(length(depthLimit) != 2){
       warning(paste0("'depthLimit' arguments of 'numeric' must be of length 2.\n"))
       return(NULL)
     }
   }
 
-  if(class(depthLimit) == "character"){
+  if(is(depthLimit, "character")){
     if(length(depthLimit) > 1){
       warning(paste0(depthLimit, " is not a valid value for 'depthLimit'\n"))
       return(NULL)
@@ -298,7 +298,7 @@ mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all"){
   # Get depth range
   layerNames <- as.numeric(gsub("[X]", "", names(envBrick)))
 
-  if(class(depthLimit) == "numeric"){
+  if(is(depthLimit, "numeric")){
     depthRange <- c(which.min(abs(layerNames - min(depthLimit))),
                     which.min(abs(layerNames - max(depthLimit))))
   } else if(depthLimit == "occs"){
