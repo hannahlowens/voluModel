@@ -247,11 +247,7 @@ glmThresholded <- reclassify(glmThresholded, c(NA, NA, 0), include.lowest = T)
 `plotLayers()` plots a transparent layer of suitable habitat for each depth layer. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. Here, I am plotting suitability from 0m to 800m, the depth range of occurrences used to train the envelope model.
 
 ```{r thresholded glm niche model plotted}
-layerNames <- as.numeric(gsub("[X]", "", names(glmThresholded)))
-datForMod$index <- unlist(lapply(datForMod$depth, FUN = function(x) which.min(abs(layerNames - x))))
-indices <- unique(datForMod$index)
-
-plotLayers(glmThresholded[[min(indices):max(indices)]], 
+plotLayers(glmThresholded, 
           land = land, landCol = "black")
 ```
 
@@ -263,6 +259,10 @@ Sometimes ecological models fail to extrapolate realistically when they are proj
 
 ```{r calculate MESS, warning=FALSE}
 # Prepare environmental data
+layerNames <- as.numeric(gsub("[X]", "", names(temperature)))
+datForMod$index <- unlist(lapply(datForMod$depth, FUN = function(x) which.min(abs(layerNames - x))))
+indices <- unique(datForMod$index)
+
 projList <- list("AOU" = oxygenSmooth[[min(indices):max(indices)]], 
                  "Temperature" = temperature[[min(indices):max(indices)]])
 
