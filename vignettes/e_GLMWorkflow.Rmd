@@ -35,6 +35,7 @@ Here are the packages you will need.
 
 ```{r packages, warning=FALSE}
 library(voluModel) # Because of course
+library(dplyr) # For occurrence data filtration
 library(ggplot2) # For fancy plotting
 library(rgdal) # For vector stuff. Will eventually be replaced with sf.
 library(raster) # For raster stuff. Will eventually be replaced with terra.
@@ -43,7 +44,7 @@ library(viridisLite) # For high-contrast plotting palettes
 
 # Data Inputs
 
-First thing's first. Distributional models are based on coordinates of species' occurrences. Here is an example dataset of *Steindachneria argentia*, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via `occCite` (Owens *et al.*, 2021). 
+First thing's first. Distributional models are based on coordinates of species' occsClean. Here is an example dataset of *Steindachneria argentia*, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via `occCite` (Owens *et al.*, 2021). 
 
 ```{r occurrence data, eval=T}
 occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
@@ -52,12 +53,11 @@ summary(occs$depth)
 boxplot.stats(occs$depth)
 ```
 
-Based on this information and what we know about the biology of Luminous Hakes and how these occurrence data are collected, I am going to remove occurrences that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not *in situ* or errors of some kind.
+Based on this information and what we know about the biology of Luminous Hakes and how these occurrence data are collected, I am going to remove occsClean that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not *in situ* or errors of some kind.
 
 ```{r clean occurrence data, eval=T}
-occsClean <- occs[complete.cases(occs$depth),]
-occsClean <- occsClean[occsClean$depth > 0.0,]
-occsClean <- occsClean[occsClean$depth < 2000.0,]
+occsClean <- occs %>% dplyr::select(decimalLongitude, decimalLatitude, depth) %>%
+  distinct() %>% filter(depth %in% 1:2000)
 head(occsClean)
 
 ggplot(occsClean, aes(x = 1, y=depth)) +
@@ -108,31 +108,25 @@ names(oxygenSmooth) <- names(temperature)
 The first step is down-sampling the occurrence data so that there is only one occurrence per voxel (the 3D equivalent of a pixel) of environmental data. We do this to avoid over-fitting the model due to biased sampling. The resampled points are centered in each voxel. 
 
 ```{r downsample to voxel, eval=TRUE, warning=FALSE, message=FALSE}
-occurrences <- occsClean[,c("decimalLatitude", "decimalLongitude", "depth")] 
-
-# Preliminary cleaning
-occurrences <- dplyr::distinct(occurrences)
-occurrences <- occurrences[complete.cases(occurrences),]
-
 # Gets the layer index for each occurrence by matching to depth
 layerNames <- as.numeric(gsub("[X]", "", names(temperature)))
-occurrences$index <- unlist(lapply(occurrences$depth, FUN = function(x) which.min(abs(layerNames - x))))
-indices <- unique(occurrences$index)
+occsClean$index <- unlist(lapply(occsClean$depth, FUN = function(x) which.min(abs(layerNames - x))))
+indices <- unique(occsClean$index)
 
-# Downsamples occurrences in each depth layer
+# Downsamples occsClean in each depth layer
 downsampledOccs <- data.frame()
 for(i in indices){
-  tempPoints <- occurrences[occurrences$index==i,]
+  tempPoints <- occsClean[occsClean$index==i,]
   tempPoints <- downsample(tempPoints, temperature[[1]])
   tempPoints$depth <- rep(layerNames[[i]], times = nrow(tempPoints))
   downsampledOccs <- rbind(downsampledOccs, tempPoints)
 }
 
-occurrences <- downsampledOccs
+occsClean <- downsampledOccs
 
-print(paste0("Original number of points: ", nrow(occsClean), "; number of downsampled occs: ", nrow(occurrences)))
+print(paste0("Original number of points: ", nrow(occs), "; number of downsampled occs: ", nrow(occsClean)))
 land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
-pointCompMap(occs1 = occsClean, occs2 = occurrences, 
+pointCompMap(occs1 = occs, occs2 = occsClean, 
              occs1Name = "Original", occs2Name = "Cleaned", 
              spName = "Steindachneria argentia", 
              land = land)
@@ -141,22 +135,22 @@ pointCompMap(occs1 = occsClean, occs2 = occurrences,
 Next, we generate a sampling region for the model based on occurrence points. Note that ideally when you're modeling you would carefully curate this background sampling region to make sure it truly approximates the area accessible to the species you are modeling. If you write the shapefile to disk, you can open and edit it in any GIS software you choose, if you have reason to believe `marineBackground()` falls short of estimating the true accessible are for a species. For more information, see [the environmental data processing tutorial](https://hannahlowens.github.io/voluModel/articles/c_DataSampling.html).
 
 ```{r environmental background sampling, warning=FALSE}
-backgroundSamplingRegions <- marineBackground(occurrences)
+backgroundSamplingRegions <- marineBackground(occsClean)
 plot(temperature[[1]], 
      main = "Points and background sampling plotted on surface temperature",
      col = viridis(n= 11, option = "mako"))
 plot(backgroundSamplingRegions, add = T, border = "orange", lwd = 2)
-points(occurrences[,c("decimalLongitude","decimalLatitude")], 
+points(occsClean[,c("decimalLongitude","decimalLatitude")], 
        cex = 1, pch = 20, col = "red")
 ```
 
-Finally, we need to draw the environmental variable data that will be used to generate the ecological niche model, from presence voxels as well as from the background sampling region. First, we sample environmental data for occurrences and add a "response" column filled with 1s, signifying these are considered "presences".
+Finally, we need to draw the environmental variable data that will be used to generate the ecological niche model, from presence voxels as well as from the background sampling region. First, we sample environmental data for occsClean and add a "response" column filled with 1s, signifying these are considered "presences".
 
 ```{r presence sampling}
 # Presences
-oxyVals <- xyzSample(occs = occurrences, oxygenSmooth)
-tempVals <- xyzSample(occs = occurrences, temperature)
-vals <- cbind(occurrences, oxyVals, tempVals)
+oxyVals <- xyzSample(occs = occsClean, oxygenSmooth)
+tempVals <- xyzSample(occs = occsClean, temperature)
+vals <- cbind(occsClean, oxyVals, tempVals)
 colnames(vals) <- c("decimalLongitude", "decimalLatitude", "depth", "AOU", "Temperature")
 vals <- vals[complete.cases(vals),]
 row.names(vals) <- NULL
@@ -166,11 +160,11 @@ occsWdata <- vals
 occsWdata$response <- rep(1, times = nrow(occsWdata))
 ```
 
-Then, we generate background data by drawing occurrences from the XY extent of the background shapefile and from user-specified depths from 5 to 800m. Background points intersecting with occurrences are not returned. Then the environmental data at each background coordinate are drawn and stored in their own data object, and the "response" column is added and filled with 0s, signifying that these are to be considered "absences" when training the model.
+Then, we generate background data by drawing occsClean from the XY extent of the background shapefile and from user-specified depths from 5 to 800m. Background points intersecting with occsClean are not returned. Then the environmental data at each background coordinate are drawn and stored in their own data object, and the "response" column is added and filled with 0s, signifying that these are to be considered "absences" when training the model.
 
 ```{r background sampling}
 # Background
-backgroundVals <- mSampling3D(occs = occurrences, 
+backgroundVals <- mSampling3D(occs = occsClean, 
                               envBrick = temperature, 
                               mShp = backgroundSamplingRegions, 
                               depthLimit = c(5, 800))
@@ -214,7 +208,7 @@ datForMod <- rbind(occsWdata, backgroundWdata[,colnames(occsWdata)])
 rm(suitableCentroid, sampleForAbsence, backgroundWdata, occsWdata)
 ```
 
-Now we are ready to make a generalized linear model. How does it look?
+With the data cleaned, formatted and united into a single `data.frame`, generating a generalized linear model is very simple. How does it look?
 
 ```{r generate glm niche model}
 glmModel <- glm(formula = response ~ Temperature *  AOU, 
@@ -222,7 +216,7 @@ glmModel <- glm(formula = response ~ Temperature *  AOU,
 summary(glmModel)
 ```
 
-Now we project the model back into geographic space; at this stage, the niche model is being used to model the species' distribution (an ENM becomes an SDM).
+Now we project the model back into geographic space; at this stage, the niche model is being used to model the geographic distribution of putatively suitable habit for Luminous Hake (an ENM becomes an SDM).
 
 ```{r project glm niche model}
 layerNames <- as.numeric(gsub("[X]", "", names(temperature)))
@@ -240,7 +234,7 @@ for(j in index){
 glmPred <- stack(depthPred[!unlist(lapply(depthPred, FUN = function(x) is.null(x)))])
 ```
 
-And here's what the SDM looks like threshholded to presences and absences; raw ENM suitability values above the threshold value become presences, values below the threshold become absences. This is useful in a variety of applications, including, but not limited to visualizing the model. In this case, the threshold is the bottom tenth percentile of suitability scores at occurrences. What this means is that we are interpreting about 10% of the occurrence points to be erroneous. It is important to remember that there are MANY different thresholds you may choose based on your dataset and the goals of your analysis. Try to choose wisely.
+And here's what the SDM looks like threshholded to presences and absences; raw ENM suitability values above the threshold value become presences, values below the threshold become absences. This is useful in a variety of applications, including, but not limited to visualizing the model. In this case, the threshold is the bottom tenth percentile of suitability scores at occsClean. What this means is that we are interpreting about 10% of the occurrence points to be erroneous. It is important to remember that there are MANY different thresholds you may choose based on your dataset and the goals of your analysis. Try to choose wisely.
 
 ```{r glm niche threshold}
 glmThreshold <- quantile(xyzSample(datForMod[datForMod$response == 1,
@@ -250,7 +244,7 @@ glmThresholded <- glmPred > glmThreshold
 glmThresholded <- reclassify(glmThresholded, c(NA, NA, 0), include.lowest = T)
 ```
 
-`plotLayers()` plots a transparent layer of suitable habitat for each depth layer. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. Here, I am plotting suitability from 0m to 800m, the depth range of occurrences used to train the envelope model.
+`plotLayers()` plots a transparent layer of suitable habitat for each depth layer. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. Here, I am plotting suitability from 0m to 800m, the depth range of occsClean used to train the envelope model.
 
 ```{r thresholded glm niche model plotted}
 layerNames <- as.numeric(gsub("[X]", "", names(glmThresholded)))
