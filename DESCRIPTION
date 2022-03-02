@@ -46,6 +46,10 @@ Suggests:
     rnaturalearth,
     rnaturalearthdata,
     tibble
+References:
+    Davis Rabosky AR, Cox CL, Rabosky DL, Title PO, Holmes IA, Feldman A, McGuire JA (2016) <doi:10.1038/ncomms11484>
+    Nychka D, Furrer R, Paige J, Sain S (2021) <doi:10.5065/D6W957CT>
+    Pateiro-Lopez B, Rodriguez-Casal A (2019) <https://CRAN.R-project.org/package=alphahull>
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2

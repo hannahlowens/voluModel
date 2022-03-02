@@ -589,6 +589,9 @@ transpColor <- function(color, percent = 50) {
 #' @param ... Additional optional arguments to pass to
 #' `spplot` initial plot object.
 #'
+#' @value A plot of class `trellis` overlaying mapped,
+#' semitransparent extents of the input rasters
+#'
 #' @note The extents of `rast1` and `rast2`
 #' must match.
 #'
@@ -827,6 +830,9 @@ diversityStack <- function(rasterList, template){
 #'
 #' @param ... Additional optional arguments to pass to
 #' `spplot` initial plot object or `viridis`.
+#'
+#' @value A plot of class `trellis` mapping the values
+#' of the input raster layer
 #'
 #' @examples
 #' library(raster)
