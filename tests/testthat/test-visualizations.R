@@ -101,7 +101,7 @@ test_that("transpColor checks", {
                                              percent = 20)), "character")
 })
 
-# Set up tests for rasterCompFunction
+# Set up tests for rasterComp function
 rast1 <- raster(ncol=10, nrow=10)
 values(rast1) <- rep(0:1, 50)
 
