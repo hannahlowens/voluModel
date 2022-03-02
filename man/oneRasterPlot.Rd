@@ -21,6 +21,10 @@ occurrence points.}
 \item{...}{Additional optional arguments to pass to
 \code{spplot} initial plot object or \code{viridis}.}
 }
+\value{
+A plot of class \code{trellis} mapping the values
+of the input raster layer
+}
 \description{
 A convenient wrapper around \code{spplot}
 to generate a formatted plot of a single raster.

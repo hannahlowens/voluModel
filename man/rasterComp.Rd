@@ -60,6 +60,10 @@ occurrence points.}
 \item{...}{Additional optional arguments to pass to
 \code{spplot} initial plot object.}
 }
+\value{
+A plot of class \code{trellis} overlaying mapped,
+semitransparent extents of the input rasters
+}
 \description{
 A convenient wrapper around \code{spplot}
 to generate formatted plots comparing two rasters.

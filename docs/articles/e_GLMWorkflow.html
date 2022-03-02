@@ -210,7 +210,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/Rtmp9O5OwX/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/Rtmp9ZPhgr/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -358,22 +358,22 @@
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.7886  -0.1561  -0.0787  -0.0501   3.6273  </span>
+<span class="co">## -0.6567  -0.1531  -0.0792  -0.0522   3.6073  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -1.8330540  1.3073125  -1.402 0.160869    </span>
-<span class="co">## Temperature     -0.1836933  0.0645183  -2.847 0.004411 ** </span>
-<span class="co">## AOU             -0.0391538  0.0111084  -3.525 0.000424 ***</span>
-<span class="co">## Temperature:AOU  0.0037589  0.0007861   4.782 1.74e-06 ***</span>
+<span class="co">## (Intercept)     -1.6901490  1.3348849  -1.266 0.205464    </span>
+<span class="co">## Temperature     -0.1864491  0.0652882  -2.856 0.004293 ** </span>
+<span class="co">## AOU             -0.0377788  0.0110384  -3.422 0.000621 ***</span>
+<span class="co">## Temperature:AOU  0.0035544  0.0007657   4.642 3.45e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 221.76  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 229.76</span>
+<span class="co">## Residual deviance: 222.37  on 2319  degrees of freedom</span>
+<span class="co">## AIC: 230.37</span>
 <span class="co">## </span>
 <span class="co">## Number of Fisher Scoring iterations: 8</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage, the niche model is being used to model the geographic distribution of putatively suitable habit for Luminous Hake (an ENM becomes an SDM).</p>
