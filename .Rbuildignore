@@ -16,4 +16,4 @@
 ComplementaryDataProcessing.R
 ^data-raw$
 ^CRAN-SUBMISSION$
-^CONTRIBUTING$
+^CONTRIBUTING.md
