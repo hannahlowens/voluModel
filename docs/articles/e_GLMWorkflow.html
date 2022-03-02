@@ -210,7 +210,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/Rtmp6wGwyq/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/Rtmp9O5OwX/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -358,24 +358,24 @@
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.6705  -0.1517  -0.0738  -0.0484   3.6560  </span>
+<span class="co">## -0.7886  -0.1561  -0.0787  -0.0501   3.6273  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -2.2787433  1.4147229  -1.611  0.10724    </span>
-<span class="co">## Temperature     -0.1704223  0.0691420  -2.465  0.01371 *  </span>
-<span class="co">## AOU             -0.0373376  0.0114284  -3.267  0.00109 ** </span>
-<span class="co">## Temperature:AOU  0.0038792  0.0008137   4.767 1.87e-06 ***</span>
+<span class="co">## (Intercept)     -1.8330540  1.3073125  -1.402 0.160869    </span>
+<span class="co">## Temperature     -0.1836933  0.0645183  -2.847 0.004411 ** </span>
+<span class="co">## AOU             -0.0391538  0.0111084  -3.525 0.000424 ***</span>
+<span class="co">## Temperature:AOU  0.0037589  0.0007861   4.782 1.74e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 219.09  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 227.09</span>
+<span class="co">## Residual deviance: 221.76  on 2319  degrees of freedom</span>
+<span class="co">## AIC: 229.76</span>
 <span class="co">## </span>
-<span class="co">## Number of Fisher Scoring iterations: 9</span></code></pre>
+<span class="co">## Number of Fisher Scoring iterations: 8</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage, the niche model is being used to model the geographic distribution of putatively suitable habit for Luminous Hake (an ENM becomes an SDM).</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[X]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
@@ -466,7 +466,7 @@
 <p>Fishnet2 Portal, <a href="http://www.fishnet2.net" class="external-link uri">http://www.fishnet2.net</a>, [Access date] Accessed via OBIS on 2020-11-04.</p>
 <p>Froese, R. and D. Pauly. Editors. 200x. FishBase. World Wide Web electronic publication. www.fishbase.org, version (xx/200x). Accessed via OBIS on 2020-11-04.</p>
 <p>Gall L (2021). Vertebrate Zoology Division - Ichthyology, Yale Peabody Museum. Yale University Peabody Museum. DOI: 10.15468/mgyhok. Accessed via GBIF on 2020-10-13.</p>
-<p>García, CB, and Duarte, LO, ‘Columbian Caribbean Sea’, in J.H. Nicholls (comp.) HMAP Data Pages (<a href="https://oceanspast.org/hmap_db.php" class="external-link uri">https://oceanspast.org/hmap_db.php</a>) Accessed via OBIS on 2020-11-04.</p>
+<p>García, CB, and Duarte, LO, ‘Columbian Caribbean Sea’, in J.H. Nicholls (comp.) HMAP Data Pages <a href="https://oceanspast.org/hmap_db.php" class="external-link uri">https://oceanspast.org/hmap_db.php</a> Accessed via OBIS on 2020-11-04.</p>
 <p>Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA, Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018). World Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen Utilization, and Oxygen Saturation. A Mishonov Technical Ed.; NOAA Atlas NESDIS 83, 38pp.</p>
 <p>GBIF.org (24 September 2020) GBIF Occurrence Download DOI: 10.15468/dl.efuutj.</p>
 <p>Grant S, McMahan C (2020). Field Museum of Natural History (Zoology) Fish Collection. Version 13.12. Field Museum. DOI: 10.15468/alz7wu. Accessed via GBIF on 2020-10-13.</p>

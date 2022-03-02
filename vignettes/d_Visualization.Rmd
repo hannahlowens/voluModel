@@ -217,7 +217,7 @@ Froese, R. and D. Pauly. Editors. 200x. FishBase. World Wide Web electronic publ
 
 Gall L (2021). Vertebrate Zoology Division - Ichthyology, Yale Peabody Museum. Yale University Peabody Museum. DOI: 10.15468/mgyhok. Accessed via GBIF on 2020-10-13.
 
-García, CB, and Duarte, LO, 'Columbian Caribbean Sea', in J.H. Nicholls (comp.) HMAP Data Pages (https://oceanspast.org/hmap_db.php) Accessed via OBIS on 2020-11-04.   
+García, CB, and Duarte, LO, 'Columbian Caribbean Sea', in J.H. Nicholls (comp.) HMAP Data Pages https://oceanspast.org/hmap_db.php Accessed via OBIS on 2020-11-04.   
 
 Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA, Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018). World Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen Utilization, and Oxygen Saturation. A Mishonov Technical Ed.; NOAA Atlas NESDIS 83, 38pp.
 
