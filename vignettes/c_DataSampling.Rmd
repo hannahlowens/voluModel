@@ -22,8 +22,6 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
-knitr::opts_knit$set(root.dir = system.file('extdata', 
-                                            package='voluModel'))
 load(system.file("extdata/oxygenSmooth.RData", 
                  package='voluModel'))
 load(system.file("extdata/oxygenBottom.RData",
@@ -72,8 +70,7 @@ pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
 
 `getDynamicAlphaHull()`, which is run within `marineBackground()` generates a polygon (or polygons) that can be used as a training region by fitting an alpha hull (or hulls) around an occurrence dataset. Alpha is a parameter that controls the complexity of the polygon(s) that is being fit around the occurrences. `getDynamicAlphaHull()` adjusts the alpha parameter iteratively, until it meets criteria the user can set via the arguments `fraction`, which is the minimum fraction of occurrences that must be contained within the polygon(s), `partCount`, which is the maximum number of polygons generated to fit the data, and `buff`, which is the permissible distance from a point to the edge of a polyon in meters. `marineBackground()` takes these and many of the same other arguments as `getDynamicAlphaHull()`. Here's how it works.
 
-```{r alpha hull demonstration, message=FALSE, warning=FALSE}
-# Marine background comparison
+```{r alpha hull demonstration, message=FALSE, warning=FALSE, eval=FALSE}
 trainingRegion <- marineBackground(occurrences, 
                                 fraction = 1, partCount = 1, buff = 1000000,
                                 clipToOcean = F)
@@ -86,10 +83,13 @@ plot(land, col = "black", add = T)
 plot(trainingRegion, add = T, border = "orange", lwd = 2)
 ```
 
+```{r plot alpha hull demonstration, echo=FALSE}
+knitr::include_graphics("alphaHullDemonstration-1.png")
+```
+
 What parameters you choose to fit the alpha hull will depend on the biology of the organism you are trying to model (e.g. you may choose a much smaller buffer for a sessile organism than you would for a highly vagile migratory species), your data, and the particulars of your study system and the geography of your study area. You may need to experiment to find something that looks sensible. If you do not provide a pre-defined buffer, `marineBackground()` will calculate a buffer that is the mean of the top and bottom 10% of distances between points in the dataset.
 
-```{r basic marineBackground demonstration, message=FALSE, warning=FALSE}
-# Hull example 1
+```{r basic marineBackground demonstration, message=FALSE, warning=FALSE, eval=FALSE}
 trainingRegion <- marineBackground(occurrences,
                                 fraction = 1, partCount = 1, 
                                 clipToOcean = F)
@@ -102,10 +102,12 @@ plot(land, col = "black", add = T)
 plot(trainingRegion, add = T, border = "orange", lwd = 2)
 ```
 
+```{r plot basic marineBackground demonstration, echo=FALSE}
+knitr::include_graphics("basicMarineBackgroundDemonstration-1.png")
+```
 You may have noticed that the training regions in the above examples include some areas of the Pacific where the species has not been observed, and cannot access. This could cause problems if it is used to train your model. You *could* delete this area by hand in your favorite GIS software, OR you could change `clipToOcean` to `TRUE` in `marineBackground()`, and any polygon fragments that do not contain an occurrence will be deleted automatically. This is a key difference from `getDynamicAlphaHull()`.
 
-```{r clipToOcean demo, message=FALSE, warning=FALSE}
-# Hull example 1
+```{r clipToOcean demo, message=FALSE, warning=FALSE, eval=F}
 trainingRegion <- marineBackground(occurrences, 
                                 fraction = .95, partCount = 2, buff = 1000000, 
                                 clipToOcean = T)
@@ -118,9 +120,17 @@ plot(land, col = "black", add = T)
 plot(trainingRegion, add = T, border = "orange", lwd = 2)
 ```
 
+```{r plot clipToOcean demo, echo=FALSE}
+trainingRegion <- marineBackground(occurrences, 
+                                fraction = .95, partCount = 2, buff = 1000000, 
+                                clipToOcean = T)
+
+knitr::include_graphics("clipToOceanDemo-1.png")
+```
+
 The last major difference between `marineBackground()` and `getDynamicAlphaHull()` is how the functions handle training regions that are adjacent to the antimeridian (i.e. 180° E or W). `getDynamicAlphaHull()` truncates polygons at this line, which can lead to some strange-looking training areas or fatal errors. `marineBackground()`, on the other hand, wraps polygons across the meridian and merges them if they overlap. For this example, I am going to manipulate the longitudinal coordinates of our Luminous Hake dataset to generate a quick fictional example.
 
-```{r meridian wrap demo, warning=FALSE, message=FALSE}
+```{r meridian wrap demo, warning=FALSE, message=FALSE, eval=F}
 # Fictional example occurrences
 pacificOccs <- occurrences
 pacificOccs$decimalLongitude <- pacificOccs$decimalLongitude - 100
@@ -143,13 +153,16 @@ plot(land, col = "black", add = T)
 plot(pacificTrainingRegion, add = T, border = "orange", lwd = 2)
 ```
 
+```{r plot meridian wrap demo, echo=FALSE}
+knitr::include_graphics("meridianWrapDemo-1.png")
+```
 # 3D Data Extraction
 
 Next, we will cover how to extract environmental data from a `RasterBrick` object using 3D occurrence coordinates. The occurrences I will use to demonstrate this are the Luminous Hake occurrences from the previous section. The environmental dataset I will use as an example is temperature (Locarnini *et al.*, 2018) from the World Ocean Atlas (WOA; Garcia *et al.*, 2019). I have chosen to focus on temperature for simple illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. 
 
 This chunk of code loads the example shapefile, which results in a `SpatialPointsDataFrame`:
 
-```{r environmental data loading, eval=T, asis=T, message = FALSE}
+```{r environmental data loading, eval=T, asis=T, message = FALSE, warning=FALSE}
 td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),

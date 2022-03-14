@@ -134,7 +134,7 @@ plot(land, col = "black", add = T)
 
 There is a workaround for this, since we can reasonably expect some degree of spatial autocorrelation in apparent oxygen utilization. We use the `interpolateRaster()` function to produce statistically-interpolated layers using `TPS()` from the `fields` package (this is a thin-plate spline interpolation). Be patient--this step can take a while, although as shown here, I am using the `fastTPS()` approximation, which only samples from nearby cells to speed things up. Maybe `fastTPS()` will work ok for your data, maybe it won't. It depends on the data.
 
-```{r interpolate oxygen, warning=FALSE}
+```{r interpolate oxygen, warning=FALSE, eval = F}
 # Creating a RasterBrick
 oxygen <- rasterFromXYZ(cbind(oxygen@coords, oxygen@data))
 
@@ -145,23 +145,22 @@ for (i in 1:nlayers(oxygen)){
 
 # Change names to match temperature
 names(oxygen) <- envtNames
-
-# How do these files look?
-p1 <- oneRasterPlot(oxygen[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization (µmol/kg), interpolated")
-
-p2 <- oneRasterPlot(oxygen[["X100"]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization (µmol/kg), interpolated")
-
-temp <- c("Surface" = p1, "100m Depth" = p2)
-update(temp, strip  = strip.custom(strip.levels = TRUE,
-                             horizontal = TRUE,
-                             bg = "black",
-                             fg = "white",
-                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
 ```
 
-You can see from these plots that apparent oxygen utilization is "patchier" than temperature. If you are confident that there should be a strong spatial correlation in a "patchy" data layer, you can also statistically smooth it, again using `TPS()`, like this:
+```{r interpolate oxygen surface only, warning=FALSE}
+# Creating a RasterBrick
+oxygen <- rasterFromXYZ(cbind(oxygen@coords, oxygen@data[["SURFACE"]]))
+
+for (i in 1:nlayers(oxygen)){
+  oxygen[[i]] <- interpolateRaster(oxygen[[i]], lon.lat = T, fast = T, aRange = 5) #Thin plate spline interpolation
+  oxygen[[i]] <- crop(mask(x = oxygen[[i]], mask = temperature[[i]]), temperature[[i]])
+}
+
+# Change names to match temperature
+names(oxygen) <- envtNames[[1]]
+```
+
+Some environmental data rasters may also look "patchy", possibly as an artifact of uneven sampling. If you are confident that there should be a strong spatial correlation in a data layer that looks "patchy", you can also statistically smooth it, again using `TPS()`, like this:
 
 ```{r smoothing oxygen, eval=FALSE}
 oxygenSmooth <- oxygen
@@ -173,13 +172,12 @@ for (i in 1:nlayers(oxygen)){
 # Change names to match temperature
 names(oxygenSmooth) <- names(temperature)
 
-p1 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization (µmol/kg), interpolated and smoothed")
+p1 <- oneRasterPlot(oxygen[[1]], land = land, landCol = "black", 
+              title= "Apparent Oxygen Utilization (µmol/kg) at Surface")
+p2 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
+              title= "Apparent Oxygen Utilization (µmol/kg) at Surface")
 
-p2 <- oneRasterPlot(oxygenSmooth[["X100"]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization (µmol/kg), interpolated and smoothed")
-
-temp <- c("Surface" = p1, "100m Depth" = p2)
+temp <- c("Interpolated" = p1, "Interpolated and Smoothed" = p2)
 update(temp, strip  = strip.custom(strip.levels = TRUE,
                              horizontal = TRUE,
                              bg = "black",
@@ -187,13 +185,12 @@ update(temp, strip  = strip.custom(strip.levels = TRUE,
                              par.strip.text = list(col = "white", cex = 1.2, font = 2)))
 ```
 ```{r smooth oxygen display, echo=FALSE}
-p1 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization (µmol/kg), interpolated and smoothed")
+p1 <- oneRasterPlot(oxygen, land = land, landCol = "black", 
+              title= "Apparent Oxygen Utilization (µmol/kg) at Surface")
+p2 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
+              title= "Apparent Oxygen Utilization (µmol/kg) at Surface")
 
-p2 <- oneRasterPlot(oxygenSmooth[["X100"]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization (µmol/kg), interpolated and smoothed")
-
-temp <- c("Surface" = p1, "100m Depth" = p2)
+temp <- c("Interpolated" = p1, "Interpolated and Smoothed" = p2)
 update(temp, strip  = strip.custom(strip.levels = TRUE,
                              horizontal = TRUE,
                              bg = "black",
