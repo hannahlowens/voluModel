@@ -48,6 +48,7 @@ test_that("marineBackground input warnings behave as expected", {
 })
 
 test_that("marineBackground results as expected", {
+  skip_on_cran() # Function's a little slow for CRAN's tastes
   result <- marineBackground(occs = occurrences, buff = 100000,
                              fraction = .9, partCount = 2, clipToOcean = TRUE)
   expect_equal(class(result)[[1]], "SpatialPolygons")
@@ -72,6 +73,7 @@ latitude <- sample(-20:20,
 occurrences <- as.data.frame(cbind(longitude,latitude))
 
 test_that("marineBackground Pacific results as expected", {
+  skip_on_cran() # Function's a little slow for CRAN's tastes
   # Both sides
   result <- marineBackground(occs = occurrences, buff = 1000000,
                              fraction = .95, partCount = 2, clipToOcean = TRUE)
