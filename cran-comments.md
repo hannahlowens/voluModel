@@ -1,3 +1,7 @@
+## This is a package update. In this version, I have:
+
+* Adjusted function example for interpolateRaster(), which breaks on some platforms.
+
 ## Test environments
 * local OS X 10.15.7, R 4.1.2
 * win-builder (devel and release)
