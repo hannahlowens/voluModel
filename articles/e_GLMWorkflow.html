@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voluModel</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.3</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-03-14</h4>
+            <h4 data-toc-skip class="date">2022-03-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/e_GLMWorkflow.Rmd" class="external-link"><code>vignettes/e_GLMWorkflow.Rmd</code></a></small>
       <div class="hidden name"><code>e_GLMWorkflow.Rmd</code></div>
@@ -134,7 +134,7 @@
 <span class="co">## plan transition to sf/stars/terra functions using GDAL and PROJ</span>
 <span class="co">## at your earliest convenience.</span>
 <span class="co">## </span>
-<span class="co">## rgdal: version: 1.5-28, (SVN revision 1158)</span>
+<span class="co">## rgdal: version: 1.5-29, (SVN revision 1165M)</span>
 <span class="co">## Geospatial Data Abstraction Library extensions to R successfully loaded</span>
 <span class="co">## Loaded GDAL runtime: GDAL 3.0.4, released 2020/01/28</span>
 <span class="co">## Path to GDAL shared files: /usr/share/gdal</span>
@@ -208,7 +208,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpjBPs6M/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpHWyUgE/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -356,24 +356,24 @@
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.7035  -0.1529  -0.0773  -0.0472   3.6580  </span>
+<span class="co">## -0.6533  -0.1596  -0.0775  -0.0498   3.6311  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -1.4572724  1.3786604  -1.057 0.290502    </span>
-<span class="co">## Temperature     -0.2026231  0.0683241  -2.966 0.003021 ** </span>
-<span class="co">## AOU             -0.0401711  0.0111155  -3.614 0.000302 ***</span>
-<span class="co">## Temperature:AOU  0.0037906  0.0007819   4.848 1.25e-06 ***</span>
+<span class="co">## (Intercept)     -1.8856482  1.3410499  -1.406 0.159695    </span>
+<span class="co">## Temperature     -0.1822076  0.0660974  -2.757 0.005840 ** </span>
+<span class="co">## AOU             -0.0363650  0.0110194  -3.300 0.000967 ***</span>
+<span class="co">## Temperature:AOU  0.0035575  0.0007758   4.586 4.53e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 220.40  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 228.4</span>
+<span class="co">## Residual deviance: 222.39  on 2319  degrees of freedom</span>
+<span class="co">## AIC: 230.39</span>
 <span class="co">## </span>
-<span class="co">## Number of Fisher Scoring iterations: 9</span></code></pre>
+<span class="co">## Number of Fisher Scoring iterations: 8</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage, the niche model is being used to model the geographic distribution of putatively suitable habit for Luminous Hake (an ENM becomes an SDM).</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[X]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
