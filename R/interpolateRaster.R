@@ -18,6 +18,7 @@
 #' @return An object of class raster
 #'
 #' @examples
+#' \donttest{
 #' library(raster)
 #' library(fields)
 #' # Create sample raster
@@ -33,6 +34,7 @@
 #' plot(interpolatedRaster)
 #' fastInterp <- interpolateRaster(r, fast = TRUE, aRange = 3.0)
 #' plot(fastInterp)
+#' }
 #'
 #' @import raster
 #' @importFrom fields Tps fastTps

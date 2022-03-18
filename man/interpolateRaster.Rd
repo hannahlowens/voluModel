@@ -30,6 +30,7 @@ but be advised that this is only an approximation
 of a true thin plate spline.
 }
 \examples{
+\donttest{
 library(raster)
 library(fields)
 # Create sample raster
@@ -45,6 +46,7 @@ interpolatedRaster <- interpolateRaster(r)
 plot(interpolatedRaster)
 fastInterp <- interpolateRaster(r, fast = TRUE, aRange = 3.0)
 plot(fastInterp)
+}
 
 }
 \seealso{

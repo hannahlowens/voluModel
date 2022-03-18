@@ -1,4 +1,8 @@
-# voluModel 0.1.1
+# voluModel 0.1.3
+
+- Adjust testing to comply with CRAN
+
+# voluModel 0.1.2
 
 - Overhauled vignettes--more detailed, special topics
 - Reduced space footprint, increased speed
