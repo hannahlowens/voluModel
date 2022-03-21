@@ -210,7 +210,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/Rtmpy2vjIP/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpTQOTby/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -358,24 +358,24 @@
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.5336  -0.1566  -0.0765  -0.0492   3.6339  </span>
+<span class="co">## -0.7111  -0.1490  -0.0776  -0.0507   3.6230  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
-<span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -1.8204593  1.3721227  -1.327  0.18459    </span>
-<span class="co">## Temperature     -0.1851229  0.0669952  -2.763  0.00572 ** </span>
-<span class="co">## AOU             -0.0382814  0.0113447  -3.374  0.00074 ***</span>
-<span class="co">## Temperature:AOU  0.0036946  0.0008155   4.530 5.89e-06 ***</span>
+<span class="co">##                  Estimate Std. Error z value Pr(&gt;|z|)    </span>
+<span class="co">## (Intercept)     -1.935480   1.339439  -1.445 0.148460    </span>
+<span class="co">## Temperature     -0.179115   0.065477  -2.736 0.006228 ** </span>
+<span class="co">## AOU             -0.038249   0.010990  -3.480 0.000501 ***</span>
+<span class="co">## Temperature:AOU  0.003736   0.000773   4.834 1.34e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 221.98  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 229.98</span>
+<span class="co">## Residual deviance: 220.74  on 2319  degrees of freedom</span>
+<span class="co">## AIC: 228.74</span>
 <span class="co">## </span>
-<span class="co">## Number of Fisher Scoring iterations: 9</span></code></pre>
+<span class="co">## Number of Fisher Scoring iterations: 8</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage, the niche model is being used to model the geographic distribution of putatively suitable habit for Luminous Hake (an ENM becomes an SDM).</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[X]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
