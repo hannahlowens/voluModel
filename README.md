@@ -1,4 +1,4 @@
-# voluModel <img src="man/figures/logo.png" align="right" height="138" />
+# voluModel <img src="man/figures/logo.png" alt="voluModel hex logo" align="right" height="138" />
 
 <!-- badges: start -->
 
@@ -47,12 +47,15 @@ citation(package = "voluModel")
 
 ## Installation
 
-Currently, there is only a development version.
+
+``` r
+install.packages("voluModel")
+```
+
+Or, install GitHub development version:
 
 ``` r
 devtools::install_github("hannahlowens/voluModel", build_vignettes = TRUE)
-
-library("voluModel")
 ```
 
 ## Getting Started
@@ -70,3 +73,9 @@ library("voluModel")
 -   License: ACM
 -   Get citation information for `voluModel` in R using
     `citation(package = 'voluModel')`
+    
+## Acknowledgements
+
+<img src="http://publications.europa.eu/code/images/scan/5000100-flag.jpg" alt="EU flag" align="right" height="100" />
+
+- This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No 891702. 
