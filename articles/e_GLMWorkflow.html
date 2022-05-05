@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-03-28</h4>
+            <h4 data-toc-skip class="date">2022-05-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/e_GLMWorkflow.Rmd" class="external-link"><code>vignettes/e_GLMWorkflow.Rmd</code></a></small>
       <div class="hidden name"><code>e_GLMWorkflow.Rmd</code></div>
@@ -134,14 +134,14 @@
 <span class="co">## plan transition to sf/stars/terra functions using GDAL and PROJ</span>
 <span class="co">## at your earliest convenience.</span>
 <span class="co">## </span>
-<span class="co">## rgdal: version: 1.5-29, (SVN revision 1165M)</span>
+<span class="co">## rgdal: version: 1.5-31, (SVN revision 1171)</span>
 <span class="co">## Geospatial Data Abstraction Library extensions to R successfully loaded</span>
 <span class="co">## Loaded GDAL runtime: GDAL 3.0.4, released 2020/01/28</span>
 <span class="co">## Path to GDAL shared files: /usr/share/gdal</span>
 <span class="co">## GDAL binary built with GEOS: TRUE </span>
 <span class="co">## Loaded PROJ runtime: Rel. 6.3.1, February 10th, 2020, [PJ_VERSION: 631]</span>
 <span class="co">## Path to PROJ shared files: /usr/share/proj</span>
-<span class="co">## Linking to sp version:1.4-6</span>
+<span class="co">## Linking to sp version:1.4-7</span>
 <span class="co">## To mute warnings of possible GDAL/OSR exportToProj4() degradation,</span>
 <span class="co">## use options("rgdal_show_exportToProj4_warnings"="none") before loading sp or rgdal.</span></code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -208,7 +208,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/Rtmpc85Hql/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpQBAVWA/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -356,24 +356,24 @@
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.6352  -0.1566  -0.0768  -0.0487   3.6389  </span>
+<span class="co">## -0.6531  -0.1535  -0.0773  -0.0503   3.6176  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -1.3736909  1.3939610  -0.985 0.324399    </span>
-<span class="co">## Temperature     -0.2031718  0.0685990  -2.962 0.003059 ** </span>
-<span class="co">## AOU             -0.0399817  0.0113095  -3.535 0.000407 ***</span>
-<span class="co">## Temperature:AOU  0.0036974  0.0007832   4.721 2.35e-06 ***</span>
+<span class="co">## (Intercept)     -1.5917685  1.3293439  -1.197 0.231147    </span>
+<span class="co">## Temperature     -0.1917031  0.0650942  -2.945 0.003229 ** </span>
+<span class="co">## AOU             -0.0388954  0.0110202  -3.529 0.000416 ***</span>
+<span class="co">## Temperature:AOU  0.0036504  0.0007659   4.766 1.88e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 221.08  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 229.08</span>
+<span class="co">## Residual deviance: 221.06  on 2319  degrees of freedom</span>
+<span class="co">## AIC: 229.06</span>
 <span class="co">## </span>
-<span class="co">## Number of Fisher Scoring iterations: 9</span></code></pre>
+<span class="co">## Number of Fisher Scoring iterations: 8</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage, the niche model is being used to model the geographic distribution of putatively suitable habit for Luminous Hake (an ENM becomes an SDM).</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[X]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
@@ -402,7 +402,8 @@
 <p><code><a href="../reference/plotLayers.html">plotLayers()</a></code> plots a transparent layer of suitable habitat for each depth layer. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. Here, I am plotting suitability from 0m to 800m, the depth range of occurrences used to train the envelope model.</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotLayers.html">plotLayers</a></span><span class="op">(</span><span class="va">glmThresholded</span>, 
-          land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></code></pre></div>
+          land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>,
+          title <span class="op">=</span> <span class="st">"Areas of suitable habitat for \n Luminous Hake, 5m to 800m"</span><span class="op">)</span></code></pre></div>
 <p><img src="e_GLMWorkflow_files/figure-html/thresholded%20glm%20niche%20model%20plotted-1.png"><!-- --></p>
 <p>Of course, this just a starting example. We welcome submissions from the community for examples of other types of models you would like to see. Submit your suggestions as issues <a href="https://github.com/hannahlowens/voluModel/issues" class="external-link">here</a>.</p>
 </div>
@@ -427,7 +428,8 @@
 <span class="va">extrapolation</span> <span class="op">&lt;-</span> <span class="fl">0</span> <span class="op">&gt;=</span> <span class="va">messBrick</span>
 
 <span class="co"># Plot Extrapolation</span>
-<span class="fu"><a href="../reference/plotLayers.html">plotLayers</a></span><span class="op">(</span><span class="va">extrapolation</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, title <span class="op">=</span> <span class="st">"Areas of extrapolation according to MESS,\n 5m to 800m"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="../reference/plotLayers.html">plotLayers</a></span><span class="op">(</span><span class="va">extrapolation</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
+           title <span class="op">=</span> <span class="st">"Areas of extrapolation according to MESS,\n 5m to 800m"</span><span class="op">)</span></code></pre></div>
 <p><img src="e_GLMWorkflow_files/figure-html/reclassify%20and%20plot%20extrapolation-1.png"><!-- --></p>
 <p>In the second <code>RasterBrick</code>, <code>noExtrapolation</code>, I reclassify the layers so that positive MESS values = 1 and MESS values less than or equal to 0 = 0. This will make plotting cropping out areas of extrapolation from the niche model projection easier. I simply multiply the thresholded GLM map by the <code>noExtrapolation</code> <code>RasterBrick</code>.</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
@@ -513,7 +515,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>
