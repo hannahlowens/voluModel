@@ -339,8 +339,9 @@ occurrences$index <- unlist(lapply(occurrences$depth,
                                      which.min(abs(layerNames - x))))
 indices <- sort(unique(occurrences$index))
 
-plotLayers(envelopeModel3D[[min(indices):max(indices)]], 
-          land = land)
+plotLayers(envelopeModel3D[[min(indices):max(indices)]],
+           title = "Envelope Model of Luminous Hake,\n 20 to 700m",
+           land = land)
 ```
 
 Interestingly, the bottom model did not predict the suitable habitat recovered by the surface model in the Sargasso Sea. The 3D model predicts suitable habitat in the Sargasso Sea, but only at lower depths.

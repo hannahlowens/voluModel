@@ -248,7 +248,8 @@ glmThresholded <- reclassify(glmThresholded, c(NA, NA, 0), include.lowest = T)
 
 ```{r thresholded glm niche model plotted}
 plotLayers(glmThresholded, 
-          land = land, landCol = "black")
+          land = land, landCol = "black",
+          title = "Areas of suitable habitat for \n Luminous Hake, 5m to 800m")
 ```
 
 Of course, this just a starting example. We welcome submissions from the community for examples of other types of models you would like to see. Submit your suggestions as issues [here](https://github.com/hannahlowens/voluModel/issues).
@@ -277,7 +278,8 @@ Now I will calculate two `rasterBrick` objects. In the first, `extrapolation`, M
 extrapolation <- 0 >= messBrick
 
 # Plot Extrapolation
-plotLayers(extrapolation, land = land, landCol = "black", title = "Areas of extrapolation according to MESS,\n 5m to 800m")
+plotLayers(extrapolation, land = land, landCol = "black", 
+           title = "Areas of extrapolation according to MESS,\n 5m to 800m")
 ```
 
 In the second `RasterBrick`, `noExtrapolation`, I reclassify the layers so that positive MESS values = 1 and MESS values less than or equal to 0 = 0. This will make plotting cropping out areas of extrapolation from the niche model projection easier. I simply multiply the thresholded GLM map by the `noExtrapolation` `RasterBrick`.
