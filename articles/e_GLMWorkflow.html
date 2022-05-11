@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-05-05</h4>
+            <h4 data-toc-skip class="date">2022-05-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/e_GLMWorkflow.Rmd" class="external-link"><code>vignettes/e_GLMWorkflow.Rmd</code></a></small>
       <div class="hidden name"><code>e_GLMWorkflow.Rmd</code></div>
@@ -134,7 +134,7 @@
 <span class="co">## plan transition to sf/stars/terra functions using GDAL and PROJ</span>
 <span class="co">## at your earliest convenience.</span>
 <span class="co">## </span>
-<span class="co">## rgdal: version: 1.5-31, (SVN revision 1171)</span>
+<span class="co">## rgdal: version: 1.5-32, (SVN revision 1176)</span>
 <span class="co">## Geospatial Data Abstraction Library extensions to R successfully loaded</span>
 <span class="co">## Loaded GDAL runtime: GDAL 3.0.4, released 2020/01/28</span>
 <span class="co">## Path to GDAL shared files: /usr/share/gdal</span>
@@ -157,7 +157,7 @@
 <div class="section level2">
 <h2 id="data-inputs">Data Inputs<a class="anchor" aria-label="anchor" href="#data-inputs"></a>
 </h2>
-<p>First thing’s first. Distributional models are based on coordinates of species’ occurrences. Here is an example dataset of <em>Steindachneria argentia</em>, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain <em>et al.</em>, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via <code>occCite</code> (Owens <em>et al.</em>, 2021).</p>
+<p>First thing’s first. Distributional models are based on coordinates of species’ occurrences. Here is an example dataset of <em>Steindachneria argentea</em>, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain <em>et al.</em>, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via <code>occCite</code> (Owens <em>et al.</em>, 2021).</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">occs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/Steindachneria_argentea.csv"</span>, 
                              package<span class="op">=</span><span class="st">'voluModel'</span><span class="op">)</span><span class="op">)</span>
@@ -208,7 +208,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpQBAVWA/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpJgx3S2/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -259,7 +259,7 @@
 <code class="sourceCode R"><span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"medium"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
 <span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs2 <span class="op">=</span> <span class="va">occsClean</span>, 
              occs1Name <span class="op">=</span> <span class="st">"Original"</span>, occs2Name <span class="op">=</span> <span class="st">"Cleaned"</span>, 
-             spName <span class="op">=</span> <span class="st">"Steindachneria argentia"</span>, 
+             spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, 
              land <span class="op">=</span> <span class="va">land</span><span class="op">)</span></code></pre></div>
 <p><img src="e_GLMWorkflow_files/figure-html/downsample%20to%20voxel-1.png"><!-- --></p>
 <p>Next, we generate a sampling region for the model based on occurrence points. Note that ideally when you’re modeling you would carefully curate this background sampling region to make sure it truly approximates the area accessible to the species you are modeling. If you write the shapefile to disk, you can open and edit it in any GIS software you choose, if you have reason to believe <code><a href="../reference/marineBackground.html">marineBackground()</a></code> falls short of estimating the true accessible are for a species. For more information, see <a href="https://hannahlowens.github.io/voluModel/articles/c_DataSampling.html" class="external-link">the environmental data processing tutorial</a>.</p>
@@ -356,22 +356,22 @@
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.6531  -0.1535  -0.0773  -0.0503   3.6176  </span>
+<span class="co">## -0.6817  -0.1504  -0.0763  -0.0511   3.6263  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -1.5917685  1.3293439  -1.197 0.231147    </span>
-<span class="co">## Temperature     -0.1917031  0.0650942  -2.945 0.003229 ** </span>
-<span class="co">## AOU             -0.0388954  0.0110202  -3.529 0.000416 ***</span>
-<span class="co">## Temperature:AOU  0.0036504  0.0007659   4.766 1.88e-06 ***</span>
+<span class="co">## (Intercept)     -1.7424998  1.3722102  -1.270 0.204138    </span>
+<span class="co">## Temperature     -0.1870495  0.0671054  -2.787 0.005313 ** </span>
+<span class="co">## AOU             -0.0406570  0.0114442  -3.553 0.000381 ***</span>
+<span class="co">## Temperature:AOU  0.0038692  0.0007999   4.837 1.32e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 221.06  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 229.06</span>
+<span class="co">## Residual deviance: 220.28  on 2319  degrees of freedom</span>
+<span class="co">## AIC: 228.28</span>
 <span class="co">## </span>
 <span class="co">## Number of Fisher Scoring iterations: 8</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage, the niche model is being used to model the geographic distribution of putatively suitable habit for Luminous Hake (an ENM becomes an SDM).</p>

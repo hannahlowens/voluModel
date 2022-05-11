@@ -102,7 +102,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-05-05</h4>
+            <h4 data-toc-skip class="date">2022-05-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/a_Introduction.Rmd" class="external-link"><code>vignettes/a_Introduction.Rmd</code></a></small>
       <div class="hidden name"><code>a_Introduction.Rmd</code></div>
@@ -127,7 +127,7 @@
 <div class="section level2">
 <h2 id="data-inputs">Data Inputs<a class="anchor" aria-label="anchor" href="#data-inputs"></a>
 </h2>
-<p>First thing’s first. Distributional models are based on coordinates of species’ occurrences. We start with and example occurrence dataset of <em>Steindachneria argentia</em>, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain <em>et al.</em>, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens <em>et al.</em>, 2021).</p>
+<p>First thing’s first. Distributional models are based on coordinates of species’ occurrences. We start with and example occurrence dataset of <em>Steindachneria argentea</em>, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain <em>et al.</em>, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens <em>et al.</em>, 2021).</p>
 <p>Here is how the occurrence data file is structured, and where the occurrences we will be using are located.</p>
 <pre><code><span class="co">##   decimalLatitude decimalLongitude  depth</span>
 <span class="co">## 1        7.450000        -54.90000 260.50</span>
@@ -202,7 +202,7 @@
 <div class="section level2">
 <h2 id="niche-envelope-models">Niche envelope models<a class="anchor" aria-label="anchor" href="#niche-envelope-models"></a>
 </h2>
-<p>Now I will construct the simple 2D envelope models, in which we define suitable conditions as those within the maximum and minimum conditions at which <em>Steindachneria argentia</em> has been observed. The results will be simple 2D distribution maps–one based on surface conditions and one based on bottom conditions.</p>
+<p>Now I will construct the simple 2D envelope models, in which we define suitable conditions as those within the maximum and minimum conditions at which <em>Steindachneria argentea</em> has been observed. The results will be simple 2D distribution maps–one based on surface conditions and one based on bottom conditions.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Get limits, surface</span>
 <span class="va">tempLims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">occsWdataSurface</span><span class="op">$</span><span class="va">Temperature</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
