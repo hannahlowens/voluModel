@@ -46,7 +46,7 @@ library(latticeExtra) # Some fancy plotting
 
 # Data Inputs
 
-First thing's first. Distributional models are based on coordinates of species' occurrences. We start with and example occurrence dataset of *Steindachneria argentia*, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens *et al.*, 2021).
+First thing's first. Distributional models are based on coordinates of species' occurrences. We start with and example occurrence dataset of *Steindachneria argentea*, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens *et al.*, 2021).
 
 ```{r loading data, message=FALSE, warning=FALSE, include=FALSE}
 # Temperature
@@ -111,7 +111,7 @@ head(occurrences)
 
 land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
 pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
-             spName = "Steindachneria argentia", ptSize = 3,
+             spName = "Steindachneria argentea", ptSize = 3,
              land = land)
 rm(indices, layerNames, tempPoints, i, downsampledOccs, occs)
 ```
@@ -255,7 +255,7 @@ rm(oxyVals, tempVals, vals)
 
 # Niche envelope models
 
-Now I will construct the simple 2D envelope models, in which we define suitable conditions as those within the maximum and minimum conditions at which *Steindachneria argentia* has been observed. The results will be simple 2D distribution maps--one based on surface conditions and one based on bottom conditions.
+Now I will construct the simple 2D envelope models, in which we define suitable conditions as those within the maximum and minimum conditions at which *Steindachneria argentea* has been observed. The results will be simple 2D distribution maps--one based on surface conditions and one based on bottom conditions.
 
 ```{r generate 2D envelope niche models}
 # Get limits, surface

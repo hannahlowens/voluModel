@@ -44,7 +44,7 @@ library(viridisLite) # For high-contrast plotting palettes
 
 # Data Inputs
 
-First thing's first. Distributional models are based on coordinates of species' occurrences. Here is an example dataset of *Steindachneria argentia*, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via `occCite` (Owens *et al.*, 2021). 
+First thing's first. Distributional models are based on coordinates of species' occurrences. Here is an example dataset of *Steindachneria argentea*, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via `occCite` (Owens *et al.*, 2021). 
 
 ```{r occurrence data, eval=T}
 occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
@@ -128,7 +128,7 @@ print(paste0("Original number of points: ", nrow(occs), "; number of downsampled
 land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
 pointCompMap(occs1 = occs, occs2 = occsClean, 
              occs1Name = "Original", occs2Name = "Cleaned", 
-             spName = "Steindachneria argentia", 
+             spName = "Steindachneria argentea", 
              land = land)
 ```
 

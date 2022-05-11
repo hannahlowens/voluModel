@@ -98,10 +98,12 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>3. Environmental Data Sampling</h1>
-                        <h4 data-toc-skip class="author">Hannah L. Owens</h4>
-                        <h4 data-toc-skip class="author">Carsten Rahbek</h4>
+                        <h4 data-toc-skip class="author">Hannah L.
+Owens</h4>
+                        <h4 data-toc-skip class="author">Carsten
+Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-03-28</h4>
+            <h4 data-toc-skip class="date">2022-05-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/c_DataSampling.Rmd" class="external-link"><code>vignettes/c_DataSampling.Rmd</code></a></small>
       <div class="hidden name"><code>c_DataSampling.Rmd</code></div>
@@ -113,7 +115,17 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>As stated in the <a href="https://hannahlowens.github.io/voluModel/articles/a_Introduction.html" class="external-link">introduction to this package</a>, one of the key contributions of <code>voluModel</code> is the way it handles the extraction of environmental data for niche modeling. Specifically, environmental data at presences, absences, pseudoabsences, and/or background points can be extracted from environmental data <code>RasterBrick</code> objects based on depth in addition to horizontal coordinates. Another useful tool provided with <code>voluModel</code> is <code><a href="../reference/marineBackground.html">marineBackground()</a></code>, which helps the user generate training regions from which background or pseudoabsence data are drawn. This is where we will start, so let’s get into it.</p>
+<p>As stated in the <a href="https://hannahlowens.github.io/voluModel/articles/a_Introduction.html" class="external-link">introduction
+to this package</a>, one of the key contributions of
+<code>voluModel</code> is the way it handles the extraction of
+environmental data for niche modeling. Specifically, environmental data
+at presences, absences, pseudoabsences, and/or background points can be
+extracted from environmental data <code>RasterBrick</code> objects based
+on depth in addition to horizontal coordinates. Another useful tool
+provided with <code>voluModel</code> is <code><a href="../reference/marineBackground.html">marineBackground()</a></code>,
+which helps the user generate training regions from which background or
+pseudoabsence data are drawn. This is where we will start, so let’s get
+into it.</p>
 <p>Here are the packages you will need.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hannahlowens.github.io/voluModel/" class="external-link">voluModel</a></span><span class="op">)</span> <span class="co"># Because of course</span>
@@ -125,16 +137,48 @@
 <div class="section level2">
 <h2 id="generating-repeatable-training-regions">Generating Repeatable Training Regions<a class="anchor" aria-label="anchor" href="#generating-repeatable-training-regions"></a>
 </h2>
-<p>To generate a sample of pseudoabsences and/or background points, it is important to consider the environments the species of interest can access (Barve <em>et al.</em>, 2011). There is ample discussion in the literature on how to best delimit a niche model training region (also variously called M or the background region), and we will not review the issue here. In the absence of specific information on species’ dispersal capabilities, algorithmically generating a repeatable sampling background from a clear set of rules may be suitable approximation, or a jumping-off point for hand-curating training regions in a GIS software of choice.</p>
-<p>We designed <code><a href="../reference/marineBackground.html">marineBackground()</a></code> as a wrapper around , a function provided by the <code>rangeBuilder</code> package (Davis-Rabosky <em>et al.</em>, 2016) which generates background sampling regions by fitting an alpha hull polygon around an occurrence point dataset. Let’s look at how <code><a href="../reference/marineBackground.html">marineBackground()</a></code> (and by extension <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>) fits alpha hull polygons, based on species occurrence data. The occurrence dataset is our <em>Steindachneria argentia</em>, Luminous Hake, data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain <em>et al.</em>, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via <code>occCite</code> (Owens <em>et al.</em>, 2021).</p>
+<p>To generate a sample of pseudoabsences and/or background points, it
+is important to consider the environments the species of interest can
+access (Barve <em>et al.</em>, 2011). There is ample discussion in the
+literature on how to best delimit a niche model training region (also
+variously called M or the background region), and we will not review the
+issue here. In the absence of specific information on species’ dispersal
+capabilities, algorithmically generating a repeatable sampling
+background from a clear set of rules may be suitable approximation, or a
+jumping-off point for hand-curating training regions in a GIS software
+of choice.</p>
+<p>We designed <code><a href="../reference/marineBackground.html">marineBackground()</a></code> as a wrapper around , a
+function provided by the <code>rangeBuilder</code> package
+(Davis-Rabosky <em>et al.</em>, 2016) which generates background
+sampling regions by fitting an alpha hull polygon around an occurrence
+point dataset. Let’s look at how <code><a href="../reference/marineBackground.html">marineBackground()</a></code> (and by
+extension <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>) fits alpha hull polygons,
+based on species occurrence data. The occurrence dataset is our
+<em>Steindachneria argentea</em>, Luminous Hake, data downloaded via R
+(R Core Team, 2020) from GBIF (Chamberlain <em>et al.</em>, 2021;
+Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via
+<code>occCite</code> (Owens <em>et al.</em>, 2021).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Map occurrences</span>
 <span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"medium"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
 <span class="fu"><a href="../reference/pointMap.html">pointMap</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, ptCol <span class="op">=</span> <span class="st">"orange"</span>, landCol <span class="op">=</span> <span class="st">"black"</span>,
-             spName <span class="op">=</span> <span class="st">"Steindachneria argentia"</span>, ptSize <span class="op">=</span> <span class="fl">3</span>,
+             spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, ptSize <span class="op">=</span> <span class="fl">3</span>,
              land <span class="op">=</span> <span class="va">land</span><span class="op">)</span></code></pre></div>
 <p><img src="c_DataSampling_files/figure-html/occurrence%20dataset-1.png"><!-- --></p>
-<p><code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>, which is run within <code><a href="../reference/marineBackground.html">marineBackground()</a></code> generates a polygon (or polygons) that can be used as a training region by fitting an alpha hull (or hulls) around an occurrence dataset. Alpha is a parameter that controls the complexity of the polygon(s) that is being fit around the occurrences. <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> adjusts the alpha parameter iteratively, until it meets criteria the user can set via the arguments <code>fraction</code>, which is the minimum fraction of occurrences that must be contained within the polygon(s), <code>partCount</code>, which is the maximum number of polygons generated to fit the data, and <code>buff</code>, which is the permissible distance from a point to the edge of a polyon in meters. <code><a href="../reference/marineBackground.html">marineBackground()</a></code> takes these and many of the same other arguments as <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>. Here’s how it works.</p>
+<p><code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>, which is run within
+<code><a href="../reference/marineBackground.html">marineBackground()</a></code> generates a polygon (or polygons) that
+can be used as a training region by fitting an alpha hull (or hulls)
+around an occurrence dataset. Alpha is a parameter that controls the
+complexity of the polygon(s) that is being fit around the occurrences.
+<code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> adjusts the alpha parameter
+iteratively, until it meets criteria the user can set via the arguments
+<code>fraction</code>, which is the minimum fraction of occurrences that
+must be contained within the polygon(s), <code>partCount</code>, which
+is the maximum number of polygons generated to fit the data, and
+<code>buff</code>, which is the permissible distance from a point to the
+edge of a polyon in meters. <code><a href="../reference/marineBackground.html">marineBackground()</a></code> takes these
+and many of the same other arguments as
+<code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>. Here’s how it works.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">trainingRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occurrences</span>, 
                                 fraction <span class="op">=</span> <span class="fl">1</span>, partCount <span class="op">=</span> <span class="fl">1</span>, buff <span class="op">=</span> <span class="fl">1000000</span>,
@@ -147,7 +191,15 @@
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">trainingRegion</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
 <p><img src="alphaHullDemonstration-1.png" width="700"></p>
-<p>What parameters you choose to fit the alpha hull will depend on the biology of the organism you are trying to model (e.g. you may choose a much smaller buffer for a sessile organism than you would for a highly vagile migratory species), your data, and the particulars of your study system and the geography of your study area. You may need to experiment to find something that looks sensible. If you do not provide a pre-defined buffer, <code><a href="../reference/marineBackground.html">marineBackground()</a></code> will calculate a buffer that is the mean of the top and bottom 10% of distances between points in the dataset.</p>
+<p>What parameters you choose to fit the alpha hull will depend on the
+biology of the organism you are trying to model (e.g. you may choose a
+much smaller buffer for a sessile organism than you would for a highly
+vagile migratory species), your data, and the particulars of your study
+system and the geography of your study area. You may need to experiment
+to find something that looks sensible. If you do not provide a
+pre-defined buffer, <code><a href="../reference/marineBackground.html">marineBackground()</a></code> will calculate a
+buffer that is the mean of the top and bottom 10% of distances between
+points in the dataset.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">trainingRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occurrences</span>,
                                 fraction <span class="op">=</span> <span class="fl">1</span>, partCount <span class="op">=</span> <span class="fl">1</span>, 
@@ -159,7 +211,16 @@
      xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">105</span>, <span class="op">-</span><span class="fl">40</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">45</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">trainingRegion</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="basicMarineBackgroundDemonstration-1.png" width="700"> You may have noticed that the training regions in the above examples include some areas of the Pacific where the species has not been observed, and cannot access. This could cause problems if it is used to train your model. You <em>could</em> delete this area by hand in your favorite GIS software, OR you could change <code>clipToOcean</code> to <code>TRUE</code> in <code><a href="../reference/marineBackground.html">marineBackground()</a></code>, and any polygon fragments that do not contain an occurrence will be deleted automatically. This is a key difference from <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>.</p>
+<p><img src="basicMarineBackgroundDemonstration-1.png" width="700"></p>
+<p>You may have noticed that the training regions in the above examples
+include some areas of the Pacific where the species has not been
+observed, and cannot access. This could cause problems if it is used to
+train your model. You <em>could</em> delete this area by hand in your
+favorite GIS software, OR you could change <code>clipToOcean</code> to
+<code>TRUE</code> in <code><a href="../reference/marineBackground.html">marineBackground()</a></code>, and any polygon
+fragments that do not contain an occurrence will be deleted
+automatically. This is a key difference from
+<code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">trainingRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occurrences</span>, 
                                 fraction <span class="op">=</span> <span class="fl">.95</span>, partCount <span class="op">=</span> <span class="fl">2</span>, buff <span class="op">=</span> <span class="fl">1000000</span>, 
@@ -174,7 +235,15 @@
 <pre><code><span class="co">## Using decimalLongitude and decimalLatitude</span>
 <span class="co">##  as x and y coordinates, respectively.</span></code></pre>
 <p><img src="clipToOceanDemo-1.png" width="700"></p>
-<p>The last major difference between <code><a href="../reference/marineBackground.html">marineBackground()</a></code> and <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> is how the functions handle training regions that are adjacent to the antimeridian (i.e. 180° E or W). <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> truncates polygons at this line, which can lead to some strange-looking training areas or fatal errors. <code><a href="../reference/marineBackground.html">marineBackground()</a></code>, on the other hand, wraps polygons across the meridian and merges them if they overlap. For this example, I am going to manipulate the longitudinal coordinates of our Luminous Hake dataset to generate a quick fictional example.</p>
+<p>The last major difference between <code><a href="../reference/marineBackground.html">marineBackground()</a></code> and
+<code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> is how the functions handle training
+regions that are adjacent to the antimeridian (i.e. 180° E or W).
+<code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> truncates polygons at this line,
+which can lead to some strange-looking training areas or fatal errors.
+<code><a href="../reference/marineBackground.html">marineBackground()</a></code>, on the other hand, wraps polygons
+across the meridian and merges them if they overlap. For this example, I
+am going to manipulate the longitudinal coordinates of our Luminous Hake
+dataset to generate a quick fictional example.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Fictional example occurrences</span>
 <span class="va">pacificOccs</span> <span class="op">&lt;-</span> <span class="va">occurrences</span>
@@ -196,9 +265,25 @@
      pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pacificTrainingRegion</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="meridianWrapDemo-1.png" width="700"> # 3D Data Extraction</p>
-<p>Next, we will cover how to extract environmental data from a <code>RasterBrick</code> object using 3D occurrence coordinates. The occurrences I will use to demonstrate this are the Luminous Hake occurrences from the previous section. The environmental dataset I will use as an example is temperature (Locarnini <em>et al.</em>, 2018) from the World Ocean Atlas (WOA; Garcia <em>et al.</em>, 2019). I have chosen to focus on temperature for simple illustrative purposes–we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient.</p>
-<p>This chunk of code loads the example shapefile, which results in a <code>SpatialPointsDataFrame</code>:</p>
+<p><img src="meridianWrapDemo-1.png" width="700"></p>
+</div>
+<div class="section level2">
+<h2 id="d-data-extraction">3D Data Extraction<a class="anchor" aria-label="anchor" href="#d-data-extraction"></a>
+</h2>
+<p>Next, we will cover how to extract environmental data from a
+<code>RasterBrick</code> object using 3D occurrence coordinates. The
+occurrences I will use to demonstrate this are the Luminous Hake
+occurrences from the previous section. The environmental dataset I will
+use as an example is temperature (Locarnini <em>et al.</em>, 2018) from
+the World Ocean Atlas (WOA; Garcia <em>et al.</em>, 2019). I have chosen
+to focus on temperature for simple illustrative purposes–we recommend
+you explore additional variables from the World Ocean Atlas and other
+sources. These data are supplied by the World Ocean Atlas as point
+shapefiles; the version supplied here has been cropped between -110 and
+-40 longitude and between -5 and 50 latitude to make it more
+memory-efficient.</p>
+<p>This chunk of code loads the example shapefile, which results in a
+<code>SpatialPointsDataFrame</code>:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/woa18_decav_t00mn01_cropped.zip"</span>, 
@@ -207,7 +292,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpS9gb5v/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpEsH7ab/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -287,7 +372,19 @@
 <span class="co">## 4     NA</span>
 <span class="co">## 5     NA</span>
 <span class="co">## 6     NA</span></code></pre>
-<p>As you can see, each point is a line in the <code>SpatialPointsDataFrame</code>; each column is a depth layer at that point–“d5M” translates to “5 meters deep”. For more details on how to process environmental data, see <a href="https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html" class="external-link">the raster data tutorial</a>. This next chunk converts the <code>SpatialPointsDataFrame</code> to a <code>RasterBrick</code>; the layers of the <code>RasterBrick</code> are then named the same as the column names of the <code>SpatialPointsDataFrame</code>. I strip the “d” and “M” from the column names so they are a little easier to use as depth coordinates. Note that <code>R</code> will not allow the raster names to be numeric, so it adds an “X” to the beginning of each column name. Don’t worry about this–<code>voluModel</code> can handle numbers preceded by “X”s without user intervention.</p>
+<p>As you can see, each point is a line in the
+<code>SpatialPointsDataFrame</code>; each column is a depth layer at
+that point–“d5M” translates to “5 meters deep”. For more details on how
+to process environmental data, see <a href="https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html" class="external-link">the
+raster data tutorial</a>. This next chunk converts the
+<code>SpatialPointsDataFrame</code> to a <code>RasterBrick</code>; the
+layers of the <code>RasterBrick</code> are then named the same as the
+column names of the <code>SpatialPointsDataFrame</code>. I strip the “d”
+and “M” from the column names so they are a little easier to use as
+depth coordinates. Note that <code>R</code> will not allow the raster
+names to be numeric, so it adds an “X” to the beginning of each column
+name. Don’t worry about this–<code>voluModel</code> can handle numbers
+preceded by “X”s without user intervention.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Creating a RasterBrick</span>
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span>,
@@ -301,7 +398,14 @@
 <span class="co"># Here's a sampling of depth plots from the 102 depth layers available</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span>, <span class="fl">50</span>, <span class="fl">100</span><span class="op">)</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <p><img src="c_DataSampling_files/figure-html/temperature%20to%20compatible%20RasterBrick-1.png"><!-- --></p>
-<p>At this point, you may have noticed a message popping up about which columns <code>voluModel</code> is interpreting as coordinates. <code>voluModel</code> is fairly flexible in how the coordinate columns are named, and it relies on names instead of column position to interpret x, y, and z (or latitude, longitude, and depth) coordinates. We do this to make <code>voluModel</code> as flexible as possible to a diversity of input formats, although English is the only supported language at the moment. Here are some examples of names that work.</p>
+<p>At this point, you may have noticed a message popping up about which
+columns <code>voluModel</code> is interpreting as coordinates.
+<code>voluModel</code> is fairly flexible in how the coordinate columns
+are named, and it relies on names instead of column position to
+interpret x, y, and z (or latitude, longitude, and depth) coordinates.
+We do this to make <code>voluModel</code> as flexible as possible to a
+diversity of input formats, although English is the only supported
+language at the moment. Here are some examples of names that work.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">occsTest</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="op">]</span>
 <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occsTest</span>, envBrick <span class="op">=</span> <span class="va">temperature</span><span class="op">)</span></code></pre></div>
@@ -325,7 +429,15 @@
 <pre><code><span class="co">## NULL</span></code></pre>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">occsTest</span><span class="op">)</span></code></pre></div>
-<p>One optional step in a niche modeling workflow is to down-sample occurrence data to the same resolution as the environmental data. We do this to avoid over-fitting the model due to biased sampling. The next chunk of code downsamples occurrence points so that there is only one per voxel (i.e. 3D pixel) of environmental data. It does this by looping through each layer of the <code>RasterBrick</code>, selecting the occurrence points with depths closest to the depths represented by that layer in the raster brick. I then downsample these points using <code>voluModel</code>’s <code><a href="../reference/downsample.html">downsample()</a></code> function.</p>
+<p>One optional step in a niche modeling workflow is to down-sample
+occurrence data to the same resolution as the environmental data. We do
+this to avoid over-fitting the model due to biased sampling. The next
+chunk of code downsamples occurrence points so that there is only one
+per voxel (i.e. 3D pixel) of environmental data. It does this by looping
+through each layer of the <code>RasterBrick</code>, selecting the
+occurrence points with depths closest to the depths represented by that
+layer in the raster brick. I then downsample these points using
+<code>voluModel</code>’s <code><a href="../reference/downsample.html">downsample()</a></code> function.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">occurrences</span> <span class="op">&lt;-</span> <span class="va">occsClean</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLatitude"</span>, <span class="st">"decimalLongitude"</span>, <span class="st">"depth"</span><span class="op">)</span><span class="op">]</span> 
 
@@ -357,11 +469,15 @@
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Original number of points: "</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occs</span><span class="op">)</span>, <span class="st">"; number of downsampled occs: "</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] "Original number of points: 301; number of downsampled occs: 82"</span></code></pre>
-<p>The resampled points returned by <code><a href="../reference/downsample.html">downsample()</a></code> are horizontally centered in each voxel. The red dots in the plot show occurrences from the original dataset; the orange dots show the downsampled dataset. Not all of the orange dots may be visible underneath the red dots.</p>
+<p>The resampled points returned by <code><a href="../reference/downsample.html">downsample()</a></code> are
+horizontally centered in each voxel. The red dots in the plot show
+occurrences from the original dataset; the orange dots show the
+downsampled dataset. Not all of the orange dots may be visible
+underneath the red dots.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs2 <span class="op">=</span> <span class="va">occurrences</span>, 
              occs1Name <span class="op">=</span> <span class="st">"Original"</span>, occs2Name <span class="op">=</span> <span class="st">"Cleaned"</span>, 
-             spName <span class="op">=</span> <span class="st">"Steindachneria argentia"</span>, 
+             spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, 
              land <span class="op">=</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"medium"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Using decimalLongitude and decimalLatitude</span>
 <span class="co">##  as x and y coordinates, respectively.</span></code></pre>
@@ -375,7 +491,14 @@
 <pre><code><span class="co">## Warning: Use of `occ_dat[[occ_datIndices$yIndex]]` is discouraged. Use</span>
 <span class="co">## `.data[[occ_datIndices$yIndex]]` instead.</span></code></pre>
 <p><img src="c_DataSampling_files/figure-html/plot%20downsample-1.png"><!-- --></p>
-<p>At this point, we can demonstrate one of the key contributions of <code>voluModel</code>– an improvement in how the environmental data are extracted at species’ occurrences. <code>voluModel</code> samples environmental conditions at the depth where each record was located, instead of extrapolating to surface or bottom conditions. Finally, we add a column called “response” and fill it by repeating “1”, to signify that these occurrences should be interpreted as presences for the purposes of modeling.</p>
+<p>At this point, we can demonstrate one of the key contributions of
+<code>voluModel</code>– an improvement in how the environmental data are
+extracted at species’ occurrences. <code>voluModel</code> samples
+environmental conditions at the depth where each record was located,
+instead of extrapolating to surface or bottom conditions. Finally, we
+add a column called “response” and fill it by repeating “1”, to signify
+that these occurrences should be interpreted as presences for the
+purposes of modeling.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Extraction</span>
 <span class="va">occurrences</span><span class="op">$</span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, envBrick <span class="op">=</span> <span class="va">temperature</span><span class="op">)</span></code></pre></div>
@@ -394,13 +517,34 @@
 <span class="co">## 8             -84.5            26.5   450       9.145        1</span>
 <span class="co">## 10            -91.5            27.5   450       9.091        1</span>
 <span class="co">## 18            -67.5            18.5   375      15.952        1</span></code></pre>
-<p>In a “real” modeling scenario, you would extract all your environmental variables using <code><a href="../reference/xyzSample.html">xyzSample()</a></code>, then add the response column. Or add the response column first or in the middle. I’m not the boss of you.</p>
+<p>In a “real” modeling scenario, you would extract all your
+environmental variables using <code><a href="../reference/xyzSample.html">xyzSample()</a></code>, then add the
+response column. Or add the response column first or in the middle. I’m
+not the boss of you.</p>
 </div>
 <div class="section level2">
 <h2 id="background-data-extraction">Background Data Extraction<a class="anchor" aria-label="anchor" href="#background-data-extraction"></a>
 </h2>
-<p>As discussed above, some modeling methods require the generation of a sampling region from which training/pseudoabsence/background points are drawn. The training region should approximately answer the question “What environments are most likely to have been experienced by Lumious Hakes?” Our answer to this question for the purposes of this tutorial is represented in <code>trainingRegion</code>, which we generated above using <code><a href="../reference/marineBackground.html">marineBackground()</a></code>. Next, we generate 3D training points within this region using the <code><a href="../reference/mSampling3D.html">mSampling3D()</a></code> function. The function takes an occurrence <code>data.frame</code>, a <code>RasterBrick</code> that will serve as a template for the resolution of the training points, a <code>SpatialPolygons</code> object representing the training region, and, optionally, information on the range of depths from which the function should sample. If you have reason to believe the species you are modeling can access depths higher or lower than those represented by occurrences, you can specify a maximum and minimum training depth from which to draw occurrence points. <code><a href="../reference/mSampling3D.html">mSampling3D()</a></code> by default draws training points from the full depth extent of the supplied <code>RasterBrick</code>.</p>
-<p>For this example, I am sampling training points from 50 to 1500 m.</p>
+<p>As discussed above, some modeling methods require the generation of a
+sampling region from which training/pseudoabsence/background points are
+drawn. The training region should approximately answer the question
+“What environments are most likely to have been experienced by Lumious
+Hakes?” Our answer to this question for the purposes of this tutorial is
+represented in <code>trainingRegion</code>, which we generated above
+using <code><a href="../reference/marineBackground.html">marineBackground()</a></code>. Next, we generate 3D training
+points within this region using the <code><a href="../reference/mSampling3D.html">mSampling3D()</a></code> function.
+The function takes an occurrence <code>data.frame</code>, a
+<code>RasterBrick</code> that will serve as a template for the
+resolution of the training points, a <code>SpatialPolygons</code> object
+representing the training region, and, optionally, information on the
+range of depths from which the function should sample. If you have
+reason to believe the species you are modeling can access depths higher
+or lower than those represented by occurrences, you can specify a
+maximum and minimum training depth from which to draw occurrence points.
+<code><a href="../reference/mSampling3D.html">mSampling3D()</a></code> by default draws training points from the
+full depth extent of the supplied <code>RasterBrick</code>.</p>
+<p>For this example, I am sampling training points from 50 to 1500
+m.</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Background</span>
 <span class="va">backgroundVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mSampling3D.html">mSampling3D</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, 
@@ -413,7 +557,9 @@
 <code class="sourceCode R"><span class="va">backgroundVals</span><span class="op">$</span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">backgroundVals</span>, <span class="va">temperature</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span>
 <span class="co">##  as x, y, and z coordinates, respectively.</span></code></pre>
-<p>Once the points are sampled, we add a column called “response” and fill it by repeating “0”, to signify that these occurrences should be interpreted as absences for the purposes of modeling.</p>
+<p>Once the points are sampled, we add a column called “response” and
+fill it by repeating “0”, to signify that these occurrences should be
+interpreted as absences for the purposes of modeling.</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Add "response" column for modeling</span>
 <span class="va">backgroundVals</span><span class="op">$</span><span class="va">response</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">)</span><span class="op">)</span>
@@ -427,7 +573,17 @@
 <span class="co">## 4            -64.5            43.5    50       3.679        0</span>
 <span class="co">## 5            -69.5            42.5    50       6.187        0</span>
 <span class="co">## 6            -68.5            42.5    50       6.422        0</span></code></pre>
-<p>It is important to note that this background data represents EVERY voxel within the training region that is not occupied by observances. Depending on your study design and the modeling algorithm you are using, these data will need to be subsampled. You could choose a random sample, select points based on geography, or any number of other strategies. Below is just one example–weighting the background points by their environmental dissimilarity to the Luminous Hake occurrence points. This manner of downsampling may be appropriate for modeling methods that interpret training points as pseudoabsences, such as generalized linear modeling, but will lead to overfit models when using algorithms like Maxent.</p>
+<p>It is important to note that this background data represents EVERY
+voxel within the training region that is not occupied by observances.
+Depending on your study design and the modeling algorithm you are using,
+these data will need to be subsampled. You could choose a random sample,
+select points based on geography, or any number of other strategies.
+Below is just one example–weighting the background points by their
+environmental dissimilarity to the Luminous Hake occurrence points. This
+manner of downsampling may be appropriate for modeling methods that
+interpret training points as pseudoabsences, such as generalized linear
+modeling, but will lead to overfit models when using algorithms like
+Maxent.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Sample background points weighted by distance from mean of occurrence temperatures</span>
 <span class="va">meanTemp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temperature"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
@@ -455,53 +611,146 @@
        x<span class="op">=</span><span class="st">"Temperature (C)"</span>, y <span class="op">=</span> <span class="st">"Density"</span><span class="op">)</span><span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="c_DataSampling_files/figure-html/glm%20data%20prep%20part%202-1.png"><!-- --></p>
-<p>For a more complex, multivariate example of environmental dissimilarity weighting, refer to the <a href="https://hannahlowens.github.io/voluModel/articles/e_GLMWorkflow.html" class="external-link">GLM workflow</a>.</p>
+<p>For a more complex, multivariate example of environmental
+dissimilarity weighting, refer to the <a href="https://hannahlowens.github.io/voluModel/articles/e_GLMWorkflow.html" class="external-link">GLM
+workflow</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<p>Bakis Y (2021): TU_Fish. v1.1. No organization. Dataset/Occurrence. <a href="https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1" class="external-link uri">https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1</a> Accessed via OBIS on 2020-11-04.</p>
-<p>Bentley A (2022). KUBI Ichthyology Collection. Version 17.80. University of Kansas Biodiversity Institute. DOI: 10.15468/mgjasg. Accessed via GBIF on 2020-10-13.</p>
-<p>Bentley A (2022). KUBI Ichthyology Tissue Collection. Version 18.68. University of Kansas Biodiversity Institute. DOI: 10.15468/jmsnwg. Accessed via GBIF on 2020-10-13.</p>
-<p>Buckup P A (2022). Coleção Ictiológica (MNRJ), Museu Nacional (MN), Universidade Federal do Rio de Janeiro(UFRJ). Version 157.1487. Museu Nacional / UFRJ. DOI: 10.15468/lluzfl. Accessed via GBIF on 2020-10-13.</p>
-<p>Catania D, Fong J (2022). CAS Ichthyology (ICH). Version 150.300. California Academy of Sciences. DOI: 10.15468/efh2ib. Accessed via GBIF on 2020-10-13.</p>
-<p>Chakrabarty P (2019). LSUMZ (LSU MNS) Fishes Collection. Version 2.2. Louisiana State University Museum of Natural Science. DOI: 10.15468/gbnym3. Accessed via GBIF on 2020-10-13.</p>
-<p>Chamberlain S, Barve V, Mcglinn D, Oldoni D, Desmet P, Geffert L, Ram K (2021). rgbif: Interface to the Global Biodiversity Information Facility API. R package version 3.6.0, <a href="https://CRAN.R-project.org/package=rgbif" class="external-link uri">https://CRAN.R-project.org/package=rgbif</a>.</p>
-<p>Chamberlain S, Boettiger C (2017). “R Python, and Ruby clients for GBIF species occurrence data.” PeerJ PrePrints. DOI: 10.7287/peerj.preprints.3304v1.</p>
-<p>Davis-Rabosky AR, Cox CL, Rabosky DL, Title PO, Holmes IA, Feldman A, McGuire JA (2016). Coral snakes predict the evolution of mimicry across New World snakes. <em>Nature Communications</em> 7:11484. DOI: 10.1038/ncomms11484</p>
-<p>Espinosa Pérez H, Comisión nacional para el conocimiento y uso de la biodiversidad C (2021). Computarización de la Colección Nacional de Peces del Instituto de Biología UNAM. Version 1.9. Comisión nacional para el conocimiento y uso de la biodiversidad. DOI: 10.15468/zb2odl. Accessed via GBIF on 2020-10-13.</p>
-<p>Frable B (2019). SIO Marine Vertebrate Collection. Version 1.7. Scripps Institution of Oceanography. DOI: 10.15468/ad1ovc. Accessed via GBIF on 2020-10-13.</p>
-<p>Fishnet2 Portal, <a href="http://www.fishnet2.net" class="external-link uri">http://www.fishnet2.net</a>, Accessed via OBIS on 2020-11-04.</p>
-<p>Froese, R. and D. Pauly. Editors. 2020. FishBase. World Wide Web electronic publication. www.fishbase.org, version (xx/200x). Accessed via OBIS on 2020-11-04.</p>
-<p>Gall L (2021). Vertebrate Zoology Division - Ichthyology, Yale Peabody Museum. Yale University Peabody Museum. DOI: 10.15468/mgyhok. Accessed via GBIF on 2020-10-13.</p>
-<p>García, CB, and Duarte, LO, ‘Columbian Caribbean Sea’, in J.H. Nicholls (comp.) HMAP Data Pages <a href="https://oceanspast.org/hmap_db.php" class="external-link uri">https://oceanspast.org/hmap_db.php</a> Accessed via OBIS on 2020-11-04.</p>
-<p>Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA, Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018). World Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen Utilization, and Oxygen Saturation. A Mishonov Technical Ed.; NOAA Atlas NESDIS 83, 38pp.</p>
-<p>GBIF.org (24 September 2020) GBIF Occurrence Download DOI: 10.15468/dl.efuutj.</p>
-<p>Grant S, McMahan C (2020). Field Museum of Natural History (Zoology) Fish Collection. Version 13.12. Field Museum. DOI: 10.15468/alz7wu. Accessed via GBIF on 2020-10-13.</p>
-<p>Harvard University M, Morris P J (2022). Museum of Comparative Zoology, Harvard University. Version 162.296. Museum of Comparative Zoology, Harvard University. DOI: 10.15468/p5rupv. Accessed via GBIF on 2020-10-13.</p>
-<p>Hendrickson D A, Cohen A E, Casarez M J (2022). University of Texas, Biodiversity Center, Ichthyology Collection (TNHCi). Version 5.175. University of Texas at Austin, Biodiversity Collections. DOI: 10.15468/h8gxdr. Accessed via GBIF on 2020-10-13.</p>
-<p>INVEMAR (2022). SIBM en línea: Sistema de Información sobre Biodiversidad Marina. Santa Marta: Instituto de investigaciones Marinas y Costeras José Benito Vives de Andréis,. <a href="http://www.invemar.org.co/siam/sibm/index.htm" class="external-link uri">http://www.invemar.org.co/siam/sibm/index.htm</a> Accessed via OBIS on 2020-11-04.</p>
-<p>Locarnini RA, Mishonov AV, Baranova OK, Boyer TP, Zweng MM, Garcia HE, Reagan JR, Seidov D, Weathers K, Paver CR, Smolyar I (2018). World Ocean Atlas 2018, Volume 1: Temperature. A. Mishonov Technical Ed.; NOAA Atlas NESDIS 81, 52pp.</p>
-<p>McLean, M.W. (2014). Straightforward Bibliography Management in R Using the RefManager Package. NA, NA. <a href="https://arxiv.org/abs/1403.2036" class="external-link uri">https://arxiv.org/abs/1403.2036</a>.</p>
-<p>McLean, M.W. (2017). RefManageR: Import and Manage BibTeX and BibLaTeX References in R. The Journal of Open Source Software.</p>
-<p>Mertz W (2021). LACM Vertebrate Collection. Version 18.9. Natural History Museum of Los Angeles County. DOI: 10.15468/77rmwd. Accessed via GBIF on 2020-10-13.</p>
-<p>Nakae M, Shinohara G (2018). Fish collection of National Museum of Nature and Science. National Museum of Nature and Science, Japan. Occurrence dataset DOI: 10.15468/w3dzv1 accessed via GBIF.org on yyyy-mm-dd. Accessed via OBIS on 2020-11-04.</p>
-<p>Natural History Museum (2021). Natural History Museum (London) Collection Specimens. DOI: 10.5519/0002965. Accessed via GBIF on 2020-10-13.</p>
-<p>National Museum of Natural History, Smithsonian Institution NMNH Fishes Collection Database (2007). National Museum of Natural History, Smithsonian Institution, 10th and Constitution Ave. N.W., Washington, DC 20560-0193. Accessed via OBIS on 2020-11-04.</p>
-<p>Norén M, Shah M (2017). Fishbase. FishBase. DOI: 10.15468/wk3zk7. Accessed via GBIF on 2020-10-13.</p>
-<p>Norton B, Hogue G (2021). NCSM Ichthyology Collection. Version 22.8. North Carolina State Museum of Natural Sciences. DOI: 10.36102/dwc.1. Accessed via GBIF on 2020-10-13.</p>
-<p>Nychka D, Furrer R, Paige J, Sain S (2021). “fields: Tools for spatial data.” R package version 13.3. <a href="https://github.com/dnychka/fieldsRPackage" class="external-link uri">https://github.com/dnychka/fieldsRPackage</a>.</p>
-<p>Orrell T, Informatics Office (2021). NMNH Extant Specimen Records (USNM, US). Version 1.49. National Museum of Natural History, Smithsonian Institution. DOI: 10.15468/hnhrg3. Accessed via GBIF on 2020-10-13.</p>
-<p>Owens H, Merow C, Maitner B, Kass J, Barve V, Guralnick R (2021). occCite: Querying and Managing Large Biodiversity Occurrence Datasets. doi: 10.5281/zenodo.4726676, R package version 0.4.9.9000, <a href="https://CRAN.R-project.org/package=occCite" class="external-link uri">https://CRAN.R-project.org/package=occCite</a>.</p>
-<p>Prestridge H (2021). Biodiversity Research and Teaching Collections - TCWC Vertebrates. Version 9.4. Texas A&amp;M University Biodiversity Research and Teaching Collections. DOI: 10.15468/szomia. Accessed via GBIF on 2020-10-13.</p>
-<p>Provoost P, Bosch S (2019). “robis: R Client to access data from the OBIS API.” Ocean Biogeographic Information System. Intergovernmental Oceanographic Commission of UNESCO. R package version 2.1.8, <a href="https://cran.r-project.org/package=robis" class="external-link uri">https://cran.r-project.org/package=robis</a>.</p>
-<p>Pugh W (2021). UAIC Ichthyological Collection. Version 3.3. University of Alabama Biodiversity and Systematics. DOI: 10.15468/a2laag. Accessed via GBIF on 2020-10-13.</p>
-<p>R Core Team (2017). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL <a href="https://www.R-project.org/" class="external-link uri">https://www.R-project.org/</a>.</p>
-<p>Robins R (2021). UF FLMNH Ichthyology. Version 117.342. Florida Museum of Natural History. DOI: 10.15468/8mjsel. Accessed via GBIF on 2020-10-13.</p>
-<p>Tavera L, Tavera M. L (2021). Biodiversidad de los recursos marinos y costeros entre Cartagena y el Golfo de Urabá, Caribe colombiano. Version 2.4. Instituto de Investigaciones Marinas y Costeras - Invemar. DOI: 10.15472/d2jusp. Accessed via GBIF on 2020-10-13.</p>
-<p>UNIBIO, IBUNAM (2020). CNPE/Coleccion Nacional de Peces. DOI: 10.15468/o5d48z. Accessed via GBIF on 2020-10-13.</p>
-<p>Wagner M (2017). MMNS Ichthyology Collection. Mississippi Museum of Natural Science. DOI: 10.15468/4c3qeq. Accessed via GBIF on 2020-10-13.</p>
-<p>Werneke D (2019). AUM Fish Collection. Version 8.1. Auburn University Museum. DOI: 10.15468/dm3oyz. Accessed via GBIF on 2020-10-13.</p>
+<p>Bakis Y (2021): TU_Fish. v1.1. No organization. Dataset/Occurrence.
+<a href="https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1" class="external-link uri">https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1</a>
+Accessed via OBIS on 2020-11-04.</p>
+<p>Bentley A (2022). KUBI Ichthyology Collection. Version 17.80.
+University of Kansas Biodiversity Institute. DOI: 10.15468/mgjasg.
+Accessed via GBIF on 2020-10-13.</p>
+<p>Bentley A (2022). KUBI Ichthyology Tissue Collection. Version 18.68.
+University of Kansas Biodiversity Institute. DOI: 10.15468/jmsnwg.
+Accessed via GBIF on 2020-10-13.</p>
+<p>Buckup P A (2022). Coleção Ictiológica (MNRJ), Museu Nacional (MN),
+Universidade Federal do Rio de Janeiro(UFRJ). Version 157.1487. Museu
+Nacional / UFRJ. DOI: 10.15468/lluzfl. Accessed via GBIF on
+2020-10-13.</p>
+<p>Catania D, Fong J (2022). CAS Ichthyology (ICH). Version 150.300.
+California Academy of Sciences. DOI: 10.15468/efh2ib. Accessed via GBIF
+on 2020-10-13.</p>
+<p>Chakrabarty P (2019). LSUMZ (LSU MNS) Fishes Collection. Version 2.2.
+Louisiana State University Museum of Natural Science. DOI:
+10.15468/gbnym3. Accessed via GBIF on 2020-10-13.</p>
+<p>Chamberlain S, Barve V, Mcglinn D, Oldoni D, Desmet P, Geffert L, Ram
+K (2021). rgbif: Interface to the Global Biodiversity Information
+Facility API. R package version 3.6.0, <a href="https://CRAN.R-project.org/package=rgbif" class="external-link uri">https://CRAN.R-project.org/package=rgbif</a>.</p>
+<p>Chamberlain S, Boettiger C (2017). “R Python, and Ruby clients for
+GBIF species occurrence data.” PeerJ PrePrints. DOI:
+10.7287/peerj.preprints.3304v1.</p>
+<p>Davis-Rabosky AR, Cox CL, Rabosky DL, Title PO, Holmes IA, Feldman A,
+McGuire JA (2016). Coral snakes predict the evolution of mimicry across
+New World snakes. <em>Nature Communications</em> 7:11484. DOI:
+10.1038/ncomms11484</p>
+<p>Espinosa Pérez H, Comisión nacional para el conocimiento y uso de la
+biodiversidad C (2021). Computarización de la Colección Nacional de
+Peces del Instituto de Biología UNAM. Version 1.9. Comisión nacional
+para el conocimiento y uso de la biodiversidad. DOI: 10.15468/zb2odl.
+Accessed via GBIF on 2020-10-13.</p>
+<p>Frable B (2019). SIO Marine Vertebrate Collection. Version 1.7.
+Scripps Institution of Oceanography. DOI: 10.15468/ad1ovc. Accessed via
+GBIF on 2020-10-13.</p>
+<p>Fishnet2 Portal, <a href="http://www.fishnet2.net" class="external-link uri">http://www.fishnet2.net</a>, Accessed via OBIS on
+2020-11-04.</p>
+<p>Froese, R. and D. Pauly. Editors. 2020. FishBase. World Wide Web
+electronic publication. www.fishbase.org, version (xx/200x). Accessed
+via OBIS on 2020-11-04.</p>
+<p>Gall L (2021). Vertebrate Zoology Division - Ichthyology, Yale
+Peabody Museum. Yale University Peabody Museum. DOI: 10.15468/mgyhok.
+Accessed via GBIF on 2020-10-13.</p>
+<p>García, CB, and Duarte, LO, ‘Columbian Caribbean Sea’, in J.H.
+Nicholls (comp.) HMAP Data Pages <a href="https://oceanspast.org/hmap_db.php" class="external-link uri">https://oceanspast.org/hmap_db.php</a> Accessed via OBIS on
+2020-11-04.</p>
+<p>Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA,
+Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018). World
+Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen
+Utilization, and Oxygen Saturation. A Mishonov Technical Ed.; NOAA Atlas
+NESDIS 83, 38pp.</p>
+<p>GBIF.org (24 September 2020) GBIF Occurrence Download DOI:
+10.15468/dl.efuutj.</p>
+<p>Grant S, McMahan C (2020). Field Museum of Natural History (Zoology)
+Fish Collection. Version 13.12. Field Museum. DOI: 10.15468/alz7wu.
+Accessed via GBIF on 2020-10-13.</p>
+<p>Harvard University M, Morris P J (2022). Museum of Comparative
+Zoology, Harvard University. Version 162.296. Museum of Comparative
+Zoology, Harvard University. DOI: 10.15468/p5rupv. Accessed via GBIF on
+2020-10-13.</p>
+<p>Hendrickson D A, Cohen A E, Casarez M J (2022). University of Texas,
+Biodiversity Center, Ichthyology Collection (TNHCi). Version 5.175.
+University of Texas at Austin, Biodiversity Collections. DOI:
+10.15468/h8gxdr. Accessed via GBIF on 2020-10-13.</p>
+<p>INVEMAR (2022). SIBM en línea: Sistema de Información sobre
+Biodiversidad Marina. Santa Marta: Instituto de investigaciones Marinas
+y Costeras José Benito Vives de Andréis,. <a href="http://www.invemar.org.co/siam/sibm/index.htm" class="external-link uri">http://www.invemar.org.co/siam/sibm/index.htm</a> Accessed
+via OBIS on 2020-11-04.</p>
+<p>Locarnini RA, Mishonov AV, Baranova OK, Boyer TP, Zweng MM, Garcia
+HE, Reagan JR, Seidov D, Weathers K, Paver CR, Smolyar I (2018). World
+Ocean Atlas 2018, Volume 1: Temperature. A. Mishonov Technical Ed.; NOAA
+Atlas NESDIS 81, 52pp.</p>
+<p>McLean, M.W. (2014). Straightforward Bibliography Management in R
+Using the RefManager Package. NA, NA. <a href="https://arxiv.org/abs/1403.2036" class="external-link uri">https://arxiv.org/abs/1403.2036</a>.</p>
+<p>McLean, M.W. (2017). RefManageR: Import and Manage BibTeX and
+BibLaTeX References in R. The Journal of Open Source Software.</p>
+<p>Mertz W (2021). LACM Vertebrate Collection. Version 18.9. Natural
+History Museum of Los Angeles County. DOI: 10.15468/77rmwd. Accessed via
+GBIF on 2020-10-13.</p>
+<p>Nakae M, Shinohara G (2018). Fish collection of National Museum of
+Nature and Science. National Museum of Nature and Science, Japan.
+Occurrence dataset DOI: 10.15468/w3dzv1 accessed via GBIF.org on
+yyyy-mm-dd. Accessed via OBIS on 2020-11-04.</p>
+<p>Natural History Museum (2021). Natural History Museum (London)
+Collection Specimens. DOI: 10.5519/0002965. Accessed via GBIF on
+2020-10-13.</p>
+<p>National Museum of Natural History, Smithsonian Institution NMNH
+Fishes Collection Database (2007). National Museum of Natural History,
+Smithsonian Institution, 10th and Constitution Ave. N.W., Washington, DC
+20560-0193. Accessed via OBIS on 2020-11-04.</p>
+<p>Norén M, Shah M (2017). Fishbase. FishBase. DOI: 10.15468/wk3zk7.
+Accessed via GBIF on 2020-10-13.</p>
+<p>Norton B, Hogue G (2021). NCSM Ichthyology Collection. Version 22.8.
+North Carolina State Museum of Natural Sciences. DOI: 10.36102/dwc.1.
+Accessed via GBIF on 2020-10-13.</p>
+<p>Nychka D, Furrer R, Paige J, Sain S (2021). “fields: Tools for
+spatial data.” R package version 13.3. <a href="https://github.com/dnychka/fieldsRPackage" class="external-link uri">https://github.com/dnychka/fieldsRPackage</a>.</p>
+<p>Orrell T, Informatics Office (2021). NMNH Extant Specimen Records
+(USNM, US). Version 1.49. National Museum of Natural History,
+Smithsonian Institution. DOI: 10.15468/hnhrg3. Accessed via GBIF on
+2020-10-13.</p>
+<p>Owens H, Merow C, Maitner B, Kass J, Barve V, Guralnick R (2021).
+occCite: Querying and Managing Large Biodiversity Occurrence Datasets.
+doi: 10.5281/zenodo.4726676, R package version 0.4.9.9000, <a href="https://CRAN.R-project.org/package=occCite" class="external-link uri">https://CRAN.R-project.org/package=occCite</a>.</p>
+<p>Prestridge H (2021). Biodiversity Research and Teaching Collections -
+TCWC Vertebrates. Version 9.4. Texas A&amp;M University Biodiversity
+Research and Teaching Collections. DOI: 10.15468/szomia. Accessed via
+GBIF on 2020-10-13.</p>
+<p>Provoost P, Bosch S (2019). “robis: R Client to access data from the
+OBIS API.” Ocean Biogeographic Information System. Intergovernmental
+Oceanographic Commission of UNESCO. R package version 2.1.8, <a href="https://cran.r-project.org/package=robis" class="external-link uri">https://cran.r-project.org/package=robis</a>.</p>
+<p>Pugh W (2021). UAIC Ichthyological Collection. Version 3.3.
+University of Alabama Biodiversity and Systematics. DOI:
+10.15468/a2laag. Accessed via GBIF on 2020-10-13.</p>
+<p>R Core Team (2017). R: A language and environment for statistical
+computing. R Foundation for Statistical Computing, Vienna, Austria. URL
+<a href="https://www.R-project.org/" class="external-link uri">https://www.R-project.org/</a>.</p>
+<p>Robins R (2021). UF FLMNH Ichthyology. Version 117.342. Florida
+Museum of Natural History. DOI: 10.15468/8mjsel. Accessed via GBIF on
+2020-10-13.</p>
+<p>Tavera L, Tavera M. L (2021). Biodiversidad de los recursos marinos y
+costeros entre Cartagena y el Golfo de Urabá, Caribe colombiano. Version
+2.4. Instituto de Investigaciones Marinas y Costeras - Invemar. DOI:
+10.15472/d2jusp. Accessed via GBIF on 2020-10-13.</p>
+<p>UNIBIO, IBUNAM (2020). CNPE/Coleccion Nacional de Peces. DOI:
+10.15468/o5d48z. Accessed via GBIF on 2020-10-13.</p>
+<p>Wagner M (2017). MMNS Ichthyology Collection. Mississippi Museum of
+Natural Science. DOI: 10.15468/4c3qeq. Accessed via GBIF on
+2020-10-13.</p>
+<p>Werneke D (2019). AUM Fish Collection. Version 8.1. Auburn University
+Museum. DOI: 10.15468/dm3oyz. Accessed via GBIF on 2020-10-13.</p>
 </div>
   </div>
 
@@ -522,7 +771,8 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer>

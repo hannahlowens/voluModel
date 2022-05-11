@@ -98,10 +98,12 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>4. Visualization Tools</h1>
-                        <h4 data-toc-skip class="author">Hannah L. Owens</h4>
-                        <h4 data-toc-skip class="author">Carsten Rahbek</h4>
+                        <h4 data-toc-skip class="author">Hannah L.
+Owens</h4>
+                        <h4 data-toc-skip class="author">Carsten
+Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-03-28</h4>
+            <h4 data-toc-skip class="date">2022-05-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/d_Visualization.Rmd" class="external-link"><code>vignettes/d_Visualization.Rmd</code></a></small>
       <div class="hidden name"><code>d_Visualization.Rmd</code></div>
@@ -113,8 +115,28 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p><code>voluModel</code> contains several functions to generate formatted maps of rasters and points automatically. This was to aid us in cleanly visualizing large numbers of maps efficiently using <code>ggplot2</code> (Wickam, 2016) and <code>lattice</code> (Sarkar, 2008) functionality. While there are quite a few features available in these functions, they were designed with fairly specific use cases in mind. You are welcome to gut the functions and rewrite them for your own custom needs.</p>
-<p>The data I will be using for the demos in this tutorial will be loaded silently outside of the visible code chunks. The Luminous Hake occurrence points, which you can see in the <a href="https://hannahlowens.github.io/voluModel/articles/c_DataSampling.html" class="external-link">data sampling tutorial</a>, were downloaded via R (R Core Team, 2020) from GBIF (Chamberlain <em>et al.</em>, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via <code>occCite</code> (Owens <em>et al.</em>, 2021). The simple envelope model is based on two environmental datasets from the World Ocean Atlas (Garcia <em>et al.</em>, 2019): temperature (Locarnini <em>et al.</em>, 2018) and apparent oxygen utilization (AOU; Garcia <em>et al.</em>, 2019). For more details on how to process environmental data, see <a href="https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html" class="external-link">the raster data tutorial</a>. For the workflow used to generate the niche envelopes, refer to <a href="https://hannahlowens.github.io/voluModel/articles/a_Introduction.html" class="external-link">the introduction vignette</a>.</p>
+<p><code>voluModel</code> contains several functions to generate
+formatted maps of rasters and points automatically. This was to aid us
+in cleanly visualizing large numbers of maps efficiently using
+<code>ggplot2</code> (Wickam, 2016) and <code>lattice</code> (Sarkar,
+2008) functionality. While there are quite a few features available in
+these functions, they were designed with fairly specific use cases in
+mind. You are welcome to gut the functions and rewrite them for your own
+custom needs.</p>
+<p>The data I will be using for the demos in this tutorial will be
+loaded silently outside of the visible code chunks. The Luminous Hake
+occurrence points, which you can see in the <a href="https://hannahlowens.github.io/voluModel/articles/c_DataSampling.html" class="external-link">data
+sampling tutorial</a>, were downloaded via R (R Core Team, 2020) from
+GBIF (Chamberlain <em>et al.</em>, 2021; Chamberlain and Boettiger,
+2017) and OBIS (Provoost and Bosch, 2019) via <code>occCite</code>
+(Owens <em>et al.</em>, 2021). The simple envelope model is based on two
+environmental datasets from the World Ocean Atlas (Garcia <em>et
+al.</em>, 2019): temperature (Locarnini <em>et al.</em>, 2018) and
+apparent oxygen utilization (AOU; Garcia <em>et al.</em>, 2019). For
+more details on how to process environmental data, see <a href="https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html" class="external-link">the
+raster data tutorial</a>. For the workflow used to generate the niche
+envelopes, refer to <a href="https://hannahlowens.github.io/voluModel/articles/a_Introduction.html" class="external-link">the
+introduction vignette</a>.</p>
 <p>Here are the packages you will need.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hannahlowens.github.io/voluModel/" class="external-link">voluModel</a></span><span class="op">)</span> <span class="co"># Because of course</span>
@@ -122,19 +144,28 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://rgdal.r-forge.r-project.org" class="external-link">rgdal</a></span><span class="op">)</span> <span class="co"># For vector stuff. Will eventually be replaced with sf.</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span> <span class="co"># For raster stuff. Will eventually be replaced with terra.</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridisLite/" class="external-link">viridisLite</a></span><span class="op">)</span> <span class="co"># For high-contrast plotting palettes</span></code></pre></div>
-<p>Here is a shapefile of the continents, which we can conveniently use to provide some context for all the maps we are about to make.</p>
+<p>Here is a shapefile of the continents, which we can conveniently use
+to provide some context for all the maps we are about to make.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"medium"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="plotting-points">Plotting points<a class="anchor" aria-label="anchor" href="#plotting-points"></a>
 </h2>
-<p>There are two functions in <code>voluModel</code> for plotting occurrence points. The first, <code><a href="../reference/pointMap.html">pointMap()</a></code>, plots a single set of horizontal geographic points. The title generated is the species name the user supplies and a count of the number of points that have been plotted.</p>
+<p>There are two functions in <code>voluModel</code> for plotting
+occurrence points. The first, <code><a href="../reference/pointMap.html">pointMap()</a></code>, plots a single
+set of horizontal geographic points. The title generated is the species
+name the user supplies and a count of the number of points that have
+been plotted.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/pointMap.html">pointMap</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occs</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, 
          ptSize <span class="op">=</span> <span class="fl">2</span>, ptCol <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span></code></pre></div>
 <p><img src="d_Visualization_files/figure-html/pointMap-1.png"><!-- --></p>
-<p>The second, <code><a href="../reference/pointCompMap.html">pointCompMap()</a></code> plots a map that maps the extents of two sets of horizontal geographic points in different colors. This might be useful, for example, if you want to compare a raw dataset to a cleaned dataset. If any points overlap, they can be plotted as a third color.</p>
+<p>The second, <code><a href="../reference/pointCompMap.html">pointCompMap()</a></code> plots a map that maps the
+extents of two sets of horizontal geographic points in different colors.
+This might be useful, for example, if you want to compare a raw dataset
+to a cleaned dataset. If any points overlap, they can be plotted as a
+third color.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs1Col <span class="op">=</span> <span class="st">"red"</span>, occs1Name <span class="op">=</span> <span class="st">"Raw"</span>, 
              occs2 <span class="op">=</span> <span class="va">occsWdata</span>, occs2Col <span class="op">=</span> <span class="st">"orange"</span>, occs2Name <span class="op">=</span> <span class="st">"Clean"</span>,
@@ -145,20 +176,39 @@
 <div class="section level2">
 <h2 id="plotting-rasters">Plotting rasters<a class="anchor" aria-label="anchor" href="#plotting-rasters"></a>
 </h2>
-<p>If you have a horizontal raster you would like to map that contains continuous data, the function for you might be <code><a href="../reference/oneRasterPlot.html">oneRasterPlot()</a></code>. It is a wrapper around <code><a href="https://rdrr.io/pkg/raster/man/spplot.html" class="external-link">spplot()</a></code> from <code>sp</code> (Pebesma and Bivand, 2005; Bivand <em>et al.</em> 2013) that implements the high-contrast, colorblind-friendly color palettes offered in <code><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis()</a></code> from <code>viridisLite</code> (Garnier <em>et al.</em>, 2021). The function optionally takes arguments to the <code><a href="https://rdrr.io/pkg/raster/man/spplot.html" class="external-link">spplot()</a></code> and <code><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis()</a></code> functions (so, for example, you can choose a palette other than the default).</p>
+<p>If you have a horizontal raster you would like to map that contains
+continuous data, the function for you might be
+<code><a href="../reference/oneRasterPlot.html">oneRasterPlot()</a></code>. It is a wrapper around
+<code><a href="https://rdrr.io/pkg/raster/man/spplot.html" class="external-link">spplot()</a></code> from <code>sp</code> (Pebesma and Bivand, 2005;
+Bivand <em>et al.</em> 2013) that implements the high-contrast,
+colorblind-friendly color palettes offered in <code><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis()</a></code>
+from <code>viridisLite</code> (Garnier <em>et al.</em>, 2021). The
+function optionally takes arguments to the <code><a href="https://rdrr.io/pkg/raster/man/spplot.html" class="external-link">spplot()</a></code> and
+<code><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis()</a></code> functions (so, for example, you can choose a
+palette other than the default).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span>rast <span class="op">=</span> <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,
               land <span class="op">=</span> <span class="va">land</span>, title <span class="op">=</span> <span class="st">"Sea Surface Temperature, WOA 2018"</span>,
               landCol <span class="op">=</span> <span class="st">"black"</span>, option <span class="op">=</span> <span class="st">"mako"</span><span class="op">)</span></code></pre></div>
 <p><img src="d_Visualization_files/figure-html/oneRasterPlot-1.png"><!-- --></p>
-<p>Suppose you want to compare the extents of two presence-absence rasters–perhaps you are comparing two species distribution model method outputs, or comparing potential distributions at two different depths. We have a function for that, too.</p>
+<p>Suppose you want to compare the extents of two presence-absence
+rasters–perhaps you are comparing two species distribution model method
+outputs, or comparing potential distributions at two different depths.
+We have a function for that, too.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/rasterComp.html">rasterComp</a></span><span class="op">(</span>rast1 <span class="op">=</span> <span class="va">envelopeModel3D</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, rast1Name <span class="op">=</span> <span class="st">"Surface"</span>,
            rast2 <span class="op">=</span> <span class="va">envelopeModel3D</span><span class="op">[[</span><span class="fl">10</span><span class="op">]</span><span class="op">]</span>, rast2Name <span class="op">=</span> <span class="st">"45m"</span>, 
            land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
            title <span class="op">=</span> <span class="st">"Suitability of Habitat for Luminous Hake\nAt Two Different Depths"</span><span class="op">)</span></code></pre></div>
 <p><img src="d_Visualization_files/figure-html/rasterComp-1.png"><!-- --></p>
-<p>Of course, 3D models such as the ones <code>voluModel</code> is designed to help you produce, are difficult to visualize. We have given it a try, though. <code><a href="../reference/plotLayers.html">plotLayers()</a></code> plots a transparent layer of suitable habitat for each depth layer. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. Here, I am plotting suitability from 20 to 700 m, the depth range of occurrences used to train the envelope model.</p>
+<p>Of course, 3D models such as the ones <code>voluModel</code> is
+designed to help you produce, are difficult to visualize. We have given
+it a try, though. <code><a href="../reference/plotLayers.html">plotLayers()</a></code> plots a transparent layer of
+suitable habitat for each depth layer. The redder the color, the
+shallower the layer, the bluer, the deeper. The more saturated the
+color, the more layers with suitable habitat. Here, I am plotting
+suitability from 20 to 700 m, the depth range of occurrences used to
+train the envelope model.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[X]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">envelopeModel3D</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="va">occsWdata</span><span class="op">$</span><span class="va">index</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">$</span><span class="va">depth</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/which.minmax.html" class="external-link">which.min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">layerNames</span> <span class="op">-</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
@@ -172,53 +222,150 @@
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<p>Bakis Y (2021): TU_Fish. v1.1. No organization. Dataset/Occurrence. <a href="https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1" class="external-link uri">https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1</a> Accessed via OBIS on 2020-11-04.</p>
-<p>Bentley A (2022). KUBI Ichthyology Collection. Version 17.80. University of Kansas Biodiversity Institute. DOI: 10.15468/mgjasg. Accessed via GBIF on 2020-10-13.</p>
-<p>Bentley A (2022). KUBI Ichthyology Tissue Collection. Version 18.68. University of Kansas Biodiversity Institute. DOI: 10.15468/jmsnwg. Accessed via GBIF on 2020-10-13.</p>
-<p>Buckup P A (2022). Coleção Ictiológica (MNRJ), Museu Nacional (MN), Universidade Federal do Rio de Janeiro(UFRJ). Version 157.1487. Museu Nacional / UFRJ. DOI: 10.15468/lluzfl. Accessed via GBIF on 2020-10-13.</p>
-<p>Catania D, Fong J (2022). CAS Ichthyology (ICH). Version 150.300. California Academy of Sciences. DOI: 10.15468/efh2ib. Accessed via GBIF on 2020-10-13.</p>
-<p>Chakrabarty P (2019). LSUMZ (LSU MNS) Fishes Collection. Version 2.2. Louisiana State University Museum of Natural Science. DOI: 10.15468/gbnym3. Accessed via GBIF on 2020-10-13.</p>
-<p>Chamberlain S, Barve V, Mcglinn D, Oldoni D, Desmet P, Geffert L, Ram K (2021). rgbif: Interface to the Global Biodiversity Information Facility API. R package version 3.6.0, <a href="https://CRAN.R-project.org/package=rgbif" class="external-link uri">https://CRAN.R-project.org/package=rgbif</a>.</p>
-<p>Chamberlain S, Boettiger C (2017). “R Python, and Ruby clients for GBIF species occurrence data.” PeerJ PrePrints. DOI: 10.7287/peerj.preprints.3304v1.</p>
-<p>Davis Rabosky AR, Cox CL, Rabosky DL, Title PO, Holmes IA, Feldman A, McGuire JA (2016). Coral snakes predict the evolution of mimicry across New World snakes. Nature Communications 7:11484.</p>
-<p>Espinosa Pérez H, Comisión nacional para el conocimiento y uso de la biodiversidad C (2021). Computarización de la Colección Nacional de Peces del Instituto de Biología UNAM. Version 1.9. Comisión nacional para el conocimiento y uso de la biodiversidad. DOI: 10.15468/zb2odl. Accessed via GBIF on 2020-10-13.</p>
-<p>Frable B (2019). SIO Marine Vertebrate Collection. Version 1.7. Scripps Institution of Oceanography. DOI: 10.15468/ad1ovc. Accessed via GBIF on 2020-10-13.</p>
-<p>Fishnet2 Portal, <a href="http://www.fishnet2.net" class="external-link uri">http://www.fishnet2.net</a>, [Access date] Accessed via OBIS on 2020-11-04.</p>
-<p>Froese, R. and D. Pauly. Editors. 200x. FishBase. World Wide Web electronic publication. www.fishbase.org, version (xx/200x). Accessed via OBIS on 2020-11-04.</p>
-<p>Gall L (2021). Vertebrate Zoology Division - Ichthyology, Yale Peabody Museum. Yale University Peabody Museum. DOI: 10.15468/mgyhok. Accessed via GBIF on 2020-10-13.</p>
-<p>García, CB, and Duarte, LO, ‘Columbian Caribbean Sea’, in J.H. Nicholls (comp.) HMAP Data Pages <a href="https://oceanspast.org/hmap_db.php" class="external-link uri">https://oceanspast.org/hmap_db.php</a> Accessed via OBIS on 2020-11-04.</p>
-<p>Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA, Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018). World Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen Utilization, and Oxygen Saturation. A Mishonov Technical Ed.; NOAA Atlas NESDIS 83, 38pp.</p>
-<p>Garnier S, Ross N, Rudis R, Camargo AP, Sciaini M, Scherer C (2021). Rvision - Colorblind-Friendly Color Maps for R. R package version 0.6.2.</p>
-<p>GBIF.org (24 September 2020) GBIF Occurrence Download DOI: 10.15468/dl.efuutj.</p>
-<p>Grant S, McMahan C (2020). Field Museum of Natural History (Zoology) Fish Collection. Version 13.12. Field Museum. DOI: 10.15468/alz7wu. Accessed via GBIF on 2020-10-13.</p>
-<p>Harvard University M, Morris P J (2022). Museum of Comparative Zoology, Harvard University. Version 162.296. Museum of Comparative Zoology, Harvard University. DOI: 10.15468/p5rupv. Accessed via GBIF on 2020-10-13.</p>
-<p>Hendrickson D A, Cohen A E, Casarez M J (2022). University of Texas, Biodiversity Center, Ichthyology Collection (TNHCi). Version 5.175. University of Texas at Austin, Biodiversity Collections. DOI: 10.15468/h8gxdr. Accessed via GBIF on 2020-10-13.</p>
-<p>INVEMAR. SIBM en línea: Sistema de Información sobre Biodiversidad Marina. Santa Marta: Instituto de investigaciones Marinas y Costeras José Benito Vives de Andréis,. <a href="http://www.invemar.org.co/siam/sibm/index.htm" class="external-link uri">http://www.invemar.org.co/siam/sibm/index.htm</a> Accessed via OBIS on 2020-11-04.</p>
-<p>Locarnini RA, Mishonov AV, Baranova OK, Boyer TP, Zweng MM, Garcia HE, Reagan JR, Seidov D, Weathers K, Paver CR, Smolyar I (2018). World Ocean Atlas 2018, Volume 1: Temperature. A. Mishonov Technical Ed.; NOAA Atlas NESDIS 81, 52pp.</p>
-<p>McLean, M.W. (2014). Straightforward Bibliography Management in R Using the RefManager Package. NA, NA. <a href="https://arxiv.org/abs/1403.2036" class="external-link uri">https://arxiv.org/abs/1403.2036</a>.</p>
-<p>McLean, M.W. (2017). RefManageR: Import and Manage BibTeX and BibLaTeX References in R. The Journal of Open Source Software.</p>
-<p>Mertz W (2021). LACM Vertebrate Collection. Version 18.9. Natural History Museum of Los Angeles County. DOI: 10.15468/77rmwd. Accessed via GBIF on 2020-10-13.</p>
-<p>Nakae M, Shinohara G (2018). Fish collection of National Museum of Nature and Science. National Museum of Nature and Science, Japan. Occurrence dataset DOI: 10.15468/w3dzv1 accessed via GBIF.org on yyyy-mm-dd. Accessed via OBIS on 2020-11-04.</p>
-<p>Natural History Museum (2021). Natural History Museum (London) Collection Specimens. DOI: 10.5519/0002965. Accessed via GBIF on 2020-10-13.</p>
-<p>National Museum of Natural History, Smithsonian Institution NMNH Fishes Collection Database. National Museum of Natural History, Smithsonian Institution, 10th and Constitution Ave. N.W., Washington, DC 20560-0193, 2007. Accessed via OBIS on 2020-11-04.</p>
-<p>Norén M, Shah M (2017). Fishbase. FishBase. DOI: 10.15468/wk3zk7. Accessed via GBIF on 2020-10-13.</p>
-<p>Norton B, Hogue G (2021). NCSM Ichthyology Collection. Version 22.8. North Carolina State Museum of Natural Sciences. DOI: 10.36102/dwc.1. Accessed via GBIF on 2020-10-13.</p>
-<p>Nychka D, Furrer R, Paige J, Sain S (2021). “fields: Tools for spatial data.” R package version 13.3, &lt;URL: <a href="https://github.com/dnychka/fieldsRPackage" class="external-link uri">https://github.com/dnychka/fieldsRPackage</a>&gt;.</p>
-<p>Orrell T, Informatics Office (2021). NMNH Extant Specimen Records (USNM, US). Version 1.49. National Museum of Natural History, Smithsonian Institution. DOI: 10.15468/hnhrg3. Accessed via GBIF on 2020-10-13.</p>
-<p>Owens H, Merow C, Maitner B, Kass J, Barve V, Guralnick R (2021). occCite: Querying and Managing Large Biodiversity Occurrence Datasets_. doi: 10.5281/zenodo.4726676 (URL: DOI: 10.5281/zenodo.4726676), R package version 0.4.9.9000, (&lt;URL: <a href="https://CRAN.R-project.org/package=occCite" class="external-link uri">https://CRAN.R-project.org/package=occCite</a>&gt;).</p>
-<p>Pebesma, E.J., R.S. Bivand (2005). Classes and methods for spatial data in R. R News 5 (2), <a href="https://cran.r-project.org/doc/Rnews/" class="external-link uri">https://cran.r-project.org/doc/Rnews/</a>.</p>
-<p>Prestridge H (2021). Biodiversity Research and Teaching Collections - TCWC Vertebrates. Version 9.4. Texas A&amp;M University Biodiversity Research and Teaching Collections. DOI: 10.15468/szomia. Accessed via GBIF on 2020-10-13.</p>
-<p>Provoost P, Bosch S (2019). “robis: R Client to access data from the OBIS API.” Ocean Biogeographic Information System. Intergovernmental Oceanographic Commission of UNESCO. R package version 2.1.8, <a href="https://cran.r-project.org/package=robis" class="external-link uri">https://cran.r-project.org/package=robis</a>.</p>
-<p>Pugh W (2021). UAIC Ichthyological Collection. Version 3.3. University of Alabama Biodiversity and Systematics. DOI: 10.15468/a2laag. Accessed via GBIF on 2020-10-13.</p>
-<p>R Core Team (2017). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL <a href="https://www.R-project.org/" class="external-link uri">https://www.R-project.org/</a>.</p>
-<p>Robins R (2021). UF FLMNH Ichthyology. Version 117.342. Florida Museum of Natural History. DOI: 10.15468/8mjsel. Accessed via GBIF on 2020-10-13.</p>
-<p>Bivand RS, Pebesma E, Gomez-Rubio V (2013). Applied spatial data analysis with R, Second edition. Springer, NY. <a href="https://asdar-book.org/" class="external-link uri">https://asdar-book.org/</a></p>
-<p>Sarkar D (2008). Lattice: Multivariate Data Visualization with R. Springer, New York. ISBN 978-0-387-75968-5</p>
-<p>Tavera L, Tavera M. L (2021). Biodiversidad de los recursos marinos y costeros entre Cartagena y el Golfo de Urabá, Caribe colombiano. Version 2.4. Instituto de Investigaciones Marinas y Costeras - Invemar. DOI: 10.15472/d2jusp. Accessed via GBIF on 2020-10-13.</p>
-<p>UNIBIO, IBUNAM. CNPE/Coleccion Nacional de Peces. DOI: 10.15468/o5d48z. Accessed via GBIF on 2020-10-13.</p>
-<p>Wagner M (2017). MMNS Ichthyology Collection. Mississippi Museum of Natural Science. DOI: 10.15468/4c3qeq. Accessed via GBIF on 2020-10-13.</p>
-<p>Werneke D (2019). AUM Fish Collection. Version 8.1. Auburn University Museum. DOI: 10.15468/dm3oyz. Accessed via GBIF on 2020-10-13.</p>
-<p>Wickham H (2016). ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York.</p>
+<p>Bakis Y (2021): TU_Fish. v1.1. No organization. Dataset/Occurrence.
+<a href="https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1" class="external-link uri">https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1</a>
+Accessed via OBIS on 2020-11-04.</p>
+<p>Bentley A (2022). KUBI Ichthyology Collection. Version 17.80.
+University of Kansas Biodiversity Institute. DOI: 10.15468/mgjasg.
+Accessed via GBIF on 2020-10-13.</p>
+<p>Bentley A (2022). KUBI Ichthyology Tissue Collection. Version 18.68.
+University of Kansas Biodiversity Institute. DOI: 10.15468/jmsnwg.
+Accessed via GBIF on 2020-10-13.</p>
+<p>Buckup P A (2022). Coleção Ictiológica (MNRJ), Museu Nacional (MN),
+Universidade Federal do Rio de Janeiro(UFRJ). Version 157.1487. Museu
+Nacional / UFRJ. DOI: 10.15468/lluzfl. Accessed via GBIF on
+2020-10-13.</p>
+<p>Catania D, Fong J (2022). CAS Ichthyology (ICH). Version 150.300.
+California Academy of Sciences. DOI: 10.15468/efh2ib. Accessed via GBIF
+on 2020-10-13.</p>
+<p>Chakrabarty P (2019). LSUMZ (LSU MNS) Fishes Collection. Version 2.2.
+Louisiana State University Museum of Natural Science. DOI:
+10.15468/gbnym3. Accessed via GBIF on 2020-10-13.</p>
+<p>Chamberlain S, Barve V, Mcglinn D, Oldoni D, Desmet P, Geffert L, Ram
+K (2021). rgbif: Interface to the Global Biodiversity Information
+Facility API. R package version 3.6.0, <a href="https://CRAN.R-project.org/package=rgbif" class="external-link uri">https://CRAN.R-project.org/package=rgbif</a>.</p>
+<p>Chamberlain S, Boettiger C (2017). “R Python, and Ruby clients for
+GBIF species occurrence data.” PeerJ PrePrints. DOI:
+10.7287/peerj.preprints.3304v1.</p>
+<p>Davis Rabosky AR, Cox CL, Rabosky DL, Title PO, Holmes IA, Feldman A,
+McGuire JA (2016). Coral snakes predict the evolution of mimicry across
+New World snakes. Nature Communications 7:11484.</p>
+<p>Espinosa Pérez H, Comisión nacional para el conocimiento y uso de la
+biodiversidad C (2021). Computarización de la Colección Nacional de
+Peces del Instituto de Biología UNAM. Version 1.9. Comisión nacional
+para el conocimiento y uso de la biodiversidad. DOI: 10.15468/zb2odl.
+Accessed via GBIF on 2020-10-13.</p>
+<p>Frable B (2019). SIO Marine Vertebrate Collection. Version 1.7.
+Scripps Institution of Oceanography. DOI: 10.15468/ad1ovc. Accessed via
+GBIF on 2020-10-13.</p>
+<p>Fishnet2 Portal, <a href="http://www.fishnet2.net" class="external-link uri">http://www.fishnet2.net</a>, [Access date] Accessed via OBIS
+on 2020-11-04.</p>
+<p>Froese, R. and D. Pauly. Editors. 200x. FishBase. World Wide Web
+electronic publication. www.fishbase.org, version (xx/200x). Accessed
+via OBIS on 2020-11-04.</p>
+<p>Gall L (2021). Vertebrate Zoology Division - Ichthyology, Yale
+Peabody Museum. Yale University Peabody Museum. DOI: 10.15468/mgyhok.
+Accessed via GBIF on 2020-10-13.</p>
+<p>García, CB, and Duarte, LO, ‘Columbian Caribbean Sea’, in J.H.
+Nicholls (comp.) HMAP Data Pages <a href="https://oceanspast.org/hmap_db.php" class="external-link uri">https://oceanspast.org/hmap_db.php</a> Accessed via OBIS on
+2020-11-04.</p>
+<p>Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA,
+Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018). World
+Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen
+Utilization, and Oxygen Saturation. A Mishonov Technical Ed.; NOAA Atlas
+NESDIS 83, 38pp.</p>
+<p>Garnier S, Ross N, Rudis R, Camargo AP, Sciaini M, Scherer C (2021).
+Rvision - Colorblind-Friendly Color Maps for R. R package version
+0.6.2.</p>
+<p>GBIF.org (24 September 2020) GBIF Occurrence Download DOI:
+10.15468/dl.efuutj.</p>
+<p>Grant S, McMahan C (2020). Field Museum of Natural History (Zoology)
+Fish Collection. Version 13.12. Field Museum. DOI: 10.15468/alz7wu.
+Accessed via GBIF on 2020-10-13.</p>
+<p>Harvard University M, Morris P J (2022). Museum of Comparative
+Zoology, Harvard University. Version 162.296. Museum of Comparative
+Zoology, Harvard University. DOI: 10.15468/p5rupv. Accessed via GBIF on
+2020-10-13.</p>
+<p>Hendrickson D A, Cohen A E, Casarez M J (2022). University of Texas,
+Biodiversity Center, Ichthyology Collection (TNHCi). Version 5.175.
+University of Texas at Austin, Biodiversity Collections. DOI:
+10.15468/h8gxdr. Accessed via GBIF on 2020-10-13.</p>
+<p>INVEMAR. SIBM en línea: Sistema de Información sobre Biodiversidad
+Marina. Santa Marta: Instituto de investigaciones Marinas y Costeras
+José Benito Vives de Andréis,. <a href="http://www.invemar.org.co/siam/sibm/index.htm" class="external-link uri">http://www.invemar.org.co/siam/sibm/index.htm</a> Accessed
+via OBIS on 2020-11-04.</p>
+<p>Locarnini RA, Mishonov AV, Baranova OK, Boyer TP, Zweng MM, Garcia
+HE, Reagan JR, Seidov D, Weathers K, Paver CR, Smolyar I (2018). World
+Ocean Atlas 2018, Volume 1: Temperature. A. Mishonov Technical Ed.; NOAA
+Atlas NESDIS 81, 52pp.</p>
+<p>McLean, M.W. (2014). Straightforward Bibliography Management in R
+Using the RefManager Package. NA, NA. <a href="https://arxiv.org/abs/1403.2036" class="external-link uri">https://arxiv.org/abs/1403.2036</a>.</p>
+<p>McLean, M.W. (2017). RefManageR: Import and Manage BibTeX and
+BibLaTeX References in R. The Journal of Open Source Software.</p>
+<p>Mertz W (2021). LACM Vertebrate Collection. Version 18.9. Natural
+History Museum of Los Angeles County. DOI: 10.15468/77rmwd. Accessed via
+GBIF on 2020-10-13.</p>
+<p>Nakae M, Shinohara G (2018). Fish collection of National Museum of
+Nature and Science. National Museum of Nature and Science, Japan.
+Occurrence dataset DOI: 10.15468/w3dzv1 accessed via GBIF.org on
+yyyy-mm-dd. Accessed via OBIS on 2020-11-04.</p>
+<p>Natural History Museum (2021). Natural History Museum (London)
+Collection Specimens. DOI: 10.5519/0002965. Accessed via GBIF on
+2020-10-13.</p>
+<p>National Museum of Natural History, Smithsonian Institution NMNH
+Fishes Collection Database. National Museum of Natural History,
+Smithsonian Institution, 10th and Constitution Ave. N.W., Washington, DC
+20560-0193, 2007. Accessed via OBIS on 2020-11-04.</p>
+<p>Norén M, Shah M (2017). Fishbase. FishBase. DOI: 10.15468/wk3zk7.
+Accessed via GBIF on 2020-10-13.</p>
+<p>Norton B, Hogue G (2021). NCSM Ichthyology Collection. Version 22.8.
+North Carolina State Museum of Natural Sciences. DOI: 10.36102/dwc.1.
+Accessed via GBIF on 2020-10-13.</p>
+<p>Nychka D, Furrer R, Paige J, Sain S (2021). “fields: Tools for
+spatial data.” R package version 13.3, &lt;URL: <a href="https://github.com/dnychka/fieldsRPackage" class="external-link uri">https://github.com/dnychka/fieldsRPackage</a>&gt;.</p>
+<p>Orrell T, Informatics Office (2021). NMNH Extant Specimen Records
+(USNM, US). Version 1.49. National Museum of Natural History,
+Smithsonian Institution. DOI: 10.15468/hnhrg3. Accessed via GBIF on
+2020-10-13.</p>
+<p>Owens H, Merow C, Maitner B, Kass J, Barve V, Guralnick R (2021).
+occCite: Querying and Managing Large Biodiversity Occurrence Datasets_.
+doi: 10.5281/zenodo.4726676 (URL: DOI: 10.5281/zenodo.4726676), R
+package version 0.4.9.9000, (&lt;URL: <a href="https://CRAN.R-project.org/package=occCite" class="external-link uri">https://CRAN.R-project.org/package=occCite</a>&gt;).</p>
+<p>Pebesma, E.J., R.S. Bivand (2005). Classes and methods for spatial
+data in R. R News 5 (2), <a href="https://cran.r-project.org/doc/Rnews/" class="external-link uri">https://cran.r-project.org/doc/Rnews/</a>.</p>
+<p>Prestridge H (2021). Biodiversity Research and Teaching Collections -
+TCWC Vertebrates. Version 9.4. Texas A&amp;M University Biodiversity
+Research and Teaching Collections. DOI: 10.15468/szomia. Accessed via
+GBIF on 2020-10-13.</p>
+<p>Provoost P, Bosch S (2019). “robis: R Client to access data from the
+OBIS API.” Ocean Biogeographic Information System. Intergovernmental
+Oceanographic Commission of UNESCO. R package version 2.1.8, <a href="https://cran.r-project.org/package=robis" class="external-link uri">https://cran.r-project.org/package=robis</a>.</p>
+<p>Pugh W (2021). UAIC Ichthyological Collection. Version 3.3.
+University of Alabama Biodiversity and Systematics. DOI:
+10.15468/a2laag. Accessed via GBIF on 2020-10-13.</p>
+<p>R Core Team (2017). R: A language and environment for statistical
+computing. R Foundation for Statistical Computing, Vienna, Austria. URL
+<a href="https://www.R-project.org/" class="external-link uri">https://www.R-project.org/</a>.</p>
+<p>Robins R (2021). UF FLMNH Ichthyology. Version 117.342. Florida
+Museum of Natural History. DOI: 10.15468/8mjsel. Accessed via GBIF on
+2020-10-13.</p>
+<p>Bivand RS, Pebesma E, Gomez-Rubio V (2013). Applied spatial data
+analysis with R, Second edition. Springer, NY. <a href="https://asdar-book.org/" class="external-link uri">https://asdar-book.org/</a></p>
+<p>Sarkar D (2008). Lattice: Multivariate Data Visualization with R.
+Springer, New York. ISBN 978-0-387-75968-5</p>
+<p>Tavera L, Tavera M. L (2021). Biodiversidad de los recursos marinos y
+costeros entre Cartagena y el Golfo de Urabá, Caribe colombiano. Version
+2.4. Instituto de Investigaciones Marinas y Costeras - Invemar. DOI:
+10.15472/d2jusp. Accessed via GBIF on 2020-10-13.</p>
+<p>UNIBIO, IBUNAM. CNPE/Coleccion Nacional de Peces. DOI:
+10.15468/o5d48z. Accessed via GBIF on 2020-10-13.</p>
+<p>Wagner M (2017). MMNS Ichthyology Collection. Mississippi Museum of
+Natural Science. DOI: 10.15468/4c3qeq. Accessed via GBIF on
+2020-10-13.</p>
+<p>Werneke D (2019). AUM Fish Collection. Version 8.1. Auburn University
+Museum. DOI: 10.15468/dm3oyz. Accessed via GBIF on 2020-10-13.</p>
+<p>Wickham H (2016). ggplot2: Elegant Graphics for Data Analysis.
+Springer-Verlag New York.</p>
 </div>
   </div>
 
@@ -239,7 +386,8 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer>

@@ -58,13 +58,13 @@ library(rangeBuilder) # To compare marineBackground to getDynamicAlphaHull
 
 To generate a sample of pseudoabsences and/or background points, it is important to consider the environments the species of interest can access (Barve *et al.*, 2011). There is ample discussion in the literature on how to best delimit a niche model training region (also variously called M or the background region), and we will not review the issue here. In the absence of specific information on species’ dispersal capabilities, algorithmically generating a repeatable sampling background from a clear set of rules may be suitable approximation, or a jumping-off point for hand-curating training regions in a GIS software of choice.
 
-We designed `marineBackground()` as a wrapper around \code{\link[rangeBuilder:getDynamicAlphaHull]{getDynamicAlphaHull}}, a function provided by the `rangeBuilder` package (Davis-Rabosky *et al.*, 2016) which generates background sampling regions by fitting an alpha hull polygon around an occurrence point dataset. Let's look at how `marineBackground()` (and by extension `getDynamicAlphaHull()`) fits alpha hull polygons, based on species occurrence data. The occurrence dataset is our *Steindachneria argentia*, Luminous Hake, data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via `occCite` (Owens *et al.*, 2021).
+We designed `marineBackground()` as a wrapper around \code{\link[rangeBuilder:getDynamicAlphaHull]{getDynamicAlphaHull}}, a function provided by the `rangeBuilder` package (Davis-Rabosky *et al.*, 2016) which generates background sampling regions by fitting an alpha hull polygon around an occurrence point dataset. Let's look at how `marineBackground()` (and by extension `getDynamicAlphaHull()`) fits alpha hull polygons, based on species occurrence data. The occurrence dataset is our *Steindachneria argentea*, Luminous Hake, data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via `occCite` (Owens *et al.*, 2021).
 
 ```{r occurrence dataset, message=FALSE, warning = FALSE}
 # Map occurrences
 land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
 pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
-             spName = "Steindachneria argentia", ptSize = 3,
+             spName = "Steindachneria argentea", ptSize = 3,
              land = land)
 ```
 
@@ -105,6 +105,7 @@ plot(trainingRegion, add = T, border = "orange", lwd = 2)
 ```{r plot basic marineBackground demonstration, echo=FALSE}
 knitr::include_graphics("basicMarineBackgroundDemonstration-1.png")
 ```
+
 You may have noticed that the training regions in the above examples include some areas of the Pacific where the species has not been observed, and cannot access. This could cause problems if it is used to train your model. You *could* delete this area by hand in your favorite GIS software, OR you could change `clipToOcean` to `TRUE` in `marineBackground()`, and any polygon fragments that do not contain an occurrence will be deleted automatically. This is a key difference from `getDynamicAlphaHull()`.
 
 ```{r clipToOcean demo, message=FALSE, warning=FALSE, eval=F}
@@ -156,6 +157,7 @@ plot(pacificTrainingRegion, add = T, border = "orange", lwd = 2)
 ```{r plot meridian wrap demo, echo=FALSE}
 knitr::include_graphics("meridianWrapDemo-1.png")
 ```
+
 # 3D Data Extraction
 
 Next, we will cover how to extract environmental data from a `RasterBrick` object using 3D occurrence coordinates. The occurrences I will use to demonstrate this are the Luminous Hake occurrences from the previous section. The environmental dataset I will use as an example is temperature (Locarnini *et al.*, 2018) from the World Ocean Atlas (WOA; Garcia *et al.*, 2019). I have chosen to focus on temperature for simple illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. 
@@ -239,7 +241,7 @@ The resampled points returned by `downsample()` are horizontally centered in eac
 ```{r plot downsample}
 pointCompMap(occs1 = occs, occs2 = occurrences, 
              occs1Name = "Original", occs2Name = "Cleaned", 
-             spName = "Steindachneria argentia", 
+             spName = "Steindachneria argentea", 
              land = rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1])
 ```
 

@@ -98,10 +98,12 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>2. Processing Raster Data</h1>
-                        <h4 data-toc-skip class="author">Hannah L. Owens</h4>
-                        <h4 data-toc-skip class="author">Carsten Rahbek</h4>
+                        <h4 data-toc-skip class="author">Hannah L.
+Owens</h4>
+                        <h4 data-toc-skip class="author">Carsten
+Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-03-28</h4>
+            <h4 data-toc-skip class="date">2022-05-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/b_RasterProcessing.Rmd" class="external-link"><code>vignettes/b_RasterProcessing.Rmd</code></a></small>
       <div class="hidden name"><code>b_RasterProcessing.Rmd</code></div>
@@ -113,7 +115,14 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>Naturally, to build 3D distribution models, one needs three-dimensionally structured environmental data. These data may come in the form of interpolated <em>in situ</em> measurements (e.g. <a href="https://www.ncei.noaa.gov/access/world-ocean-atlas-2018/" class="external-link">NOAA’s World Ocean Atlas dataset</a>; Garcia et al. 2018a) or as outputs from climate models, either as stand-alone ocean components or as a component of coupled atmosphere-ocean models (e.g. CCSM3, Collins et al. 2006; HadCM3, Valdes et al. 2017). Typically, these data are organized as a series of horizontal layers that are stacked by depth.</p>
+<p>Naturally, to build 3D distribution models, one needs
+three-dimensionally structured environmental data. These data may come
+in the form of interpolated <em>in situ</em> measurements (e.g. <a href="https://www.ncei.noaa.gov/access/world-ocean-atlas-2018/" class="external-link">NOAA’s
+World Ocean Atlas dataset</a>; Garcia et al. 2018a) or as outputs from
+climate models, either as stand-alone ocean components or as a component
+of coupled atmosphere-ocean models (e.g. CCSM3, Collins et al. 2006;
+HadCM3, Valdes et al. 2017). Typically, these data are organized as a
+series of horizontal layers that are stacked by depth.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hannahlowens.github.io/voluModel/" class="external-link">voluModel</a></span><span class="op">)</span> <span class="co"># Since this is the package this vignette is about.</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://rgdal.r-forge.r-project.org" class="external-link">rgdal</a></span><span class="op">)</span> <span class="co"># For vector stuff. Will eventually be replaced with sf.</span>
@@ -126,7 +135,17 @@
 <div class="section level2">
 <h2 id="data-inputs">Data Inputs<a class="anchor" aria-label="anchor" href="#data-inputs"></a>
 </h2>
-<p>First, let’s look at a relatively simple environmental variable from the WOA: temperature (Locarnini et al, 2018). These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. You can download the full dataset via the WOA website. Our first task is to read in the shapefile as a <code>SpatialPointsDataFrame</code>. Note that each row in <code>temperature@data</code> is a set of horizontal coordinates. Each column is a vertical position in the water column. Make sure to check the metadata of the data you use. Different sources may use vertical depth structures.</p>
+<p>First, let’s look at a relatively simple environmental variable from
+the WOA: temperature (Locarnini et al, 2018). These data are supplied by
+the World Ocean Atlas as point shapefiles; the version supplied here has
+been cropped between -110 and -40 longitude and between -5 and 50
+latitude to make it more memory-efficient. You can download the full
+dataset via the WOA website. Our first task is to read in the shapefile
+as a <code>SpatialPointsDataFrame</code>. Note that each row in
+<code>temperature@data</code> is a set of horizontal coordinates. Each
+column is a vertical position in the water column. Make sure to check
+the metadata of the data you use. Different sources may use vertical
+depth structures.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/woa18_decav_t00mn01_cropped.zip"</span>, 
@@ -135,7 +154,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpatfFW5/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpWSoyHD/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -232,7 +251,16 @@
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="fl">0</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">depths</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span>, axes<span class="op">=</span><span class="cn">FALSE</span>, type <span class="op">=</span> <span class="st">"n"</span>, xlab <span class="op">=</span> <span class="st">""</span>, ylab <span class="op">=</span> <span class="st">"Depth Intervals (m)"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/axis.html" class="external-link">axis</a></span><span class="op">(</span><span class="fl">2</span>, at <span class="op">=</span> <span class="fl">0</span><span class="op">-</span><span class="va">depths</span>, labels <span class="op">=</span> <span class="va">depths</span><span class="op">)</span></code></pre></div>
 <p><img src="b_RasterProcessing_files/figure-html/environmental%20data%20loading%20temperature-1.png"><!-- --></p>
-<p>Next, we convert temperature into a <code>RasterBrick</code>. While we are at it, we will generate a raster from the deepest value available for each point. While you might call this a “bottom” raster, it is important to note that in some cases, values are not available for the bottom. After the <code>RasterBrick</code> is created, we give it the same depth names as the columns in the <code>SpatialPointsDataFrame</code>. This is important, because <code>voluModel</code> uses these names as z coordinates when handling 3D data. I am using <code><a href="../reference/oneRasterPlot.html">oneRasterPlot()</a></code> from voluModel to visualize the rasters using a uniform, high-contrast asthetic.</p>
+<p>Next, we convert temperature into a <code>RasterBrick</code>. While
+we are at it, we will generate a raster from the deepest value available
+for each point. While you might call this a “bottom” raster, it is
+important to note that in some cases, values are not available for the
+bottom. After the <code>RasterBrick</code> is created, we give it the
+same depth names as the columns in the
+<code>SpatialPointsDataFrame</code>. This is important, because
+<code>voluModel</code> uses these names as z coordinates when handling
+3D data. I am using <code><a href="../reference/oneRasterPlot.html">oneRasterPlot()</a></code> from voluModel to
+visualize the rasters using a uniform, high-contrast asthetic.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#Creating a bottom raster from the point shapefile</span>
 <span class="va">temperatureBottom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bottomRaster.html">bottomRaster</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span>
@@ -268,7 +296,11 @@
 <div class="section level2">
 <h2 id="interpolation">Interpolation<a class="anchor" aria-label="anchor" href="#interpolation"></a>
 </h2>
-<p>Next, we have a bit of a more complicated example: apparent oxygen utilization (AOU; Garcia et al, 2018b). Apparent oxygen usage is more patchily sampled than temperature (it’s generally measured from instrument casts on research cruises, and the coverage isn’t quite as dense as for temperature).</p>
+<p>Next, we have a bit of a more complicated example: apparent oxygen
+utilization (AOU; Garcia et al, 2018b). Apparent oxygen usage is more
+patchily sampled than temperature (it’s generally measured from
+instrument casts on research cruises, and the coverage isn’t quite as
+dense as for temperature).</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/woa18_all_A00mn01_cropped.zip"</span>, 
@@ -278,7 +310,7 @@
 <span class="va">oxygen</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/oxygen"</span><span class="op">)</span>, 
                   layer <span class="op">=</span> <span class="st">"woa18_all_A00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpatfFW5/oxygen", layer: "woa18_all_A00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpWSoyHD/oxygen", layer: "woa18_all_A00mn01_cropped"</span>
 <span class="co">## with 1490 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -290,7 +322,15 @@
      pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span>, xlim <span class="op">=</span> <span class="va">ext</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>, ylim <span class="op">=</span> <span class="va">ext</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>, cex <span class="op">=</span> <span class="fl">.6</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></code></pre></div>
 <p><img src="b_RasterProcessing_files/figure-html/environmental%20data%20loading%20oxygen-1.png"><!-- --></p>
-<p>There is a workaround for this, since we can reasonably expect some degree of spatial autocorrelation in apparent oxygen utilization. We use the <code><a href="../reference/interpolateRaster.html">interpolateRaster()</a></code> function to produce statistically-interpolated layers using <code>TPS()</code> from the <code>fields</code> package (this is a thin-plate spline interpolation). Be patient–this step can take a while, although as shown here, I am using the <code>fastTPS()</code> approximation, which only samples from nearby cells to speed things up. Maybe <code>fastTPS()</code> will work ok for your data, maybe it won’t. It depends on the data.</p>
+<p>There is a workaround for this, since we can reasonably expect some
+degree of spatial autocorrelation in apparent oxygen utilization. We use
+the <code><a href="../reference/interpolateRaster.html">interpolateRaster()</a></code> function to produce
+statistically-interpolated layers using <code>TPS()</code> from the
+<code>fields</code> package (this is a thin-plate spline interpolation).
+Be patient–this step can take a while, although as shown here, I am
+using the <code>fastTPS()</code> approximation, which only samples from
+nearby cells to speed things up. Maybe <code>fastTPS()</code> will work
+ok for your data, maybe it won’t. It depends on the data.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Creating a RasterBrick</span>
 <span class="va">oxygen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">@</span><span class="va">coords</span>, <span class="va">oxygen</span><span class="op">@</span><span class="va">data</span><span class="op">)</span><span class="op">)</span>
@@ -313,7 +353,11 @@
 
 <span class="co"># Change names to match temperature</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">envtNames</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></code></pre></div>
-<p>Some environmental data rasters may also look “patchy”, possibly as an artifact of uneven sampling. If you are confident that there should be a strong spatial correlation in a data layer that looks “patchy”, you can also statistically smooth it, again using <code>TPS()</code>, like this:</p>
+<p>Some environmental data rasters may also look “patchy”, possibly as
+an artifact of uneven sampling. If you are confident that there should
+be a strong spatial correlation in a data layer that looks “patchy”, you
+can also statistically smooth it, again using <code>TPS()</code>, like
+this:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">oxygenSmooth</span> <span class="op">&lt;-</span> <span class="va">oxygen</span>
 <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/nlayers.html" class="external-link">nlayers</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
@@ -340,13 +384,36 @@
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<p>Collins WD, Bitz CM, Blackmon ML, Bonan GB, Bretherton CS, Carton JA, Chang P, Doney SC, Hack JJ, Henderson TB, Kiehl JT, Large WG, McKenna DS, Santer BD, Smith RD. (2006) The Community Climate System Model Version 3 (CCSM3) Journal of Climate, 19(11), 2122–2143 DOI: 10.1175/jcli3761.1</p>
-<p>Garcia HE, Boyer P, Baranova OK, Locarnini RA, Mishonov AV, Grodsky A, Paver CR, Weathers KW, Smolyar IV, Reagan JR, Seidov D, Zweng MM. (2018a). World Ocean Atlas 2018 (A. Mishonov, Ed.). NOAA National Centers for Environmental Information. <a href="https://accession.nodc.noaa.gov/NCEI-WOA18" class="external-link uri">https://accession.nodc.noaa.gov/NCEI-WOA18</a></p>
-<p>Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA, Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018b). World Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen Utilization, and Oxygen Saturation. A Mishonov Technical Ed.; NOAA Atlas NESDIS 83, 38pp.</p>
-<p>Locarnini RA, Mishonov AV, Baranova OK, Boyer TP, Zweng MM, Garcia HE, Reagan JR, Seidov D, Weathers K, Paver CR, Smolyar I (2018). World Ocean Atlas 2018, Volume 1: Temperature. A. Mishonov Technical Ed.; NOAA Atlas NESDIS 81, 52pp.</p>
-<p>Nychka D, Furrer R, Paige J, Sain S (2021). “fields: Tools for spatial data.” R package version 13.3, &lt;URL: <a href="https://github.com/dnychka/fieldsRPackage" class="external-link uri">https://github.com/dnychka/fieldsRPackage</a>&gt;.</p>
-<p>R Core Team (2017). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL <a href="https://www.R-project.org/" class="external-link uri">https://www.R-project.org/</a>.</p>
-<p>Valdes PJ, Armstrong E, Badger MPS, Bradshaw CD, Bragg F, Crucifix M, Davies-Barnard T, Day JJ, Farnsworth A, Gordon C, Hopcroft PO, Kennedy AT, Lord NS, Lunt DJ, Marzocchi A, Parry LM, Pope V, Roberts WHG, Stone EJ, … Williams JHT. (2017). The BRIDGE HadCM3 family of climate models: <a href="mailto:HadCM3@Bristol" class="email">HadCM3@Bristol</a> v1.0. Geoscientific Model Development, 10(10), 3715–3743. DOI: 10.5194/gmd-10-3715-2017</p>
+<p>Collins WD, Bitz CM, Blackmon ML, Bonan GB, Bretherton CS, Carton JA,
+Chang P, Doney SC, Hack JJ, Henderson TB, Kiehl JT, Large WG, McKenna
+DS, Santer BD, Smith RD. (2006) The Community Climate System Model
+Version 3 (CCSM3) Journal of Climate, 19(11), 2122–2143 DOI:
+10.1175/jcli3761.1</p>
+<p>Garcia HE, Boyer P, Baranova OK, Locarnini RA, Mishonov AV, Grodsky
+A, Paver CR, Weathers KW, Smolyar IV, Reagan JR, Seidov D, Zweng MM.
+(2018a). World Ocean Atlas 2018 (A. Mishonov, Ed.). NOAA National
+Centers for Environmental Information. <a href="https://accession.nodc.noaa.gov/NCEI-WOA18" class="external-link uri">https://accession.nodc.noaa.gov/NCEI-WOA18</a></p>
+<p>Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA,
+Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018b). World
+Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen
+Utilization, and Oxygen Saturation. A Mishonov Technical Ed.; NOAA Atlas
+NESDIS 83, 38pp.</p>
+<p>Locarnini RA, Mishonov AV, Baranova OK, Boyer TP, Zweng MM, Garcia
+HE, Reagan JR, Seidov D, Weathers K, Paver CR, Smolyar I (2018). World
+Ocean Atlas 2018, Volume 1: Temperature. A. Mishonov Technical Ed.; NOAA
+Atlas NESDIS 81, 52pp.</p>
+<p>Nychka D, Furrer R, Paige J, Sain S (2021). “fields: Tools for
+spatial data.” R package version 13.3, &lt;URL: <a href="https://github.com/dnychka/fieldsRPackage" class="external-link uri">https://github.com/dnychka/fieldsRPackage</a>&gt;.</p>
+<p>R Core Team (2017). R: A language and environment for statistical
+computing. R Foundation for Statistical Computing, Vienna, Austria. URL
+<a href="https://www.R-project.org/" class="external-link uri">https://www.R-project.org/</a>.</p>
+<p>Valdes PJ, Armstrong E, Badger MPS, Bradshaw CD, Bragg F, Crucifix M,
+Davies-Barnard T, Day JJ, Farnsworth A, Gordon C, Hopcroft PO, Kennedy
+AT, Lord NS, Lunt DJ, Marzocchi A, Parry LM, Pope V, Roberts WHG, Stone
+EJ, … Williams JHT. (2017). The BRIDGE HadCM3 family of climate models:
+<a href="mailto:HadCM3@Bristol" class="email">HadCM3@Bristol</a> v1.0.
+Geoscientific Model Development, 10(10), 3715–3743. DOI:
+10.5194/gmd-10-3715-2017</p>
 </div>
   </div>
 
@@ -367,7 +434,8 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer>
