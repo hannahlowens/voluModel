@@ -147,7 +147,7 @@ for (i in 1:nlayers(oxygen)){
 names(oxygen) <- envtNames
 ```
 
-```{r interpolate oxygen surface only, warning=FALSE}
+```{r interpolate oxygen surface only, echo = FALSE, warning=FALSE}
 # Creating a RasterBrick
 oxygen <- rasterFromXYZ(cbind(oxygen@coords, oxygen@data[["SURFACE"]]))
 
