@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-05-11</h4>
+            <h4 data-toc-skip class="date">2022-05-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/e_GLMWorkflow.Rmd" class="external-link"><code>vignettes/e_GLMWorkflow.Rmd</code></a></small>
       <div class="hidden name"><code>e_GLMWorkflow.Rmd</code></div>
@@ -208,7 +208,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpJgx3S2/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpZR4gHg/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -356,22 +356,22 @@
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.6817  -0.1504  -0.0763  -0.0511   3.6263  </span>
+<span class="co">## -0.6791  -0.1547  -0.0773  -0.0498   3.6166  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -1.7424998  1.3722102  -1.270 0.204138    </span>
-<span class="co">## Temperature     -0.1870495  0.0671054  -2.787 0.005313 ** </span>
-<span class="co">## AOU             -0.0406570  0.0114442  -3.553 0.000381 ***</span>
-<span class="co">## Temperature:AOU  0.0038692  0.0007999   4.837 1.32e-06 ***</span>
+<span class="co">## (Intercept)     -1.6946848  1.3395574  -1.265 0.205833    </span>
+<span class="co">## Temperature     -0.1875903  0.0658009  -2.851 0.004360 ** </span>
+<span class="co">## AOU             -0.0367880  0.0110473  -3.330 0.000868 ***</span>
+<span class="co">## Temperature:AOU  0.0035002  0.0007668   4.565 5.01e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 220.28  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 228.28</span>
+<span class="co">## Residual deviance: 222.21  on 2319  degrees of freedom</span>
+<span class="co">## AIC: 230.21</span>
 <span class="co">## </span>
 <span class="co">## Number of Fisher Scoring iterations: 8</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage, the niche model is being used to model the geographic distribution of putatively suitable habit for Luminous Hake (an ENM becomes an SDM).</p>
