@@ -135,7 +135,7 @@ pointCompMap(occs1 = occs, occs2 = occsClean,
 Next, we generate a sampling region for the model based on occurrence points. Note that ideally when you're modeling you would carefully curate this background sampling region to make sure it truly approximates the area accessible to the species you are modeling. If you write the shapefile to disk, you can open and edit it in any GIS software you choose, if you have reason to believe `marineBackground()` falls short of estimating the true accessible are for a species. For more information, see [the environmental data processing tutorial](https://hannahlowens.github.io/voluModel/articles/c_DataSampling.html).
 
 ```{r environmental background sampling, warning=FALSE}
-backgroundSamplingRegions <- marineBackground(occsClean)
+backgroundSamplingRegions <- marineBackground(occsClean, buff = 1000000)
 plot(temperature[[1]], 
      main = "Points and background sampling plotted on surface temperature",
      col = viridis(n= 11, option = "mako"))

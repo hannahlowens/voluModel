@@ -91,7 +91,7 @@ occsWdata$AOU <- xyzSample(occs = occsWdata, oxygenSmooth)
 occsWdata <- occsWdata[complete.cases(occsWdata),]
 
 # Study region
-studyRegion <- marineBackground(occsWdata)
+studyRegion <- marineBackground(occsWdata, buff = 1000000)
 
 # Get limits
 tempLims <- quantile(occsWdata$temperature,c(0, 1))

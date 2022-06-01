@@ -103,7 +103,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-05-11</h4>
+            <h4 data-toc-skip class="date">2022-06-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/e_GLMWorkflow.Rmd" class="external-link"><code>vignettes/e_GLMWorkflow.Rmd</code></a></small>
       <div class="hidden name"><code>e_GLMWorkflow.Rmd</code></div>
@@ -139,15 +139,15 @@ tools.</p>
 <span class="co">## plan transition to sf/stars/terra functions using GDAL and PROJ</span>
 <span class="co">## at your earliest convenience.</span>
 <span class="co">## </span>
-<span class="co">## rgdal: version: 1.5-30, (SVN revision 1171)</span>
+<span class="co">## rgdal: version: 1.5-32, (SVN revision 1176)</span>
 <span class="co">## Geospatial Data Abstraction Library extensions to R successfully loaded</span>
-<span class="co">## Loaded GDAL runtime: GDAL 3.4.2, released 2022/03/08</span>
-<span class="co">## Path to GDAL shared files: /Library/Frameworks/R.framework/Versions/4.1/Resources/library/rgdal/gdal</span>
-<span class="co">## GDAL binary built with GEOS: FALSE </span>
+<span class="co">## Loaded GDAL runtime: GDAL 3.4.1, released 2021/12/27</span>
+<span class="co">## Path to GDAL shared files: /Library/Frameworks/R.framework/Versions/4.1/Resources/library/sf/gdal</span>
+<span class="co">## GDAL binary built with GEOS: TRUE </span>
 <span class="co">## Loaded PROJ runtime: Rel. 8.2.1, January 1st, 2022, [PJ_VERSION: 821]</span>
-<span class="co">## Path to PROJ shared files: /Library/Frameworks/R.framework/Versions/4.1/Resources/library/rgdal/proj</span>
+<span class="co">## Path to PROJ shared files: /Users/Hannah/Library/Application Support/proj:/usr/local/opt/proj/share/proj:/usr/local/Cellar/proj/8.2.1/share/proj</span>
 <span class="co">## PROJ CDN enabled: FALSE</span>
-<span class="co">## Linking to sp version:1.4-6</span>
+<span class="co">## Linking to sp version:1.4-7</span>
 <span class="co">## To mute warnings of possible GDAL/OSR exportToProj4() degradation,</span>
 <span class="co">## use options("rgdal_show_exportToProj4_warnings"="none") before loading sp or rgdal.</span></code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -234,7 +234,7 @@ illustrative purposes.</p>
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpLw79K3/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpdSbBme/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -302,7 +302,7 @@ software you choose, if you have reason to believe
 accessible are for a species. For more information, see <a href="https://hannahlowens.github.io/voluModel/articles/c_DataSampling.html" class="external-link">the
 environmental data processing tutorial</a>.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">backgroundSamplingRegions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occsClean</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">backgroundSamplingRegions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occsClean</span>, buff <span class="op">=</span> <span class="fl">1000000</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Using decimalLongitude and decimalLatitude</span>
 <span class="co">##  as x and y coordinates, respectively.</span></code></pre>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
@@ -416,22 +416,22 @@ simple. How does it look?</p>
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.7656  -0.1556  -0.0735  -0.0471   3.6474  </span>
+<span class="co">## -0.5595  -0.1513  -0.0776  -0.0484   3.6407  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -1.6710394  1.3810650  -1.210 0.226293    </span>
-<span class="co">## Temperature     -0.1928190  0.0680609  -2.833 0.004611 ** </span>
-<span class="co">## AOU             -0.0393035  0.0112518  -3.493 0.000477 ***</span>
-<span class="co">## Temperature:AOU  0.0037907  0.0007938   4.775 1.79e-06 ***</span>
+<span class="co">## (Intercept)     -1.7684834  1.4718027  -1.202 0.229528    </span>
+<span class="co">## Temperature     -0.1880797  0.0714186  -2.633 0.008451 ** </span>
+<span class="co">## AOU             -0.0394226  0.0115417  -3.416 0.000636 ***</span>
+<span class="co">## Temperature:AOU  0.0038080  0.0007844   4.855  1.2e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 219.76  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 227.76</span>
+<span class="co">## Residual deviance: 220.40  on 2319  degrees of freedom</span>
+<span class="co">## AIC: 228.4</span>
 <span class="co">## </span>
 <span class="co">## Number of Fisher Scoring iterations: 9</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage,
@@ -707,8 +707,7 @@ Museum. DOI: 10.15468/dm3oyz. Accessed via GBIF on 2020-10-13.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>
