@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-05-31</h4>
+            <h4 data-toc-skip class="date">2022-06-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/e_GLMWorkflow.Rmd" class="external-link"><code>vignettes/e_GLMWorkflow.Rmd</code></a></small>
       <div class="hidden name"><code>e_GLMWorkflow.Rmd</code></div>
@@ -208,7 +208,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpHTr6Hg/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpEkhFeu/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -264,7 +264,7 @@
 <p><img src="e_GLMWorkflow_files/figure-html/downsample%20to%20voxel-1.png"><!-- --></p>
 <p>Next, we generate a sampling region for the model based on occurrence points. Note that ideally when you’re modeling you would carefully curate this background sampling region to make sure it truly approximates the area accessible to the species you are modeling. If you write the shapefile to disk, you can open and edit it in any GIS software you choose, if you have reason to believe <code><a href="../reference/marineBackground.html">marineBackground()</a></code> falls short of estimating the true accessible are for a species. For more information, see <a href="https://hannahlowens.github.io/voluModel/articles/c_DataSampling.html" class="external-link">the environmental data processing tutorial</a>.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">backgroundSamplingRegions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occsClean</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">backgroundSamplingRegions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occsClean</span>, buff <span class="op">=</span> <span class="fl">1000000</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Using decimalLongitude and decimalLatitude</span>
 <span class="co">##  as x and y coordinates, respectively.</span></code></pre>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
@@ -356,22 +356,22 @@
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.6914  -0.1558  -0.0728  -0.0476   3.6635  </span>
+<span class="co">## -0.8074  -0.1511  -0.0740  -0.0467   3.6515  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -1.4028933  1.4237933  -0.985 0.324466    </span>
-<span class="co">## Temperature     -0.2054856  0.0700508  -2.933 0.003353 ** </span>
-<span class="co">## AOU             -0.0442119  0.0122134  -3.620 0.000295 ***</span>
-<span class="co">## Temperature:AOU  0.0041067  0.0008618   4.765 1.89e-06 ***</span>
+<span class="co">## (Intercept)     -1.9531735  1.4929593  -1.308 0.190786    </span>
+<span class="co">## Temperature     -0.1824209  0.0727955  -2.506 0.012213 *  </span>
+<span class="co">## AOU             -0.0395319  0.0118645  -3.332 0.000862 ***</span>
+<span class="co">## Temperature:AOU  0.0039379  0.0008159   4.826 1.39e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 219.63  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 227.63</span>
+<span class="co">## Residual deviance: 218.52  on 2319  degrees of freedom</span>
+<span class="co">## AIC: 226.52</span>
 <span class="co">## </span>
 <span class="co">## Number of Fisher Scoring iterations: 9</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage, the niche model is being used to model the geographic distribution of putatively suitable habit for Luminous Hake (an ENM becomes an SDM).</p>
