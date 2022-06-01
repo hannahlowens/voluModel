@@ -42,9 +42,6 @@ values(r)[520:525] <- 9999
 plot(r)
 
 # Smooth bubble with smoothRaster
-smoothedRaster <- smoothRaster(r)
-plot(smoothedRaster)
-
 fastSmooth <- smoothRaster(r, fast = TRUE, aRange = 3.0)
 plot(fastSmooth)
 

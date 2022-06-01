@@ -77,7 +77,7 @@ xyzSample <- function(occs, envBrick){
     return(NULL)
   }
 
-  if(class(envBrick) != "RasterBrick"){
+  if(!inherits(envBrick, what = "RasterBrick")){
     warning(paste0("'envBrick' must be of class 'RasterBrick'.\n"))
     return(NULL)
   }

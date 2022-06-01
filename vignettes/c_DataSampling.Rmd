@@ -89,23 +89,6 @@ knitr::include_graphics("alphaHullDemonstration-1.png")
 
 What parameters you choose to fit the alpha hull will depend on the biology of the organism you are trying to model (e.g. you may choose a much smaller buffer for a sessile organism than you would for a highly vagile migratory species), your data, and the particulars of your study system and the geography of your study area. You may need to experiment to find something that looks sensible. If you do not provide a pre-defined buffer, `marineBackground()` will calculate a buffer that is the mean of the top and bottom 10% of distances between points in the dataset.
 
-```{r basic marineBackground demonstration, message=FALSE, warning=FALSE, eval=FALSE}
-trainingRegion <- marineBackground(occurrences,
-                                fraction = 1, partCount = 1, 
-                                clipToOcean = F)
-plot(occurrences[,c("decimalLongitude", "decimalLatitude")],
-     main = "Mimimum of 100% Points in Training Region,\nMaximum of 1 Polygon Permitted, Automatic Buffer",
-     xlab = "Longitude", ylab = "Latitude",
-     pch = 20, col = "red",
-     xlim = c(-105, -40), ylim = c(0, 45))
-plot(land, col = "black", add = T)
-plot(trainingRegion, add = T, border = "orange", lwd = 2)
-```
-
-```{r plot basic marineBackground demonstration, echo=FALSE}
-knitr::include_graphics("basicMarineBackgroundDemonstration-1.png")
-```
-
 You may have noticed that the training regions in the above examples include some areas of the Pacific where the species has not been observed, and cannot access. This could cause problems if it is used to train your model. You *could* delete this area by hand in your favorite GIS software, OR you could change `clipToOcean` to `TRUE` in `marineBackground()`, and any polygon fragments that do not contain an occurrence will be deleted automatically. This is a key difference from `getDynamicAlphaHull()`.
 
 ```{r clipToOcean demo, message=FALSE, warning=FALSE, eval=F}

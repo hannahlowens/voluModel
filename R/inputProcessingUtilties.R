@@ -239,7 +239,7 @@ downsample <- function(occs, rasterTemplate){
 
 # Samples bottom values from raster bricks
 bottomRaster <- function(rawPointData){
-  if(class(rawPointData) != "SpatialPointsDataFrame"){
+  if(!is(rawPointData, "SpatialPointsDataFrame")){
     warning(paste0("'rawPointData' must be class 'SpatialPointsDataFrame'.\n"))
     return(NULL)
   }

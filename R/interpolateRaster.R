@@ -71,7 +71,7 @@ interpolateRaster <- function(inputRaster, fast = FALSE, ...){
   }
 
   # Input error check
-  if (!class(inputRaster) == "RasterLayer") {
+  if (!is(inputRaster, "RasterLayer")) {
     warning(paste0("inputRaster is not of class 'RasterLayer'.\n"))
     return(NULL)
   }
@@ -157,9 +157,6 @@ interpolateRaster <- function(inputRaster, fast = FALSE, ...){
 #' plot(r)
 #'
 #' # Smooth bubble with smoothRaster
-#' smoothedRaster <- smoothRaster(r)
-#' plot(smoothedRaster)
-#'
 #' fastSmooth <- smoothRaster(r, fast = TRUE, aRange = 3.0)
 #' plot(fastSmooth)
 #'
@@ -197,7 +194,7 @@ smoothRaster <- function(inputRaster, fast = FALSE, ...){
   }
 
   # Input error check
-  if (!class(inputRaster) == "RasterLayer") {
+  if (!is(inputRaster, "RasterLayer")) {
     warning(paste0("inputRaster is not of class 'RasterLayer'.\n"))
     return(NULL)
   }

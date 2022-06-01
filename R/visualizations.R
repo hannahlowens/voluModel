@@ -73,7 +73,7 @@ testIntersection <- function(a,b){
   #reads in two rasters and tests for overlap T or F
   # if returns TRUE then there is overlap
   # try error is included b/c errors has come up with other test data
-  !(class(try(intersect(a,b),T ))=='try-error' || is.null(intersect(a,b)))
+  !(inherits(try(intersect(a,b),T ), what ='try-error') || is.null(intersect(a,b)))
 }
 
 #' @title Point mapping
@@ -650,8 +650,8 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
     return(NULL)
   }
 
-  if(any(all(!class(rast1) == "RasterLayer", !is.null(rast1)),
-         all(!class(rast2) == "RasterLayer", !is.null(rast2)))){
+  if(any(all(!inherits(rast1, what = "RasterLayer"), !is.null(rast1)),
+         all(!inherits(rast2, what = "RasterLayer"), !is.null(rast2)))){
     warning(paste0("'rast1' and 'rast2', must either be objects of type
                    'RasterLayer' or NULL.\n"))
     return(NULL)
