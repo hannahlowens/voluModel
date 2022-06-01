@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voluModel</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.5</span>
       </span>
     </div>
 
@@ -234,7 +234,7 @@ illustrative purposes.</p>
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpdSbBme/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmppbjwJX/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -416,22 +416,22 @@ simple. How does it look?</p>
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.5595  -0.1513  -0.0776  -0.0484   3.6407  </span>
+<span class="co">## -0.5951  -0.1505  -0.0729  -0.0471   3.6492  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -1.7684834  1.4718027  -1.202 0.229528    </span>
-<span class="co">## Temperature     -0.1880797  0.0714186  -2.633 0.008451 ** </span>
-<span class="co">## AOU             -0.0394226  0.0115417  -3.416 0.000636 ***</span>
-<span class="co">## Temperature:AOU  0.0038080  0.0007844   4.855  1.2e-06 ***</span>
+<span class="co">## (Intercept)     -2.0494084  1.5146425  -1.353 0.176035    </span>
+<span class="co">## Temperature     -0.1783503  0.0730057  -2.443 0.014567 *  </span>
+<span class="co">## AOU             -0.0396608  0.0118421  -3.349 0.000811 ***</span>
+<span class="co">## Temperature:AOU  0.0039841  0.0008231   4.840  1.3e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 220.40  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 228.4</span>
+<span class="co">## Residual deviance: 218.07  on 2319  degrees of freedom</span>
+<span class="co">## AIC: 226.07</span>
 <span class="co">## </span>
 <span class="co">## Number of Fisher Scoring iterations: 9</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage,

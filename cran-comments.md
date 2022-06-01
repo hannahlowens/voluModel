@@ -1,6 +1,6 @@
 ## This is a package update. In this version, I have:
 
-* Adjusted function example for interpolateRaster(), which breaks on some platforms.
+* Addressed an error on some platforms when "buff" in marineBackground() was not specified.
 
 ## Test environments
 * local OS X 10.15.7, R 4.1.2
