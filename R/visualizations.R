@@ -781,7 +781,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
 #' @export
 
 diversityStack <- function(rasterList, template){
-  if(!class(rasterList) == "list"){
+  if(!inherits(rasterList, what = "list")){
     warning(paste0("'rasterList' must be of class 'list'.\n"))
     return(NULL)
   }

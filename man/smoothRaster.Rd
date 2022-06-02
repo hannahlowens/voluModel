@@ -38,11 +38,11 @@ r <- raster(ncol=100, nrow=100)
 values(r) <- 1:10000
 
 # Introduce a "bubble"
-values(r)[520:525] <- 9999
+values(r)[720:725] <- 9999
 plot(r)
 
 # Smooth bubble with smoothRaster
-fastSmooth <- smoothRaster(r, fast = TRUE, aRange = 3.0)
+fastSmooth <- smoothRaster(r, fast = TRUE, aRange = 10.0)
 plot(fastSmooth)
 
 }
