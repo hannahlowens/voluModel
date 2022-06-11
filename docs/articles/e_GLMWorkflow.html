@@ -103,7 +103,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-06-02</h4>
+            <h4 data-toc-skip class="date">2022-06-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/e_GLMWorkflow.Rmd" class="external-link"><code>vignettes/e_GLMWorkflow.Rmd</code></a></small>
       <div class="hidden name"><code>e_GLMWorkflow.Rmd</code></div>
@@ -139,17 +139,18 @@ tools.</p>
 <span class="co">## plan transition to sf/stars/terra functions using GDAL and PROJ</span>
 <span class="co">## at your earliest convenience.</span>
 <span class="co">## </span>
-<span class="co">## rgdal: version: 1.5-32, (SVN revision 1176)</span>
+<span class="co">## rgdal: version: 1.5-29, (SVN revision 1165M)</span>
 <span class="co">## Geospatial Data Abstraction Library extensions to R successfully loaded</span>
-<span class="co">## Loaded GDAL runtime: GDAL 3.4.1, released 2021/12/27</span>
-<span class="co">## Path to GDAL shared files: /Library/Frameworks/R.framework/Versions/4.1/Resources/library/sf/gdal</span>
+<span class="co">## Loaded GDAL runtime: GDAL 3.4.0, released 2021/11/04</span>
+<span class="co">## Path to GDAL shared files: /Library/Frameworks/R.framework/Versions/4.1/Resources/library/rgdal/gdal</span>
 <span class="co">## GDAL binary built with GEOS: TRUE </span>
-<span class="co">## Loaded PROJ runtime: Rel. 8.2.1, January 1st, 2022, [PJ_VERSION: 821]</span>
-<span class="co">## Path to PROJ shared files: /Users/Hannah/Library/Application Support/proj:/usr/local/opt/proj/share/proj:/usr/local/Cellar/proj/8.2.1/share/proj</span>
+<span class="co">## Loaded PROJ runtime: Rel. 8.1.1, September 1st, 2021, [PJ_VERSION: 811]</span>
+<span class="co">## Path to PROJ shared files: /Library/Frameworks/R.framework/Versions/4.1/Resources/library/rgdal/proj</span>
 <span class="co">## PROJ CDN enabled: FALSE</span>
-<span class="co">## Linking to sp version:1.4-7</span>
+<span class="co">## Linking to sp version:1.4-6</span>
 <span class="co">## To mute warnings of possible GDAL/OSR exportToProj4() degradation,</span>
-<span class="co">## use options("rgdal_show_exportToProj4_warnings"="none") before loading sp or rgdal.</span></code></pre>
+<span class="co">## use options("rgdal_show_exportToProj4_warnings"="none") before loading sp or rgdal.</span>
+<span class="co">## Overwritten PROJ_LIB was /Library/Frameworks/R.framework/Versions/4.1/Resources/library/rgdal/proj</span></code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span> <span class="co"># For raster stuff. Will eventually be replaced with terra.</span></code></pre></div>
 <pre><code><span class="co">## </span>
@@ -234,7 +235,7 @@ illustrative purposes.</p>
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpthPzGT/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/xn/_tk36pd5517g_xxb5t9gh2qr0000gn/T/RtmpVDSjUJ/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -416,24 +417,24 @@ simple. How does it look?</p>
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.5495  -0.1576  -0.0753  -0.0491   3.6466  </span>
+<span class="co">## -0.5664  -0.1500  -0.0757  -0.0496   3.6207  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -2.0624436  1.3674125  -1.508 0.131482    </span>
-<span class="co">## Temperature     -0.1774879  0.0675241  -2.629 0.008576 ** </span>
-<span class="co">## AOU             -0.0393730  0.0115215  -3.417 0.000632 ***</span>
-<span class="co">## Temperature:AOU  0.0039002  0.0008232   4.738 2.16e-06 ***</span>
+<span class="co">## (Intercept)     -1.9790190  1.3634611  -1.451 0.146650    </span>
+<span class="co">## Temperature     -0.1770915  0.0663493  -2.669 0.007606 ** </span>
+<span class="co">## AOU             -0.0383481  0.0112225  -3.417 0.000633 ***</span>
+<span class="co">## Temperature:AOU  0.0037570  0.0007974   4.712 2.46e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 221.25  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 229.25</span>
+<span class="co">## Residual deviance: 220.58  on 2319  degrees of freedom</span>
+<span class="co">## AIC: 228.58</span>
 <span class="co">## </span>
-<span class="co">## Number of Fisher Scoring iterations: 9</span></code></pre>
+<span class="co">## Number of Fisher Scoring iterations: 8</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage,
 the niche model is being used to model the geographic distribution of
 putatively suitable habit for Luminous Hake (an ENM becomes an SDM).</p>
