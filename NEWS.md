@@ -1,3 +1,7 @@
+# voluModel 0.1.6
+
+- Updated license from ACM to GPL-3
+
 # voluModel 0.1.5
 
 - Addressed an error on some platforms when "buff" in marineBackground() was not specified.

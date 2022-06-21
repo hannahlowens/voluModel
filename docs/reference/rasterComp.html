@@ -21,7 +21,7 @@ in two different RasterLayers."><meta property="og:image" content="/logo.png"><!
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voluModel</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.6</span>
       </span>
     </div>
 
@@ -106,45 +106,70 @@ in two different <code>RasterLayers</code>.</p>
 distribution of the species corresponding to
 <code>rast1Name</code>. Should have values of 0 (absence)
 and 1 (presence). Can also be <code>NULL</code>.</p></dd>
+
+
 <dt>rast2</dt>
 <dd><p>A single <code>RasterLayer</code> showing the
 distribution of the species corresponding to
 <code>rast2Name</code>. Should have values of 0 (absence)
 and 1 (presence). Must match the extent and
 resolution of <code>rast1</code>. Can also be <code>NULL.</code></p></dd>
+
+
 <dt>col1</dt>
 <dd><p>Color for <code>rast1</code> presences</p></dd>
+
+
 <dt>col2</dt>
 <dd><p>Color for <code>rast2</code> presences</p></dd>
+
+
 <dt>rast1Name</dt>
 <dd><p>An optional name for the first set
 of occurrences, which will be color-coded to
 <code>occs1Col</code> in the resulting plot.</p></dd>
+
+
 <dt>rast2Name</dt>
 <dd><p>An optional name for the first set
 of occurrences, which will be color-coded to
 <code>occs2Col</code> in the resulting plot.</p></dd>
+
+
 <dt>colNeither</dt>
 <dd><p>Color for cells with absences for
 both <code>rast1</code> and <code>rast2</code>.</p></dd>
+
+
 <dt>colBoth</dt>
 <dd><p>Color for cells with presences for
 both <code>rast1</code> and <code>rast2</code>.</p></dd>
+
+
 <dt>land</dt>
 <dd><p>An optional coastline polygon shapefile
 of type <code>sf</code> to provide geographic context for the
 occurrence points.</p></dd>
+
+
 <dt>landCol</dt>
 <dd><p>Color for land on map.</p></dd>
+
+
 <dt>title</dt>
 <dd><p>A title for the plot.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional optional arguments to pass to
 <code>spplot</code> initial plot object.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A plot of class <code>trellis</code> overlaying mapped,
+    
+
+<p>A plot of class <code>trellis</code> overlaying mapped,
 semitransparent extents of the input rasters</p>
     </div>
     <div id="note">
@@ -183,7 +208,7 @@ must match.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>
