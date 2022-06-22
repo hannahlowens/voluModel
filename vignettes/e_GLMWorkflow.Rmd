@@ -125,7 +125,7 @@ for(i in indices){
 occsClean <- downsampledOccs
 
 print(paste0("Original number of points: ", nrow(occs), "; number of downsampled occs: ", nrow(occsClean)))
-land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
+land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
 pointCompMap(occs1 = occs, occs2 = occsClean, 
              occs1Name = "Original", occs2Name = "Cleaned", 
              spName = "Steindachneria argentea", 

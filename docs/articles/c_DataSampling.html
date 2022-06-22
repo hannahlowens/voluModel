@@ -103,7 +103,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-06-21</h4>
+            <h4 data-toc-skip class="date">2022-06-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/c_DataSampling.Rmd" class="external-link"><code>vignettes/c_DataSampling.Rmd</code></a></small>
       <div class="hidden name"><code>c_DataSampling.Rmd</code></div>
@@ -160,7 +160,7 @@ Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via
 <code>occCite</code> (Owens <em>et al.</em>, 2021).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Map occurrences</span>
-<span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"medium"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
+<span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"small"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
 <span class="fu"><a href="../reference/pointMap.html">pointMap</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, ptCol <span class="op">=</span> <span class="st">"orange"</span>, landCol <span class="op">=</span> <span class="st">"black"</span>,
              spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, ptSize <span class="op">=</span> <span class="fl">3</span>,
              land <span class="op">=</span> <span class="va">land</span><span class="op">)</span></code></pre></div>
@@ -280,7 +280,7 @@ memory-efficient.</p>
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpI5IwEo/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpuVIgSe/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -466,7 +466,7 @@ underneath the red dots.</p>
 <code class="sourceCode R"><span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs2 <span class="op">=</span> <span class="va">occurrences</span>, 
              occs1Name <span class="op">=</span> <span class="st">"Original"</span>, occs2Name <span class="op">=</span> <span class="st">"Cleaned"</span>, 
              spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, 
-             land <span class="op">=</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"medium"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+             land <span class="op">=</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"small"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## Using decimalLongitude and decimalLatitude</span>
 <span class="co">##  as x and y coordinates, respectively.</span></code></pre>
 <pre><code><span class="co">## Using decimalLongitude and decimalLatitude</span>

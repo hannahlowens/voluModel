@@ -103,7 +103,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-06-21</h4>
+            <h4 data-toc-skip class="date">2022-06-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/e_GLMWorkflow.Rmd" class="external-link"><code>vignettes/e_GLMWorkflow.Rmd</code></a></small>
       <div class="hidden name"><code>e_GLMWorkflow.Rmd</code></div>
@@ -234,7 +234,7 @@ illustrative purposes.</p>
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpJPYU2B/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpE2GhCh/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -286,7 +286,7 @@ biased sampling. The resampled points are centered in each voxel.</p>
 <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Original number of points: "</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occs</span><span class="op">)</span>, <span class="st">"; number of downsampled occs: "</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occsClean</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] "Original number of points: 301; number of downsampled occs: 71"</span></code></pre>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"medium"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
+<code class="sourceCode R"><span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"small"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
 <span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs2 <span class="op">=</span> <span class="va">occsClean</span>, 
              occs1Name <span class="op">=</span> <span class="st">"Original"</span>, occs2Name <span class="op">=</span> <span class="st">"Cleaned"</span>, 
              spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, 
@@ -416,22 +416,22 @@ simple. How does it look?</p>
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.5699  -0.1498  -0.0726  -0.0492   3.6270  </span>
+<span class="co">## -0.6124  -0.1504  -0.0745  -0.0492   3.6265  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -2.1383566  1.4422000  -1.483 0.138153    </span>
-<span class="co">## Temperature     -0.1717763  0.0697386  -2.463 0.013772 *  </span>
-<span class="co">## AOU             -0.0394054  0.0118713  -3.319 0.000902 ***</span>
-<span class="co">## Temperature:AOU  0.0039372  0.0008356   4.712 2.46e-06 ***</span>
+<span class="co">## (Intercept)     -2.3607376  1.3992219  -1.687 0.091569 .  </span>
+<span class="co">## Temperature     -0.1630790  0.0678467  -2.404 0.016233 *  </span>
+<span class="co">## AOU             -0.0379179  0.0114375  -3.315 0.000916 ***</span>
+<span class="co">## Temperature:AOU  0.0038730  0.0008086   4.790 1.67e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 218.92  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 226.92</span>
+<span class="co">## Residual deviance: 220.27  on 2319  degrees of freedom</span>
+<span class="co">## AIC: 228.27</span>
 <span class="co">## </span>
 <span class="co">## Number of Fisher Scoring iterations: 9</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage,

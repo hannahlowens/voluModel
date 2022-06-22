@@ -1,6 +1,7 @@
 # voluModel 0.1.6
 
 - Updated license from ACM to GPL-3
+- Fixed a bug in error handling for marineBackground()
 
 # voluModel 0.1.5
 

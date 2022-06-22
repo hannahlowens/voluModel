@@ -109,7 +109,7 @@ Here is how the occurrence data file is structured, and where the occurrences we
 ```{r show points, warning=FALSE, echo=FALSE, message=FALSE}
 head(occurrences)
 
-land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
+land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
 pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
              spName = "Steindachneria argentea", ptSize = 3,
              land = land)
@@ -172,11 +172,13 @@ At this point, we can demonstrate one of the key contributions of `voluModel`-- 
 allTemp <- rbind(threeDimTemp, surfTemp, bottomTemp)
 colnames(allTemp) <- c("Group", "Temperature")
 allTemp <- as.data.frame(allTemp)
+allTemp <- allTemp[complete.cases(allTemp),]
 allTemp$Temperature <- as.numeric(allTemp$Temperature)
 
 allOxy <- rbind(threeDimOxy, surfOxy, bottomOxy)
 colnames(allOxy) <- c("Group", "Oxygen")
 allOxy <- as.data.frame(allOxy)
+allOxy <- allOxy[complete.cases(allOxy),]
 allOxy$Oxygen <- as.numeric(allOxy$Oxygen)
 
 # Plotting
@@ -299,7 +301,7 @@ envelopeModelBottom <- mask(crop(envelopeModelBottom, studyRegion), mask = study
 How do these 2D models compare? `voluModel` has a function to conveniently generate a formatted comparison between two presence/absence distribution rasters `rasterComp()`.
 
 ```{r comparing 2D maps}
-land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
+land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
 rasterComp(rast1 = envelopeModelSurface, rast2 = envelopeModelBottom, 
            rast1Name = "Surface", rast2Name = "Bottom", land = land, landCol = "black", 
            title = "Comparison between surface and bottom envelope models")

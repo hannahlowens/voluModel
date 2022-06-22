@@ -135,7 +135,7 @@ library(viridisLite) # For high-contrast plotting palettes
 Here is a shapefile of the continents, which we can conveniently use to provide some context for all the maps we are about to make.
 
 ```{r loading land data, warning=FALSE, message=FALSE}
-land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
+land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
 ```
 
 # Plotting points

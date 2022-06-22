@@ -194,7 +194,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
     hull <- Polygons(list(hull), ID = "A")
     hull <- SpatialPolygons(list(hull))
     proj4string(hull) <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
-    hull <- sp::spTransform(hull[[1]],
+    hull <- sp::spTransform(hull,
                             CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
   } else{
     hull <- sp::spTransform(hull[[1]],
@@ -269,7 +269,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
     wholeM <- middle
   }
 
-  wholeM <- spTransform(wholeM,
+  wholeM <- sp::spTransform(wholeM,
                         CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
 
   return(wholeM)

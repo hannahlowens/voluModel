@@ -840,7 +840,7 @@ diversityStack <- function(rasterList, template){
 #' values(rast) <- seq(0,99, 1)
 #'
 #' oneRasterPlot(rast = rast,
-#'               land = rnaturalearth::ne_countries(scale = "medium",
+#'               land = rnaturalearth::ne_countries(scale = "small",
 #'                                                  returnclass = "sf")[1],
 #'               landCol = "black")
 #'

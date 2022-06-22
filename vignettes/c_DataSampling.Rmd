@@ -62,7 +62,7 @@ We designed `marineBackground()` as a wrapper around \code{\link[rangeBuilder:ge
 
 ```{r occurrence dataset, message=FALSE, warning = FALSE}
 # Map occurrences
-land <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1]
+land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
 pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
              spName = "Steindachneria argentea", ptSize = 3,
              land = land)
@@ -225,7 +225,7 @@ The resampled points returned by `downsample()` are horizontally centered in eac
 pointCompMap(occs1 = occs, occs2 = occurrences, 
              occs1Name = "Original", occs2Name = "Cleaned", 
              spName = "Steindachneria argentea", 
-             land = rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")[1])
+             land = rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1])
 ```
 
 At this point, we can demonstrate one of the key contributions of `voluModel`-- an improvement in how the environmental data are extracted at species' occurrences. `voluModel` samples environmental conditions at the depth where each record was located, instead of extrapolating to surface or bottom conditions. Finally, we add a column called "response" and fill it by repeating "1", to signify that these occurrences should be interpreted as presences for the purposes of modeling.
