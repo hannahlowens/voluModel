@@ -51,7 +51,7 @@ occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
                              package='voluModel'))
 spName <- "Steindachneria argentea"
 pointMap(occs = occs, spName = spName,
-         land = rnaturalearth::ne_countries(scale = "medium",
+         land = rnaturalearth::ne_countries(scale = "small",
                                             returnclass = "sf")[1])
 
 }

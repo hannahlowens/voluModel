@@ -34,10 +34,7 @@ library(raster)
 rast <- raster(ncol=10, nrow=10)
 values(rast) <- seq(0,99, 1)
 
-oneRasterPlot(rast = rast,
-              land = rnaturalearth::ne_countries(scale = "small",
-                                                 returnclass = "sf")[1],
-              landCol = "black")
+oneRasterPlot(rast = rast)
 
 }
 \seealso{

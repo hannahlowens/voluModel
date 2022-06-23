@@ -212,8 +212,19 @@ AOU based on 3D extraction is significantly higher than AOU extracted at the sur
 
 Some modeling methods require the generation of a sampling region from which pseudoabsence or background points are drawn. For this introduction, we are showing you a simple envelope method that does not require background sampling. Instead, I will be applying the same principle to define the study region to which I project the envelope model, so we have a product that makes biological sense in terms of the question "Where are we most likely to encounter Lumious Hakes?" See [the background sampling tutorial](https://hannahlowens.github.io/voluModel/articles/c_DataSampling.html) for more information on `voluModel`'s `marineBackground()` function, and [the generalized linear model tutorial](https://hannahlowens.github.io/voluModel/articles/e_GLMWorkflow.html) for an example of a modelling application that uses a background sampling region. 
 
-```{r study region, message=FALSE, warning=FALSE}
+```{r study region, message=FALSE, warning=FALSE, eval=FALSE}
 studyRegion <- marineBackground(occurrences, buff = 1000000)
+plot(temperature[[1]], 
+     main = "Points and background sampling plotted on surface temperature",
+     col = viridis(n = 11, option = "mako"))
+plot(studyRegion, add = T, border = "orange", lwd = 2)
+points(occurrences[,c("decimalLongitude","decimalLatitude")], 
+       cex = 1, pch = 20, col = "red")
+```
+
+```{r study region hidden, message=FALSE, warning=FALSE, eval=TRUE, echo=FALSE}
+studyRegion <- readRDS(system.file("extdata/backgroundSamplingRegions.rds",
+                              package='voluModel'))
 plot(temperature[[1]], 
      main = "Points and background sampling plotted on surface temperature",
      col = viridis(n = 11, option = "mako"))
@@ -301,7 +312,6 @@ envelopeModelBottom <- mask(crop(envelopeModelBottom, studyRegion), mask = study
 How do these 2D models compare? `voluModel` has a function to conveniently generate a formatted comparison between two presence/absence distribution rasters `rasterComp()`.
 
 ```{r comparing 2D maps}
-land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
 rasterComp(rast1 = envelopeModelSurface, rast2 = envelopeModelBottom, 
            rast1Name = "Surface", rast2Name = "Bottom", land = land, landCol = "black", 
            title = "Comparison between surface and bottom envelope models")

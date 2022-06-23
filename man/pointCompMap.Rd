@@ -94,9 +94,7 @@ pointCompMap(occs1 = occs1, occs2 = occs2,
              landCol = "black",
              waterCol = "steelblue",
              spName = spName,
-             ptSize = 2,
-             land = rnaturalearth::ne_countries(scale = "medium",
-                                                returnclass = "sf")[1])
+             ptSize = 2)
 
 }
 \seealso{

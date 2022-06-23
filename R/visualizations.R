@@ -111,7 +111,7 @@ testIntersection <- function(a,b){
 #'                              package='voluModel'))
 #' spName <- "Steindachneria argentea"
 #' pointMap(occs = occs, spName = spName,
-#'          land = rnaturalearth::ne_countries(scale = "medium",
+#'          land = rnaturalearth::ne_countries(scale = "small",
 #'                                             returnclass = "sf")[1])
 #'
 #' @import ggplot2
@@ -282,9 +282,7 @@ pointMap <- function(occs, spName, land = NA,
 #'              landCol = "black",
 #'              waterCol = "steelblue",
 #'              spName = spName,
-#'              ptSize = 2,
-#'              land = rnaturalearth::ne_countries(scale = "medium",
-#'                                                 returnclass = "sf")[1])
+#'              ptSize = 2)
 #'
 #' @import ggplot2
 #' @importFrom dplyr inner_join anti_join
@@ -839,10 +837,7 @@ diversityStack <- function(rasterList, template){
 #' rast <- raster(ncol=10, nrow=10)
 #' values(rast) <- seq(0,99, 1)
 #'
-#' oneRasterPlot(rast = rast,
-#'               land = rnaturalearth::ne_countries(scale = "small",
-#'                                                  returnclass = "sf")[1],
-#'               landCol = "black")
+#' oneRasterPlot(rast = rast)
 #'
 #' @import raster
 #' @importFrom viridisLite viridis
@@ -862,7 +857,7 @@ oneRasterPlot <- function(rast,
   if("maxpixels" %in% names(args)){
     maxpixels <- args$maxpixels
   } else{
-    maxpixels <- 50000
+    maxpixels <- 10000
   }
 
   if("alpha" %in% names(args)){
@@ -987,7 +982,7 @@ plotLayers <- function(rast,
   if("maxpixels" %in% names(args)){
     maxpixels <- args$maxpixels
   } else{
-    maxpixels <- 50000
+    maxpixels <- 10000
   }
 
   # Input error checking

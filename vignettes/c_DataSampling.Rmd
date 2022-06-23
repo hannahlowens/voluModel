@@ -93,10 +93,10 @@ You may have noticed that the training regions in the above examples include som
 
 ```{r clipToOcean demo, message=FALSE, warning=FALSE, eval=F}
 trainingRegion <- marineBackground(occurrences, 
-                                fraction = .95, partCount = 2, buff = 1000000, 
-                                clipToOcean = T)
+                                   buff = 1000000, 
+                                   clipToOcean = T)
 plot(occurrences[,c("decimalLongitude", "decimalLatitude")],
-     main = "Minimum of 95% Points in Training Region,\nMaximum of 2 Polygons Permitted, 100 km Buffer",
+     main = "100 km Buffer,\n Training Region Clipped to Occupied Polygon",
      xlab = "Longitude", ylab = "Latitude",
      pch = 20, col = "red",
      xlim = c(-105, -40), ylim = c(0, 45))
@@ -105,9 +105,8 @@ plot(trainingRegion, add = T, border = "orange", lwd = 2)
 ```
 
 ```{r plot clipToOcean demo, echo=FALSE}
-trainingRegion <- marineBackground(occurrences, 
-                                fraction = .95, partCount = 2, buff = 1000000, 
-                                clipToOcean = T)
+trainingRegion <- readRDS(system.file("extdata/backgroundSamplingRegions.rds",
+                              package='voluModel'))
 
 knitr::include_graphics("clipToOceanDemo-1.png")
 ```
@@ -175,7 +174,7 @@ envtNames[[1]] <- "0"
 names(temperature) <- envtNames
 
 # Here's a sampling of depth plots from the 102 depth layers available
-plot(temperature[[c(1, 10, 50, 100)]])
+plot(temperature[[c(1, 50)]])
 ```
 
 At this point, you may have noticed a message popping up about which columns `voluModel` is interpreting as coordinates. `voluModel` is fairly flexible in how the coordinate columns are named, and it relies on names instead of column position to interpret x, y, and z (or latitude, longitude, and depth) coordinates. We do this to make `voluModel` as flexible as possible to a diversity of input formats, although English is the only supported language at the moment. Here are some examples of names that work.
@@ -186,9 +185,6 @@ xyzSample(occs = occsTest, envBrick = temperature)
 colnames(occsTest) <- c("x", "y", "z")
 xyzSample(occs = occsTest, envBrick = temperature)
 
-# Of course, the names have to be somewhat interpretable
-colnames(occsTest) <- c("ham", "eggs", "cheese")
-xyzSample(occs = occsTest, envBrick = temperature)
 rm(occsTest)
 ```
 
@@ -221,11 +217,11 @@ print(paste0("Original number of points: ", nrow(occs), "; number of downsampled
 
 The resampled points returned by `downsample()` are horizontally centered in each voxel. The red dots in the plot show occurrences from the original dataset; the orange dots show the downsampled dataset. Not all of the orange dots may be visible underneath the red dots.
 
-```{r plot downsample}
+```{r plot downsample, warning=FALSE}
 pointCompMap(occs1 = occs, occs2 = occurrences, 
              occs1Name = "Original", occs2Name = "Cleaned", 
              spName = "Steindachneria argentea", 
-             land = rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1])
+             land = land)
 ```
 
 At this point, we can demonstrate one of the key contributions of `voluModel`-- an improvement in how the environmental data are extracted at species' occurrences. `voluModel` samples environmental conditions at the depth where each record was located, instead of extrapolating to surface or bottom conditions. Finally, we add a column called "response" and fill it by repeating "1", to signify that these occurrences should be interpreted as presences for the purposes of modeling.
