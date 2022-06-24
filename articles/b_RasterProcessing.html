@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-06-23</h4>
+            <h4 data-toc-skip class="date">2022-06-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/b_RasterProcessing.Rmd" class="external-link"><code>vignettes/b_RasterProcessing.Rmd</code></a></small>
       <div class="hidden name"><code>b_RasterProcessing.Rmd</code></div>
@@ -135,7 +135,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpGrjsce/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpzrDO12/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -250,20 +250,16 @@
 <span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
               title<span class="op">=</span> <span class="st">"Temperature (C)"</span><span class="op">)</span>
 
-<span class="co"># R won't let you name the layers numbers only--it pastes an X at the beginning</span>
-<span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">[[</span><span class="st">"X100"</span><span class="op">]</span><span class="op">]</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
-              title<span class="op">=</span> <span class="st">"Temperature (C)"</span><span class="op">)</span>
-
-<span class="va">p3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">temperatureBottom</span>,land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
+<span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">temperatureBottom</span>,land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, 
               title <span class="op">=</span> <span class="st">"Temperature (C)"</span><span class="op">)</span>
 
-<span class="va">temp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Surface"</span> <span class="op">=</span> <span class="va">p1</span>, <span class="st">"100m Depth"</span> <span class="op">=</span> <span class="va">p2</span>, <span class="st">"Bottom"</span> <span class="op">=</span> <span class="va">p3</span><span class="op">)</span>
+<span class="va">temp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Surface"</span> <span class="op">=</span> <span class="va">p1</span>, <span class="st">"Bottom"</span> <span class="op">=</span> <span class="va">p2</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/update.html" class="external-link">update</a></span><span class="op">(</span><span class="va">temp</span>, strip  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/strip.default.html" class="external-link">strip.custom</a></span><span class="op">(</span>strip.levels <span class="op">=</span> <span class="cn">TRUE</span>,
                              horizontal <span class="op">=</span> <span class="cn">TRUE</span>,
                              bg <span class="op">=</span> <span class="st">"black"</span>,
                              fg <span class="op">=</span> <span class="st">"white"</span>,
                              par.strip.text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"white"</span>, cex <span class="op">=</span> <span class="fl">1.2</span>, font <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="b_RasterProcessing_files/figure-html/temperature%20processing-1.png"><!-- --></p>
+<p><img src="TemperatureTopBottom.png" width="100%" height="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="interpolation">Interpolation<a class="anchor" aria-label="anchor" href="#interpolation"></a>
@@ -278,7 +274,7 @@
 <span class="va">oxygen</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/oxygen"</span><span class="op">)</span>, 
                   layer <span class="op">=</span> <span class="st">"woa18_all_A00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpGrjsce/oxygen", layer: "woa18_all_A00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpzrDO12/oxygen", layer: "woa18_all_A00mn01_cropped"</span>
 <span class="co">## with 1490 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">

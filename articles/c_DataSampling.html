@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-06-23</h4>
+            <h4 data-toc-skip class="date">2022-06-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/c_DataSampling.Rmd" class="external-link"><code>vignettes/c_DataSampling.Rmd</code></a></small>
       <div class="hidden name"><code>c_DataSampling.Rmd</code></div>
@@ -160,7 +160,7 @@
      xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">105</span>, <span class="op">-</span><span class="fl">40</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">45</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">trainingRegion</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="clipToOceanDemo-1.png" width="1291"></p>
+<p><img src="clipToOceanDemo-1.png" width="700"></p>
 <p>The last major difference between <code><a href="../reference/marineBackground.html">marineBackground()</a></code> and <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> is how the functions handle training regions that are adjacent to the antimeridian (i.e. 180° E or W). <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> truncates polygons at this line, which can lead to some strange-looking training areas or fatal errors. <code><a href="../reference/marineBackground.html">marineBackground()</a></code>, on the other hand, wraps polygons across the meridian and merges them if they overlap. For this example, I am going to manipulate the longitudinal coordinates of our Luminous Hake dataset to generate a quick fictional example.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Fictional example occurrences</span>
@@ -198,7 +198,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/Rtmp2t0lJd/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmpbGraqQ/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
