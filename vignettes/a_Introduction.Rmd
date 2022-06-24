@@ -22,8 +22,6 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
-knitr::opts_knit$set(root.dir = system.file('extdata', 
-                                            package='voluModel'))
 load(system.file("extdata/oxygenSmooth.RData", 
                  package='voluModel'))
 load(system.file("extdata/oxygenBottom.RData",
@@ -120,23 +118,15 @@ Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et 
 
 Here you see plots at the sea surface and the bottom. The AOU dataset has been interpolated and smoothed using a thin plate spline algorithm. For more details on how to process environmental data, see [the raster data tutorial](https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html). 
 
-```{r environmental data plotting, echo=FALSE, message=FALSE, warning=FALSE}
-p1 <- oneRasterPlot(temperature[[1]], land = land, landCol = "black", 
-              title= "Temperature (C)")
-p2 <- oneRasterPlot(temperatureBottom,land = land, landCol = "black", 
-              title = "Temperature (C)")
+```{r temperature plot, echo=FALSE, out.width = '100%', out.height= '100%'}
+knitr::include_graphics("TemperatureTopBottom.png")
+```
 
+```{r temperature plotting, echo=FALSE, message=FALSE, warning=FALSE}
 p3 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
               title= "Apparent Oxygen Utilization (µmol/kg), interpolated and smoothed")
 p4 <- oneRasterPlot(oxygenBottom, land = land, landCol = "black",
      title = "Apparent Oxygen Utilization (µmol/kg), interpolated and smoothed")
-
-temp <- c("Surface" = p1, "Bottom" = p2)
-update(temp, strip  = strip.custom(strip.levels = TRUE,
-                             horizontal = TRUE,
-                             bg = "black",
-                             fg = "white",
-                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
 temp <- c("Surface" = p3, "Bottom" = p4)
 update(temp, strip  = strip.custom(strip.levels = TRUE,
                              horizontal = TRUE,
@@ -215,22 +205,18 @@ Some modeling methods require the generation of a sampling region from which pse
 ```{r study region, message=FALSE, warning=FALSE, eval=FALSE}
 studyRegion <- marineBackground(occurrences, buff = 1000000)
 plot(temperature[[1]], 
-     main = "Points and background sampling plotted on surface temperature",
+     main = "Points and background sampling\nplotted on surface temperature",
      col = viridis(n = 11, option = "mako"))
 plot(studyRegion, add = T, border = "orange", lwd = 2)
 points(occurrences[,c("decimalLongitude","decimalLatitude")], 
        cex = 1, pch = 20, col = "red")
 ```
-
 ```{r study region hidden, message=FALSE, warning=FALSE, eval=TRUE, echo=FALSE}
 studyRegion <- readRDS(system.file("extdata/backgroundSamplingRegions.rds",
                               package='voluModel'))
-plot(temperature[[1]], 
-     main = "Points and background sampling plotted on surface temperature",
-     col = viridis(n = 11, option = "mako"))
-plot(studyRegion, add = T, border = "orange", lwd = 2)
-points(occurrences[,c("decimalLongitude","decimalLatitude")], 
-       cex = 1, pch = 20, col = "red")
+```
+```{r plot study region, echo=FALSE, out.width = '100%', out.height= '100%'}
+knitr::include_graphics("PointsAndTrainingRegion.png")
 ```
 
 For our simple niche envelope models, we need to draw the environmental variable data from each occurrence voxel. For comparison with previous modeling approaches, I will extract data from the surface, from the bottom, and from the 3D coordinate for each variable.

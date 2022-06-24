@@ -83,8 +83,8 @@ plot(land, col = "black", add = T)
 plot(trainingRegion, add = T, border = "orange", lwd = 2)
 ```
 
-```{r plot alpha hull demonstration, echo=FALSE}
-knitr::include_graphics("alphaHullDemonstration-1.png")
+```{r plot alpha hull demonstration, echo=FALSE, fig.width=7}
+knitr::include_graphics("alphaHullDemonstration-1.png", )
 ```
 
 What parameters you choose to fit the alpha hull will depend on the biology of the organism you are trying to model (e.g. you may choose a much smaller buffer for a sessile organism than you would for a highly vagile migratory species), your data, and the particulars of your study system and the geography of your study area. You may need to experiment to find something that looks sensible. If you do not provide a pre-defined buffer, `marineBackground()` will calculate a buffer that is the mean of the top and bottom 10% of distances between points in the dataset.

@@ -22,8 +22,6 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
-knitr::opts_knit$set(root.dir = system.file('extdata', 
-                                            package='voluModel'))
 load(system.file("extdata/oxygenSmooth.RData", 
                  package='voluModel'))
 ```
@@ -79,7 +77,7 @@ axis(2, at = 0-depths, labels = depths)
 
 Next, we convert temperature into a `RasterBrick`. While we are at it, we will generate a raster from the deepest value available for each point. While you might call this a "bottom" raster, it is important to note that in some cases, values are not available for the bottom. After the `RasterBrick` is created, we give it the same depth names as the columns in the `SpatialPointsDataFrame`. This is important, because `voluModel` uses these names as z coordinates when handling 3D data. I am using `oneRasterPlot()` from voluModel to visualize the rasters using a uniform, high-contrast asthetic.
 
-```{r temperature processing}
+```{r temperature processing, eval=FALSE}
 #Creating a bottom raster from the point shapefile
 temperatureBottom <- bottomRaster(temperature)
 
@@ -96,19 +94,33 @@ names(temperature) <- envtNames
 p1 <- oneRasterPlot(temperature[[1]], land = land, landCol = "black", 
               title= "Temperature (C)")
 
-# R won't let you name the layers numbers only--it pastes an X at the beginning
-p2 <- oneRasterPlot(temperature[["X100"]], land = land, landCol = "black", 
-              title= "Temperature (C)")
-
-p3 <- oneRasterPlot(temperatureBottom,land = land, landCol = "black", 
+p2 <- oneRasterPlot(temperatureBottom,land = land, landCol = "black", 
               title = "Temperature (C)")
 
-temp <- c("Surface" = p1, "100m Depth" = p2, "Bottom" = p3)
+temp <- c("Surface" = p1, "Bottom" = p2)
 update(temp, strip  = strip.custom(strip.levels = TRUE,
                              horizontal = TRUE,
                              bg = "black",
                              fg = "white",
                              par.strip.text = list(col = "white", cex = 1.2, font = 2)))
+```
+
+```{r temperature processing hidden, echo=FALSE}
+#Creating a bottom raster from the point shapefile
+temperatureBottom <- bottomRaster(temperature)
+
+# Creating a 3D temperature RasterBrick from the point shapefile
+temperature <- rasterFromXYZ(cbind(temperature@coords,
+                                   temperature@data))
+
+# Get names of depths
+envtNames <- gsub("[d,M]", "", names(temperature))
+envtNames[[1]] <- "0"
+names(temperature) <- envtNames
+```
+
+```{r temperature plot, echo=FALSE, out.width = '100%', out.height= '100%'}
+knitr::include_graphics("TemperatureTopBottom.png")
 ```
 
 # Interpolation

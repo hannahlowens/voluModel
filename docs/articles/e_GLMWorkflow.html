@@ -103,7 +103,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-06-23</h4>
+            <h4 data-toc-skip class="date">2022-06-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/e_GLMWorkflow.Rmd" class="external-link"><code>vignettes/e_GLMWorkflow.Rmd</code></a></small>
       <div class="hidden name"><code>e_GLMWorkflow.Rmd</code></div>
@@ -234,7 +234,7 @@ illustrative purposes.</p>
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpiNrDas/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpRecaQP/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -309,7 +309,6 @@ environmental data processing tutorial</a>.</p>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">backgroundSamplingRegions</span>, add <span class="op">=</span> <span class="cn">T</span>, border <span class="op">=</span> <span class="st">"orange"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">occsClean</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>,<span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>, 
        cex <span class="op">=</span> <span class="fl">1</span>, pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></code></pre></div>
-<p><img src="e_GLMWorkflow_files/figure-html/environmental%20background%20sampling%20hidden-1.png"><!-- --></p>
 <p>Finally, we need to draw the environmental variable data that will be
 used to generate the ecological niche model, from presence voxels as
 well as from the background sampling region. First, we sample
@@ -413,24 +412,24 @@ simple. How does it look?</p>
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.6931  -0.1548  -0.0733  -0.0470   3.6495  </span>
+<span class="co">## -0.6619  -0.1509  -0.0768  -0.0502   3.6153  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
-<span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -2.2511777  1.3513369  -1.666   0.0957 .  </span>
-<span class="co">## Temperature     -0.1705777  0.0669365  -2.548   0.0108 *  </span>
-<span class="co">## AOU             -0.0359696  0.0111056  -3.239   0.0012 ** </span>
-<span class="co">## Temperature:AOU  0.0037575  0.0007776   4.832 1.35e-06 ***</span>
+<span class="co">##                  Estimate Std. Error z value Pr(&gt;|z|)    </span>
+<span class="co">## (Intercept)     -1.830269   1.345804  -1.360  0.17384    </span>
+<span class="co">## Temperature     -0.182111   0.065915  -2.763  0.00573 ** </span>
+<span class="co">## AOU             -0.038671   0.011161  -3.465  0.00053 ***</span>
+<span class="co">## Temperature:AOU  0.003724   0.000778   4.787 1.69e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 218.85  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 226.85</span>
+<span class="co">## Residual deviance: 220.41  on 2319  degrees of freedom</span>
+<span class="co">## AIC: 228.41</span>
 <span class="co">## </span>
-<span class="co">## Number of Fisher Scoring iterations: 9</span></code></pre>
+<span class="co">## Number of Fisher Scoring iterations: 8</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage,
 the niche model is being used to model the geographic distribution of
 putatively suitable habit for Luminous Hake (an ENM becomes an SDM).</p>
