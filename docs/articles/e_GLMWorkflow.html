@@ -235,7 +235,7 @@ illustrative purposes.</p>
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpZpj7gr/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpjjndR1/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -279,7 +279,7 @@ biased sampling. The resampled points are centered in each voxel.</p>
   <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="va">occsClean</span><span class="op">[</span><span class="va">occsClean</span><span class="op">$</span><span class="va">index</span><span class="op">==</span><span class="va">i</span>,<span class="op">]</span>
   <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/downsample.html">downsample</a></span><span class="op">(</span><span class="va">tempPoints</span>, <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
   <span class="va">tempPoints</span><span class="op">$</span><span class="va">depth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">layerNames</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tempPoints</span><span class="op">)</span><span class="op">)</span>
-  <span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">downsampledOccs</span>, <span class="va">tempPoints</span><span class="op">)</span>
+  <span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">downsampledOccs</span>, <span class="va">tempPoints</span><span class="op">)</span>
 <span class="op">}</span>
 
 <span class="va">occsClean</span> <span class="op">&lt;-</span> <span class="va">downsampledOccs</span>
@@ -384,7 +384,7 @@ most dissimilar background may more likely lead to an overfit model.</p>
 <span class="va">suitableCentroid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Temperature"</span>, <span class="st">"AOU"</span><span class="op">)</span><span class="op">]</span>, 
                           MARGIN <span class="op">=</span> <span class="fl">2</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span>
 <span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Temperature"</span>, <span class="st">"AOU"</span><span class="op">)</span><span class="op">]</span>, MARGIN <span class="op">=</span> <span class="fl">1</span>, 
-                                  FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">suitableCentroid</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+                                  FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">suitableCentroid</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="va">backgroundWdata</span><span class="op">$</span><span class="va">sampleWeight</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span> <span class="op">-</span> 
                                  <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span><span class="op">)</span><span class="op">-</span>
                                                                  <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span><span class="op">)</span><span class="op">)</span>
@@ -397,7 +397,7 @@ most dissimilar background may more likely lead to an overfit model.</p>
 object.</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Unite datasets</span>
-<span class="va">datForMod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">occsWdata</span>, <span class="va">backgroundWdata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
+<span class="va">datForMod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">occsWdata</span>, <span class="va">backgroundWdata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">suitableCentroid</span>, <span class="va">sampleForAbsence</span>, <span class="va">backgroundWdata</span>, <span class="va">occsWdata</span><span class="op">)</span></code></pre></div>
 <p>With the data cleaned, formatted and united into a single
 <code>data.frame</code>, generating a generalized linear model is very
@@ -413,22 +413,22 @@ simple. How does it look?</p>
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.7046  -0.1487  -0.0712  -0.0473   3.6508  </span>
+<span class="co">## -0.5591  -0.1536  -0.0756  -0.0489   3.6470  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -2.2241268  1.4012255  -1.587 0.112451    </span>
-<span class="co">## Temperature     -0.1717961  0.0679942  -2.527 0.011516 *  </span>
-<span class="co">## AOU             -0.0393227  0.0113790  -3.456 0.000549 ***</span>
-<span class="co">## Temperature:AOU  0.0040336  0.0008189   4.926 8.41e-07 ***</span>
+<span class="co">## (Intercept)     -2.0003992  1.3921840  -1.437 0.150753    </span>
+<span class="co">## Temperature     -0.1799598  0.0682686  -2.636 0.008388 ** </span>
+<span class="co">## AOU             -0.0382585  0.0113036  -3.385 0.000713 ***</span>
+<span class="co">## Temperature:AOU  0.0038224  0.0007928   4.821 1.43e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
 <span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 217.49  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 225.49</span>
+<span class="co">## Residual deviance: 219.80  on 2319  degrees of freedom</span>
+<span class="co">## AIC: 227.8</span>
 <span class="co">## </span>
 <span class="co">## Number of Fisher Scoring iterations: 9</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage,
