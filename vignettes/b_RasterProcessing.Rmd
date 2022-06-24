@@ -159,7 +159,7 @@ for (i in 1:nlayers(oxygen)){
 names(oxygen) <- envtNames
 ```
 
-```{r interpolate oxygen surface only, echo = FALSE, warning=FALSE}
+```{r interpolate oxygen surface only, echo = FALSE, eval = FALSE, warning=FALSE}
 # Creating a RasterBrick
 oxygen <- rasterFromXYZ(cbind(oxygen@coords, oxygen@data[["SURFACE"]]))
 
@@ -196,7 +196,7 @@ update(temp, strip  = strip.custom(strip.levels = TRUE,
                              fg = "white",
                              par.strip.text = list(col = "white", cex = 1.2, font = 2)))
 ```
-```{r smooth oxygen display, echo=FALSE}
+```{r smooth oxygen display, echo=FALSE, eval=FALSE}
 p1 <- oneRasterPlot(oxygen, land = land, landCol = "black", 
               title= "Apparent Oxygen Utilization (µmol/kg) at Surface")
 p2 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
@@ -208,6 +208,10 @@ update(temp, strip  = strip.custom(strip.levels = TRUE,
                              bg = "black",
                              fg = "white",
                              par.strip.text = list(col = "white", cex = 1.2, font = 2)))
+```
+
+```{r AOU plot, echo=FALSE, out.width = '100%', out.height= '100%'}
+knitr::include_graphics("AOUInterpAndSmooth.png")
 ```
 
 # References
