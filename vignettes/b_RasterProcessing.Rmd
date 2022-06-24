@@ -32,7 +32,7 @@ Naturally, to build 3D distribution models, one needs three-dimensionally struct
 
 ```{r load packages, message=FALSE, warning=FALSE}
 library(voluModel) # Since this is the package this vignette is about.
-library(rgdal) # For vector stuff. Will eventually be replaced with sf.
+library(rgdal, options("rgdal_show_exportToProj4_warnings"="none")) # For vector stuff. Will eventually be replaced with sf.
 library(raster) # For raster stuff. Will eventually be replaced with terra.
 library(tibble) # For data organization
 library(ggplot2) # For supplementary visualization

@@ -37,7 +37,8 @@ Here are the packages you will need.
 library(voluModel) # Because of course
 library(dplyr) # For occurrence data filtration
 library(ggplot2) # For fancy plotting
-library(rgdal) # For vector stuff. Will eventually be replaced with sf.
+library(rgdal,
+        options("rgdal_show_exportToProj4_warnings"="none")) # For vector stuff. Will eventually be replaced with sf.
 library(raster) # For raster stuff. Will eventually be replaced with terra.
 library(viridisLite) # For high-contrast plotting palettes
 ```

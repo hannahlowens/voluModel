@@ -36,10 +36,10 @@ Here are the packages you will need.
 ```{r packages, message=FALSE, warning=FALSE}
 library(voluModel) # Because of course
 library(ggplot2) # For fancy plotting
-library(rgdal) # For vector stuff. Will eventually be replaced with sf.
+library(rgdal, 
+        options("rgdal_show_exportToProj4_warnings"="none")) # For vector stuff. Will eventually be replaced with sf.
 library(raster) # For raster stuff. Will eventually be replaced with terra.
 library(viridisLite) # For high-contrast plotting palettes
-library(latticeExtra) # Some fancy plotting
 ```
 
 # Data Inputs
@@ -122,9 +122,9 @@ Here you see plots at the sea surface and the bottom. The AOU dataset has been i
 knitr::include_graphics("TemperatureTopBottom.png")
 ```
 
-```{r temperature plotting, echo=FALSE, message=FALSE, warning=FALSE}
+```{r oxygen plotting, echo=FALSE, eval = FALSE, message=FALSE, warning=FALSE}
 p3 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization (µmol/kg), interpolated and smoothed")
+              title= "Apparent Oxygen Utilization (µmol/kg),\n interpolated and smoothed")
 p4 <- oneRasterPlot(oxygenBottom, land = land, landCol = "black",
      title = "Apparent Oxygen Utilization (µmol/kg), interpolated and smoothed")
 temp <- c("Surface" = p3, "Bottom" = p4)
@@ -133,6 +133,10 @@ update(temp, strip  = strip.custom(strip.levels = TRUE,
                              bg = "black",
                              fg = "white",
                              par.strip.text = list(col = "white", cex = 1.2, font = 2)))
+```
+
+```{r oxygen plot, echo=FALSE, out.width = '100%', out.height= '100%'}
+knitr::include_graphics("OxygenTopBottom.png")
 ```
 
 # A point about 3D environmental data extraction
