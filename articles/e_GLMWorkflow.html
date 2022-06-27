@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-06-24</h4>
+            <h4 data-toc-skip class="date">2022-06-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/e_GLMWorkflow.Rmd" class="external-link"><code>vignettes/e_GLMWorkflow.Rmd</code></a></small>
       <div class="hidden name"><code>e_GLMWorkflow.Rmd</code></div>
@@ -180,16 +180,18 @@
 <span class="co">## [1] 2067.5</span></code></pre>
 <p>Based on this information and what we know about the biology of Luminous Hakes and how these occurrence data are collected, I am going to remove occurrences that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not <em>in situ</em> or errors of some kind.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">occsClean</span> <span class="op">&lt;-</span> <span class="va">occs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">decimalLongitude</span>, <span class="va">decimalLatitude</span>, <span class="va">depth</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">depth</span> <span class="op"><a href="https://rdrr.io/pkg/raster/man/match.html" class="external-link">%in%</a></span> <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">occsClean</span> <span class="op">&lt;-</span> <span class="va">occs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">decimalLongitude</span>, <span class="va">decimalLatitude</span>, <span class="va">depth</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/between.html" class="external-link">between</a></span><span class="op">(</span><span class="va">depth</span>, <span class="fl">1</span>, <span class="fl">2000</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/raster/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">occsClean</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">##   decimalLongitude decimalLatitude depth</span>
-<span class="co">## 1        -54.08333        7.666667   450</span>
-<span class="co">## 2        -54.08333        7.666667   450</span>
-<span class="co">## 3        -80.43333        9.300000    82</span>
-<span class="co">## 4        -59.78330        9.683300   274</span>
-<span class="co">## 5        -59.78333        9.683333   274</span>
-<span class="co">## 6        -59.75000        9.750000   366</span></code></pre>
+<pre><code><span class="co">##   decimalLongitude decimalLatitude  depth</span>
+<span class="co">## 1        -54.90000        7.450000 260.50</span>
+<span class="co">## 2        -54.08333        7.666667 450.00</span>
+<span class="co">## 3        -54.08333        7.666667 450.00</span>
+<span class="co">## 4        -56.87500        7.741667 365.76</span>
+<span class="co">## 5        -80.43333        9.300000  82.00</span>
+<span class="co">## 6        -59.78330        9.683300 274.00</span></code></pre>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">occsClean</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span>, y<span class="op">=</span><span class="va">depth</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html" class="external-link">geom_violin</a></span><span class="op">(</span>fill<span class="op">=</span><span class="st">"yellow"</span>, <span class="op">)</span> <span class="op">+</span>
@@ -209,7 +211,7 @@
 <span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, 
                        layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## OGR data source with driver: ESRI Shapefile </span>
-<span class="co">## Source: "/tmp/RtmpSrq01x/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
+<span class="co">## Source: "/tmp/RtmphTDYvr/temperature", layer: "woa18_decav_t00mn01_cropped"</span>
 <span class="co">## with 1633 features</span>
 <span class="co">## It has 102 fields</span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -255,7 +257,7 @@
 <span class="va">occsClean</span> <span class="op">&lt;-</span> <span class="va">downsampledOccs</span>
 
 <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Original number of points: "</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occs</span><span class="op">)</span>, <span class="st">"; number of downsampled occs: "</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occsClean</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] "Original number of points: 301; number of downsampled occs: 71"</span></code></pre>
+<pre><code><span class="co">## [1] "Original number of points: 301; number of downsampled occs: 82"</span></code></pre>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"small"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
 <span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs2 <span class="op">=</span> <span class="va">occsClean</span>, 
@@ -353,24 +355,24 @@
 <span class="co">## </span>
 <span class="co">## Deviance Residuals: </span>
 <span class="co">##     Min       1Q   Median       3Q      Max  </span>
-<span class="co">## -0.8818  -0.1454  -0.0707  -0.0471   3.6524  </span>
+<span class="co">## -0.6081  -0.1576  -0.0833  -0.0576   3.6328  </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span>
-<span class="co">## (Intercept)     -1.9227686  1.3300667  -1.446 0.148284    </span>
-<span class="co">## Temperature     -0.1837274  0.0654799  -2.806 0.005018 ** </span>
-<span class="co">## AOU             -0.0392597  0.0111646  -3.516 0.000437 ***</span>
-<span class="co">## Temperature:AOU  0.0039388  0.0007944   4.958 7.11e-07 ***</span>
+<span class="co">## (Intercept)     -2.4454963  1.4018833  -1.744  0.08108 .  </span>
+<span class="co">## Temperature     -0.1487718  0.0654275  -2.274  0.02298 *  </span>
+<span class="co">## AOU             -0.0297020  0.0103038  -2.883  0.00394 ** </span>
+<span class="co">## Temperature:AOU  0.0031129  0.0006895   4.515 6.33e-06 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
 <span class="co">## (Dispersion parameter for binomial family taken to be 1)</span>
 <span class="co">## </span>
-<span class="co">##     Null deviance: 258.07  on 2322  degrees of freedom</span>
-<span class="co">## Residual deviance: 216.94  on 2319  degrees of freedom</span>
-<span class="co">## AIC: 224.94</span>
+<span class="co">##     Null deviance: 291.73  on 2625  degrees of freedom</span>
+<span class="co">## Residual deviance: 256.26  on 2622  degrees of freedom</span>
+<span class="co">## AIC: 264.26</span>
 <span class="co">## </span>
-<span class="co">## Number of Fisher Scoring iterations: 9</span></code></pre>
+<span class="co">## Number of Fisher Scoring iterations: 8</span></code></pre>
 <p>Now we project the model back into geographic space; at this stage, the niche model is being used to model the geographic distribution of putatively suitable habit for Luminous Hake (an ENM becomes an SDM).</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[X]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/pkg/raster/man/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
