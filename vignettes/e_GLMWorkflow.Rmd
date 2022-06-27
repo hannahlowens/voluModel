@@ -57,8 +57,10 @@ boxplot.stats(occs$depth)
 Based on this information and what we know about the biology of Luminous Hakes and how these occurrence data are collected, I am going to remove occurrences that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not *in situ* or errors of some kind.
 
 ```{r clean occurrence data, eval=T}
-occsClean <- occs %>% dplyr::select(decimalLongitude, decimalLatitude, depth) %>%
-  distinct() %>% filter(depth %in% 1:2000)
+occsClean <- occs %>% 
+  dplyr::select(decimalLongitude, decimalLatitude, depth) %>%
+  dplyr::distinct() %>% 
+  filter(dplyr::between(depth, 1, 2000))
 head(occsClean)
 
 ggplot(occsClean, aes(x = 1, y=depth)) +

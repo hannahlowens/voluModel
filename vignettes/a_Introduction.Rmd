@@ -35,6 +35,7 @@ Here are the packages you will need.
 
 ```{r packages, message=FALSE, warning=FALSE}
 library(voluModel) # Because of course
+library(dplyr) # To filter data
 library(ggplot2) # For fancy plotting
 library(rgdal, 
         options("rgdal_show_exportToProj4_warnings"="none")) # For vector stuff. Will eventually be replaced with sf.
@@ -78,15 +79,10 @@ occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
                              package='voluModel'))
 
 #Clean points
-occsClean <- occs[complete.cases(occs$depth),]
-occsClean <- occsClean[occsClean$depth > 0.0,]
-occsClean <- occsClean[occsClean$depth < 2000.0,]
-
-occurrences <- occsClean[,c("decimalLatitude", "decimalLongitude", "depth")] 
-
-# Preliminary cleaning
-occurrences <- dplyr::distinct(occurrences)
-occurrences <- occurrences[complete.cases(occurrences),]
+occurrences <- occs %>% 
+  dplyr::select(decimalLongitude, decimalLatitude, depth) %>%
+  dplyr::distinct() %>% 
+  dplyr::filter(dplyr::between(depth, 1, 2000))
 
 # Gets the layer index for each occurrence by matching to depth
 layerNames <- as.numeric(gsub("[X]", "", names(temperature)))

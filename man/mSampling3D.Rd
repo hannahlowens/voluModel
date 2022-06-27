@@ -76,11 +76,10 @@ buffPts <- SpatialPoints(occurrences[,c("longitude", "latitude")])
 crs(buffPts) <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
 mShp <- buffer(buffPts, width = 1, dissolve = TRUE)
 
-# Test function
+# Here's the function
 occSample3d <- mSampling3D(occurrences,
                            envBrick, mShp = mShp,
                            depthLimit = "occs")
-head(occSample3d)
 
 }
 \keyword{backgroundSampling}

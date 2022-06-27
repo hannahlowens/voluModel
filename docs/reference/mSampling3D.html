@@ -158,15 +158,12 @@ which to sample.</p></li>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/projection.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">buffPts</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"</span></span>
 <span class="r-in"><span class="va">mShp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/buffer.html" class="external-link">buffer</a></span><span class="op">(</span><span class="va">buffPts</span>, width <span class="op">=</span> <span class="fl">1</span>, dissolve <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="co"># Test function</span></span>
+<span class="r-in"><span class="co"># Here's the function</span></span>
 <span class="r-in"><span class="va">occSample3d</span> <span class="op">&lt;-</span> <span class="fu">mSampling3D</span><span class="op">(</span><span class="va">occurrences</span>,</span>
 <span class="r-in">                           <span class="va">envBrick</span>, mShp <span class="op">=</span> <span class="va">mShp</span>,</span>
 <span class="r-in">                           depthLimit <span class="op">=</span> <span class="st">"occs"</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Using longitude, latitude, and depth</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  as x, y, and z coordinates, respectively.</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">occSample3d</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] longitude latitude  depth    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;0 rows&gt; (or 0-length row.names)</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>

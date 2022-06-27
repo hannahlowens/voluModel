@@ -56,7 +56,6 @@ mShp <- buffer(buffPts, width = 1, dissolve = TRUE)
 
 # Here's the function
 result <- mSampling2D(occs = occurrences, rasterTemplate = r, mShp = mShp)
-head(result)
 
 }
 \keyword{backgroundSampling}

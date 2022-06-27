@@ -285,7 +285,7 @@ pointMap <- function(occs, spName, land = NA,
 #'              ptSize = 2)
 #'
 #' @import ggplot2
-#' @importFrom dplyr inner_join anti_join
+#' @importFrom dplyr inner_join anti_join %>% mutate
 #' @importFrom ggtext element_markdown
 #'
 #' @seealso \code{\link[ggplot2:ggplot]{ggplot}}
@@ -382,13 +382,16 @@ pointCompMap <- function(occs1, occs2,
 
   # Where the function actually starts
   occsBoth <- NA
-  occsBoth <- unique(dplyr::inner_join(occs2[,c(xIndex2, yIndex2)],
-                                     occs1[,c(xIndex1, yIndex1)]))
-  occsBoth$source <- rep_len("both", length.out = nrow(occsBoth))
-  occs1 <- unique(dplyr::anti_join(occs1[,c(xIndex1, yIndex1)],occsBoth))
-  occs1$source <- rep_len(occs1Name, length.out = nrow(occs1))
-  occs2 <- unique(dplyr::anti_join(occs2[,c(xIndex2, yIndex2)],occsBoth))
-  occs2$source <- rep_len(occs2Name, length.out = nrow(occs2))
+  occsBoth <- dplyr::inner_join(occs2[,c(xIndex2, yIndex2)],
+                                occs1[,c(xIndex1, yIndex1)]) %>%
+    dplyr::distinct() %>%
+    dplyr::mutate(source = "both")
+  occs1 <- dplyr::anti_join(occs1[,c(xIndex1, yIndex1)],occsBoth) %>%
+    dplyr::distinct() %>%
+    dplyr::mutate(source = occs1Name)
+  occs2 <- dplyr::anti_join(occs2[,c(xIndex2, yIndex2)],occsBoth) %>%
+    dplyr::distinct() %>%
+    dplyr::mutate(source = occs2Name)
 
   colParse1 <- columnParse(occs1)
   xIndex1 <- colParse1$xIndex

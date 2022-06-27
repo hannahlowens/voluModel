@@ -98,7 +98,6 @@ occCellRemoval <- function(occs, rasterTemplate){
 #'
 #' # Here's the function
 #' result <- mSampling2D(occs = occurrences, rasterTemplate = r, mShp = mShp)
-#' head(result)
 #'
 #' @import raster
 #'
@@ -212,11 +211,10 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 #' crs(buffPts) <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
 #' mShp <- buffer(buffPts, width = 1, dissolve = TRUE)
 #'
-#' # Test function
+#' # Here's the function
 #' occSample3d <- mSampling3D(occurrences,
 #'                            envBrick, mShp = mShp,
 #'                            depthLimit = "occs")
-#' head(occSample3d)
 #'
 #' @import raster
 #'

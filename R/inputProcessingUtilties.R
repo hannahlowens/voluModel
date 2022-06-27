@@ -138,7 +138,6 @@ columnParse <- function(occs, wDepth = FALSE){
 #'
 #' # Here's the function
 #' result <- downsample(occs = occurrences, rasterTemplate = r)
-#' head(result)
 #'
 #' @import raster
 #'

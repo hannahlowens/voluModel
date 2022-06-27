@@ -40,7 +40,6 @@ occurrences <- as.data.frame(cbind(longitude,latitude))
 
 # Here's the function
 result <- downsample(occs = occurrences, rasterTemplate = r)
-head(result)
 
 }
 \keyword{inputProcessing}
