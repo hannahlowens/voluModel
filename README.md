@@ -30,7 +30,7 @@ citation for the version you’re using:
 citation(package = "voluModel")
 ```
     ## Owens H, Rahbek C (2022). _voluModel: Modeling Species Distributions in Three Dimensions_. doi:
-    ## 10.5281/zenodo.6367505 (URL: https://doi.org/10.5281/zenodo.6389839), R package version 0.1.5, <URL:
+    ## 10.5281/zenodo.6769758  (URL: https://doi.org/10.5281/zenodo.6769758), R package version 0.1.6, <URL:
     ## http://CRAN.R-project.org/package=voluModel>.
     ##
     ## A BibTeX entry for LaTeX users is
@@ -39,9 +39,9 @@ citation(package = "voluModel")
     ##    title = {{voluModel}: Modeling Species Distributions in Three Dimensions},
     ##    author = {Hannah L. Owens and Carsten Rahbek},
     ##    year = {2022}
-    ##    note = {R package version 0.1.5},
+    ##    note = {R package version 0.1.6},
     ##    url = {http://CRAN.R-project.org/package=voluModel},
-    ##    doi = {10.5281/zenodo.6389839},
+    ##    doi = {10.5281/zenodo.6769758},
     ##  }
 
 
@@ -70,7 +70,7 @@ devtools::install_github("hannahlowens/voluModel", build_vignettes = TRUE)
 
 -   Please [report any issues or
     bugs](https://github.com/hannahlowens/voluModel/issues).
--   License: ACM
+-   License: GPL-3
 -   Get citation information for `voluModel` in R using
     `citation(package = 'voluModel')`
     
