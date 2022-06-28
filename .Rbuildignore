@@ -17,3 +17,4 @@ ComplementaryDataProcessing.R
 ^data-raw$
 ^CRAN-SUBMISSION$
 ^CONTRIBUTING.md
+^man/figures/SoMePreview$
