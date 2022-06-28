@@ -79,21 +79,21 @@ occurrence point plots.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">pointCompMap</span><span class="op">(</span>
-  <span class="va">occs1</span>,
-  <span class="va">occs2</span>,
-  <span class="va">spName</span>,
-  land <span class="op">=</span> <span class="cn">NA</span>,
-  occs1Col <span class="op">=</span> <span class="st">"#bd0026"</span>,
-  occs2Col <span class="op">=</span> <span class="st">"#fd8d3c"</span>,
-  agreeCol <span class="op">=</span> <span class="st">"black"</span>,
-  occs1Name <span class="op">=</span> <span class="st">"Set 1"</span>,
-  occs2Name <span class="op">=</span> <span class="st">"Set 2"</span>,
-  landCol <span class="op">=</span> <span class="st">"gray"</span>,
-  waterCol <span class="op">=</span> <span class="st">"steelblue"</span>,
-  ptSize <span class="op">=</span> <span class="fl">1</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pointCompMap</span><span class="op">(</span></span>
+<span>  <span class="va">occs1</span>,</span>
+<span>  <span class="va">occs2</span>,</span>
+<span>  <span class="va">spName</span>,</span>
+<span>  land <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  occs1Col <span class="op">=</span> <span class="st">"#bd0026"</span>,</span>
+<span>  occs2Col <span class="op">=</span> <span class="st">"#fd8d3c"</span>,</span>
+<span>  agreeCol <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  occs1Name <span class="op">=</span> <span class="st">"Set 1"</span>,</span>
+<span>  occs2Name <span class="op">=</span> <span class="st">"Set 2"</span>,</span>
+<span>  landCol <span class="op">=</span> <span class="st">"gray"</span>,</span>
+<span>  waterCol <span class="op">=</span> <span class="st">"steelblue"</span>,</span>
+<span>  ptSize <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -182,27 +182,27 @@ must match.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">occs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/Steindachneria_argentea.csv"</span>,</span>
-<span class="r-in">                             package<span class="op">=</span><span class="st">'voluModel'</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">occs1</span> <span class="op">&lt;-</span> <span class="va">occs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occs</span><span class="op">)</span>,</span>
-<span class="r-in">                     size <span class="op">=</span> <span class="fl">24</span>, replace <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,<span class="op">]</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">occs2</span> <span class="op">&lt;-</span> <span class="va">occs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/ncell.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occs</span><span class="op">)</span>,</span>
-<span class="r-in">                     size <span class="op">=</span> <span class="fl">24</span>, replace <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,<span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">spName</span> <span class="op">&lt;-</span> <span class="st">"Steindachneria argentea"</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">pointCompMap</span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs1</span>, occs2 <span class="op">=</span> <span class="va">occs2</span>,</span>
-<span class="r-in">             occs1Col <span class="op">=</span> <span class="st">"red"</span>, occs2Col <span class="op">=</span> <span class="st">"orange"</span>,</span>
-<span class="r-in">             agreeCol <span class="op">=</span> <span class="st">"purple"</span>,</span>
-<span class="r-in">             occs1Name <span class="op">=</span> <span class="st">"2D"</span>,</span>
-<span class="r-in">             occs2Name <span class="op">=</span> <span class="st">"3D"</span>,</span>
-<span class="r-in">             landCol <span class="op">=</span> <span class="st">"black"</span>,</span>
-<span class="r-in">             waterCol <span class="op">=</span> <span class="st">"steelblue"</span>,</span>
-<span class="r-in">             spName <span class="op">=</span> <span class="va">spName</span>,</span>
-<span class="r-in">             ptSize <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">occs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/Steindachneria_argentea.csv"</span>,</span></span>
+<span class="r-in"><span>                             package<span class="op">=</span><span class="st">'voluModel'</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">occs1</span> <span class="op">&lt;-</span> <span class="va">occs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occs</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                     size <span class="op">=</span> <span class="fl">24</span>, replace <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">occs2</span> <span class="op">&lt;-</span> <span class="va">occs</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occs</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                     size <span class="op">=</span> <span class="fl">24</span>, replace <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">spName</span> <span class="op">&lt;-</span> <span class="st">"Steindachneria argentea"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">pointCompMap</span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs1</span>, occs2 <span class="op">=</span> <span class="va">occs2</span>,</span></span>
+<span class="r-in"><span>             occs1Col <span class="op">=</span> <span class="st">"red"</span>, occs2Col <span class="op">=</span> <span class="st">"orange"</span>,</span></span>
+<span class="r-in"><span>             agreeCol <span class="op">=</span> <span class="st">"purple"</span>,</span></span>
+<span class="r-in"><span>             occs1Name <span class="op">=</span> <span class="st">"2D"</span>,</span></span>
+<span class="r-in"><span>             occs2Name <span class="op">=</span> <span class="st">"3D"</span>,</span></span>
+<span class="r-in"><span>             landCol <span class="op">=</span> <span class="st">"black"</span>,</span></span>
+<span class="r-in"><span>             waterCol <span class="op">=</span> <span class="st">"steelblue"</span>,</span></span>
+<span class="r-in"><span>             spName <span class="op">=</span> <span class="va">spName</span>,</span></span>
+<span class="r-in"><span>             ptSize <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Using decimalLongitude and decimalLatitude</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  as x and y coordinates, respectively.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Using decimalLongitude and decimalLatitude</span>
@@ -213,7 +213,7 @@ must match.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Use of `occ_dat[[occ_datIndices$xIndex]]` is discouraged. Use `.data[[occ_datIndices$xIndex]]` instead.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Use of `occ_dat[[occ_datIndices$yIndex]]` is discouraged. Use `.data[[occ_datIndices$yIndex]]` instead.</span>
 <span class="r-plt img"><img src="pointCompMap-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>

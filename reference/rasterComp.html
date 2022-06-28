@@ -83,20 +83,20 @@ in two different <code>RasterLayers</code>.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">rasterComp</span><span class="op">(</span>
-  rast1 <span class="op">=</span> <span class="cn">NULL</span>,
-  rast2 <span class="op">=</span> <span class="cn">NULL</span>,
-  col1 <span class="op">=</span> <span class="st">"red"</span>,
-  col2 <span class="op">=</span> <span class="st">"blue"</span>,
-  rast1Name <span class="op">=</span> <span class="st">"Set 1"</span>,
-  rast2Name <span class="op">=</span> <span class="st">"Set 2"</span>,
-  colNeither <span class="op">=</span> <span class="st">"white"</span>,
-  colBoth <span class="op">=</span> <span class="st">"purple"</span>,
-  land <span class="op">=</span> <span class="cn">NA</span>,
-  landCol <span class="op">=</span> <span class="st">"black"</span>,
-  title <span class="op">=</span> <span class="st">"A Raster Comparison"</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">rasterComp</span><span class="op">(</span></span>
+<span>  rast1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rast2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  col1 <span class="op">=</span> <span class="st">"red"</span>,</span>
+<span>  col2 <span class="op">=</span> <span class="st">"blue"</span>,</span>
+<span>  rast1Name <span class="op">=</span> <span class="st">"Set 1"</span>,</span>
+<span>  rast2Name <span class="op">=</span> <span class="st">"Set 2"</span>,</span>
+<span>  colNeither <span class="op">=</span> <span class="st">"white"</span>,</span>
+<span>  colBoth <span class="op">=</span> <span class="st">"purple"</span>,</span>
+<span>  land <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  landCol <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  title <span class="op">=</span> <span class="st">"A Raster Comparison"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -179,21 +179,21 @@ must match.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/raster/man/spplot.html" class="external-link">spplot</a></code></p></div>
+    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/sp/man/spplot.html" class="external-link">spplot</a></code></p></div>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="va">rast1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span>ncol<span class="op">=</span><span class="fl">10</span>, nrow<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getValues.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span>, <span class="fl">50</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">rast2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span>ncol<span class="op">=</span><span class="fl">10</span>, nrow<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getValues.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">50</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">rasterComp</span><span class="op">(</span>rast1 <span class="op">=</span> <span class="va">rast1</span>, rast2 <span class="op">=</span> <span class="va">rast2</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rast1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span>ncol<span class="op">=</span><span class="fl">10</span>, nrow<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span>, <span class="fl">50</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">rast2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span>ncol<span class="op">=</span><span class="fl">10</span>, nrow<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">50</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">rasterComp</span><span class="op">(</span>rast1 <span class="op">=</span> <span class="va">rast1</span>, rast2 <span class="op">=</span> <span class="va">rast2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="rasterComp-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
