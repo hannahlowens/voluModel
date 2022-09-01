@@ -6,7 +6,7 @@
 #' Delineating background sampling regions can be one of the
 #' trickiest parts of generating a good model. Automatically
 #' generated background shapefiles should be inspected
-#' carefully prior to model use. HAHA EDIT!!
+#' carefully prior to model use.
 #'
 #' Useful references, among others:
 #' \itemize{
