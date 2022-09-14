@@ -100,10 +100,10 @@ verticalSample <- function(x, sampleAxis = "lon", axisValue = NA){
     }
   }
 
-  # Selecect coordinates to sample
+  # Select coordinates to sample
   samplePoints <- data.frame(rasterToPoints(x[[1]])[,c("x","y")])
   if(sampleAxis == "lon"){
-    samplePoints <- samplePoints[samplePoints[,"x"]==axisValue,]
+    samplePoints <- samplePoints[samplePoints[,"x"] == axisValue,]
     cellValues <- data.frame(matrix(nrow = ncol(x@data@values),
                                     ncol = nrow(samplePoints)))
     row.names(cellValues) <- colnames(x@data@values)
@@ -130,3 +130,6 @@ verticalSample <- function(x, sampleAxis = "lon", axisValue = NA){
   }
   return(terra::rast(sampledPoints))
 }
+
+#How is it?
+plot(verticalSample(envelopeModel3D))
