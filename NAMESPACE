@@ -2,6 +2,7 @@
 
 export(MESS3D)
 export(areColors)
+export(blendColor)
 export(bottomRaster)
 export(columnParse)
 export(diversityStack)
