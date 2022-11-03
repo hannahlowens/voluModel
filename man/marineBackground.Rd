@@ -4,7 +4,7 @@
 \alias{marineBackground}
 \title{Marine background shapefile generation}
 \usage{
-marineBackground(occs, clipToOcean = TRUE, ...)
+marineBackground(occs, clipToOcean = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{occs}{A \code{data.frame} with at least two columns
@@ -15,6 +15,9 @@ can be coerced into this format.}
 occurs. Useful in cases where buffers jump over narrow
 peninsulas (e.g. Isthmus of Panama). Can be quite artificial at ocean
 boundaries.}
+
+\item{verbose}{\code{logical}. Switching to \code{FALSE} mutes message describing
+which columns in \code{occs} are interpreted as x and y coordinates.}
 
 \item{...}{Additional optional arguments to pass to
 \code{getDynamicAlphaHull}.}
@@ -51,7 +54,7 @@ and Biogeography} 30: 1876-88.
 }
 \details{
 The meat of this function is a special-case wrapper
-around \code{getDynamicAlphaHull} from the \code{rangeBuilder} package.
+around \code{getDynamicAlphaHull()} from the \code{rangeBuilder} package.
 The function documented here is especially useful in cases where
 one wants to automatically generate training regions that overlap
 the international date line. Regions that exceed the line are cut
@@ -61,6 +64,10 @@ deleted.
 If the argument \code{buff} is not supplied, a buffer is
 calculated by taking the mean between the 10th and 90th percentile
 of horizontal distances between occurrence points.
+
+If \code{getDynamicAlphaHull()} cannot satisfy the provided conditions,
+the occurrences are buffered and then a minimum convex hull is
+drawn around the buffer polygons.
 }
 \examples{
 \donttest{

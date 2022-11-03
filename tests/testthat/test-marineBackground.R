@@ -87,7 +87,8 @@ test_that("marineBackground Pacific results as expected", {
 
   #One side
   result <- marineBackground(occs = occurrences[1:10,], buff = 1000000,
-                             fraction = .95, partCount = 2, clipToOcean = TRUE)
+                             fraction = .95, partCount = 2, clipToOcean = TRUE,
+                             verbose = FALSE)
   expect_equal(class(result)[[1]], "SpatialPolygons")
   expect_equal(length(result@polygons), 1)
 })
