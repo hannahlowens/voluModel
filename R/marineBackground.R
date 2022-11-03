@@ -33,6 +33,9 @@
 #' peninsulas (e.g. Isthmus of Panama). Can be quite artificial at ocean
 #' boundaries.
 #'
+#' @param verbose `logical`. Switching to `FALSE` mutes message describing
+#' which columns in `occs` are interpreted as x and y coordinates.
+#'
 #' @param ... Additional optional arguments to pass to
 #' `getDynamicAlphaHull`.
 #'
@@ -87,7 +90,7 @@
 #' @export
 
 
-marineBackground <- function(occs, clipToOcean = TRUE, ...){
+marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
   args <- list(...)
 
   if("fraction" %in% names(args)){
@@ -129,6 +132,10 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
     warning(message("Argument 'clipToOcean' is not of type 'logical'.\n"))
     return(NULL)
   }
+  if (!is.logical(verbose)) {
+    warning(message("Argument 'verbose' is not of type 'logical'.\n"))
+    return(NULL)
+  }
   if (!is.numeric(fraction)) {
     warning(message("Argument 'fraction' is not of class 'numeric'.\n"))
     return(NULL)
@@ -148,7 +155,9 @@ marineBackground <- function(occs, clipToOcean = TRUE, ...){
   yIndex <- colParse$yIndex
   interp <- colParse$reportMessage
 
-  message(interp)
+  if(verbose){
+    message(interp)
+  }
 
   # Calculate buffer
   if("buff" %in% names(args)){

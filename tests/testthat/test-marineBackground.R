@@ -45,6 +45,10 @@ test_that("marineBackground input warnings behave as expected", {
                                   partCount = 3, buff = 10000,
                                   initialAlpha = 3, alphaIncrement = 1,
                                   clipToCoast = 1))
+  expect_warning(marineBackground(occs = occurrences, fraction = 0.95,
+                                  partCount = 3, buff = 10000,
+                                  initialAlpha = 3, alphaIncrement = 1,
+                                  clipToCoast = 1, verbose = "rabbit"))
 })
 
 test_that("marineBackground results as expected", {
