@@ -546,7 +546,7 @@ transpColor <- function(color, percent = 50) {
 #'
 #' @examples
 #'
-#' transpColor(col1 = "#1B9E777F", col2 = "#7570B37F")
+#' blendColor(col1 = "#1B9E777F", col2 = "#7570B37F")
 #'
 #' @importFrom grDevices rgb
 #'

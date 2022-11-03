@@ -101,6 +101,15 @@ test_that("transpColor checks", {
                                              percent = 20)), "character")
 })
 
+test_that("blendColor checks", {
+  expect_error(voluModel:::blendColor())
+  expect_warning(voluModel:::blendColor(col1 = "eggs"))
+  expect_warning(voluModel:::blendColor(col1 = "#1B9E777F",
+                                        col2 = "eggs"))
+  expect_equal(class(voluModel:::blendtranspColor(col1 = "#1B9E777F",
+                                                  col2 = "#7570B37F")), "character")
+})
+
 # Set up tests for rasterComp function
 rast1 <- raster(ncol=10, nrow=10)
 values(rast1) <- rep(0:1, 50)

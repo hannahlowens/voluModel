@@ -22,7 +22,7 @@ Generates a blended color from two transparent colors
 }
 \examples{
 
-transpColor(col1 = "#1B9E777F", col2 = "#7570B37F")
+blendColor(col1 = "#1B9E777F", col2 = "#7570B37F")
 
 }
 \keyword{internal}
