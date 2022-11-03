@@ -25,6 +25,8 @@ test_that("xyzSample input warnings behave as expected", {
   expect_warning(xyzSample(occs = "a", envBrick = rBrick))
   expect_warning(xyzSample(occs = occurrences[,1:2], envBrick = rBrick))
   expect_warning(xyzSample(occs = occurrences, envBrick = "a"))
+  expect_warning(xyzSample(occs = occurrences, envBrick = rBrick,
+                           verbose = "eggs"))
 
   colnames(occurrences) <- c("cheese", "eggs", "spam")
   expect_warning(xyzSample(occs = occurrences, envBrick = rBrick))

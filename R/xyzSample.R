@@ -11,6 +11,10 @@
 #' one environmental variable. Each layer represents
 #' a depth slice. See Details for more information.
 #'
+#' @param verbose `logical`. Switching to `FALSE` mutes message describing
+#' which columns in `occs1` and `occs2` are interpreted as x, y, and z
+#' coordinates.
+#'
 #' @details The `envBrick` `rasterBrick` object should
 #' have numeric names that correspond with the beginning
 #' depth of a particular depth slice. For example, one
@@ -63,7 +67,7 @@
 #'
 #' @export
 
-xyzSample <- function(occs, envBrick){
+xyzSample <- function(occs, envBrick, verbose = TRUE){
   if(!is.data.frame(occs)){
     warning(paste0("'occs' must be an object of class 'data.frame'.\n"))
     return(NULL)
@@ -79,6 +83,11 @@ xyzSample <- function(occs, envBrick){
     return(NULL)
   }
 
+  if (!is.logical(verbose)) {
+    warning(message("Argument 'verbose' is not of type 'logical'.\n"))
+    return(NULL)
+  }
+
   # Parse columns
   colNames <- colnames(occs)
   colParse <- columnParse(occs, wDepth = TRUE)
@@ -90,7 +99,10 @@ xyzSample <- function(occs, envBrick){
   zIndex <- colParse$zIndex
   interp <- colParse$reportMessage
 
-  message(interp)
+  if(verbose){
+    message(interp)
+  }
+
 
   # Checking for appropriate environmental layer names
   layerNames <- as.numeric(gsub("[X]", "", names(envBrick)))

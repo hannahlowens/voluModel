@@ -4,7 +4,7 @@
 \alias{xyzSample}
 \title{Sampling from rasterBrick using 3D coordinates}
 \usage{
-xyzSample(occs, envBrick)
+xyzSample(occs, envBrick, verbose = TRUE)
 }
 \arguments{
 \item{occs}{A dataframe with at least three columns
@@ -14,6 +14,10 @@ can be coerced into this format.}
 \item{envBrick}{A \code{rasterBrick} object with
 one environmental variable. Each layer represents
 a depth slice. See Details for more information.}
+
+\item{verbose}{\code{logical}. Switching to \code{FALSE} mutes message describing
+which columns in \code{occs1} and \code{occs2} are interpreted as x, y, and z
+coordinates.}
 }
 \value{
 Vector of environmental values equal in length
