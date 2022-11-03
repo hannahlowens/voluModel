@@ -103,7 +103,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-11-02</h4>
+            <h4 data-toc-skip class="date">2022-11-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/c_DataSampling.Rmd" class="external-link"><code>vignettes/c_DataSampling.Rmd</code></a></small>
       <div class="hidden name"><code>c_DataSampling.Rmd</code></div>
@@ -199,7 +199,7 @@ and many of the same other arguments as
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>, </span>
 <span>       pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span>, cex <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span></code></pre></div>
-<p><img src="alphaHullDemonstration-1.png" width="696"></p>
+<p><img src="alphaHullDemonstration-1.png" width="960"></p>
 <p>What parameters you choose to fit the alpha hull will depend on the
 biology of the organism you are trying to model (e.g. you may choose a
 much smaller buffer for a sessile organism than you would for a highly
@@ -228,7 +228,7 @@ automatically. This is a key difference from
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>, </span>
 <span>       pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span>, cex <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span></code></pre></div>
-<p><img src="clipToOceanDemo-1.png" width="700"></p>
+<p><img src="clipToOceanDemo-1.png" width="960"></p>
 <p>The last major difference between <code><a href="../reference/marineBackground.html">marineBackground()</a></code> and
 <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> is how the functions handle training
 regions that are adjacent to the antimeridian (i.e. 180° E or W).
@@ -250,7 +250,7 @@ dataset to generate a quick fictional example.</p>
 <span></span>
 <span><span class="co"># marine Background</span></span>
 <span><span class="va">pacificTrainingRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">pacificOccs</span>, </span>
-<span>                                          fraction <span class="op">=</span> <span class="fl">1</span>, partCount <span class="op">=</span> <span class="fl">2</span>, </span>
+<span>                                          fraction <span class="op">=</span> <span class="fl">0.95</span>, partCount <span class="op">=</span> <span class="fl">3</span>, </span>
 <span>                                          clipToOcean <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pacificTrainingRegion</span>, border <span class="op">=</span> <span class="cn">F</span>, col <span class="op">=</span> <span class="st">"gray"</span>,</span>
 <span>     main <span class="op">=</span> <span class="st">"marineBackground Antimeridian Wrap"</span>,</span>
@@ -285,7 +285,7 @@ memory-efficient.</p>
 <span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, </span>
 <span>                       layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## OGR data source with driver: ESRI Shapefile </span></span>
-<span><span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/Rtmpdf2QEk/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
+<span><span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpQ2dqR9/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
 <span><span class="co">## with 1633 features</span></span>
 <span><span class="co">## It has 102 fields</span></span></code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">

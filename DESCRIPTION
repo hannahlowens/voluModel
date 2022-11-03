@@ -38,6 +38,7 @@ Imports:
     ggplot2,
     ggtext,
     grDevices,
+    lattice,
     latticeExtra,
     methods,
     raster,
