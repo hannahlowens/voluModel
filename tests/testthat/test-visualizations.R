@@ -14,9 +14,9 @@ test_that("input checks", {
 })
 
 test_that("areColors works as expected", {
-  expect_error(areColors())
-  expect_warning(areColors(NULL))
-  expect_true(is.logical(areColors("red")))
+  expect_error(voluModel:::areColors())
+  expect_warning(voluModel:::areColors(NULL))
+  expect_true(is.logical(voluModel:::areColors("red")))
 })
 
 test_that("pointMap checks", {
@@ -34,6 +34,9 @@ test_that("pointMap checks", {
   expect_warning(pointMap(occs = occs,
                           spName = spName, land = land,
                           ptSize = "a"))
+  expect_warning(pointMap(occs = occs,
+                          spName = spName, land = land,
+                          verbose = "banana"))
   point_map <- pointMap(occs = occs,
                         spName = spName, land = land)
   expect_true(is.ggplot(point_map))
@@ -70,6 +73,9 @@ test_that("pointCompMap checks", {
   expect_warning(pointCompMap(occs1 = occs1, occs2 = occs2,
                               spName = spName, land = land,
                           ptSize = "a"))
+  expect_warning(pointCompMap(occs1 = occs1, occs2 = occs2,
+                              spName = spName, land = land,
+                              verbose = "banana"))
 
   badColNames <- occs1
   colnames(badColNames)[1:2] <- c("x", "y")
@@ -102,12 +108,11 @@ test_that("transpColor checks", {
 })
 
 test_that("blendColor checks", {
-  expect_error(voluModel:::blendColor())
   expect_warning(voluModel:::blendColor(col1 = "eggs"))
   expect_warning(voluModel:::blendColor(col1 = "#1B9E777F",
                                         col2 = "eggs"))
-  expect_equal(class(voluModel:::blendtranspColor(col1 = "#1B9E777F",
-                                                  col2 = "#7570B37F")), "character")
+  expect_equal(class(voluModel:::blendColor(col1 = "#1B9E777F",
+                                            col2 = "#7570B37F")), "character")
 })
 
 # Set up tests for rasterComp function

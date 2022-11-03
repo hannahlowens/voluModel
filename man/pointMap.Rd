@@ -12,6 +12,7 @@ pointMap(
   landCol = "gray",
   waterCol = "steelblue",
   ptSize = 1,
+  verbose = TRUE,
   ...
 )
 }
@@ -35,6 +36,9 @@ occurrence points.}
 
 \item{ptSize}{\code{numeric} value for \code{cex};
 size of occurrence points on map.}
+
+\item{verbose}{\code{logical}. Switching to \code{FALSE} mutes message describing
+which columns in \code{occs} are interpreted as x and y coordinates.}
 
 \item{...}{Additional optional arguments to pass to
 \code{ggplot} initial plot object.}

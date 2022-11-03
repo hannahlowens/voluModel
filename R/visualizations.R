@@ -101,6 +101,9 @@ testIntersection <- function(a,b){
 #' @param ptSize `numeric` value for `cex`;
 #' size of occurrence points on map.
 #'
+#' @param verbose `logical`. Switching to `FALSE` mutes message describing
+#' which columns in `occs` are interpreted as x and y coordinates.
+#'
 #' @param ... Additional optional arguments to pass to
 #' `ggplot` initial plot object.
 #'
@@ -124,6 +127,7 @@ testIntersection <- function(a,b){
 pointMap <- function(occs, spName, land = NA,
                      ptCol = "#bd0026", landCol = "gray",
                      waterCol = "steelblue", ptSize = 1,
+                     verbose = TRUE,
                      ...){
   args <- list(...)
 
@@ -137,6 +141,11 @@ pointMap <- function(occs, spName, land = NA,
     alpha <- args$alpha
   } else{
     alpha <- 2/3
+  }
+
+  if (!is.logical(verbose)) {
+    warning(message("Argument 'verbose' is not of type 'logical'.\n"))
+    return(NULL)
   }
 
   # Input checking
@@ -178,7 +187,9 @@ pointMap <- function(occs, spName, land = NA,
   yIndex <- colParse$yIndex
   interp <- colParse$reportMessage
 
-  message(interp)
+  if(verbose){
+    message(interp)
+  }
 
   # Where the actual function happens
   if(any(is.na(land))){
@@ -253,6 +264,9 @@ pointMap <- function(occs, spName, land = NA,
 #' @param ptSize `numeric` value for `cex`;
 #' size of occurrence points on map.
 #'
+#' @param verbose `logical`. Switching to `FALSE` mutes message describing
+#' which columns in `occs1` and `occs2` are interpreted as x and y coordinates.
+#'
 #' @param ... Additional optional arguments to pass to
 #' `ggplot` initial plot object.
 #'
@@ -303,6 +317,7 @@ pointCompMap <- function(occs1, occs2,
                          landCol = "gray",
                          waterCol = "steelblue",
                          ptSize = 1,
+                         verbose = TRUE,
                          ...){
   args <- list(...)
 
@@ -336,6 +351,11 @@ pointCompMap <- function(occs1, occs2,
     return(NULL)
   }
 
+  if (!is.logical(verbose)) {
+    warning(message("Argument 'verbose' is not of type 'logical'.\n"))
+    return(NULL)
+  }
+
   colVec <- c(occs1Col, occs2Col, agreeCol, landCol, waterCol)
   colTest <- areColors(colVec)
 
@@ -360,7 +380,9 @@ pointCompMap <- function(occs1, occs2,
   yIndex1 <- colParse1$yIndex
   interp1 <- colParse1$reportMessage
 
-  message(interp1)
+  if(verbose){
+    message(interp1)
+  }
 
   colNames2 <- colnames(occs2)
   colParse2 <- columnParse(occs2)
@@ -371,7 +393,9 @@ pointCompMap <- function(occs1, occs2,
   yIndex2 <- colParse2$yIndex
   interp2 <- colParse2$reportMessage
 
-  message(interp2)
+  if(verbose){
+    message(interp2)
+  }
 
   if(!all(c(colnames(occs1)[[xIndex1]] == colnames(occs2)[[xIndex2]],
            colnames(occs1)[[yIndex1]] == colnames(occs2)[[yIndex2]]))){
@@ -554,7 +578,7 @@ transpColor <- function(color, percent = 50) {
 #'
 #' @export
 
-blendColor <- function(col1 = "#1B9E777F", col2 = "#7570B37F") {
+blendColor <- function( col1 = "#1b9e777F", col2 = "#7570b37F") {
   colVec <- c(col1, col2)
   colTest <- areColors(colVec)
 

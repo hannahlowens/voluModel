@@ -4,7 +4,7 @@
 \alias{blendColor}
 \title{Blend Colors}
 \usage{
-blendColor(col1 = "#1B9E777F", col2 = "#7570B37F")
+blendColor(col1 = "#1b9e777F", col2 = "#7570b37F")
 }
 \arguments{
 \item{color}{Anything that can be interpreted by \code{rgb}
