@@ -7,12 +7,10 @@
 rasterComp(
   rast1 = NULL,
   rast2 = NULL,
-  col1 = "red",
-  col2 = "blue",
+  col1 = "#1b9e777F",
+  col2 = "#7570b37F",
   rast1Name = "Set 1",
   rast2Name = "Set 2",
-  colNeither = "white",
-  colBoth = "purple",
   land = NA,
   landCol = "black",
   title = "A Raster Comparison",
@@ -42,12 +40,6 @@ of occurrences, which will be color-coded to
 \item{rast2Name}{An optional name for the first set
 of occurrences, which will be color-coded to
 \code{occs2Col} in the resulting plot.}
-
-\item{colNeither}{Color for cells with absences for
-both \code{rast1} and \code{rast2}.}
-
-\item{colBoth}{Color for cells with presences for
-both \code{rast1} and \code{rast2}.}
 
 \item{land}{An optional coastline polygon shapefile
 of type \code{sf} to provide geographic context for the

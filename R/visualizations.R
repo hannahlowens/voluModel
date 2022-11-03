@@ -488,9 +488,8 @@ pointCompMap <- function(occs1, occs2,
 #' @param percent A whole number between 0 and 100 specifying
 #' how transparent the color should be.
 #'
-#' @return A `list` of length 2 with indices of the x and y
-#' columns, respectively, followed by a message with a plain
-#' text report of which columns were interpreted as x and y.
+#' @return A `character` string with hex color, including
+#' adjustment for transparency.
 #'
 #' @examples
 #'
@@ -527,6 +526,55 @@ transpColor <- function(color, percent = 50) {
   t.col <- rgb(rgb.val[1], rgb.val[2], rgb.val[3],
                maxColorValue = 255,
                alpha = (100 - percent) * 255 / 100)
+
+  ## Save the color
+  return(t.col)
+}
+
+#' @title Blend Colors
+#'
+#' @description Generates a blended color from two transparent colors
+#'
+#' @param color Anything that can be interpreted by `rgb`
+#' as a color.
+#'
+#' @param percent A whole number between 0 and 100 specifying
+#' how transparent the color should be.
+#'
+#' @return A `character` string with hex color, including
+#' adjustment for transparency.
+#'
+#' @examples
+#'
+#' transpColor(col1 = "#1B9E777F", col2 = "#7570B37F")
+#'
+#' @importFrom grDevices rgb
+#'
+#' @keywords internal plotting
+#'
+#' @export
+
+blendColor <- function(col1 = "#1B9E777F", col2 = "#7570B37F") {
+  colVec <- c(col1, col2)
+  colTest <- areColors(colVec)
+
+  if(!any(c(all(colTest), length(colTest) < 2))){
+    warning(paste0("'col1' and 'col2'
+                   must be recognized colors.\n"))
+    return(NULL)
+  }
+
+  ## Get RGB values for colors
+  rgb.val1 <- col2rgb(col1, alpha = TRUE)
+  rgb.val2 <- col2rgb(col2, alpha = TRUE)
+  alphaVal <- rgb.val1["alpha",] + rgb.val2["alpha",]
+  if(alphaVal >= 255){alphaVal <- 255}
+  ## Make new color using input color as base and transparency set by alpha
+  t.col <- rgb(red = mean(c(rgb.val1["red",], rgb.val2["red",])),
+               green = mean(c(rgb.val1["green",], rgb.val2["green",])),
+               blue = mean(c(rgb.val1["blue",], rgb.val2["blue",])),
+               alpha = alphaVal,
+               maxColorValue = 255)
 
   ## Save the color
   return(t.col)
@@ -573,12 +621,6 @@ transpColor <- function(color, percent = 50) {
 #' of occurrences, which will be color-coded to
 #' `occs2Col` in the resulting plot.
 #'
-#' @param colBoth Color for cells with presences for
-#' both `rast1` and `rast2`.
-#'
-#' @param colNeither Color for cells with absences for
-#' both `rast1` and `rast2`.
-#'
 #' @param landCol Color for land on map.
 #'
 #' @param land An optional coastline polygon shapefile
@@ -615,9 +657,8 @@ transpColor <- function(color, percent = 50) {
 #' @export
 
 rasterComp <- function(rast1 = NULL, rast2 = NULL,
-                       col1 = "red", col2 = "blue",
+                       col1 = "#1b9e777F", col2 = "#7570b37F",
                        rast1Name = "Set 1", rast2Name = "Set 2",
-                       colNeither = "white", colBoth = "purple",
                        land = NA, landCol = "black",
                        title = "A Raster Comparison", ...){
 
@@ -629,11 +670,11 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
     maxpixels <- 50000
   }
 
-  colVec <- c(col1, col2, colBoth, colNeither, landCol)
+  colVec <- c(col1, col2, landCol)
   colTest <- areColors(colVec)
 
-  if(!any(c(all(colTest), length(colTest) < 4))){
-    warning(paste0("'col1', 'col2', 'colBoth', 'colNeither' and 'landCol'
+  if(!any(c(all(colTest), length(colTest) < 3))){
+    warning(paste0("'col1', 'col2', and 'landCol'
                    must be recognized colors.\n"))
     return(NULL)
   }
@@ -681,7 +722,8 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
   myCols <- c(transpColor("white", percent = 100),
               transpColor(col1, percent = 50),
               transpColor(col2, percent = 50),
-              transpColor(colBoth, percent = 30))
+              blendColor(transpColor(col1, percent = 50),
+                         transpColor(col2, percent = 50)))
   if(any(is.na(land))){
     if(all(cellStats(rast2, sum) > 0, cellStats(rast1, sum) > 0)){
       spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = FALSE,
@@ -875,6 +917,12 @@ oneRasterPlot <- function(rast,
     option <- "plasma"
   }
 
+  if("n" %in% names(args)){
+    n <- args$n
+  } else{
+    n = 11
+  }
+
   # Input error checking
   if(!grepl("Raster*", class(rast))){
     warning(paste0("'rast' must be of class 'Raster*'.\n"))
@@ -900,17 +948,17 @@ oneRasterPlot <- function(rast,
 
   #Function body
   at <- seq(from = cellStats(rast, min), to = cellStats(rast, max),
-            by = (cellStats(rast, max)-cellStats(rast, min))/11)
+            by = (cellStats(rast, max)-cellStats(rast, min))/n)
 
   if(any(is.na(land))){
     spplot(rast, col = "transparent",
-           col.regions = viridis(11, alpha = alpha,
+           col.regions = viridis(n = n, alpha = alpha,
                                  option = option),
            at = at, main = title,
            maxpixels = maxpixels)
   } else {
     spplot(rast, col = "transparent",
-           col.regions = viridis(11, alpha = alpha,
+           col.regions = viridis(n = n, alpha = alpha,
                                  option = option),
            at = at, main = title,
            maxpixels = maxpixels) +

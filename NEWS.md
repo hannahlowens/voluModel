@@ -1,3 +1,9 @@
+# voluModel 0.1.7
+
+- Default rasterComp() plotting colors have been adjusted to increase contrast
+- oneRasterPlot() adjusted to accept "n" argument for viridis() color scales
+- Silent code in "Introduction"" and "Visualization"" vignettes unmuted to allow for more explicit demonstrations
+
 # voluModel 0.1.6
 
 - Updated license from ACM to GPL-3

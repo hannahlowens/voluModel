@@ -24,7 +24,15 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
 knitr::opts_knit$set(root.dir = system.file('extdata', 
                                             package='voluModel'))
+```
 
+# Introduction 
+
+`voluModel` contains several functions to generate formatted maps of rasters and points automatically. This was to aid us in cleanly visualizing large numbers of maps efficiently using `ggplot2` (Wickam, 2016) and `lattice` (Sarkar, 2008) functionality. While there are quite a few features available in these functions, they were designed with fairly specific use cases in mind. You are welcome to gut the functions and rewrite them for your own custom needs. 
+
+The data I will be using for the demos in this tutorial will be loaded and analyzed first. The Luminous Hake occurrence points, which you can see in the [data sampling tutorial](https://hannahlowens.github.io/voluModel/articles/c_DataSampling.html), were downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via `occCite` (Owens *et al.*, 2021). The simple envelope model is based on two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (AOU; Garcia *et al.*, 2019). For more details on how to process environmental data, see [the raster data tutorial](https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html). For the workflow used to generate the niche envelopes, refer to [the introduction vignette](https://hannahlowens.github.io/voluModel/articles/a_Introduction.html).
+
+```{r generating data for plotting}
 library(voluModel) # Because of course
 library(ggplot2) # For fancy plotting
 library(rgdal, 
@@ -111,12 +119,6 @@ rm(AOUpresence, downsampledOccs, occsClean, occurrences, temperaturePresence,
    tempPoints, aouLims, envtNames, i, indices, layerNames, td, tempLims)
 ```
 
-# Introduction 
-
-`voluModel` contains several functions to generate formatted maps of rasters and points automatically. This was to aid us in cleanly visualizing large numbers of maps efficiently using `ggplot2` (Wickam, 2016) and `lattice` (Sarkar, 2008) functionality. While there are quite a few features available in these functions, they were designed with fairly specific use cases in mind. You are welcome to gut the functions and rewrite them for your own custom needs. 
-
-The data I will be using for the demos in this tutorial will be loaded silently outside of the visible code chunks. The Luminous Hake occurrence points, which you can see in the [data sampling tutorial](https://hannahlowens.github.io/voluModel/articles/c_DataSampling.html), were downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via `occCite` (Owens *et al.*, 2021). The simple envelope model is based on two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (AOU; Garcia *et al.*, 2019). For more details on how to process environmental data, see [the raster data tutorial](https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html). For the workflow used to generate the niche envelopes, refer to [the introduction vignette](https://hannahlowens.github.io/voluModel/articles/a_Introduction.html).
-
 Here are the packages you will need. 
 
 ```{r packages, warning=FALSE, eval=FALSE}
@@ -158,7 +160,7 @@ If you have a horizontal raster you would like to map that contains continuous d
 ```{r oneRasterPlot}
 oneRasterPlot(rast = temperature[[1]],
               land = land, title = "Sea Surface Temperature, WOA 2018",
-              landCol = "black", option = "mako")
+              landCol = "black", n = 11, option = "mako")
 ```
 
 Suppose you want to compare the extents of two presence-absence rasters--perhaps you are comparing two species distribution model method outputs, or comparing potential distributions at two different depths. We have a function for that, too.

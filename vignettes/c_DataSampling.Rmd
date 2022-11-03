@@ -72,13 +72,12 @@ pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
 trainingRegion <- marineBackground(occurrences, 
                                 fraction = 1, partCount = 1, buff = 1000000,
                                 clipToOcean = F)
-plot(occurrences[,c("decimalLongitude", "decimalLatitude")],
+plot(trainingRegion, border = F, col = "gray",
      main = "Mimimum of 100% Points in Training Region,\nMaximum of 1 Polygon Permitted, 100 km Buffer",
-     xlab = "Longitude", ylab = "Latitude",
-     pch = 20, col = "red",
-     xlim = c(-105, -40), ylim = c(0, 45))
+     axes = T)
 plot(land, col = "black", add = T)
-plot(trainingRegion, add = T, border = "orange", lwd = 2)
+points(occurrences[,c("decimalLongitude", "decimalLatitude")], 
+       pch = 20, col = "red", cex = 1.5)
 ```
 
 ```{r plot alpha hull demonstration, echo=FALSE, fig.width=7}
@@ -93,13 +92,12 @@ You may have noticed that the training regions in the above examples include som
 trainingRegion <- marineBackground(occurrences, 
                                    buff = 1000000, 
                                    clipToOcean = T)
-plot(occurrences[,c("decimalLongitude", "decimalLatitude")],
+plot(trainingRegion, border = F, col = "gray",
      main = "100 km Buffer,\n Training Region Clipped to Occupied Polygon",
-     xlab = "Longitude", ylab = "Latitude",
-     pch = 20, col = "red",
-     xlim = c(-105, -40), ylim = c(0, 45))
+     axes = T)
 plot(land, col = "black", add = T)
-plot(trainingRegion, add = T, border = "orange", lwd = 2)
+points(occurrences[,c("decimalLongitude", "decimalLatitude")], 
+       pch = 20, col = "red", cex = 1.5)
 ```
 
 ```{r plot clipToOcean demo, echo=FALSE}
@@ -123,15 +121,14 @@ for (i in 1:length(pacificOccs$decimalLongitude)){
 
 # marine Background
 pacificTrainingRegion <- marineBackground(pacificOccs, 
-                                          fraction = 1, partCount = 2, 
+                                          fraction = 0.95, partCount = 3, 
                                           clipToOcean = T)
-plot(pacificOccs[,c("decimalLongitude", "decimalLatitude")],
+plot(pacificTrainingRegion, border = F, col = "gray",
      main = "marineBackground Antimeridian Wrap",
-     xlab = "Longitude", ylab = "Latitude",
-     ylim = c(-40,60),
-     pch = 20, col = "red")
+     axes = T)
 plot(land, col = "black", add = T)
-plot(pacificTrainingRegion, add = T, border = "orange", lwd = 2)
+points(pacificOccs[,c("decimalLongitude", "decimalLatitude")], 
+       pch = 20, col = "red", cex = 1.5)
 ```
 
 ```{r plot meridian wrap demo, echo=FALSE}
