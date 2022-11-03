@@ -114,7 +114,7 @@ and Biogeography</em> 30: 1876-88.</p></li>
 </ul></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">marineBackground</span><span class="op">(</span><span class="va">occs</span>, clipToOcean <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">marineBackground</span><span class="op">(</span><span class="va">occs</span>, clipToOcean <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -130,6 +130,11 @@ can be coerced into this format.</p></dd>
 occurs. Useful in cases where buffers jump over narrow
 peninsulas (e.g. Isthmus of Panama). Can be quite artificial at ocean
 boundaries.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p><code>logical</code>. Switching to <code>FALSE</code> mutes message describing
+which columns in <code>occs</code> are interpreted as x and y coordinates.</p></dd>
 
 
 <dt>...</dt>
@@ -148,7 +153,7 @@ input data into this format.</p>
     <div id="details">
     <h2>Details</h2>
     <p>The meat of this function is a special-case wrapper
-around <code>getDynamicAlphaHull</code> from the <code>rangeBuilder</code> package.
+around <code>getDynamicAlphaHull()</code> from the <code>rangeBuilder</code> package.
 The function documented here is especially useful in cases where
 one wants to automatically generate training regions that overlap
 the international date line. Regions that exceed the line are cut
@@ -157,6 +162,9 @@ deleted.</p>
 <p>If the argument <code>buff</code> is not supplied, a buffer is
 calculated by taking the mean between the 10th and 90th percentile
 of horizontal distances between occurrence points.</p>
+<p>If <code>getDynamicAlphaHull()</code> cannot satisfy the provided conditions,
+the occurrences are buffered and then a minimum convex hull is
+drawn around the buffer polygons.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
