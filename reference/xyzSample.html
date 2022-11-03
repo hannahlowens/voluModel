@@ -77,7 +77,7 @@ given 3D environmental variable brick</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xyzSample</span><span class="op">(</span><span class="va">occs</span>, <span class="va">envBrick</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">xyzSample</span><span class="op">(</span><span class="va">occs</span>, <span class="va">envBrick</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -92,6 +92,12 @@ can be coerced into this format.</p></dd>
 <dd><p>A <code>rasterBrick</code> object with
 one environmental variable. Each layer represents
 a depth slice. See Details for more information.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p><code>logical</code>. Switching to <code>FALSE</code> mutes message describing
+which columns in <code>occs1</code> and <code>occs2</code> are interpreted as x, y, and z
+coordinates.</p></dd>
 
 </dl></div>
     <div id="value">
