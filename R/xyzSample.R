@@ -103,7 +103,6 @@ xyzSample <- function(occs, envBrick, verbose = TRUE){
     message(interp)
   }
 
-
   # Checking for appropriate environmental layer names
   layerNames <- as.numeric(gsub("[X]", "", names(envBrick)))
   if(sum(is.na(layerNames)) > 0){

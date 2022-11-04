@@ -4,7 +4,7 @@
 \alias{mSampling3D}
 \title{3D background sampling}
 \usage{
-mSampling3D(occs, envBrick, mShp, depthLimit = "all")
+mSampling3D(occs, envBrick, mShp, depthLimit = "all", verbose = TRUE)
 }
 \arguments{
 \item{occs}{A \code{data.frame} with at least three columns
@@ -20,6 +20,9 @@ which background points should be sampled.}
 
 \item{depthLimit}{An argument controlling the depth
 extent of sampling. Refer to \code{Details} for more information.}
+
+\item{verbose}{\code{logical}. Switching to \code{FALSE} mutes message describing
+which columns in \code{occs} are interpreted as x, y, and z coordinates.}
 }
 \value{
 A \code{data.frame} with 3D coordinates of points for background

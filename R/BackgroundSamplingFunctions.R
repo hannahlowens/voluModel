@@ -65,6 +65,9 @@ occCellRemoval <- function(occs, rasterTemplate){
 #' @param mShp A shapefile defining the area from
 #' which background points should be sampled.
 #'
+#' @param verbose `logical`. Switching to `FALSE` mutes message describing
+#' which columns in `occs` are interpreted as x and y coordinates.
+#'
 #' @details This function is designed to sample background points
 #' for distributional modeling in two dimensions. The returned
 #' `data.frame` contains all points from across the designated
@@ -105,7 +108,7 @@ occCellRemoval <- function(occs, rasterTemplate){
 #'
 #' @export
 
-mSampling2D <- function(occs, rasterTemplate, mShp){
+mSampling2D <- function(occs, rasterTemplate, mShp, verbose = TRUE){
   if(!is.data.frame(occs)){
     warning(paste0("'occs' must be an object of class 'data.frame'.\n"))
     return(NULL)
@@ -121,6 +124,11 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
     return(NULL)
   }
 
+  if (!is.logical(verbose)) {
+    warning(message("Argument 'verbose' is not of type 'logical'.\n"))
+    return(NULL)
+  }
+
   # Parse columns
   colNames <- colnames(occs)
   colParse <- columnParse(occs)
@@ -131,7 +139,9 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
   yIndex <- colParse$yIndex
   interp <- colParse$reportMessage
 
-  message(interp)
+  if(verbose){
+    message(interp)
+  }
 
   # Calculate lat/lon buffers and buffer
   rasterTemplate <- crop(mask(rasterTemplate, mask = mShp), y = mShp)
@@ -162,6 +172,9 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 #'
 #' @param depthLimit An argument controlling the depth
 #' extent of sampling. Refer to `Details` for more information.
+#'
+#' @param verbose `logical`. Switching to `FALSE` mutes message describing
+#' which columns in `occs` are interpreted as x, y, and z coordinates.
 #'
 #' @details This function is designed to sample background points for
 #' distributional modeling in three dimensions. If a voxel (3D pixel)
@@ -222,7 +235,7 @@ mSampling2D <- function(occs, rasterTemplate, mShp){
 #'
 #' @export
 
-mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all"){
+mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all", verbose = TRUE){
   if(!is.data.frame(occs)){
     warning(paste0("'occs' must be an object of class 'data.frame'.\n"))
     return(NULL)
@@ -265,6 +278,11 @@ mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all"){
     }
   }
 
+  if (!is.logical(verbose)) {
+    warning(message("Argument 'verbose' is not of type 'logical'.\n"))
+    return(NULL)
+  }
+
   # Parse columns
   colNames <- colnames(occs)
   colParse <- columnParse(occs, wDepth = TRUE)
@@ -276,7 +294,9 @@ mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all"){
   zIndex <- colParse$zIndex
   interp <- colParse$reportMessage
 
-  message(interp)
+  if(verbose){
+    message(interp)
+  }
 
   # Checking for appropriate environmental layer names
   layerNames <- as.numeric(gsub("[X]", "", names(envBrick)))

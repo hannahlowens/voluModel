@@ -58,6 +58,8 @@ test_that("mSampling2D input warnings behave as expected", {
                              mShp = mShp))
   expect_warning(mSampling2D(occs = occurrences, rasterTemplate = r,
                              mShp = "a"))
+  expect_warning(mSampling2D(occs = occurrences, rasterTemplate = r,
+                             mShp = mShp, verbose = "dragon"))
 
   colnames(occurrences) <- c("spam", "eggs")
   expect_warning(mSampling2D(occs = occurrences, rasterTemplate = r,
@@ -104,6 +106,8 @@ test_that("mSampling3D input warnings behave as expected", {
   expect_warning(mSampling3D(occs = occurrences[,1:2], envBrick = rBrick))
   expect_warning(mSampling3D(occs = occurrences[,1], envBrick = rBrick))
   expect_warning(mSampling3D(occs = occurrences, envBrick = "a"))
+  expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick,
+                             mShp = mShp, verbose = "dragon"))
 
   colnames(occurrences) <- c("spam", "eggs", "cheese")
   expect_warning(mSampling3D(occs = occurrences, envBrick = rBrick,

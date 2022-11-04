@@ -89,16 +89,16 @@ test_that("columnParse outputs as expected", {
 
 # downsample() tests ----
 # Create sample raster
-r <- raster(ncol=10, nrow=10)
-values(r) <- 1:100
+r <- raster(ncol=5, nrow=5)
+values(r) <- 1:25
 
 # Create test occurrences
 set.seed(0)
 longitude <- sample(extent(r)[1]:extent(r)[2],
-                    size = 20, replace = TRUE)
+                    size = 5, replace = TRUE)
 set.seed(0)
 latitude <- sample(extent(r)[3]:extent(r)[4],
-                   size = 20, replace = TRUE)
+                   size = 5, replace = TRUE)
 occurrences <- as.data.frame(cbind(longitude,latitude))
 
 test_that("downsample input warnings behave as expected", {
@@ -106,6 +106,7 @@ test_that("downsample input warnings behave as expected", {
   expect_warning(downsample(occs = "a", rasterTemplate = r))
   expect_warning(downsample(occs = occurrences[,1], rasterTemplate = r))
   expect_warning(downsample(occs = occurrences, rasterTemplate = "a"))
+  expect_warning(downsample(occs = occurrences, rasterTemplate = r, verbose = "potato"))
 
   colnames(occurrences) <- c("spam", "eggs")
   expect_warning(downsample(occs = occurrences, rasterTemplate = r))
@@ -117,7 +118,7 @@ result <- downsample(occs = occurrences, rasterTemplate = r)
 test_that("downsample outputs as expected", {
   expect_true(is.data.frame(result))
   expect_equal(ncol(result), 2)
-  expect_true(nrow(result) == 18)
+  expect_true(nrow(result) == 4)
 })
 
 test_that("downsample special case checks", {

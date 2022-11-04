@@ -117,6 +117,9 @@ columnParse <- function(occs, wDepth = FALSE){
 #' as a template for the resolution at which `occs` should be
 #' downsampled.
 #'
+#' @param verbose `logical`. Switching to `FALSE` mutes message describing
+#' which columns in `occs` are interpreted as x and y coordinates.
+#'
 #' @return A `data.frame` with two columns named "longitude"
 #' and "latitude" or with names that were used when coercing
 #' input data into this format.
@@ -144,7 +147,7 @@ columnParse <- function(occs, wDepth = FALSE){
 #' @keywords inputProcessing
 #' @export
 
-downsample <- function(occs, rasterTemplate){
+downsample <- function(occs, rasterTemplate, verbose = TRUE){
   if(!is.data.frame(occs)){
     warning(paste0("'occs' must be an object of class 'data.frame'.\n"))
     return(NULL)
@@ -152,6 +155,11 @@ downsample <- function(occs, rasterTemplate){
 
   if(!grepl("Raster", class(rasterTemplate))){
     warning(paste0("'rasterTemplate' must be of class 'Raster*'.\n"))
+    return(NULL)
+  }
+
+  if (!is.logical(verbose)) {
+    warning(message("Argument 'verbose' is not of type 'logical'.\n"))
     return(NULL)
   }
 
@@ -165,7 +173,9 @@ downsample <- function(occs, rasterTemplate){
   yIndex <- colParse$yIndex
   interp <- colParse$reportMessage
 
-  message(interp)
+  if(verbose){
+    message(interp)
+  }
 
   occCells <- cellFromXY(object = rasterTemplate, occs[,c(xIndex,yIndex)])
   occCells <- unique(occCells)

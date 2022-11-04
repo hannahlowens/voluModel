@@ -4,7 +4,7 @@
 \alias{mSampling2D}
 \title{2D background sampling}
 \usage{
-mSampling2D(occs, rasterTemplate, mShp)
+mSampling2D(occs, rasterTemplate, mShp, verbose = TRUE)
 }
 \arguments{
 \item{occs}{A dataframe with at least two columns
@@ -17,6 +17,9 @@ coordinates.}
 
 \item{mShp}{A shapefile defining the area from
 which background points should be sampled.}
+
+\item{verbose}{\code{logical}. Switching to \code{FALSE} mutes message describing
+which columns in \code{occs} are interpreted as x and y coordinates.}
 }
 \value{
 A \code{data.frame} with 2D coordinates of points

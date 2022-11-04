@@ -4,7 +4,7 @@
 \alias{downsample}
 \title{Occurrence downsampling}
 \usage{
-downsample(occs, rasterTemplate)
+downsample(occs, rasterTemplate, verbose = TRUE)
 }
 \arguments{
 \item{occs}{A \code{data.frame} with at least two columns
@@ -14,6 +14,9 @@ can be coerced into this format.}
 \item{rasterTemplate}{A \verb{Raster*} object to serve
 as a template for the resolution at which \code{occs} should be
 downsampled.}
+
+\item{verbose}{\code{logical}. Switching to \code{FALSE} mutes message describing
+which columns in \code{occs} are interpreted as x and y coordinates.}
 }
 \value{
 A \code{data.frame} with two columns named "longitude"
