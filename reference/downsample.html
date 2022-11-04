@@ -75,7 +75,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">downsample</span><span class="op">(</span><span class="va">occs</span>, <span class="va">rasterTemplate</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">downsample</span><span class="op">(</span><span class="va">occs</span>, <span class="va">rasterTemplate</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -90,6 +90,11 @@ can be coerced into this format.</p></dd>
 <dd><p>A <code>Raster*</code> object to serve
 as a template for the resolution at which <code>occs</code> should be
 downsampled.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p><code>logical</code>. Switching to <code>FALSE</code> mutes message describing
+which columns in <code>occs</code> are interpreted as x and y coordinates.</p></dd>
 
 </dl></div>
     <div id="value">

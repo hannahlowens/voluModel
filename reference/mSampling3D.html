@@ -79,7 +79,7 @@ resolution of envBrick.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mSampling3D</span><span class="op">(</span><span class="va">occs</span>, <span class="va">envBrick</span>, <span class="va">mShp</span>, depthLimit <span class="op">=</span> <span class="st">"all"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mSampling3D</span><span class="op">(</span><span class="va">occs</span>, <span class="va">envBrick</span>, <span class="va">mShp</span>, depthLimit <span class="op">=</span> <span class="st">"all"</span>, verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -104,6 +104,11 @@ which background points should be sampled.</p></dd>
 <dt>depthLimit</dt>
 <dd><p>An argument controlling the depth
 extent of sampling. Refer to <code>Details</code> for more information.</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p><code>logical</code>. Switching to <code>FALSE</code> mutes message describing
+which columns in <code>occs</code> are interpreted as x, y, and z coordinates.</p></dd>
 
 </dl></div>
     <div id="value">
