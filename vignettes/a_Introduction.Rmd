@@ -129,7 +129,7 @@ indices <- unique(occurrences$index)
 downsampledOccs <- data.frame()
 for(i in indices){
   tempPoints <- occurrences[occurrences$index==i,]
-  tempPoints <- downsample(tempPoints, temperature[[1]])
+  tempPoints <- downsample(tempPoints, temperature[[1]], verbose = FALSE)
   tempPoints$depth <- rep(layerNames[[i]], times = nrow(tempPoints))
   downsampledOccs <- rbind(downsampledOccs, tempPoints)
 }
