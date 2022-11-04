@@ -1,7 +1,10 @@
 ## This is a package update. In this version, I have:
 
-* Updated license from ACM to GPL-3
-* Fixed a bug in error handling for marineBackground()
+* Default rasterComp() plotting colors have been adjusted to increase contrast
+* oneRasterPlot() adjusted to accept "n" argument for viridis() color scales
+* MOre explicit code in "Introduction"" and "Visualization"" vignettes 
+* Added verbose switch to mute messages about which columns are being interpreted as x, y, and/or z
+coordinates to all relevant functions (default verbose = TRUE)
 
 ## Test environments
 * local OS X 10.15.7, R 4.1.2
