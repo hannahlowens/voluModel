@@ -103,7 +103,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-11-03</h4>
+            <h4 data-toc-skip class="date">2022-11-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/d_Visualization.Rmd" class="external-link"><code>vignettes/d_Visualization.Rmd</code></a></small>
       <div class="hidden name"><code>d_Visualization.Rmd</code></div>
@@ -185,7 +185,7 @@ introduction vignette</a>.</p>
 <span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, </span>
 <span>                       layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## OGR data source with driver: ESRI Shapefile </span></span>
-<span><span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpxItd6t/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
+<span><span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpgAjCVV/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
 <span><span class="co">## with 1633 features</span></span>
 <span><span class="co">## It has 102 fields</span></span></code></pre>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -197,7 +197,7 @@ introduction vignette</a>.</p>
 <span>                             package<span class="op">=</span><span class="st">'voluModel'</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Creating a RasterBrick</span></span>
-<span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span>,</span>
+<span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span>,</span>
 <span>                                   <span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get names of depths</span></span>
@@ -220,83 +220,28 @@ introduction vignette</a>.</p>
 <span><span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="va">indices</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span><span class="va">occurrences</span><span class="op">$</span><span class="va">index</span><span class="op">==</span><span class="va">i</span>,<span class="op">]</span></span>
-<span>  <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/downsample.html">downsample</a></span><span class="op">(</span><span class="va">tempPoints</span>, <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/downsample.html">downsample</a></span><span class="op">(</span><span class="va">tempPoints</span>, <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span>  <span class="va">tempPoints</span><span class="op">$</span><span class="va">depth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">layerNames</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tempPoints</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">downsampledOccs</span>, <span class="va">tempPoints</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<pre><code><span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span></code></pre>
-<pre><code><span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">occsWdata</span> <span class="op">&lt;-</span> <span class="va">downsampledOccs</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLatitude"</span>, <span class="st">"decimalLongitude"</span>, <span class="st">"depth"</span><span class="op">)</span><span class="op">]</span> </span>
+<span>  <span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">downsampledOccs</span>, <span class="va">tempPoints</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">occsWdata</span> <span class="op">&lt;-</span> <span class="va">downsampledOccs</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLatitude"</span>, <span class="st">"decimalLongitude"</span>, <span class="st">"depth"</span><span class="op">)</span><span class="op">]</span> </span>
 <span></span>
 <span><span class="co"># Extract data ----</span></span>
 <span><span class="va">occsWdata</span><span class="op">$</span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occsWdata</span>, <span class="va">temperature</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">occsWdata</span><span class="op">$</span><span class="va">AOU</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occsWdata</span>, <span class="va">oxygenSmooth</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">occsWdata</span> <span class="op">&lt;-</span> <span class="va">occsWdata</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">)</span>,<span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Study region</span></span>
 <span><span class="va">studyRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occsWdata</span>, buff <span class="op">=</span> <span class="fl">1000000</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
 <span><span class="co">##  as x and y coordinates, respectively.</span></span></code></pre>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get limits</span></span>
 <span><span class="va">tempLims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">$</span><span class="va">temperature</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">aouLims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">$</span><span class="va">AOU</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
@@ -321,7 +266,7 @@ introduction vignette</a>.</p>
 <pre><code><span><span class="co">## Warning in rm(AOUpresence, downsampledOccs, occsClean, occurrences,</span></span>
 <span><span class="co">## temperaturePresence, : object 'occsClean' not found</span></span></code></pre>
 <p>Here are the packages you will need.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hannahlowens.github.io/voluModel/" class="external-link">voluModel</a></span><span class="op">)</span> <span class="co"># Because of course</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span> <span class="co"># For fancy plotting</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://rgdal.r-forge.r-project.org" class="external-link">rgdal</a></span><span class="op">)</span> <span class="co"># For vector stuff. Will eventually be replaced with sf.</span></span>
@@ -329,7 +274,7 @@ introduction vignette</a>.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridisLite/" class="external-link">viridisLite</a></span><span class="op">)</span> <span class="co"># For high-contrast plotting palettes</span></span></code></pre></div>
 <p>Here is a shapefile of the continents, which we can conveniently use
 to provide some context for all the maps we are about to make.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"small"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -340,7 +285,7 @@ occurrence points. The first, <code><a href="../reference/pointMap.html">pointMa
 set of horizontal geographic points. The title generated is the species
 name the user supplies and a count of the number of points that have
 been plotted.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pointMap.html">pointMap</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occs</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, </span>
 <span>         ptSize <span class="op">=</span> <span class="fl">2</span>, ptCol <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="d_Visualization_files/figure-html/pointMap-1.png"><!-- --></p>
@@ -349,7 +294,7 @@ extents of two sets of horizontal geographic points in different colors.
 This might be useful, for example, if you want to compare a raw dataset
 to a cleaned dataset. If any points overlap, they can be plotted as a
 third color.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs1Col <span class="op">=</span> <span class="st">"red"</span>, occs1Name <span class="op">=</span> <span class="st">"Raw"</span>, </span>
 <span>             occs2 <span class="op">=</span> <span class="va">occsWdata</span>, occs2Col <span class="op">=</span> <span class="st">"orange"</span>, occs2Name <span class="op">=</span> <span class="st">"Clean"</span>,</span>
 <span>             spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, agreeCol <span class="op">=</span> <span class="st">"purple"</span>,</span>
@@ -369,7 +314,7 @@ from <code>viridisLite</code> (Garnier <em>et al.</em>, 2021). The
 function optionally takes arguments to the <code><a href="https://rdrr.io/pkg/sp/man/spplot.html" class="external-link">spplot()</a></code> and
 <code><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis()</a></code> functions (so, for example, you can choose a
 palette other than the default).</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span>rast <span class="op">=</span> <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>              land <span class="op">=</span> <span class="va">land</span>, title <span class="op">=</span> <span class="st">"Sea Surface Temperature, WOA 2018"</span>,</span>
 <span>              landCol <span class="op">=</span> <span class="st">"black"</span>, n <span class="op">=</span> <span class="fl">11</span>, option <span class="op">=</span> <span class="st">"mako"</span><span class="op">)</span></span></code></pre></div>
@@ -378,7 +323,7 @@ palette other than the default).</p>
 rasters–perhaps you are comparing two species distribution model method
 outputs, or comparing potential distributions at two different depths.
 We have a function for that, too.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/rasterComp.html">rasterComp</a></span><span class="op">(</span>rast1 <span class="op">=</span> <span class="va">envelopeModel3D</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, rast1Name <span class="op">=</span> <span class="st">"Surface"</span>,</span>
 <span>           rast2 <span class="op">=</span> <span class="va">envelopeModel3D</span><span class="op">[[</span><span class="fl">10</span><span class="op">]</span><span class="op">]</span>, rast2Name <span class="op">=</span> <span class="st">"45m"</span>, </span>
 <span>           land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, </span>
@@ -392,7 +337,7 @@ shallower the layer, the bluer, the deeper. The more saturated the
 color, the more layers with suitable habitat. Here, I am plotting
 suitability from 20 to 700 m, the depth range of occurrences used to
 train the envelope model.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[X]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">envelopeModel3D</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">occsWdata</span><span class="op">$</span><span class="va">index</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">$</span><span class="va">depth</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">layerNames</span> <span class="op">-</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">indices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">$</span><span class="va">index</span><span class="op">)</span></span>

@@ -104,7 +104,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-11-03</h4>
+            <h4 data-toc-skip class="date">2022-11-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/a_Introduction.Rmd" class="external-link"><code>vignettes/a_Introduction.Rmd</code></a></small>
       <div class="hidden name"><code>a_Introduction.Rmd</code></div>
@@ -174,7 +174,7 @@ make it more space-efficient.</p>
 <span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, </span>
 <span>                       layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## OGR data source with driver: ESRI Shapefile </span></span>
-<span><span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/RtmpLIEHU0/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
+<span><span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/Rtmp1N8YZy/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
 <span><span class="co">## with 1633 features</span></span>
 <span><span class="co">## It has 102 fields</span></span></code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -186,7 +186,7 @@ make it more space-efficient.</p>
 <span><span class="va">temperatureBottom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bottomRaster.html">bottomRaster</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Creating a RasterBrick</span></span>
-<span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span>,</span>
+<span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span>,</span>
 <span>                                   <span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get names of depths</span></span>
@@ -213,66 +213,11 @@ name.</p>
 <span><span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="va">indices</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span><span class="va">occurrences</span><span class="op">$</span><span class="va">index</span><span class="op">==</span><span class="va">i</span>,<span class="op">]</span></span>
-<span>  <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/downsample.html">downsample</a></span><span class="op">(</span><span class="va">tempPoints</span>, <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/downsample.html">downsample</a></span><span class="op">(</span><span class="va">tempPoints</span>, <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span>  <span class="va">tempPoints</span><span class="op">$</span><span class="va">depth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">layerNames</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tempPoints</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">downsampledOccs</span>, <span class="va">tempPoints</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<pre><code><span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span>
-<span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span></code></pre>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">occurrences</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLatitude"</span>, <span class="st">"decimalLongitude"</span>, <span class="st">"depth"</span><span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">downsampledOccs</span>, <span class="va">tempPoints</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">occurrences</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLatitude"</span>, <span class="st">"decimalLongitude"</span>, <span class="st">"depth"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">indices</span>, <span class="va">layerNames</span>, <span class="va">tempPoints</span>, <span class="va">i</span>, <span class="va">downsampledOccs</span>, <span class="va">occs</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -312,7 +257,7 @@ background sampling tutorial</a> for more information on
 <a href="https://hannahlowens.github.io/voluModel/articles/e_GLMWorkflow.html" class="external-link">the
 generalized linear model tutorial</a> for an example of a modelling
 application that uses a background sampling region.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">studyRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occurrences</span>, buff <span class="op">=</span> <span class="fl">1000000</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">studyRegion</span>, border <span class="op">=</span> <span class="cn">F</span>, col <span class="op">=</span> <span class="st">"gray"</span>,</span>
 <span>     main <span class="op">=</span> <span class="st">"Points and Background Sampling"</span>,</span>
@@ -325,11 +270,11 @@ application that uses a background sampling region.</p>
 environmental variable data from each occurrence voxel. For comparison
 with previous modeling approaches, I will extract data from the surface,
 from the bottom, and from the 3D coordinate for each variable.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Surface Presences</span></span>
 <span><span class="va">oxyVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/extract.html" class="external-link">extract</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">oxygenSmooth</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">tempVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/extract.html" class="external-link">extract</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">occurrences</span>, <span class="va">oxyVals</span>, <span class="va">tempVals</span><span class="op">)</span></span>
+<span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">occurrences</span>, <span class="va">oxyVals</span>, <span class="va">tempVals</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span>, <span class="st">"depth"</span>, <span class="st">"AOU"</span>, <span class="st">"Temperature"</span><span class="op">)</span></span>
 <span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="va">vals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span>,<span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
@@ -338,7 +283,7 @@ from the bottom, and from the 3D coordinate for each variable.</p>
 <span><span class="co"># Bottom Presences</span></span>
 <span><span class="va">oxyVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/extract.html" class="external-link">extract</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">oxygenBottom</span>, <span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">tempVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/extract.html" class="external-link">extract</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">temperatureBottom</span>, <span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">occurrences</span>, <span class="va">oxyVals</span>, <span class="va">tempVals</span><span class="op">)</span></span>
+<span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">occurrences</span>, <span class="va">oxyVals</span>, <span class="va">tempVals</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span>, <span class="st">"depth"</span>, <span class="st">"AOU"</span>, <span class="st">"Temperature"</span><span class="op">)</span></span>
 <span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="va">vals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span>,<span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
@@ -348,12 +293,12 @@ from the bottom, and from the 3D coordinate for each variable.</p>
 <span><span class="va">oxyVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, <span class="va">oxygenSmooth</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tempVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, <span class="va">temperature</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">occurrences</span>, <span class="va">oxyVals</span>, <span class="va">tempVals</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">occurrences</span>, <span class="va">oxyVals</span>, <span class="va">tempVals</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span>, <span class="st">"depth"</span>, <span class="st">"AOU"</span>, <span class="st">"Temperature"</span><span class="op">)</span></span>
 <span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="va">vals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span>,<span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
@@ -369,7 +314,7 @@ which we define suitable conditions as those within the maximum and
 minimum conditions at which <em>Steindachneria argentea</em> has been
 observed. The results will be simple 2D distribution maps–one based on
 surface conditions and one based on bottom conditions.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get limits, surface</span></span>
 <span><span class="va">tempLims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">occsWdataSurface</span><span class="op">$</span><span class="va">Temperature</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">aouLims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">occsWdataSurface</span><span class="op">$</span><span class="va">AOU</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
@@ -409,7 +354,7 @@ surface conditions and one based on bottom conditions.</p>
 <p>How do these 2D models compare? <code>voluModel</code> has a function
 to conveniently generate a formatted comparison between two
 presence/absence distribution rasters <code><a href="../reference/rasterComp.html">rasterComp()</a></code>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/rasterComp.html">rasterComp</a></span><span class="op">(</span>rast1 <span class="op">=</span> <span class="va">envelopeModelSurface</span>, rast2 <span class="op">=</span> <span class="va">envelopeModelBottom</span>, </span>
 <span>           rast1Name <span class="op">=</span> <span class="st">"Surface"</span>, rast2Name <span class="op">=</span> <span class="st">"Bottom"</span>, </span>
 <span>           land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, </span>
@@ -424,7 +369,7 @@ projected to each layer in each of the raster bricks (essentially
 generating a single variable model for each variable). The
 single-variable models are then multiplied together to generate a full
 model.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get limits</span></span>
 <span><span class="va">tempLims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">occsWdata3D</span><span class="op">$</span><span class="va">Temperature</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">aouLims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">occsWdata3D</span><span class="op">$</span><span class="va">AOU</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
@@ -450,7 +395,7 @@ the color, the shallower the layer, the bluer, the deeper. The more
 saturated the color, the more layers with suitable habitat. We will only
 look at projections within the study area and at depths the species was
 observed.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get indices of model-relevant layers</span></span>
 <span><span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[X]"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">envelopeModel3D</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">occurrences</span><span class="op">$</span><span class="va">index</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">$</span><span class="va">depth</span>, </span>
