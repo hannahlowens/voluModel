@@ -103,7 +103,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-11-04</h4>
+            <h4 data-toc-skip class="date">2022-11-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/c_DataSampling.Rmd" class="external-link"><code>vignettes/c_DataSampling.Rmd</code></a></small>
       <div class="hidden name"><code>c_DataSampling.Rmd</code></div>
@@ -174,7 +174,7 @@ Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via
 <span><span class="fu"><a href="../reference/pointMap.html">pointMap</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, ptCol <span class="op">=</span> <span class="st">"orange"</span>, landCol <span class="op">=</span> <span class="st">"black"</span>,</span>
 <span>             spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, ptSize <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>             land <span class="op">=</span> <span class="va">land</span><span class="op">)</span></span></code></pre></div>
-<p><img src="c_DataSampling_files/figure-html/occurrence%20dataset-1.png"><!-- --></p>
+<p><img src="c_DataSampling_files/figure-html/occurrence%20dataset-1.png"><!-- --><img src="pointMap.png" width="100%" height="100%"></p>
 <p><code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>, which is run within
 <code><a href="../reference/marineBackground.html">marineBackground()</a></code> generates a polygon (or polygons) that
 can be used as a training region by fitting an alpha hull (or hulls)
@@ -275,8 +275,8 @@ sources. These data are supplied by the World Ocean Atlas as point
 shapefiles; the version supplied here has been cropped between -110 and
 -40 longitude and between -5 and 50 latitude to make it more
 memory-efficient.</p>
-<p>This chunk of code loads the example shapefile, which results in a
-<code>SpatialPointsDataFrame</code>:</p>
+<p>This chunk of code loads the example data shapefile, which results in
+a <code>SpatialPointsDataFrame</code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/woa18_decav_t00mn01_cropped.zip"</span>, </span>
@@ -285,7 +285,7 @@ memory-efficient.</p>
 <span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, </span>
 <span>                       layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## OGR data source with driver: ESRI Shapefile </span></span>
-<span><span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/Rtmp6lr3NV/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
+<span><span class="co">## Source: "/private/var/folders/bn/2vhstsbj041cx84rt_n8rv080000gp/T/Rtmpql5qrS/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
 <span><span class="co">## with 1633 features</span></span>
 <span><span class="co">## It has 102 fields</span></span></code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -456,11 +456,7 @@ underneath the red dots.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs2 <span class="op">=</span> <span class="va">occurrences</span>, </span>
 <span>             occs1Name <span class="op">=</span> <span class="st">"Original"</span>, occs2Name <span class="op">=</span> <span class="st">"Cleaned"</span>, </span>
 <span>             spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, </span>
-<span>             land <span class="op">=</span> <span class="va">land</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span></code></pre>
-<pre><code><span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span></code></pre>
+<span>             land <span class="op">=</span> <span class="va">land</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Joining, by = c("decimalLongitude", "decimalLatitude")</span></span>
 <span><span class="co">## Joining, by = c("decimalLongitude", "decimalLatitude")</span></span>
 <span><span class="co">## Joining, by = c("decimalLongitude", "decimalLatitude")</span></span></code></pre>
@@ -473,12 +469,12 @@ instead of extrapolating to surface or bottom conditions. Finally, we
 add a column called “response” and fill it by repeating “1”, to signify
 that these occurrences should be interpreted as presences for the
 purposes of modeling.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extraction</span></span>
 <span><span class="va">occurrences</span><span class="op">$</span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, envBrick <span class="op">=</span> <span class="va">temperature</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add "response" column for modeling</span></span>
 <span><span class="va">occurrences</span><span class="op">$</span><span class="va">response</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">occurrences</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span>,<span class="op">]</span></span>
@@ -519,7 +515,7 @@ maximum and minimum training depth from which to draw occurrence points.
 full depth extent of the supplied <code>RasterBrick</code>.</p>
 <p>For this example, I am sampling training points from 50 to 1500
 m.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Background</span></span>
 <span><span class="va">backgroundVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mSampling3D.html">mSampling3D</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, </span>
 <span>                              envBrick <span class="op">=</span> <span class="va">temperature</span>, </span>
@@ -527,17 +523,19 @@ m.</p>
 <span>                              depthLimit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">1500</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">backgroundVals</span><span class="op">$</span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">backgroundVals</span>, <span class="va">temperature</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#Remove incomplete cases</span></span>
+<span><span class="va">backgroundVals</span> <span class="op">&lt;-</span> <span class="va">backgroundVals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">)</span>,<span class="op">]</span></span></code></pre></div>
 <p>Once the points are sampled, we add a column called “response” and
 fill it by repeating “0”, to signify that these occurrences should be
 interpreted as absences for the purposes of modeling.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add "response" column for modeling</span></span>
 <span><span class="va">backgroundVals</span><span class="op">$</span><span class="va">response</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">backgroundVals</span> <span class="op">&lt;-</span> <span class="va">backgroundVals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">)</span>,<span class="op">]</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   decimalLongitude decimalLatitude depth temperature response</span></span>
@@ -558,7 +556,7 @@ manner of downsampling may be appropriate for modeling methods that
 interpret training points as pseudoabsences, such as generalized linear
 modeling, but will lead to overfit models when using algorithms like
 Maxent.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Sample background points weighted by distance from mean of occurrence temperatures</span></span>
 <span><span class="va">meanTemp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temperature"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">backgroundVals</span><span class="op">$</span><span class="va">distance</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">[</span>,<span class="st">"temperature"</span><span class="op">]</span> <span class="op">-</span> <span class="va">meanTemp</span><span class="op">)</span></span>

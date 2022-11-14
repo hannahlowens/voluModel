@@ -65,6 +65,10 @@ pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
              spName = "Steindachneria argentea", ptSize = 3,
              land = land)
 ```
+```{r point plot, echo=FALSE, out.width = '100%', out.height= '100%'}
+land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
+knitr::include_graphics("pointMap.png")
+```
 
 `getDynamicAlphaHull()`, which is run within `marineBackground()` generates a polygon (or polygons) that can be used as a training region by fitting an alpha hull (or hulls) around an occurrence dataset. Alpha is a parameter that controls the complexity of the polygon(s) that is being fit around the occurrences. `getDynamicAlphaHull()` adjusts the alpha parameter iteratively, until it meets criteria the user can set via the arguments `fraction`, which is the minimum fraction of occurrences that must be contained within the polygon(s), `partCount`, which is the maximum number of polygons generated to fit the data, and `buff`, which is the permissible distance from a point to the edge of a polyon in meters. `marineBackground()` takes these and many of the same other arguments as `getDynamicAlphaHull()`. Here's how it works.
 
@@ -139,7 +143,7 @@ knitr::include_graphics("meridianWrapDemo-1.png")
 
 Next, we will cover how to extract environmental data from a `RasterBrick` object using 3D occurrence coordinates. The occurrences I will use to demonstrate this are the Luminous Hake occurrences from the previous section. The environmental dataset I will use as an example is temperature (Locarnini *et al.*, 2018) from the World Ocean Atlas (WOA; Garcia *et al.*, 2019). I have chosen to focus on temperature for simple illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. 
 
-This chunk of code loads the example shapefile, which results in a `SpatialPointsDataFrame`:
+This chunk of code loads the example data shapefile, which results in a `SpatialPointsDataFrame`:
 
 ```{r environmental data loading, eval=T, asis=T, message = FALSE, warning=FALSE}
 td <- tempdir()
@@ -210,7 +214,7 @@ The resampled points returned by `downsample()` are horizontally centered in eac
 pointCompMap(occs1 = occs, occs2 = occurrences, 
              occs1Name = "Original", occs2Name = "Cleaned", 
              spName = "Steindachneria argentea", 
-             land = land)
+             land = land, verbose = FALSE)
 ```
 
 At this point, we can demonstrate one of the key contributions of `voluModel`-- an improvement in how the environmental data are extracted at species' occurrences. `voluModel` samples environmental conditions at the depth where each record was located, instead of extrapolating to surface or bottom conditions. Finally, we add a column called "response" and fill it by repeating "1", to signify that these occurrences should be interpreted as presences for the purposes of modeling.
@@ -241,6 +245,9 @@ backgroundVals <- mSampling3D(occs = occurrences,
                               mShp = trainingRegion, 
                               depthLimit = c(50, 1500))
 backgroundVals$temperature <- xyzSample(occs = backgroundVals, temperature)
+
+#Remove incomplete cases
+backgroundVals <- backgroundVals[complete.cases(backgroundVals),]
 ```
 
 Once the points are sampled, we add a column called "response" and fill it by repeating "0", to signify that these occurrences should be interpreted as absences for the purposes of modeling.
@@ -248,7 +255,6 @@ Once the points are sampled, we add a column called "response" and fill it by re
 ```{r }
 # Add "response" column for modeling
 backgroundVals$response <- rep(0, times = nrow(backgroundVals))
-backgroundVals <- backgroundVals[complete.cases(backgroundVals),]
 
 head(backgroundVals)
 ```
