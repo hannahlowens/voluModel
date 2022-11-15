@@ -115,18 +115,8 @@ envelopeModel3D <- temperaturePresence * AOUpresence
 envelopeModel3D <- mask(crop(envelopeModel3D, studyRegion), 
                         mask = studyRegion)
 names(envelopeModel3D) <- names(temperature)
-rm(AOUpresence, downsampledOccs, occsClean, occurrences, temperaturePresence, 
+rm(AOUpresence, downsampledOccs, occurrences, temperaturePresence, 
    tempPoints, aouLims, envtNames, i, indices, layerNames, td, tempLims)
-```
-
-Here are the packages you will need. 
-
-```{r packages, warning=FALSE, eval=FALSE}
-library(voluModel) # Because of course
-library(ggplot2) # For fancy plotting
-library(rgdal) # For vector stuff. Will eventually be replaced with sf.
-library(raster) # For raster stuff. Will eventually be replaced with terra.
-library(viridisLite) # For high-contrast plotting palettes
 ```
 
 Here is a shapefile of the continents, which we can conveniently use to provide some context for all the maps we are about to make.
@@ -143,8 +133,11 @@ There are two functions in `voluModel` for plotting occurrence points. The first
 pointMap(occs = occs, land = land, landCol = "black", spName = "Steindachneria argentea", 
          ptSize = 2, ptCol = "orange")
 ```
-```{r point plot, echo=FALSE, out.width = '100%', out.height= '100%'}
-knitr::include_graphics("pointMap.png")
+
+```{r pointMap plot, echo=FALSE, out.width = '100%', out.height= '100%'}
+knitr::include_graphics(system.file("extdata/pointMap.png", 
+                                    package = "voluModel"), 
+                        rel_path = getOption("knitr.graphics.rel_path", FALSE))
 ```
 
 The second, `pointCompMap()` plots a map that maps the extents of two sets of horizontal geographic points in different colors. This might be useful, for example, if you want to compare a raw dataset to a cleaned dataset. If any points overlap, they can be plotted as a third color.
@@ -153,7 +146,7 @@ The second, `pointCompMap()` plots a map that maps the extents of two sets of ho
 pointCompMap(occs1 = occs, occs1Col = "red", occs1Name = "Raw", 
              occs2 = occsWdata, occs2Col = "orange", occs2Name = "Clean",
              spName = "Steindachneria argentea", agreeCol = "purple",
-             land = land, landCol = "black", ptSize = 2)
+             land = land, landCol = "black", ptSize = 2, verbose = FALSE)
 ```
 
 # Plotting rasters

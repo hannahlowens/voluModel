@@ -47,7 +47,7 @@ library(viridisLite) # For high-contrast plotting palettes
 
 First thing's first. Distributional models are based on coordinates of species' occurrences. Here is an example dataset of *Steindachneria argentea*, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via `occCite` (Owens *et al.*, 2021). 
 
-```{r occurrence data, eval=T}
+```{r occurrence data, eval=TRUE}
 occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
                              package='voluModel'))
 summary(occs$depth)
@@ -56,7 +56,7 @@ boxplot.stats(occs$depth)
 
 Based on this information and what we know about the biology of Luminous Hakes and how these occurrence data are collected, I am going to remove occurrences that have a depth of 0, as well as the extreme depth outlier, since these look like either collections of individuals that were not *in situ* or errors of some kind.
 
-```{r clean occurrence data, eval=T}
+```{r clean occurrence data, eval=TRUE}
 occsClean <- occs %>% 
   dplyr::select(decimalLongitude, decimalLatitude, depth) %>%
   dplyr::distinct() %>% 
@@ -120,7 +120,8 @@ indices <- unique(occsClean$index)
 downsampledOccs <- data.frame()
 for(i in indices){
   tempPoints <- occsClean[occsClean$index==i,]
-  tempPoints <- downsample(tempPoints, temperature[[1]])
+  tempPoints <- downsample(tempPoints, temperature[[1]], 
+                           verbose = FALSE)
   tempPoints$depth <- rep(layerNames[[i]], times = nrow(tempPoints))
   downsampledOccs <- rbind(downsampledOccs, tempPoints)
 }
@@ -132,26 +133,29 @@ land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
 pointCompMap(occs1 = occs, occs2 = occsClean, 
              occs1Name = "Original", occs2Name = "Cleaned", 
              spName = "Steindachneria argentea", 
-             land = land)
+             land = land, verbose = FALSE)
 ```
 
 Next, we generate a sampling region for the model based on occurrence points. Note that ideally when you're modeling you would carefully curate this background sampling region to make sure it truly approximates the area accessible to the species you are modeling. If you write the shapefile to disk, you can open and edit it in any GIS software you choose, if you have reason to believe `marineBackground()` falls short of estimating the true accessible are for a species. For more information, see [the environmental data processing tutorial](https://hannahlowens.github.io/voluModel/articles/c_DataSampling.html).
 
 ```{r environmental background sampling, warning=FALSE, eval = FALSE}
 backgroundSamplingRegions <- marineBackground(occsClean, buff = 1000000)
-plot(temperature[[1]], 
-     main = "Points and background sampling plotted on surface temperature",
-     col = viridis(n= 11, option = "mako"))
-plot(backgroundSamplingRegions, add = T, border = "orange", lwd = 2)
-points(occsClean[,c("decimalLongitude","decimalLatitude")], 
-       cex = 1, pch = 20, col = "red")
+plot(backgroundSamplingRegions, border = F, col = "gray",
+     main = "Points and Background Sampling",
+     axes = T)
+plot(land, col = "black", add = T)
+points(occurrences[,c("decimalLongitude", "decimalLatitude")], 
+       pch = 20, col = "red", cex = 1.5)
 ```
 ```{r environmental background sampling hidden, warning=FALSE, echo=FALSE}
 backgroundSamplingRegions <- readRDS(system.file("extdata/backgroundSamplingRegions.rds",
                               package='voluModel'))
 ```
-```{plot study region plot, echo=FALSE, out.width = '100%', out.height= '100%'}
-knitr::include_graphics("PointsAndTrainingRegion.png")
+
+```{r plot study region plot, echo=FALSE, out.width = '100%', out.height= '100%'}
+knitr::include_graphics(system.file("extdata/PointsAndTrainingRegion.png", 
+                                    package = "voluModel"), 
+                        rel_path = getOption("knitr.graphics.rel_path", FALSE))
 ```
 
 Finally, we need to draw the environmental variable data that will be used to generate the ecological niche model, from presence voxels as well as from the background sampling region. First, we sample environmental data for occurrences and add a "response" column filled with 1s, signifying these are considered "presences".

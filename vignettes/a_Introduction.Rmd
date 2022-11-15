@@ -47,7 +47,7 @@ library(lattice) # For plotting
 
 First thing's first. Distributional models are based on coordinates of species' occurrences. We start with and example occurrence dataset of *Steindachneria argentea*, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens *et al.*, 2021). Here is how the occurrence data file is structured, and where the occurrences we will be using are located.
 
-```{r show points, warning=FALSE, echo=FALSE, message=FALSE, eval=FALSE}
+```{r show points, warning=FALSE, echo=TRUE, message=FALSE, eval=FALSE}
 occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
                              package='voluModel'))
 
@@ -76,7 +76,9 @@ occurrences <- occs %>%
 
 head(occurrences)
 land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
-knitr::include_graphics("pointMap.png")
+knitr::include_graphics(system.file("extdata/pointMap.png", 
+                                    package = "voluModel"), 
+                        rel_path = getOption("knitr.graphics.rel_path", FALSE))
 ```
 
 Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (AOU; Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more space-efficient. 
@@ -111,11 +113,7 @@ names(oxygenSmooth) <- names(temperature)
 
 Here you see plots at the sea surface and the bottom. The AOU dataset has been interpolated and smoothed using a thin plate spline algorithm. For more details on how to process environmental data, see [the raster data tutorial](https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html). 
 
-```{r temperature plot, echo=FALSE, out.width = '100%', out.height= '100%'}
-knitr::include_graphics("TemperatureTopBottom.png")
-```
-
-```{r oxygen plotting, echo=FALSE, eval = FALSE, message=FALSE, warning=FALSE}
+```{r oxygen plotting, echo=TRUE, eval = FALSE, message=FALSE, warning=FALSE}
 p3 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
               title= "Apparent Oxygen Utilization (µmol/kg),\n interpolated and smoothed")
 p4 <- oneRasterPlot(oxygenBottom, land = land, landCol = "black",
@@ -126,6 +124,10 @@ update(temp, strip  = strip.custom(strip.levels = TRUE,
                              bg = "black",
                              fg = "white",
                              par.strip.text = list(col = "white", cex = 1.2, font = 2)))
+```
+
+```{r temperature plot, echo=FALSE, out.width = '100%', out.height= '100%'}
+knitr::include_graphics("TemperatureTopBottom.png")
 ```
 
 ```{r oxygen plot, echo=FALSE, out.width = '100%', out.height= '100%'}
@@ -226,12 +228,16 @@ plot(land, col = "black", add = T)
 points(occurrences[,c("decimalLongitude", "decimalLatitude")], 
        pch = 20, col = "red", cex = 1.5)
 ```
+
 ```{r study region hidden, message=FALSE, warning=FALSE, eval=TRUE, echo=FALSE}
 studyRegion <- readRDS(system.file("extdata/backgroundSamplingRegions.rds",
                               package='voluModel'))
 ```
+
 ```{r plot study region, echo=FALSE, out.width = '100%', out.height= '100%'}
-knitr::include_graphics("PointsAndTrainingRegion.png")
+knitr::include_graphics(system.file("extdata/PointsAndTrainingRegion.png", 
+                                    package = "voluModel"), 
+                        rel_path = getOption("knitr.graphics.rel_path", FALSE))
 ```
 
 For our simple niche envelope models, we need to draw the environmental variable data from each occurrence voxel. For comparison with previous modeling approaches, I will extract data from the surface, from the bottom, and from the 3D coordinate for each variable.
