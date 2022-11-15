@@ -276,27 +276,26 @@ pointMap <- function(occs, spName, land = NA,
 #' must match.
 #'
 #' @examples
-#' occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
-#'                              package='voluModel'))
+#' set.seed(5)
+#' occs <- data.frame(cbind(decimalLatitude = sample(seq(7,35), 24),
+#'                          decimalLongitude = sample(seq(-97, -70), 24)))
+#'
 #' set.seed(0)
 #' occs1 <- occs[sample(1:nrow(occs),
-#'                      size = 24, replace = FALSE),]
+#'                      size = 12, replace = FALSE),]
 #' set.seed(10)
 #' occs2 <- occs[sample(1:nrow(occs),
-#'                      size = 24, replace = FALSE),]
-#'
-#' spName <- "Steindachneria argentea"
-#'
+#'                      size = 12, replace = FALSE),]
 #'
 #' pointCompMap(occs1 = occs1, occs2 = occs2,
 #'              occs1Col = "red", occs2Col = "orange",
 #'              agreeCol = "purple",
 #'              occs1Name = "2D",
 #'              occs2Name = "3D",
-#'              landCol = "black",
 #'              waterCol = "steelblue",
-#'              spName = spName,
-#'              ptSize = 2)
+#'              spName = "Steindachneria argentea",
+#'              ptSize = 2,
+#'              verbose = FALSE)
 #'
 #' @import ggplot2
 #' @importFrom dplyr inner_join anti_join %>% mutate
