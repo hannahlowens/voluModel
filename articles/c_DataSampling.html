@@ -101,7 +101,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-11-04</h4>
+            <h4 data-toc-skip class="date">2022-11-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/c_DataSampling.Rmd" class="external-link"><code>vignettes/c_DataSampling.Rmd</code></a></small>
       <div class="hidden name"><code>c_DataSampling.Rmd</code></div>
@@ -143,7 +143,7 @@
 <span><span class="fu"><a href="../reference/pointMap.html">pointMap</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, ptCol <span class="op">=</span> <span class="st">"orange"</span>, landCol <span class="op">=</span> <span class="st">"black"</span>,</span>
 <span>             spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, ptSize <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>             land <span class="op">=</span> <span class="va">land</span><span class="op">)</span></span></code></pre></div>
-<p><img src="c_DataSampling_files/figure-html/occurrence%20dataset-1.png"><!-- --></p>
+<p><img src="c_DataSampling_files/figure-html/occurrence%20dataset-1.png"><!-- --><img src="../../../_temp/Library/voluModel/extdata/pointMap.png" width="100%" height="100%"></p>
 <p><code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>, which is run within <code><a href="../reference/marineBackground.html">marineBackground()</a></code> generates a polygon (or polygons) that can be used as a training region by fitting an alpha hull (or hulls) around an occurrence dataset. Alpha is a parameter that controls the complexity of the polygon(s) that is being fit around the occurrences. <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code> adjusts the alpha parameter iteratively, until it meets criteria the user can set via the arguments <code>fraction</code>, which is the minimum fraction of occurrences that must be contained within the polygon(s), <code>partCount</code>, which is the maximum number of polygons generated to fit the data, and <code>buff</code>, which is the permissible distance from a point to the edge of a polyon in meters. <code><a href="../reference/marineBackground.html">marineBackground()</a></code> takes these and many of the same other arguments as <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>. Here’s how it works.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trainingRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occurrences</span>, </span>
@@ -196,16 +196,16 @@
 <h2 id="d-data-extraction">3D Data Extraction<a class="anchor" aria-label="anchor" href="#d-data-extraction"></a>
 </h2>
 <p>Next, we will cover how to extract environmental data from a <code>RasterBrick</code> object using 3D occurrence coordinates. The occurrences I will use to demonstrate this are the Luminous Hake occurrences from the previous section. The environmental dataset I will use as an example is temperature (Locarnini <em>et al.</em>, 2018) from the World Ocean Atlas (WOA; Garcia <em>et al.</em>, 2019). I have chosen to focus on temperature for simple illustrative purposes–we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient.</p>
-<p>This chunk of code loads the example shapefile, which results in a <code>SpatialPointsDataFrame</code>:</p>
+<p>This chunk of code loads the example data shapefile, which results in a <code>SpatialPointsDataFrame</code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/woa18_decav_t00mn01_cropped.zip"</span>, </span>
 <span>                  package <span class="op">=</span> <span class="st">"voluModel"</span><span class="op">)</span>,</span>
 <span>      exdir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, junkpaths <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/readOGR.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, </span>
+<span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/rgdal-deprecated.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, </span>
 <span>                       layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## OGR data source with driver: ESRI Shapefile </span></span>
-<span><span class="co">## Source: "/tmp/RtmpgAEACQ/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
+<span><span class="co">## Source: "/tmp/RtmpFbxCET/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
 <span><span class="co">## with 1633 features</span></span>
 <span><span class="co">## It has 102 fields</span></span></code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -345,22 +345,18 @@
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs2 <span class="op">=</span> <span class="va">occurrences</span>, </span>
 <span>             occs1Name <span class="op">=</span> <span class="st">"Original"</span>, occs2Name <span class="op">=</span> <span class="st">"Cleaned"</span>, </span>
 <span>             spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, </span>
-<span>             land <span class="op">=</span> <span class="va">land</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span></code></pre>
-<pre><code><span><span class="co">## Using decimalLongitude and decimalLatitude</span></span>
-<span><span class="co">##  as x and y coordinates, respectively.</span></span></code></pre>
+<span>             land <span class="op">=</span> <span class="va">land</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Joining, by = c("decimalLongitude", "decimalLatitude")</span></span>
 <span><span class="co">## Joining, by = c("decimalLongitude", "decimalLatitude")</span></span>
 <span><span class="co">## Joining, by = c("decimalLongitude", "decimalLatitude")</span></span></code></pre>
 <p><img src="c_DataSampling_files/figure-html/plot%20downsample-1.png"><!-- --></p>
 <p>At this point, we can demonstrate one of the key contributions of <code>voluModel</code>– an improvement in how the environmental data are extracted at species’ occurrences. <code>voluModel</code> samples environmental conditions at the depth where each record was located, instead of extrapolating to surface or bottom conditions. Finally, we add a column called “response” and fill it by repeating “1”, to signify that these occurrences should be interpreted as presences for the purposes of modeling.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extraction</span></span>
 <span><span class="va">occurrences</span><span class="op">$</span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, envBrick <span class="op">=</span> <span class="va">temperature</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add "response" column for modeling</span></span>
 <span><span class="va">occurrences</span><span class="op">$</span><span class="va">response</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">occurrences</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span>,<span class="op">]</span></span>
@@ -380,7 +376,7 @@
 </h2>
 <p>As discussed above, some modeling methods require the generation of a sampling region from which training/pseudoabsence/background points are drawn. The training region should approximately answer the question “What environments are most likely to have been experienced by Lumious Hakes?” Our answer to this question for the purposes of this tutorial is represented in <code>trainingRegion</code>, which we generated above using <code><a href="../reference/marineBackground.html">marineBackground()</a></code>. Next, we generate 3D training points within this region using the <code><a href="../reference/mSampling3D.html">mSampling3D()</a></code> function. The function takes an occurrence <code>data.frame</code>, a <code>RasterBrick</code> that will serve as a template for the resolution of the training points, a <code>SpatialPolygons</code> object representing the training region, and, optionally, information on the range of depths from which the function should sample. If you have reason to believe the species you are modeling can access depths higher or lower than those represented by occurrences, you can specify a maximum and minimum training depth from which to draw occurrence points. <code><a href="../reference/mSampling3D.html">mSampling3D()</a></code> by default draws training points from the full depth extent of the supplied <code>RasterBrick</code>.</p>
 <p>For this example, I am sampling training points from 50 to 1500 m.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Background</span></span>
 <span><span class="va">backgroundVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mSampling3D.html">mSampling3D</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, </span>
 <span>                              envBrick <span class="op">=</span> <span class="va">temperature</span>, </span>
@@ -388,15 +384,17 @@
 <span>                              depthLimit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">1500</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">backgroundVals</span><span class="op">$</span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">backgroundVals</span>, <span class="va">temperature</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#Remove incomplete cases</span></span>
+<span><span class="va">backgroundVals</span> <span class="op">&lt;-</span> <span class="va">backgroundVals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">)</span>,<span class="op">]</span></span></code></pre></div>
 <p>Once the points are sampled, we add a column called “response” and fill it by repeating “0”, to signify that these occurrences should be interpreted as absences for the purposes of modeling.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add "response" column for modeling</span></span>
 <span><span class="va">backgroundVals</span><span class="op">$</span><span class="va">response</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">backgroundVals</span> <span class="op">&lt;-</span> <span class="va">backgroundVals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">)</span>,<span class="op">]</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   decimalLongitude decimalLatitude depth temperature response</span></span>
@@ -407,7 +405,7 @@
 <span><span class="co">## 5            -63.5            43.5    50       4.003        0</span></span>
 <span><span class="co">## 6            -69.5            42.5    50       6.187        0</span></span></code></pre>
 <p>It is important to note that this background data represents EVERY voxel within the training region that is not occupied by observances. Depending on your study design and the modeling algorithm you are using, these data will need to be subsampled. You could choose a random sample, select points based on geography, or any number of other strategies. Below is just one example–weighting the background points by their environmental dissimilarity to the Luminous Hake occurrence points. This manner of downsampling may be appropriate for modeling methods that interpret training points as pseudoabsences, such as generalized linear modeling, but will lead to overfit models when using algorithms like Maxent.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Sample background points weighted by distance from mean of occurrence temperatures</span></span>
 <span><span class="va">meanTemp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temperature"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">backgroundVals</span><span class="op">$</span><span class="va">distance</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">[</span>,<span class="st">"temperature"</span><span class="op">]</span> <span class="op">-</span> <span class="va">meanTemp</span><span class="op">)</span></span>
