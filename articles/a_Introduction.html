@@ -151,7 +151,7 @@
 <span><span class="co">## 4        -56.87500        7.741667 365.76</span></span>
 <span><span class="co">## 5        -80.43333        9.300000  82.00</span></span>
 <span><span class="co">## 6        -59.78330        9.683300 274.00</span></span></code></pre>
-<p><img src="../../../_temp/Library/voluModel/extdata/pointMap.png" width="100%" height="100%"></p>
+<p><img src="pointMap.png" width="100%" height="100%"></p>
 <p>Next, we load two environmental datasets from the World Ocean Atlas (Garcia <em>et al.</em>, 2019): temperature (Locarnini <em>et al.</em>, 2018) and apparent oxygen utilization (AOU; Garcia <em>et al.</em>, 2019). I have chosen these variables for simplified illustrative purposes–we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more space-efficient.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Temperature</span></span>
@@ -162,7 +162,7 @@
 <span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/rgdal-deprecated.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, </span>
 <span>                       layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## OGR data source with driver: ESRI Shapefile </span></span>
-<span><span class="co">## Source: "/tmp/RtmpsLKWV0/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
+<span><span class="co">## Source: "/tmp/RtmpWFWGUm/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
 <span><span class="co">## with 1633 features</span></span>
 <span><span class="co">## It has 102 fields</span></span></code></pre>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -234,7 +234,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">land</span>, col <span class="op">=</span> <span class="st">"black"</span>, add <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span><span class="op">)</span><span class="op">]</span>, </span>
 <span>       pch <span class="op">=</span> <span class="fl">20</span>, col <span class="op">=</span> <span class="st">"red"</span>, cex <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span></code></pre></div>
-<p><img src="../../../_temp/Library/voluModel/extdata/PointsAndTrainingRegion.png" width="100%" height="100%"></p>
+<p><img src="PointsAndTrainingRegion.png" width="100%" height="100%"></p>
 <p>For our simple niche envelope models, we need to draw the environmental variable data from each occurrence voxel. For comparison with previous modeling approaches, I will extract data from the surface, from the bottom, and from the 3D coordinate for each variable.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Surface Presences</span></span>
