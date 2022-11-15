@@ -135,9 +135,7 @@ pointMap(occs = occs, land = land, landCol = "black", spName = "Steindachneria a
 ```
 
 ```{r pointMap plot, echo=FALSE, out.width = '100%', out.height= '100%'}
-knitr::include_graphics(system.file("extdata/pointMap.png", 
-                                    package = "voluModel"), 
-                        rel_path = getOption("knitr.graphics.rel_path", FALSE))
+knitr::include_graphics("pointMap.png")
 ```
 
 The second, `pointCompMap()` plots a map that maps the extents of two sets of horizontal geographic points in different colors. This might be useful, for example, if you want to compare a raw dataset to a cleaned dataset. If any points overlap, they can be plotted as a third color.

@@ -67,9 +67,7 @@ pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
 ```
 ```{r point plot, echo=FALSE, out.width = '100%', out.height= '100%'}
 land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
-knitr::include_graphics(system.file("extdata/pointMap.png", 
-                                    package = "voluModel"), 
-                        rel_path = getOption("knitr.graphics.rel_path", FALSE))
+knitr::include_graphics("pointMap.png")
 ```
 
 `getDynamicAlphaHull()`, which is run within `marineBackground()` generates a polygon (or polygons) that can be used as a training region by fitting an alpha hull (or hulls) around an occurrence dataset. Alpha is a parameter that controls the complexity of the polygon(s) that is being fit around the occurrences. `getDynamicAlphaHull()` adjusts the alpha parameter iteratively, until it meets criteria the user can set via the arguments `fraction`, which is the minimum fraction of occurrences that must be contained within the polygon(s), `partCount`, which is the maximum number of polygons generated to fit the data, and `buff`, which is the permissible distance from a point to the edge of a polyon in meters. `marineBackground()` takes these and many of the same other arguments as `getDynamicAlphaHull()`. Here's how it works.
