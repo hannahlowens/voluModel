@@ -76,9 +76,7 @@ occurrences <- occs %>%
 
 head(occurrences)
 land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
-knitr::include_graphics(system.file("extdata/pointMap.png", 
-                                    package = "voluModel"), 
-                        rel_path = getOption("knitr.graphics.rel_path", FALSE))
+knitr::include_graphics("pointMap.png")
 ```
 
 Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (AOU; Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more space-efficient. 
@@ -235,9 +233,7 @@ studyRegion <- readRDS(system.file("extdata/backgroundSamplingRegions.rds",
 ```
 
 ```{r plot study region, echo=FALSE, out.width = '100%', out.height= '100%'}
-knitr::include_graphics(system.file("extdata/PointsAndTrainingRegion.png", 
-                                    package = "voluModel"), 
-                        rel_path = getOption("knitr.graphics.rel_path", FALSE))
+knitr::include_graphics("PointsAndTrainingRegion.png")
 ```
 
 For our simple niche envelope models, we need to draw the environmental variable data from each occurrence voxel. For comparison with previous modeling approaches, I will extract data from the surface, from the bottom, and from the 3D coordinate for each variable.
