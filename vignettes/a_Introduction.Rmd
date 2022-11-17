@@ -22,10 +22,6 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
-load(system.file("extdata/oxygenSmooth.RData", 
-                 package='voluModel'))
-load(system.file("extdata/oxygenBottom.RData",
-                 package = 'voluModel'))
 ```
 
 # Introduction 
@@ -105,7 +101,11 @@ envtNames <- gsub("[d,M]", "", names(temperature))
 envtNames[[1]] <- "0"
 names(temperature) <- envtNames
 
-# Oxygen processing
+# Oxygen processing, pre-baked to save time
+load(system.file("extdata/oxygenSmooth.RData", 
+                 package='voluModel'))
+load(system.file("extdata/oxygenBottom.RData",
+                 package = 'voluModel'))
 names(oxygenSmooth) <- names(temperature)
 ```
 
