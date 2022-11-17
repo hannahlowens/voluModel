@@ -26,7 +26,7 @@ test_that("interpolateRaster input warnings behave as expected", {
 })
 
 # Introduce a "hole"
-values(r)[67:70] <- NA
+values(r)[c(12:13, 30)] <- NA
 
 test_that("interpolateRaster returns appropriate information", {
  # Execute function

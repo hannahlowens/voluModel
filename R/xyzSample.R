@@ -62,6 +62,7 @@
 #' occurrences$envtValue <- occSample3d
 #'
 #' @import raster
+#' @importFrom terra rast extract
 #'
 #' @keywords dataPrep
 #'
@@ -82,6 +83,8 @@ xyzSample <- function(occs, envBrick, verbose = TRUE){
     warning(paste0("'envBrick' must be of class 'RasterBrick'.\n"))
     return(NULL)
   }
+
+  envBrick <- rast(envBrick)
 
   if (!is.logical(verbose)) {
     warning(message("Argument 'verbose' is not of type 'logical'.\n"))
@@ -121,9 +124,9 @@ xyzSample <- function(occs, envBrick, verbose = TRUE){
   occs$sampledValues <- rep(NA, times = nrow(occs))
   indices <- unique(occs$index)
   for(i in indices){
-    occs[occs$index == i,]$sampledValues <- raster::extract(x = envBrick[[i]],
-                                                            y = occs[occs$index == i,c(xIndex,
-                                                                                       yIndex)])
+    occs[occs$index == i,]$sampledValues <- terra::extract(x = envBrick[[i]],
+                                                           y = occs[occs$index == i,c(xIndex,
+                                                                                      yIndex)])[,2]
   }
   return(occs$sampledValues)
 }
