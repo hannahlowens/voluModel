@@ -102,7 +102,7 @@
                         <h4 data-toc-skip class="author">Hannah L. Owens</h4>
                         <h4 data-toc-skip class="author">Carsten Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-11-16</h4>
+            <h4 data-toc-skip class="date">2022-11-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/a_Introduction.Rmd" class="external-link"><code>vignettes/a_Introduction.Rmd</code></a></small>
       <div class="hidden name"><code>a_Introduction.Rmd</code></div>
@@ -162,7 +162,7 @@
 <span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://rgdal.r-forge.r-project.org/reference/rgdal-deprecated.html" class="external-link">readOGR</a></span><span class="op">(</span>dsn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature"</span><span class="op">)</span>, </span>
 <span>                       layer <span class="op">=</span><span class="st">"woa18_decav_t00mn01_cropped"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## OGR data source with driver: ESRI Shapefile </span></span>
-<span><span class="co">## Source: "/tmp/RtmpuzLytL/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
+<span><span class="co">## Source: "/tmp/RtmpvU6NmD/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
 <span><span class="co">## with 1633 features</span></span>
 <span><span class="co">## It has 102 fields</span></span></code></pre>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -182,7 +182,11 @@
 <span><span class="va">envtNames</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"0"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">envtNames</span></span>
 <span></span>
-<span><span class="co"># Oxygen processing</span></span>
+<span><span class="co"># Oxygen processing, pre-baked to save time</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/oxygenSmooth.RData"</span>, </span>
+<span>                 package<span class="op">=</span><span class="st">'voluModel'</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/oxygenBottom.RData"</span>,</span>
+<span>                 package <span class="op">=</span> <span class="st">'voluModel'</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">oxygenSmooth</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span></span></code></pre></div>
 <p>Here you see plots at the sea surface and the bottom. The AOU dataset has been interpolated and smoothed using a thin plate spline algorithm. For more details on how to process environmental data, see <a href="https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html" class="external-link">the raster data tutorial</a>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
