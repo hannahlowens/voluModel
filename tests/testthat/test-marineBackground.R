@@ -1,18 +1,13 @@
-library(raster)
 library(voluModel)
 
 # Create sample raster
-r <- raster(ncol=360, nrow=180)
-values(r) <- 1
+occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
+                             package='voluModel'))
 
 # Create test occurrences
 set.seed(0)
-longitude <- sample(-50:50,
-                    size = 20, replace = FALSE)
-set.seed(0)
-latitude <- sample(-30:30,
-                   size = 20, replace = FALSE)
-occurrences <- as.data.frame(cbind(longitude,latitude))
+occurrences <- occs[sample(1:nrow(occs),
+            size = 24, replace = FALSE),]
 
 test_that("marineBackground input warnings behave as expected", {
   expect_error(marineBackground())
@@ -56,13 +51,13 @@ test_that("marineBackground results as expected", {
   skip_on_ci() # Something weird happens at line 58
   result <- marineBackground(occs = occurrences, buff = 100000,
                              fraction = .9, partCount = 2, clipToOcean = TRUE)
-  expect_equal(class(result)[[1]], "SpatialPolygons")
-  expect_equal(length(result@polygons), 1)
+  expect_equal(class(result)[[1]], "SpatVector")
+  expect_equal(length(result), 1)
 
   result <- marineBackground(occs = occurrences,
                              fraction = .9, partCount = 2, clipToOcean = TRUE)
-  expect_equal(class(result)[[1]], "SpatialPolygons")
-  expect_equal(length(result@polygons), 1)
+  expect_equal(class(result)[[1]], "SpatVector")
+  expect_equal(length(result), 1)
 })
 
 test_that("marineBackground Pacific results as expected", {
@@ -82,13 +77,13 @@ test_that("marineBackground Pacific results as expected", {
 
   result <- marineBackground(occs = occurrences, buff = 1000000,
                              fraction = .95, partCount = 2, clipToOcean = TRUE)
-  expect_equal(class(result)[[1]], "SpatialPolygons")
-  expect_equal(length(result@polygons), 1)
+  expect_equal(class(result)[[1]], "SpatVector")
+  expect_equal(length(result), 1)
 
   #One side
   result <- marineBackground(occs = occurrences[1:10,], buff = 1000000,
                              fraction = .95, partCount = 2, clipToOcean = TRUE,
                              verbose = FALSE)
-  expect_equal(class(result)[[1]], "SpatialPolygons")
-  expect_equal(length(result@polygons), 1)
+  expect_equal(class(result)[[1]], "SpatVector")
+  expect_equal(length(result), 1)
 })

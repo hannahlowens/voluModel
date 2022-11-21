@@ -39,9 +39,7 @@
 #' @param ... Additional optional arguments to pass to
 #' `getDynamicAlphaHull`.
 #'
-#' @return A `data.frame` with two columns named "longitude"
-#' and "latitude" or with names that were used when coercing
-#' input data into this format.
+#' @return A `SpatVector`
 #'
 #' @details The meat of this function is a special-case wrapper
 #' around `getDynamicAlphaHull()` from the `rangeBuilder` package.
@@ -80,11 +78,9 @@
 #'                            fraction = .9, partCount = 2, clipToOcean = FALSE)
 #' }
 #'
-#' @import raster
-#' @import rangeBuilder
-#' @import rgeos
-#' @import sp
-#' @importFrom terra distance buffer shift vect
+#' @import terra
+#' @import sf
+#' @importFrom rangeBuilder getDynamicAlphaHull
 #' @importFrom methods as slot<-
 #'
 #' @seealso \code{\link[rangeBuilder:getDynamicAlphaHull]{getDynamicAlphaHull}}
@@ -189,88 +185,86 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
   }
 
   # Point part
-  occsForM <- suppressWarnings(sp::SpatialPoints(occs[,c(xIndex, yIndex)],
-                                                 proj4string = sp::CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")))
-  occsForM <- sp::spTransform(occsForM,
-                              CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
+  upj <- sf::st_crs(4326) # Unprojected WGS84
+  pj <- sf::st_crs(4087) # Projected WGS84
+  occsForM <- terra::vect(x = occs[,c(xIndex, yIndex)],
+                          geom = c(colNames[xIndex], colNames[yIndex]),
+                          crs = upj$wkt)
+  occsForM <- terra::project(occsForM, y = pj$wkt)
   occBuff <- suppressWarnings(terra::buffer(occsForM,
-                                            width = buff, dissolve = TRUE))
+                                            width = buff))
+  occBuff <- terra::aggregate(occBuff)
 
   # Hull part
-  hull <- try(rangeBuilder::getDynamicAlphaHull(occs,
-                                                initialAlpha = initialAlpha,
-                                                alphaIncrement = alphaIncrement,
-                                                coordHeaders=colnames(occs)[c(xIndex,
-                                                                              yIndex)],
-                                                clipToCoast = clipToCoast,
-                                                fraction = fraction,
-                                                partCount = partCount),
+  hull <- try(getDynamicAlphaHull(occs, initialAlpha = initialAlpha,
+                                  alphaIncrement = alphaIncrement,
+                                  coordHeaders=colnames(occs)[c(xIndex,
+                                                                yIndex)],
+                                  clipToCoast = clipToCoast,
+                                  fraction = fraction,
+                                  partCount = partCount),
               silent = TRUE)
-  gdahFail <- FALSE
+  gdahAlternative <- FALSE
   if("try-error" %in% class(hull)){
-    x1 <- min(occs[xIndex])
-    x2 <- max(occs[xIndex])
-    y1 <- min(occs[yIndex])
-    y2 <- max(occs[yIndex])
-    hull <- Polygon(cbind(c(x1,x1,x2,x2,x1),c(y1,y2,y2,y1,y1)))
-    hull <- Polygons(list(hull), ID = "A")
-    hull <- SpatialPolygons(list(hull))
-    proj4string(hull) <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
-    hull <- sp::spTransform(hull,
-                            CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
+    gdahAlternative <- TRUE
   } else{
     if(hull$alpha == "alphaMCH"){
-      gdahFail <- TRUE
+      gdahAlternative <- TRUE
     }
-    hull <- sp::spTransform(hull[[1]],
-                            CRSobj = sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs"))
+    hull <- sf::st_transform(hull[[1]], crs = 4087)
+    if(xmin(terra::ext(vect(hull))) < -20037000 ||
+       xmax(terra::ext(vect(hull))) > 20037000){
+      gdahAlternative <- TRUE
+    }
   }
 
-  if(gdahFail){
-    occBuffTmp <- terra::disagg(terra::vect(occBuff))
+  if(gdahAlternative){
+    occBuffTmp <- terra::disagg(occBuff)
     occBuffConv <- vector(mode = "list", length = length(occBuffTmp))
     for (i in 1:length(occBuffTmp)){
       occBuffConv[[i]] <- terra::convHull(occBuffTmp[i])
-      values(occBuffConv[[i]]) <- 1
+      terra::values(occBuffConv[[i]]) <- 1
     }
-    wholeM <- vect(occBuffConv)
-    wholeM <- as(wholeM, "Spatial")
+    wholeM <- terra::aggregate(terra::vect(occBuffConv))
+    #wholeM <- as(wholeM, "Spatial")
   } else{
-    hullBuff <- terra::buffer(hull, width = buff, dissolve = TRUE)
-    wholeM <- rgeos::gUnion(occBuff, hullBuff)
+    hullBuff <- terra::buffer(terra::vect(hull), width = buff)
+    hullBuff <- terra::aggregate(hullBuff)
+    wholeM <- terra::union(occBuff, hullBuff)
+    wholeM <- terra::aggregate(wholeM)
+    #wholeM <- as(wholeM, "Spatial")
   }
 
   # Crop out land
   land <- readRDS(system.file("extdata/smallLand.rds",
                               package='voluModel'))
-  wholeM <- try(rgeos::gDifference(wholeM,land), silent = T)
+  wholeM <- terra::erase(wholeM, vect(land))
 
   # Optional removal of unoccupied polygons
   if(clipToOcean){
     # First, split up disjunct polygons
-    wholeM <- sp::disaggregate(wholeM)
-    wholeM <- wholeM[apply(rgeos::gContains(wholeM, occsForM, byid = TRUE),
-                           2, FUN = any)]
+    wholeM <- terra::disagg(wholeM)
+    wholeM <- wholeM[terra::relate(wholeM, occsForM, "contains")]
   }
 
   # Putting it all together and fixing the date line
-  worldExtent <- extent(-20037508,
-                        20037508,
-                        -10018754,
-                        10018754) # Plate-Carre world extent
-  worldExtent <- as(worldExtent, 'SpatialPolygons')
-  crs(worldExtent) <- sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs")
+  worldExtent <- terra::ext(-20037508,
+                            20037508,
+                            -10018754,
+                            10018754) # Plate-Carre world extent
+  #worldExtent <- as(worldExtent, 'SpatVector')
+  #crs(worldExtent) <- sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs")
 
   # Get rid of slop at poles
-  wholeM <- crop(wholeM, extent(c(xmin(wholeM),
-                                  xmax(wholeM),
-                                  ymin(worldExtent),
-                                  ymax(worldExtent))))
+  wholeM <- crop(wholeM, terra::ext(c(xmin(wholeM),
+                                      xmax(wholeM),
+                                      ymin(worldExtent),
+                                      ymax(worldExtent))))
   # Wrap shapefiles at 180th meridian
-  middle <- gIntersection(wholeM, worldExtent)
-  ends <- gDifference(wholeM, worldExtent)
-  if(!is.null(ends)){
-    ends <- disaggregate(ends)
+  middle <- terra::intersect(wholeM, worldExtent)
+  ends <- terra::erase(wholeM, worldExtent)
+  if(length(ends) > 0){
+    ends <- terra::disagg(ends)
     if(length(ends) == 1){
       if(xmin(ends) < -20037508){
         ends <- terra::shift(ends, dx = 20037508*2)
@@ -283,22 +277,19 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
       for(j in 1:length(ends)){
         if(xmin(ends[j,]) < -20037508){
           endTemp <- terra::shift(ends[j,], dx = 20037508*2)
-          slot(endTemp@polygons[[1]], "ID") <- paste0(j)
         } else if(xmax(ends[j,]) > 20037508){
           endTemp <- terra::shift(ends[j,], dx = -20037508*2)
-          slot(endTemp@polygons[[1]], "ID") <- paste0(j)
         }
         result[[j]] <- endTemp
       }
-      ends <- do.call(rbind, result)
+      ends <- terra::aggregate(result)
     }
-    wholeM <- gUnion(middle, ends)
+    wholeM <- terra::aggregate(terra::union(middle, ends))
   } else{
     wholeM <- middle
   }
 
-  wholeM <- sp::spTransform(wholeM,
-                        CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
+  wholeM <- terra::project(wholeM, y = pj$wkt)
 
   return(wholeM)
 }
