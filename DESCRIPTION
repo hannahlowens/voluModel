@@ -38,14 +38,12 @@ Imports:
     ggplot2,
     ggtext,
     grDevices,
-    lattice,
     latticeExtra,
     methods,
     raster,
-    rangeBuilder,
+    rangeBuilder (>= 2.0),
     terra,
     viridisLite,
-    sp,
     sf
 Suggests:
     testthat (>= 3.0.0),
@@ -53,10 +51,12 @@ Suggests:
     knitr,
     covr,
     gridExtra,
+    lattice,
     rgdal,
     rmarkdown,
     rnaturalearth,
     rnaturalearthdata,
+    sp,
     tibble
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
