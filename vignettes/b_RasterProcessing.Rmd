@@ -43,6 +43,9 @@ library(tibble) # For data organization
 library(ggplot2) # For supplementary visualization
 library(fields) # For raster interpolation
 library(latticeExtra) # Some fancy plotting
+
+library(terra) # Now being transitioned in
+library(sf) # Now being transitioned in
 ```
 
 # Data Inputs
