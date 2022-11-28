@@ -42,13 +42,15 @@ library(rgdal,
 library(raster) # For raster stuff. Will eventually be replaced with terra.
 library(rangeBuilder) # To compare marineBackground to getDynamicAlphaHull
 library(dplyr) # To filter data
+library(terra) # Now being transitioned in
+library(sf) # Now being transitioned in
 ```
 
-# Generating Repeatable Training Regions
 
-To generate a sample of pseudoabsences and/or background points, it is important to consider the environments the species of interest can access (Barve *et al.*, 2011). There is ample discussion in the literature on how to best delimit a niche model training region (also variously called M or the background region), and we will not review the issue here. In the absence of specific information on species’ dispersal capabilities, algorithmically generating a repeatable sampling background from a clear set of rules may be suitable approximation, or a jumping-off point for hand-curating training regions in a GIS software of choice.
 
-We designed `marineBackground()` as a wrapper around \code{\link[rangeBuilder:getDynamicAlphaHull]{getDynamicAlphaHull}}, a function provided by the `rangeBuilder` package (Davis-Rabosky *et al.*, 2016) which generates background sampling regions by fitting an alpha hull polygon around an occurrence point dataset. Let's look at how `marineBackground()` (and by extension `getDynamicAlphaHull()`) fits alpha hull polygons, based on species occurrence data. The occurrence dataset is our *Steindachneria argentea*, Luminous Hake, data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via `occCite` (Owens *et al.*, 2021).
+# 3D Data Extraction
+
+First, we will cover how to extract environmental data from a `RasterBrick` object using 3D occurrence coordinates. The species occurrences I will use are *Steindachneria argentea*, Luminous Hake, data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via `occCite` (Owens *et al.*, 2021).
 
 ```{r occurrence dataset, message=FALSE, warning = FALSE}
 # Get points
@@ -70,78 +72,7 @@ land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
 knitr::include_graphics("pointMap.png")
 ```
 
-`getDynamicAlphaHull()`, which is run within `marineBackground()` generates a polygon (or polygons) that can be used as a training region by fitting an alpha hull (or hulls) around an occurrence dataset. Alpha is a parameter that controls the complexity of the polygon(s) that is being fit around the occurrences. `getDynamicAlphaHull()` adjusts the alpha parameter iteratively, until it meets criteria the user can set via the arguments `fraction`, which is the minimum fraction of occurrences that must be contained within the polygon(s), `partCount`, which is the maximum number of polygons generated to fit the data, and `buff`, which is the permissible distance from a point to the edge of a polyon in meters. `marineBackground()` takes these and many of the same other arguments as `getDynamicAlphaHull()`. Here's how it works.
-
-```{r alpha hull demonstration, message=FALSE, warning=FALSE, eval=FALSE}
-trainingRegion <- marineBackground(occurrences, 
-                                fraction = 1, partCount = 1, buff = 1000000,
-                                clipToOcean = F)
-plot(trainingRegion, border = F, col = "gray",
-     main = "Mimimum of 100% Points in Training Region,\nMaximum of 1 Polygon Permitted, 100 km Buffer",
-     axes = T)
-plot(land, col = "black", add = T)
-points(occurrences[,c("decimalLongitude", "decimalLatitude")], 
-       pch = 20, col = "red", cex = 1.5)
-```
-
-```{r plot alpha hull demonstration, echo=FALSE, fig.width=7}
-knitr::include_graphics("alphaHullDemonstration-1.png", )
-```
-
-What parameters you choose to fit the alpha hull will depend on the biology of the organism you are trying to model (e.g. you may choose a much smaller buffer for a sessile organism than you would for a highly vagile migratory species), your data, and the particulars of your study system and the geography of your study area. You may need to experiment to find something that looks sensible. If you do not provide a pre-defined buffer, `marineBackground()` will calculate a buffer that is the mean of the top and bottom 10% of distances between points in the dataset.
-
-You may have noticed that the training regions in the above examples include some areas of the Pacific where the species has not been observed, and cannot access. This could cause problems if it is used to train your model. You *could* delete this area by hand in your favorite GIS software, OR you could change `clipToOcean` to `TRUE` in `marineBackground()`, and any polygon fragments that do not contain an occurrence will be deleted automatically. This is a key difference from `getDynamicAlphaHull()`.
-
-```{r clipToOcean demo, message=FALSE, warning=FALSE, eval=F}
-trainingRegion <- marineBackground(occurrences, 
-                                   buff = 1000000, 
-                                   clipToOcean = T)
-plot(trainingRegion, border = F, col = "gray",
-     main = "100 km Buffer,\n Training Region Clipped to Occupied Polygon",
-     axes = T)
-plot(land, col = "black", add = T)
-points(occurrences[,c("decimalLongitude", "decimalLatitude")], 
-       pch = 20, col = "red", cex = 1.5)
-```
-
-```{r plot clipToOcean demo, echo=FALSE}
-trainingRegion <- readRDS(system.file("extdata/backgroundSamplingRegions.rds",
-                              package='voluModel'))
-
-knitr::include_graphics("clipToOceanDemo-1.png")
-```
-
-The last major difference between `marineBackground()` and `getDynamicAlphaHull()` is how the functions handle training regions that are adjacent to the antimeridian (i.e. 180° E or W). `getDynamicAlphaHull()` truncates polygons at this line, which can lead to some strange-looking training areas or fatal errors. `marineBackground()`, on the other hand, wraps polygons across the meridian and merges them if they overlap. For this example, I am going to manipulate the longitudinal coordinates of our Luminous Hake dataset to generate a quick fictional example.
-
-```{r meridian wrap demo, warning=FALSE, message=FALSE, eval=F}
-# Fictional example occurrences
-pacificOccs <- occurrences
-pacificOccs$decimalLongitude <- pacificOccs$decimalLongitude - 100
-for (i in 1:length(pacificOccs$decimalLongitude)){
-  if (pacificOccs$decimalLongitude[[i]] < -180){
-    pacificOccs$decimalLongitude[[i]] <- pacificOccs$decimalLongitude[[i]] + 360
-  }
-}
-
-# marine Background
-pacificTrainingRegion <- marineBackground(pacificOccs, 
-                                          fraction = 0.95, partCount = 3, 
-                                          clipToOcean = T)
-plot(pacificTrainingRegion, border = F, col = "gray",
-     main = "marineBackground Antimeridian Wrap",
-     axes = T)
-plot(land, col = "black", add = T)
-points(pacificOccs[,c("decimalLongitude", "decimalLatitude")], 
-       pch = 20, col = "red", cex = 1.5)
-```
-
-```{r plot meridian wrap demo, echo=FALSE}
-knitr::include_graphics("meridianWrapDemo-1.png")
-```
-
-# 3D Data Extraction
-
-Next, we will cover how to extract environmental data from a `RasterBrick` object using 3D occurrence coordinates. The occurrences I will use to demonstrate this are the Luminous Hake occurrences from the previous section. The environmental dataset I will use as an example is temperature (Locarnini *et al.*, 2018) from the World Ocean Atlas (WOA; Garcia *et al.*, 2019). I have chosen to focus on temperature for simple illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. 
+The environmental dataset I will use as an example is temperature (Locarnini *et al.*, 2018) from the World Ocean Atlas (WOA; Garcia *et al.*, 2019). I have chosen to focus on temperature for simple illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. 
 
 This chunk of code loads the example data shapefile, which results in a `SpatialPointsDataFrame`:
 
@@ -179,7 +110,7 @@ plot(temperature[[c(1, 50)]])
 At this point, you may have noticed a message popping up about which columns `voluModel` is interpreting as coordinates. `voluModel` is fairly flexible in how the coordinate columns are named, and it relies on names instead of column position to interpret x, y, and z (or latitude, longitude, and depth) coordinates. We do this to make `voluModel` as flexible as possible to a diversity of input formats, although English is the only supported language at the moment. Here are some examples of names that work.
 
 ```{r column interpretations, message=TRUE, warning=TRUE}
-occsTest <- occurrences[1:5,]
+occsTest <- occurrences[19:24,]
 xyzSample(occs = occsTest, envBrick = temperature)
 colnames(occsTest) <- c("x", "y", "z")
 xyzSample(occs = occsTest, envBrick = temperature)
@@ -232,6 +163,87 @@ head(occurrences)
 
 In a "real" modeling scenario, you would extract all your environmental variables using `xyzSample()`, then add the response column. Or add the response column first or in the middle. I'm not the boss of you.
 
+# Generating Repeatable Training Regions
+
+To generate a sample of pseudoabsences and/or background points, it is important to consider the environments the species of interest can access (Barve *et al.*, 2011). There is ample discussion in the literature on how to best delimit a niche model training region (also variously called M or the background region), and we will not review the issue here. In the absence of specific information on species’ dispersal capabilities, algorithmically generating a repeatable sampling background from a clear set of rules may be suitable approximation, or a jumping-off point for hand-curating training regions in a GIS software of choice.
+
+We designed `marineBackground()` as a wrapper around \code{\link[rangeBuilder:getDynamicAlphaHull]{getDynamicAlphaHull}}, a function provided by the `rangeBuilder` package (Davis-Rabosky *et al.*, 2016) which generates background sampling regions by fitting an alpha hull polygon around an occurrence point dataset. Let's look at how `marineBackground()` (and by extension `getDynamicAlphaHull()`) fits alpha hull polygons, based on the cleaned species occurrence data from above. 
+
+`getDynamicAlphaHull()`, which is run within `marineBackground()` generates a polygon (or polygons) that can be used as a training region by fitting an alpha hull (or hulls) around an occurrence dataset. Alpha is a parameter that controls the complexity of the polygon(s) that is being fit around the occurrences. `getDynamicAlphaHull()` adjusts the alpha parameter iteratively, until it meets criteria the user can set via the arguments `fraction`, which is the minimum fraction of occurrences that must be contained within the polygon(s), `partCount`, which is the maximum number of polygons generated to fit the data, and `buff`, which is the permissible distance from a point to the edge of a polyon in meters. `marineBackground()` takes these and many of the same other arguments as `getDynamicAlphaHull()`. Here's how it works.
+
+```{r alpha hull demonstration, message=FALSE, warning=FALSE, eval=FALSE}
+trainingRegion <- marineBackground(occurrences, 
+                                fraction = 1, partCount = 1, buff = 1000000,
+                                clipToOcean = F)
+trainingRegion <- sf::st_as_sf(trainingRegion)
+trainingRegion <- sf::st_transform(trainingRegion, crs(land))
+plot(trainingRegion, border = F, col = "gray",
+     main = "Mimimum of 100% Points in Training Region,\nMaximum of 1 Polygon Permitted, 100 km Buffer",
+     axes = T)
+plot(land, col = "black", add = T)
+points(occurrences[,c("decimalLongitude", "decimalLatitude")], 
+       pch = 20, col = "red", cex = 1.5)
+```
+
+```{r plot alpha hull demonstration, echo=FALSE, fig.width=7}
+knitr::include_graphics("alphaHullDemonstration-1.png", )
+```
+
+What parameters you choose to fit the alpha hull will depend on the biology of the organism you are trying to model (e.g. you may choose a much smaller buffer for a sessile organism than you would for a highly vagile migratory species), your data, and the particulars of your study system and the geography of your study area. You may need to experiment to find something that looks sensible. If you do not provide a pre-defined buffer, `marineBackground()` will calculate a buffer that is the mean of the top and bottom 10% of distances between points in the dataset.
+
+You may have noticed that the training regions in the above examples include some areas of the Pacific where the species has not been observed, and cannot access. This could cause problems if it is used to train your model. You *could* delete this area by hand in your favorite GIS software, OR you could change `clipToOcean` to `TRUE` in `marineBackground()`, and any polygon fragments that do not contain an occurrence will be deleted automatically. This is a key difference from `getDynamicAlphaHull()`.
+
+```{r clipToOcean demo, message=FALSE, warning=FALSE, eval=F}
+trainingRegion <- marineBackground(occurrences, 
+                                   buff = 1000000, 
+                                   clipToOcean = T)
+trainingRegion <- sf::st_as_sf(trainingRegion)
+trainingRegion <- sf::st_transform(trainingRegion, crs(land))
+plot(trainingRegion, border = F, col = "gray",
+     main = "100 km Buffer,\n Training Region Clipped to Occupied Polygon",
+     axes = T)
+plot(land, col = "black", add = T)
+points(occurrences[,c("decimalLongitude", "decimalLatitude")], 
+       pch = 20, col = "red", cex = 1.5)
+```
+
+```{r plot clipToOcean demo, echo=FALSE}
+trainingRegion <- readRDS(system.file("extdata/backgroundSamplingRegions.rds",
+                              package='voluModel'))
+
+knitr::include_graphics("clipToOceanDemo-1.png")
+```
+
+The last major difference between `marineBackground()` and `getDynamicAlphaHull()` is how the functions handle training regions that are adjacent to the antimeridian (i.e. 180° E or W). `getDynamicAlphaHull()` truncates polygons at this line, which can lead to some strange-looking training areas or fatal errors. `marineBackground()`, on the other hand, wraps polygons across the meridian and merges them if they overlap. For this example, I am going to manipulate the longitudinal coordinates of our Luminous Hake dataset to generate a quick fictional example.
+
+```{r meridian wrap demo, warning=FALSE, message=FALSE, eval=F}
+# Fictional example occurrences
+pacificOccs <- occurrences
+pacificOccs$decimalLongitude <- pacificOccs$decimalLongitude - 100
+for (i in 1:length(pacificOccs$decimalLongitude)){
+  if (pacificOccs$decimalLongitude[[i]] < -180){
+    pacificOccs$decimalLongitude[[i]] <- pacificOccs$decimalLongitude[[i]] + 360
+  }
+}
+
+# marine Background
+pacificTrainingRegion <- marineBackground(pacificOccs, 
+                                          fraction = 0.95, partCount = 3, 
+                                          clipToOcean = T)
+pacificTrainingRegion <- sf::st_as_sf(pacificTrainingRegion)
+pacificTrainingRegion <- sf::st_transform(pacificTrainingRegion, crs(land))
+plot(pacificTrainingRegion, border = F, col = "gray",
+     main = "marineBackground Antimeridian Wrap",
+     axes = T)
+plot(land, col = "black", add = T)
+points(pacificOccs[,c("decimalLongitude", "decimalLatitude")], 
+       pch = 20, col = "red", cex = 1.5)
+```
+
+```{r plot meridian wrap demo, echo=FALSE}
+knitr::include_graphics("meridianWrapDemo-1.png")
+```
+
 # Background Data Extraction
 
 As discussed above, some modeling methods require the generation of a sampling region from which training/pseudoabsence/background points are drawn. The training region should approximately answer the question "What environments are most likely to have been experienced by Lumious Hakes?" Our answer to this question for the purposes of this tutorial is represented in `trainingRegion`, which we generated above using `marineBackground()`. Next, we generate 3D training points within this region using the `mSampling3D()` function. The function takes an occurrence `data.frame`, a `RasterBrick` that will serve as a template for the resolution of the training points, a `SpatialPolygons` object representing the training region, and, optionally, information on the range of depths from which the function should sample. If you have reason to believe the species you are modeling can access depths higher or lower than those represented by occurrences, you can specify a maximum and minimum training depth from which to draw occurrence points. `mSampling3D()` by default draws training points from the full depth extent of the supplied `RasterBrick`. 
@@ -241,8 +253,8 @@ For this example, I am sampling training points from 50 to 1500 m.
 ```{r training points}
 # Background
 backgroundVals <- mSampling3D(occs = occurrences, 
-                              envBrick = temperature, 
-                              mShp = trainingRegion, 
+                              envBrick = rast(temperature), 
+                              mShp = vect(trainingRegion), 
                               depthLimit = c(50, 1500))
 backgroundVals$temperature <- xyzSample(occs = backgroundVals, temperature)
 
