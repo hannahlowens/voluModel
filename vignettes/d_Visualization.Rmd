@@ -40,6 +40,8 @@ library(rgdal,
 library(raster) # For raster stuff. Will eventually be replaced with terra.
 library(viridisLite) # For high-contrast plotting palettes
 library(dplyr) # To filter data
+library(terra) # Now being transitioned in
+library(sf) # Now being transitioned in
 
 # Load data
 load(system.file("extdata/oxygenSmooth.RData", 
@@ -93,8 +95,13 @@ occsWdata$temperature <- xyzSample(occs = occsWdata, temperature)
 occsWdata$AOU <- xyzSample(occs = occsWdata, oxygenSmooth)
 occsWdata <- occsWdata[complete.cases(occsWdata),]
 
+# Land shapefile
+land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
+
 # Study region
 studyRegion <- marineBackground(occsWdata, buff = 1000000)
+studyRegion <- sf::st_as_sf(studyRegion)
+studyRegion <- sf::st_transform(studyRegion, crs(land))
 
 # Get limits
 tempLims <- quantile(occsWdata$temperature,c(0, 1))
@@ -117,12 +124,6 @@ envelopeModel3D <- mask(crop(envelopeModel3D, studyRegion),
 names(envelopeModel3D) <- names(temperature)
 rm(AOUpresence, downsampledOccs, occurrences, temperaturePresence, 
    tempPoints, aouLims, envtNames, i, indices, layerNames, td, tempLims)
-```
-
-Here is a shapefile of the continents, which we can conveniently use to provide some context for all the maps we are about to make.
-
-```{r loading land data, warning=FALSE, message=FALSE}
-land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
 ```
 
 # Plotting points
