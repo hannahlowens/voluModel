@@ -4,13 +4,10 @@
 
 [![R-CMD-check](https://github.com/hannahlowens/voluModel/workflows/R-CMD-check/badge.svg)](https://github.com/hannahlowens/voluModel/actions)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Codecov test
-coverage](https://codecov.io/gh/hannahlowens/voluModel/branch/main/graph/badge.svg)](https://codecov.io/gh/hannahlowens/voluModel?branch=main)
-[![cran
-version](https://www.r-pkg.org/badges/version/voluModel)](https://cran.r-project.org/package=voluModel)
+[![Codecov test coverage](https://codecov.io/gh/hannahlowens/voluModel/branch/main/graph/badge.svg)](https://codecov.io/gh/hannahlowens/voluModel?branch=main)
+[![cran version](https://www.r-pkg.org/badges/version/voluModel)](https://cran.r-project.org/package=voluModel)
 [![DOI](https://zenodo.org/badge/409153439.svg)](https://zenodo.org/badge/latestdoi/409153439)
-[![rstudio mirror
-downloads](https://cranlogs.r-pkg.org/badges/voluModel)](https://github.com/r-hub/cranlogs.app)
+[![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/voluModel)](https://github.com/r-hub/cranlogs.app)
 
 <!-- badges: end -->
 
@@ -30,7 +27,7 @@ citation for the version you’re using:
 citation(package = "voluModel")
 ```
     ## Owens H, Rahbek C (2022). _voluModel: Modeling Species Distributions in Three Dimensions_. doi:
-    ## 10.5281/zenodo.7330931  (URL: https://doi.org/10.5281/zenodo.7330931), R package version 0.1.7, <URL:
+    ## 10.5281/zenodo.7372599  (URL: https://doi.org/10.5281/zenodo.7372599), R package version 0.1.8, <URL:
     ## http://CRAN.R-project.org/package=voluModel>.
     ##
     ## A BibTeX entry for LaTeX users is
@@ -39,9 +36,9 @@ citation(package = "voluModel")
     ##    title = {{voluModel}: Modeling Species Distributions in Three Dimensions},
     ##    author = {Hannah L. Owens and Carsten Rahbek},
     ##    year = {2022}
-    ##    note = {R package version 0.1.7},
+    ##    note = {R package version 0.1.8},
     ##    url = {http://CRAN.R-project.org/package=voluModel},
-    ##    doi = {10.5281/zenodo.7330931},
+    ##    doi = {10.5281/zenodo.7372599},
     ##  }
 
 

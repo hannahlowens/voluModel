@@ -8,4 +8,4 @@ bibentry(bibtype = "Manual",
          year = year,
          note = note,
          url = "https://CRAN.R-project.org/package=voluModel",
-         doi = "10.5281/zenodo.7330931")
+         doi = "10.5281/zenodo.7372599")

@@ -1,3 +1,7 @@
+# voluModel 0.1.9
+
+- Development version
+
 # voluModel 0.1.8
 
 - Addressed ERRORs on CRAN resulting from package updates on which voluModel depends.
