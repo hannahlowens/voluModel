@@ -43,10 +43,9 @@ Imports:
     methods,
     raster,
     rangeBuilder,
-    rgeos,
     terra,
     viridisLite,
-    sp
+    sf
 Suggests:
     testthat (>= 3.0.0),
     nlme,
