@@ -51,37 +51,39 @@ which to sample.
 }
 }
 \examples{
-library(raster)
+library(terra)
 
 # Create test raster
-r1 <- raster(ncol=10, nrow=10)
+r1 <- rast(ncol=10, nrow=10)
 values(r1) <- 1:100
-r2 <- raster(ncol=10, nrow=10)
+r2 <- rast(ncol=10, nrow=10)
 values(r2) <- c(rep(20, times = 50), rep(60, times = 50))
-r3 <- raster(ncol=10, nrow=10)
+r3 <- rast(ncol=10, nrow=10)
 values(r3) <- 8
-envBrick <- brick(r1, r2, r3)
+envBrick <- c(r1, r2, r3)
 names(envBrick) <- c(0, 10, 30)
 
 # Create test occurrences
 set.seed(0)
-longitude <- sample(extent(envBrick)[1]:extent(envBrick)[2],
+longitude <- sample(ext(envBrick)[1]:ext(envBrick)[2],
                     size = 10, replace = FALSE)
 set.seed(0)
-latitude <- sample(extent(envBrick)[3]:extent(envBrick)[4],
+latitude <- sample(ext(envBrick)[3]:ext(envBrick)[4],
                    size = 10, replace = FALSE)
 set.seed(0)
 depth <- sample(0:35, size = 10, replace = TRUE)
-occurrences <- as.data.frame(cbind(longitude,latitude,depth))
+occurrences <- data.frame(longitude,latitude,depth)
 
 # Generate background sampling buffer
-buffPts <- SpatialPoints(occurrences[,c("longitude", "latitude")])
-crs(buffPts) <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
-mShp <- buffer(buffPts, width = 1, dissolve = TRUE)
+buffPts <- vect(occurrences,
+                c("longitude", "latitude"))
+crs(buffPts) <- crs(r)
+mShp <- aggregate(buffer(buffPts, width = 1000000))
 
 # Here's the function
-occSample3d <- mSampling3D(occurrences,
-                           envBrick, mShp = mShp,
+occSample3d <- mSampling3D(occs = occurrences,
+                           envBrick = envBrick,
+                           mShp = mShp,
                            depthLimit = "occs")
 
 }
