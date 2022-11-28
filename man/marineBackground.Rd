@@ -23,9 +23,7 @@ which columns in \code{occs} are interpreted as x and y coordinates.}
 \code{getDynamicAlphaHull}.}
 }
 \value{
-A \code{data.frame} with two columns named "longitude"
-and "latitude" or with names that were used when coercing
-input data into this format.
+A \code{SpatVector}
 }
 \description{
 Automatically generates background

@@ -17,22 +17,25 @@
 #' @return A `Raster*`
 #'
 #' @examples
+#'
+#' library(terra)
 #' # Create sample raster
-#' r <- raster(ncol=10, nrow=10)
+#' r <- rast(ncol=10, nrow=10)
 #' values(r) <- 1:100
 #'
 #' # Create test occurrences
 #' set.seed(0)
-#' longitude <- sample(extent(r)[1]:extent(r)[2],
+#' longitude <- sample(ext(r)[1]:ext(r)[2],
 #'                     size = 10, replace = FALSE)
 #' set.seed(0)
-#' latitude <- sample(extent(r)[3]:extent(r)[4],
+#' latitude <- sample(ext(r)[3]:ext(r)[4],
 #'                    size = 10, replace = FALSE)
+#' occs <- data.frame(longitude, latitude)
 #'
 #' # Here's the function
-#' result <- occCellRemoval(occs = occurrences, rasterTemplate = r)
+#' result <- occCellRemoval(occs = occs, rasterTemplate = r)
 #'
-#' @import raster
+#' @import terra
 #'
 #' @keywords internal
 #'
@@ -41,8 +44,9 @@
 occCellRemoval <- function(occs, rasterTemplate){
   # Handling alternative column names for occurrences
   colNames <- colnames(occs)
-  xIndex <- grep(tolower(colNames), pattern = "long")
-  yIndex <- grep(tolower(colNames), pattern = "lat")
+  cp <- columnParse(occs)
+  xIndex <- cp$xIndex
+  yIndex <- cp$yIndex
 
   # Meat of function
   occCells <- cellFromXY(object = rasterTemplate, occs[,c(xIndex,yIndex)])
@@ -78,26 +82,26 @@ occCellRemoval <- function(occs, rasterTemplate){
 #' for background sampling.
 #'
 #' @examples
-#' library(raster)
-#' library(sp)
+#' library(terra)
 #'
 #' # Create sample raster
-#' r <- raster(ncol=10, nrow=10)
+#' r <- rast(ncol=10, nrow=10)
 #' values(r) <- 1:100
 #'
 #' # Create test occurrences
 #' set.seed(0)
-#' longitude <- sample(extent(r)[1]:extent(r)[2],
+#' longitude <- sample(ext(r)[1]:ext(r)[2],
 #'                     size = 10, replace = FALSE)
 #' set.seed(0)
-#' latitude <- sample(extent(r)[3]:extent(r)[4],
+#' latitude <- sample(ext(r)[3]:ext(r)[4],
 #'                    size = 10, replace = FALSE)
-#' occurrences <- as.data.frame(cbind(longitude,latitude))
+#' occurrences <- data.frame(longitude,latitude)
 #'
 #' # Generate background sampling buffer
-#' buffPts <- SpatialPoints(occurrences[,c("longitude", "latitude")])
-#' crs(buffPts) <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
-#' mShp <- buffer(buffPts, width = 1, dissolve = TRUE)
+#' buffPts <- vect(occurrences,
+#'                 c("longitude", "latitude"))
+#' crs(buffPts) <- crs(r)
+#' mShp <- aggregate(buffer(buffPts, width = 1000000))
 #'
 #' # Here's the function
 #' result <- mSampling2D(occs = occurrences, rasterTemplate = r, mShp = mShp)
@@ -114,18 +118,18 @@ mSampling2D <- function(occs, rasterTemplate, mShp, verbose = TRUE){
     return(NULL)
   }
 
-  if(!grepl("Raster", class(rasterTemplate))){
-    warning(paste0("'rasterTemplate' must be of class 'Raster*'.\n"))
+  if(!grepl("SpatRaster", class(rasterTemplate))){
+    warning(paste0("'rasterTemplate' must be of class 'SpatRaster'.\n"))
     return(NULL)
   }
 
-  if(!is(mShp, "SpatialPolygons")){
-    warning(paste0("'mShp' must be of class 'SpatialPolygons'.\n"))
+  if(!is(mShp, "SpatVector")){
+    warning(paste0("'mShp' must be of class 'SpatVector'.\n"))
     return(NULL)
   }
 
   if (!is.logical(verbose)) {
-    warning(message("Argument 'verbose' is not of type 'logical'.\n"))
+    warning(paste0("Argument 'verbose' is not of type 'logical'.\n"))
     return(NULL)
   }
 
@@ -143,12 +147,12 @@ mSampling2D <- function(occs, rasterTemplate, mShp, verbose = TRUE){
     message(interp)
   }
 
-  # Calculate lat/lon buffers and buffer
-  rasterTemplate <- crop(mask(rasterTemplate, mask = mShp), y = mShp)
-  # For each layer, toss cells where there are occurrences
+  rasterTemplate <- crop(x = mask(x = rasterTemplate, mask = mShp), y = mShp)
   rawLayer <- occCellRemoval(occs = occs[,c(xIndex,yIndex)],
                              rasterTemplate)
-  mPts <- data.frame(rasterToPoints(rawLayer)[,c("x", "y")])
+  mPts <- data.frame(xyFromCell(rawLayer, cell = 1:ncell(rawLayer)))
+  mPts$extract <- extract(x = rawLayer, y = mPts)[,2]
+  mPts <- mPts[!is.na(mPts$extract),1:2]
   colnames(mPts) <- colNames[c(xIndex, yIndex)]
   return(mPts)
 }
@@ -196,40 +200,42 @@ mSampling2D <- function(occs, rasterTemplate, mShp, verbose = TRUE){
 #' sampling.
 #'
 #' @examples
-#' library(raster)
+#' library(terra)
 #'
 #' # Create test raster
-#' r1 <- raster(ncol=10, nrow=10)
+#' r1 <- rast(ncol=10, nrow=10)
 #' values(r1) <- 1:100
-#' r2 <- raster(ncol=10, nrow=10)
+#' r2 <- rast(ncol=10, nrow=10)
 #' values(r2) <- c(rep(20, times = 50), rep(60, times = 50))
-#' r3 <- raster(ncol=10, nrow=10)
+#' r3 <- rast(ncol=10, nrow=10)
 #' values(r3) <- 8
-#' envBrick <- brick(r1, r2, r3)
+#' envBrick <- c(r1, r2, r3)
 #' names(envBrick) <- c(0, 10, 30)
 #'
 #' # Create test occurrences
 #' set.seed(0)
-#' longitude <- sample(extent(envBrick)[1]:extent(envBrick)[2],
+#' longitude <- sample(ext(envBrick)[1]:ext(envBrick)[2],
 #'                     size = 10, replace = FALSE)
 #' set.seed(0)
-#' latitude <- sample(extent(envBrick)[3]:extent(envBrick)[4],
+#' latitude <- sample(ext(envBrick)[3]:ext(envBrick)[4],
 #'                    size = 10, replace = FALSE)
 #' set.seed(0)
 #' depth <- sample(0:35, size = 10, replace = TRUE)
-#' occurrences <- as.data.frame(cbind(longitude,latitude,depth))
+#' occurrences <- data.frame(longitude,latitude,depth)
 #'
 #' # Generate background sampling buffer
-#' buffPts <- SpatialPoints(occurrences[,c("longitude", "latitude")])
-#' crs(buffPts) <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
-#' mShp <- buffer(buffPts, width = 1, dissolve = TRUE)
+#' buffPts <- vect(occurrences,
+#'                 c("longitude", "latitude"))
+#' crs(buffPts) <- crs(r)
+#' mShp <- aggregate(buffer(buffPts, width = 1000000))
 #'
 #' # Here's the function
-#' occSample3d <- mSampling3D(occurrences,
-#'                            envBrick, mShp = mShp,
+#' occSample3d <- mSampling3D(occs = occurrences,
+#'                            envBrick = envBrick,
+#'                            mShp = mShp,
 #'                            depthLimit = "occs")
 #'
-#' @import raster
+#' @import terra
 #'
 #' @keywords backgroundSampling
 #'
@@ -246,13 +252,13 @@ mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all", verbose = TRUE
     return(NULL)
   }
 
-  if(!is(envBrick, "RasterBrick")){
-    warning(paste0("'envBrick' must be of class 'RasterBrick'.\n"))
+  if(!is(envBrick, "SpatRaster")){
+    warning(paste0("'envBrick' must be of class 'SpatRaster'.\n"))
     return(NULL)
   }
 
-  if(!is(mShp, "SpatialPolygons")){
-    warning(paste0("'mShp' must be of class 'SpatialPolygons'.\n"))
+  if(!is(mShp, "SpatVector")){
+    warning(paste0("'mShp' must be of class 'SpatVector'.\n"))
     return(NULL)
   }
 
@@ -279,7 +285,7 @@ mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all", verbose = TRUE
   }
 
   if (!is.logical(verbose)) {
-    warning(message("Argument 'verbose' is not of type 'logical'.\n"))
+    warning(paste0("Argument 'verbose' is not of type 'logical'.\n"))
     return(NULL)
   }
 
@@ -314,37 +320,32 @@ mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all", verbose = TRUE
                               FUN = function(x) which.min(abs(layerNames - x))))
 
   # Get depth range
-  layerNames <- as.numeric(gsub("[X]", "", names(envBrick)))
-
   if(is(depthLimit, "numeric")){
     depthRange <- c(which.min(abs(layerNames - min(depthLimit))),
                     which.min(abs(layerNames - max(depthLimit))))
   } else if(depthLimit == "occs"){
     depthRange <- c(min(occs$index), max(occs$index))
   } else {
-    depthRange <- c(1, nlayers(envBrick))
+    depthRange <- c(1, nlyr(envBrick))
   }
 
-  # Calculate lat/long buffers and buffer
-  rasterTemplate <- envBrick[[1]]
-  envBrick <- crop(mask(envBrick[[depthRange[[1]]:depthRange[[2]]]],
+  envBrick <- crop(x = mask(x = envBrick[[depthRange[[1]]:depthRange[[2]]]],
                         mask = mShp), y = mShp)
-  # For each layer, toss cells where there are occurrences
   mPts <- data.frame()
-  for(i in 1:nlayers(envBrick)){
+  for(i in 1:length(names(envBrick))){
     rawLayer <- envBrick[[i]]
     layerDepth <- as.numeric(gsub("[X]", "", names(rawLayer)))
     occsAtLayerDepth <- occs[occs$index == match(layerDepth, layerNames),]
-    if (nrow(occsAtLayerDepth) == 0){
-      tempPoints <- data.frame(rasterToPoints(rawLayer)[,c("x", "y")])
-      colnames(tempPoints) <- c(colNames[xIndex],colNames[yIndex])
-      tempPoints[,zIndex] <- rep(layerDepth, times = nrow(tempPoints))
-    } else {
-      rawLayer <- occCellRemoval(occs = occsAtLayerDepth, rawLayer)
-      tempPoints <- data.frame(rasterToPoints(rawLayer)[,c("x", "y")])
-      colnames(tempPoints) <- c(colNames[xIndex],colNames[yIndex])
-      tempPoints[,zIndex] <- rep(layerDepth, times = nrow(tempPoints))
+    if (nrow(occsAtLayerDepth) > 0){
+      rawLayer <- occCellRemoval(occs = occsAtLayerDepth[,c(xIndex,yIndex)],
+                                 rawLayer)
     }
+    tempPoints <- data.frame(xyFromCell(rawLayer,
+                                        cell = 1:ncell(rawLayer)))
+    tempPoints$extract <- extract(x = rawLayer, y = tempPoints)[,2]
+    tempPoints <- tempPoints[!is.na(tempPoints$extract),1:2]
+    colnames(tempPoints) <- colNames[c(xIndex, yIndex)]
+    tempPoints[,zIndex] <- rep(layerDepth, times = nrow(tempPoints))
     mPts <- rbind(mPts, tempPoints)
   }
   colnames(mPts)[[3]] <- colNames[[zIndex]]

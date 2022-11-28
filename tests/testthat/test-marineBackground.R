@@ -1,6 +1,4 @@
-library(voluModel)
-
-# Create sample raster
+# Read occurrences for test
 occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
                              package='voluModel'))
 
@@ -68,15 +66,16 @@ test_that("marineBackground Pacific results as expected", {
   set.seed(0)
   longitude <- c(sample(-180:-175,
                         size = 10, replace = TRUE),
-                 sample(175:180,
+                 sample(165:180,
                         size = 10, replace = TRUE))
   set.seed(0)
   latitude <- sample(-20:20,
                      size = 20, replace = TRUE)
-  occurrences <- as.data.frame(cbind(longitude,latitude))
+  occurrences <- data.frame(longitude,latitude)
 
   result <- marineBackground(occs = occurrences, buff = 1000000,
-                             fraction = .95, partCount = 2, clipToOcean = TRUE)
+                             fraction = .95, partCount = 2, clipToOcean = TRUE,
+                             verbose = FALSE)
   expect_equal(class(result)[[1]], "SpatVector")
   expect_equal(length(result), 1)
 
