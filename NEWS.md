@@ -1,3 +1,9 @@
+# voluModel 0.1.8
+
+- Addressed ERRORs on CRAN resulting from package updates on which voluModel depends.
+- marineBackground() updated to use terra and sf packages, now returns a SpatVector object instead of a SpatialPolygons object.
+- Vignettes updated to reflect the changes.
+
 # voluModel 0.1.7
 
 - Default rasterComp() plotting colors have been adjusted to increase contrast
