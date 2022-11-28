@@ -226,7 +226,7 @@ mSampling2D <- function(occs, rasterTemplate, mShp, verbose = TRUE){
 #' # Generate background sampling buffer
 #' buffPts <- vect(occurrences,
 #'                 c("longitude", "latitude"))
-#' crs(buffPts) <- crs(r)
+#' crs(buffPts) <- crs(envBrick)
 #' mShp <- aggregate(buffer(buffPts, width = 1000000))
 #'
 #' # Here's the function
