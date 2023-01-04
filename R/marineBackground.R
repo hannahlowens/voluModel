@@ -147,7 +147,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
 
   # Parse columns
   colNames <- colnames(occs)
-  colParse <- voluModel::columnParse(occs)
+  colParse <- columnParse(occs)
   if(is.null(colParse)){
     return(NULL)
   }
@@ -167,7 +167,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
       return(NULL)
     }
   } else{
-    pDist <- terra::distance(as.matrix(occs[,c(xIndex, yIndex)]), lonlat = TRUE)
+    pDist <- distance(as.matrix(occs[,c(xIndex, yIndex)]), lonlat = TRUE)
     buff <- mean(quantile(pDist, c(.1, .9), na.rm = TRUE))/2
   }
 
@@ -211,9 +211,9 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
     if(hull$alpha == "alphaMCH"){
       gdahAlternative <- TRUE
     }
-    hull <- st_transform(hull[[1]], crs = 4087)
-    if(xmin(ext(vect(hull))) < -20037000 ||
-       xmax(ext(vect(hull))) > 20037000){
+    hull <- st_transform(hull[[1]], crs = pj$wkt)
+    if(xmin(ext(vect(hull))) < -20000000 ||
+       xmax(ext(vect(hull))) > 20000000){
       gdahAlternative <- TRUE
     }
   }
@@ -222,7 +222,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
     occBuffTmp <- disagg(occBuff)
     occBuffConv <- vector(mode = "list", length = length(occBuffTmp))
     for (i in 1:length(occBuffTmp)){
-      occBuffConv[[i]] <- terra::convHull(occBuffTmp[i])
+      occBuffConv[[i]] <- convHull(occBuffTmp[i])
       values(occBuffConv[[i]]) <- 1
     }
     wholeM <- aggregate(vect(occBuffConv))
