@@ -103,7 +103,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2022-11-28</h4>
+            <h4 data-toc-skip class="date">2023-01-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/e_GLMWorkflow.Rmd" class="external-link"><code>vignettes/e_GLMWorkflow.Rmd</code></a></small>
       <div class="hidden name"><code>e_GLMWorkflow.Rmd</code></div>
@@ -140,7 +140,7 @@ tools.</p>
 <span><span class="co">## plan transition to sf/stars/terra functions using GDAL and PROJ</span></span>
 <span><span class="co">## at your earliest convenience.</span></span>
 <span><span class="co">## See https://r-spatial.org/r/2022/04/12/evolution.html and https://github.com/r-spatial/evolution</span></span>
-<span><span class="co">## rgdal: version: 1.6-2, (SVN revision 1183)</span></span>
+<span><span class="co">## rgdal: version: 1.6-3, (SVN revision 1187)</span></span>
 <span><span class="co">## Geospatial Data Abstraction Library extensions to R successfully loaded</span></span>
 <span><span class="co">## Loaded GDAL runtime: GDAL 3.4.1, released 2021/12/27</span></span>
 <span><span class="co">## Path to GDAL shared files: /usr/share/gdal</span></span>
@@ -160,7 +160,7 @@ tools.</p>
 <span><span class="co">##     select</span></span></code></pre>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/terra/" class="external-link">terra</a></span><span class="op">)</span> <span class="co"># Now being transitioned in</span></span></code></pre></div>
-<pre><code><span><span class="co">## terra 1.6.41</span></span></code></pre>
+<pre><code><span><span class="co">## terra 1.6.47</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## Attaching package: 'terra'</span></span></code></pre>
 <pre><code><span><span class="co">## The following object is masked from 'package:rgdal':</span></span>
@@ -254,7 +254,7 @@ illustrative purposes.</p>
 <pre><code><span><span class="co">## Warning: OGR support is provided by the sf and terra packages among others</span></span></code></pre>
 <pre><code><span><span class="co">## Warning: OGR support is provided by the sf and terra packages among others</span></span></code></pre>
 <pre><code><span><span class="co">## OGR data source with driver: ESRI Shapefile </span></span>
-<span><span class="co">## Source: "/tmp/Rtmp90gZCv/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
+<span><span class="co">## Source: "/tmp/RtmpQjZ8I9/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
 <span><span class="co">## with 1633 features</span></span>
 <span><span class="co">## It has 102 fields</span></span></code></pre>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
@@ -436,22 +436,22 @@ simple. How does it look?</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Deviance Residuals: </span></span>
 <span><span class="co">##     Min       1Q   Median       3Q      Max  </span></span>
-<span><span class="co">## -0.6366  -0.1619  -0.0818  -0.0563   3.6491  </span></span>
+<span><span class="co">## -0.5909  -0.1624  -0.0871  -0.0602   3.6165  </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Coefficients:</span></span>
-<span><span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">## (Intercept)     -2.4412188  1.3473356  -1.812  0.07000 .  </span></span>
-<span><span class="co">## Temperature     -0.1512365  0.0636379  -2.377  0.01748 *  </span></span>
-<span><span class="co">## AOU             -0.0286329  0.0101405  -2.824  0.00475 ** </span></span>
-<span><span class="co">## Temperature:AOU  0.0030505  0.0006941   4.395 1.11e-05 ***</span></span>
+<span><span class="co">##                  Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span><span class="co">## (Intercept)     -2.817747   1.326717  -2.124   0.0337 *  </span></span>
+<span><span class="co">## Temperature     -0.133030   0.062428  -2.131   0.0331 *  </span></span>
+<span><span class="co">## AOU             -0.025313   0.009969  -2.539   0.0111 *  </span></span>
+<span><span class="co">## Temperature:AOU  0.002823   0.000670   4.214 2.51e-05 ***</span></span>
 <span><span class="co">## ---</span></span>
 <span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## (Dispersion parameter for binomial family taken to be 1)</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##     Null deviance: 291.73  on 2625  degrees of freedom</span></span>
-<span><span class="co">## Residual deviance: 256.62  on 2622  degrees of freedom</span></span>
-<span><span class="co">## AIC: 264.62</span></span>
+<span><span class="co">## Residual deviance: 259.31  on 2622  degrees of freedom</span></span>
+<span><span class="co">## AIC: 267.31</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Number of Fisher Scoring iterations: 8</span></span></code></pre>
 <p>Now we project the model back into geographic space; at this stage,
@@ -727,7 +727,7 @@ Museum. DOI: 10.15468/dm3oyz. Accessed via GBIF on 2020-10-13.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
