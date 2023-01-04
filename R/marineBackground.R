@@ -147,7 +147,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
 
   # Parse columns
   colNames <- colnames(occs)
-  colParse <- columnParse(occs)
+  colParse <- voluModel::columnParse(occs)
   if(is.null(colParse)){
     return(NULL)
   }
@@ -167,7 +167,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
       return(NULL)
     }
   } else{
-    pDist <- distance(as.matrix(occs[,c(xIndex, yIndex)]), lonlat = TRUE)
+    pDist <- terra::distance(as.matrix(occs[,c(xIndex, yIndex)]), lonlat = TRUE)
     buff <- mean(quantile(pDist, c(.1, .9), na.rm = TRUE))/2
   }
 
@@ -188,11 +188,11 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
   upj <- st_crs(4326) # Unprojected WGS84
   pj <- st_crs(4087) # Projected WGS84
   occsForM <- vect(x = occs[,c(xIndex, yIndex)],
-                          geom = c(colNames[xIndex], colNames[yIndex]),
-                          crs = upj$wkt)
+                   geom = c(colNames[xIndex], colNames[yIndex]),
+                   crs = upj$wkt)
   occsForM <- project(occsForM, y = pj$wkt)
   occBuff <- suppressWarnings(buffer(occsForM,
-                                            width = buff))
+                                     width = buff))
   occBuff <- aggregate(occBuff)
 
   # Hull part
@@ -222,7 +222,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
     occBuffTmp <- disagg(occBuff)
     occBuffConv <- vector(mode = "list", length = length(occBuffTmp))
     for (i in 1:length(occBuffTmp)){
-      occBuffConv[[i]] <- convHull(occBuffTmp[i])
+      occBuffConv[[i]] <- terra::convHull(occBuffTmp[i])
       values(occBuffConv[[i]]) <- 1
     }
     wholeM <- aggregate(vect(occBuffConv))
@@ -249,17 +249,15 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
 
   # Putting it all together and fixing the date line
   worldExtent <- ext(-20037508,
-                            20037508,
-                            -10018754,
-                            10018754) # Plate-Carre world extent
-  #worldExtent <- as(worldExtent, 'SpatVector')
-  #crs(worldExtent) <- sp::CRS("+proj=eqc +lon_0=0 +datum=WGS84 +units=m +no_defs")
+                     20037508,
+                     -10018754,
+                     10018754) # Plate-Carre world extent
 
   # Get rid of slop at poles
   wholeM <- crop(wholeM, ext(c(xmin(wholeM),
-                                      xmax(wholeM),
-                                      ymin(worldExtent),
-                                      ymax(worldExtent))))
+                               xmax(wholeM),
+                               ymin(worldExtent),
+                               ymax(worldExtent))))
   # Wrap shapefiles at 180th meridian
   middle <- intersect(wholeM, worldExtent)
   ends <- erase(wholeM, worldExtent)
