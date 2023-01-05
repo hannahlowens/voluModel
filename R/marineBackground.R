@@ -212,7 +212,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
       gdahAlternative <- TRUE
     }
     hull <- st_transform(hull[[1]], crs = pj$wkt)
-    if(!st_is_valid(hull)){
+    if(!all(st_is_valid(hull))){
       gdahAlternative <- TRUE
     }
   }
