@@ -103,7 +103,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2023-01-04</h4>
+            <h4 data-toc-skip class="date">2023-01-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/e_GLMWorkflow.Rmd" class="external-link"><code>vignettes/e_GLMWorkflow.Rmd</code></a></small>
       <div class="hidden name"><code>e_GLMWorkflow.Rmd</code></div>
@@ -254,7 +254,7 @@ illustrative purposes.</p>
 <pre><code><span><span class="co">## Warning: OGR support is provided by the sf and terra packages among others</span></span></code></pre>
 <pre><code><span><span class="co">## Warning: OGR support is provided by the sf and terra packages among others</span></span></code></pre>
 <pre><code><span><span class="co">## OGR data source with driver: ESRI Shapefile </span></span>
-<span><span class="co">## Source: "/tmp/RtmpQjZ8I9/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
+<span><span class="co">## Source: "/tmp/RtmpBIobij/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
 <span><span class="co">## with 1633 features</span></span>
 <span><span class="co">## It has 102 fields</span></span></code></pre>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
@@ -436,22 +436,22 @@ simple. How does it look?</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Deviance Residuals: </span></span>
 <span><span class="co">##     Min       1Q   Median       3Q      Max  </span></span>
-<span><span class="co">## -0.5909  -0.1624  -0.0871  -0.0602   3.6165  </span></span>
+<span><span class="co">## -0.6595  -0.1586  -0.0810  -0.0545   3.6655  </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Coefficients:</span></span>
-<span><span class="co">##                  Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">## (Intercept)     -2.817747   1.326717  -2.124   0.0337 *  </span></span>
-<span><span class="co">## Temperature     -0.133030   0.062428  -2.131   0.0331 *  </span></span>
-<span><span class="co">## AOU             -0.025313   0.009969  -2.539   0.0111 *  </span></span>
-<span><span class="co">## Temperature:AOU  0.002823   0.000670   4.214 2.51e-05 ***</span></span>
+<span><span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
+<span><span class="co">## (Intercept)     -2.7905351  1.3688843  -2.039  0.04150 *  </span></span>
+<span><span class="co">## Temperature     -0.1396866  0.0646266  -2.161  0.03066 *  </span></span>
+<span><span class="co">## AOU             -0.0290716  0.0102397  -2.839  0.00452 ** </span></span>
+<span><span class="co">## Temperature:AOU  0.0032747  0.0007186   4.557 5.19e-06 ***</span></span>
 <span><span class="co">## ---</span></span>
 <span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## (Dispersion parameter for binomial family taken to be 1)</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##     Null deviance: 291.73  on 2625  degrees of freedom</span></span>
-<span><span class="co">## Residual deviance: 259.31  on 2622  degrees of freedom</span></span>
-<span><span class="co">## AIC: 267.31</span></span>
+<span><span class="co">## Residual deviance: 254.52  on 2622  degrees of freedom</span></span>
+<span><span class="co">## AIC: 262.52</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Number of Fisher Scoring iterations: 8</span></span></code></pre>
 <p>Now we project the model back into geographic space; at this stage,
