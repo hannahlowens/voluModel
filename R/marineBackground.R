@@ -212,8 +212,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
       gdahAlternative <- TRUE
     }
     hull <- st_transform(hull[[1]], crs = pj$wkt)
-    if(xmin(ext(vect(hull))) < -20000000 ||
-       xmax(ext(vect(hull))) > 20000000){
+    if(!st_is_valid(hull)){
       gdahAlternative <- TRUE
     }
   }
