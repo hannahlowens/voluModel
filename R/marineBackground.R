@@ -232,20 +232,6 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
     wholeM <- aggregate(wholeM)
   }
 
-  # Crop out land
-  land <- readRDS(system.file("extdata/smallLand.rds",
-                              package='voluModel'))
-  wholeM <- erase(wholeM, vect(land))
-
-  # Optional removal of unoccupied polygons
-  if(clipToOcean){
-    # First, split up disjunct polygons
-    wholeM <- disagg(wholeM)
-    polysContainingPoints <- apply(relate(wholeM, occsForM, "contains"),
-                                   MARGIN = 1, FUN = function(x) any(x))
-    wholeM <- wholeM[polysContainingPoints]
-  }
-
   # Putting it all together and fixing the date line
   worldExtent <- ext(-20037508,
                      20037508,
@@ -259,7 +245,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
                                ymax(worldExtent))))
   # Wrap shapefiles at 180th meridian
   middle <- intersect(wholeM, worldExtent)
-  ends <- erase(wholeM, worldExtent)
+  ends <- disagg(erase(wholeM, worldExtent))
   if(length(ends) > 0){
     if(length(ends) == 1){
       if(xmin(ends) < -20037508){
@@ -288,6 +274,21 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
 
   wholeM <- aggregate(wholeM)
   wholeM <- project(wholeM, y = pj$wkt)
+
+  # Crop out land
+  land <- readRDS(system.file("extdata/smallLand.rds",
+                              package='voluModel'))
+  wholeM <- erase(wholeM, vect(land))
+
+  # Optional removal of unoccupied polygons
+  if(clipToOcean){
+    # First, split up disjunct polygons
+    wholeM <- disagg(wholeM)
+    polysContainingPoints <- apply(relate(wholeM, occsForM, "contains"),
+                                   MARGIN = 1, FUN = function(x) any(x))
+    wholeM <- wholeM[polysContainingPoints]
+  }
+  wholeM <- aggregate(wholeM)
   wholeM <- project(wholeM, y = upj$wkt)
 
   return(wholeM)
