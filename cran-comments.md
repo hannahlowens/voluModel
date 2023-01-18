@@ -1,8 +1,6 @@
 ## This is a package update. In this version, I have:
 
-* Addressed errors flagged on CRAN
-* marineBackground() updated to use terra and sf packages, now returns a SpatVector object instead of a SpatialPolygons object.
-* Vignettes updated to reflect changes.
+* Addressed ERRORs in vignettes resulting from package updates to rnaturalearth.
 
 ## Test environments
 * local OS X 10.15.7, R 4.1.2
