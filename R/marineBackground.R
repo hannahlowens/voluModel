@@ -273,7 +273,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
   }
 
   wholeM <- aggregate(wholeM)
-  wholeM <- project(wholeM, y = pj$wkt)
+  crs(wholeM) <- pj$wkt
 
   # Crop out land
   land <- readRDS(system.file("extdata/smallLand.rds",
@@ -289,7 +289,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
     wholeM <- wholeM[polysContainingPoints]
   }
   wholeM <- aggregate(wholeM)
-  wholeM <- project(wholeM, y = upj$wkt)
+  wholeM <- terra::project(wholeM, y = upj$wkt)
 
   return(wholeM)
 }

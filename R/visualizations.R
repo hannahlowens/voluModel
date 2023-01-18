@@ -785,9 +785,9 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
                       text=list(c("Neither", rast1Name, rast2Name, "Both"))),
              col="transparent",  main = title,
              maxpixels = maxpixels,
+             sp.layout=list(as(land, "Spatial"), fill=landCol, first=FALSE),
              par.settings = list(mai = c(0,0,0,0))) +
-        as.layer(spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, col="transparent")) +
-        as.layer(spplot(as(land,"Spatial"), fill=landCol))
+        as.layer(spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, col="transparent"))
     } else if (cellStats(rast2, sum) == 0){
       spplot(rast1, col.regions = myCols[c(1,2)],
              cuts = 1, colorkey = FALSE,
@@ -797,8 +797,8 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
                       text=list(c("Neither", rast1Name))),
              col="transparent", main = title,
              maxpixels = maxpixels,
-             par.settings = list(mai = c(0,0,0,0))) +
-        as.layer(spplot(as(land,"Spatial"), fill=landCol))
+             sp.layout=list(as(land, "Spatial"), fill=landCol, first=FALSE),
+             par.settings = list(mai = c(0,0,0,0)))
     } else{
       spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = FALSE,
              key=list(space="right", points=list(pch = 22, cex = 2,
@@ -806,8 +806,8 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
                       text=list(c("Neither", rast2Name))),
              col="transparent", main = title,
              maxpixels = maxpixels,
-             par.settings = list(mai = c(0,0,0,0))) +
-        as.layer(spplot(as(land,"Spatial"), fill=landCol))
+             sp.layout=list(as(land, "Spatial"), fill=landCol, first=FALSE),
+             par.settings = list(mai = c(0,0,0,0)))
     }
   }
 }
@@ -980,12 +980,11 @@ oneRasterPlot <- function(rast,
            at = at, main = title,
            maxpixels = maxpixels)
   } else {
-    spplot(rast, col = "transparent",
-           col.regions = viridis(n = n, alpha = alpha,
+    spplot(rast, col = viridis(n = n, alpha = alpha,
                                  option = option),
            at = at, main = title,
-           maxpixels = maxpixels) +
-      as.layer(spplot(as(land,"Spatial"), fill=landCol, main = title))
+           maxpixels = maxpixels,
+           sp.layout=list(as(land, "Spatial"), fill=landCol, first=FALSE))
   }
 }
 
@@ -1088,13 +1087,23 @@ plotLayers <- function(rast,
   blueVal <- 0
   stepSize <- 1/(nlayers(rast) + 1)
 
+  if(!any(is.na(land))){
   plotStart <- spplot(rast[[1]],
                       col.regions = c(rgb(0,0,0,0),
                                       rgb(redVal,0,blueVal,stepSize)),
                       cuts = 1, colorkey = FALSE, col="transparent",
                       main = title,
                       par.settings = list(mai = c(0,0,0,0)),
-                      maxpixels = maxpixels)
+                      maxpixels = maxpixels, sp.layout=list(as(land, "Spatial"), fill=landCol, first=TRUE))
+  } else {
+    plotStart <- spplot(rast[[1]],
+                        col.regions = c(rgb(0,0,0,0),
+                                        rgb(redVal,0,blueVal,stepSize)),
+                        cuts = 1, colorkey = FALSE, col="transparent",
+                        main = title,
+                        par.settings = list(mai = c(0,0,0,0)),
+                        maxpixels = maxpixels)
+  }
 
   for(i in 2:nlayers(rast)){
     redVal <- redVal - stepSize
@@ -1107,9 +1116,5 @@ plotLayers <- function(rast,
                                              cuts = 1, col="transparent"))
   }
 
-  if(!any(is.na(land))){
-    plotStart <- plotStart +
-      as.layer(spplot(as(land,"Spatial"), fill=landCol))
-  }
   return(plotStart)
 }

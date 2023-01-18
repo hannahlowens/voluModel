@@ -54,7 +54,7 @@ Suggests:
     lattice,
     rgdal,
     rmarkdown,
-    rnaturalearth,
+    rnaturalearth (>= 0.3.2),
     rnaturalearthdata,
     sp,
     tibble
