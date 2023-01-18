@@ -74,12 +74,15 @@ occurrences <- occs %>%
 
 head(occurrences)
 land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
+```
+
+``` {r plotting points, message=FALSE, warning=FALSE, include=FALSE}
 knitr::include_graphics("pointMap.png")
 ```
 
 Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (AOU; Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more space-efficient. 
 
-```{r loading data, message=FALSE, warning=FALSE, include=TRUE}
+```{r loading temperature data, message=FALSE, warning=FALSE, include=TRUE}
 # Temperature
 td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
@@ -102,7 +105,33 @@ temperature <- rasterFromXYZ(cbind(temperature@coords,
 envtNames <- gsub("[d,M]", "", names(temperature))
 envtNames[[1]] <- "0"
 names(temperature) <- envtNames
+```
 
+Let's see what the top and bottom temperature files look like.
+
+``` {r plotting temperature, eval = FALSE}
+# How do these files look?
+p1 <- oneRasterPlot(temperature[[1]], land = land, landCol = "black", 
+              title= "Temperature (C)")
+
+p2 <- oneRasterPlot(temperatureBottom,land = land, landCol = "black", 
+              title = "Temperature (C)")
+
+temp <- c("Surface" = p1, "Bottom" = p2)
+update(temp, strip  = strip.custom(strip.levels = TRUE,
+                             horizontal = TRUE,
+                             bg = "black",
+                             fg = "white",
+                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
+```
+
+```{r temperature plot, echo=FALSE, out.width = '100%', out.height= '100%'}
+knitr::include_graphics("TemperatureTopBottom.png")
+```
+
+The AOU dataset has been interpolated and smoothed using a thin plate spline algorithm. For more details on how to process environmental data, see [the raster data tutorial](https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html). First, we load the data.
+
+```{r loading oxygen data, message=FALSE, warning=FALSE, include=TRUE}
 # Oxygen processing, pre-baked to save time
 load(system.file("extdata/oxygenSmooth.RData", 
                  package='voluModel'))
@@ -110,8 +139,7 @@ load(system.file("extdata/oxygenBottom.RData",
                  package = 'voluModel'))
 names(oxygenSmooth) <- names(temperature)
 ```
-
-Here you see plots at the sea surface and the bottom. The AOU dataset has been interpolated and smoothed using a thin plate spline algorithm. For more details on how to process environmental data, see [the raster data tutorial](https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html). 
+Then we plot it.
 
 ```{r oxygen plotting, echo=TRUE, eval = FALSE, message=FALSE, warning=FALSE}
 p3 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
@@ -124,10 +152,6 @@ update(temp, strip  = strip.custom(strip.levels = TRUE,
                              bg = "black",
                              fg = "white",
                              par.strip.text = list(col = "white", cex = 1.2, font = 2)))
-```
-
-```{r temperature plot, echo=FALSE, out.width = '100%', out.height= '100%'}
-knitr::include_graphics("TemperatureTopBottom.png")
 ```
 
 ```{r oxygen plot, echo=FALSE, out.width = '100%', out.height= '100%'}
@@ -221,12 +245,12 @@ Some modeling methods require the generation of a sampling region from which pse
 
 ```{r study region, message=FALSE, warning=FALSE, eval=FALSE}
 studyRegion <- marineBackground(occurrences, buff = 1000000)
-studyRegion <- sf::st_as_sf(studyRegion)
-studyRegion <- sf::st_transform(studyRegion, crs(land))
+landVect <- vect(land)
+landVect <- terra::project(landVect, y = studyRegion)
 plot(studyRegion, border = F, col = "gray",
      main = "Points and Background Sampling",
      axes = T)
-plot(land, col = "black", add = T)
+plot(landVect, col = "black", add = T)
 points(occurrences[,c("decimalLongitude", "decimalLatitude")], 
        pch = 20, col = "red", cex = 1.5)
 ```
@@ -294,7 +318,8 @@ AOUpresence <- reclassify(oxygenSmooth[[1]],
 
 # Put it all together, surface
 envelopeModelSurface <- temperaturePresence * AOUpresence
-envelopeModelSurface <- mask(crop(envelopeModelSurface, studyRegion), 
+studyRegion <- as(studyRegion, "Spatial")
+envelopeModelSurface <- raster::mask(raster::crop(envelopeModelSurface, studyRegion), 
                              mask = studyRegion)
 
 # Get limits, bottom
