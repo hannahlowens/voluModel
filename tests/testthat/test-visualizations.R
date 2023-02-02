@@ -142,17 +142,26 @@ test_that("rasterComp works", {
                "trellis")
 })
 
-test_that("diversityStack works", {
-  divStack <- diversityStack(list(rast1, rast2), template = rast2)
-  expect_true(grepl("Raster*", class(divStack)))
-})
-
 test_that("oneRasterPlot works", {
   divStack <- diversityStack(list(rast1, rast2), template = rast2)
   expect_warning(oneRasterPlot(rast = "a"))
   expect_warning(oneRasterPlot(rast = divStack, land = "a"))
   expect_equal(class(oneRasterPlot(divStack)), "trellis")
   expect_equal(class(oneRasterPlot(divStack, land = land)), "trellis")
+})
+
+rast1 <- raster(ncol=10, nrow=10)
+values(rast1) <- rep(0:1, 50)
+
+rast2 <- raster(ncol=10, nrow=5)
+values(rast2) <- c(rep(0, 25), rep(1,25))
+rasterList <- list(rast1, rast2)
+
+test_that("diversityStack works", {
+  expect_warning(diversityStack(rasterList = "a"))
+  expect_warning(diversityStack(rasterList = rasterList, template = "b"))
+  divStack <- diversityStack(rasterList = rasterList, template = rast2)
+  expect_true(grepl("Raster*", class(divStack)))
 })
 
 rast1 <- raster(ncol=10, nrow=10)

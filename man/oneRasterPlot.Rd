@@ -4,7 +4,14 @@
 \alias{oneRasterPlot}
 \title{Single raster plot}
 \usage{
-oneRasterPlot(rast, land = NA, landCol = "black", title = "A Raster", ...)
+oneRasterPlot(
+  rast,
+  land = NA,
+  landCol = "black",
+  scaleRange = NA,
+  title = "A Raster",
+  ...
+)
 }
 \arguments{
 \item{rast}{A single \verb{Raster*} layer on a continuous
@@ -15,6 +22,11 @@ of type \code{sf} to provide geographic context for the
 occurrence points.}
 
 \item{landCol}{Color for land on map.}
+
+\item{scaleRange}{Optional numeric vector containing
+maximum and minimum values for color scale. Helpful
+when making multiple plots for comparison. Defaults
+to minimum and maximum of input \code{rast}.}
 
 \item{title}{A title for the plot.}
 
