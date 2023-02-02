@@ -1,3 +1,7 @@
+# voluModel 0.2.0
+
+- scaleRange argument added to oneRasterPlot().
+
 # voluModel 0.1.9
 
 - Addressed ERRORs in vignettes resulting from package updates to rnaturalearth.
