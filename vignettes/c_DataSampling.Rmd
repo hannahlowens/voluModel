@@ -60,7 +60,9 @@ occurrences <- occs %>%
   dplyr::select(decimalLongitude, decimalLatitude, depth) %>%
   dplyr::distinct() %>% 
   dplyr::filter(dplyr::between(depth, 1, 2000))
+```
 
+```{r occurrence dataset plotting code, message=FALSE, warning = FALSE, eval=FALSE, echo = FALSE}
 # Map occurrences
 land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
 pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
