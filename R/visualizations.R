@@ -842,7 +842,8 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
 #' result
 #' plot(result)
 #'
-#' @import raster
+#' @importFrom raster raster
+#' @importFrom terra rast resample
 #' @keywords plotting
 #' @export
 
@@ -866,15 +867,19 @@ diversityStack <- function(rasterList, template){
   diversityRaster <- raster(nrows = template@nrows, ncol = template@ncols,
                             ext = template@extent, crs = template@crs)
   values(diversityRaster) <- 0
+  diversityRaster <- rast(diversityRaster)
 
-  for(i in 1:length(rasterList)){
-    temp <- rasterList[[i]]
-    if(testIntersection(temp,template)){
-      temp <- raster::resample(temp, template)
+  template <- rast(template)
+
+  for(i in rasterList){
+    temp <- rast(i)
+    if(testIntersection(raster(temp),raster(template))){
+      temp <- terra::resample(temp, template, method = "near")
       temp[is.na(temp[])] <- 0
       diversityRaster <- diversityRaster + temp
     }
   }
+  diversityRaster <- raster(diversityRaster)
   return(diversityRaster)
 }
 
@@ -891,6 +896,11 @@ diversityStack <- function(rasterList, template){
 #' occurrence points.
 #'
 #' @param landCol Color for land on map.
+#'
+#' @param scaleRange Optional numeric vector containing
+#' maximum and minimum values for color scale. Helpful
+#' when making multiple plots for comparison. Defaults
+#' to minimum and maximum of input `rast`.
 #'
 #' @param title A title for the plot.
 #'
@@ -918,6 +928,7 @@ diversityStack <- function(rasterList, template){
 
 oneRasterPlot <- function(rast,
                           land = NA, landCol = "black",
+                          scaleRange = NA,
                           title = "A Raster", ...){
   #Input processing
   args <- list(...)
@@ -957,6 +968,14 @@ oneRasterPlot <- function(rast,
     return(NULL)
   }
 
+  if(!all(is.na(scaleRange))){
+    if(!all(any("numeric" %in% class(scaleRange)),
+            length(scaleRange) == 2)){
+      warning(paste0("'scaleRange' must either be NA or\na numeric vector of length 2."))
+      return(NULL)
+    }
+  }
+
   colTest <- areColors(landCol)
 
   if(!any(c(all(colTest), length(colTest) < 1))){
@@ -970,22 +989,29 @@ oneRasterPlot <- function(rast,
   }
 
   #Function body
-  at <- seq(from = cellStats(rast, min), to = cellStats(rast, max),
-            by = (cellStats(rast, max)-cellStats(rast, min))/n)
+  if(any(is.na(scaleRange))){
+    at <- seq(from = cellStats(rast, min), to = cellStats(rast, max),
+              by = (cellStats(rast, max)-cellStats(rast, min))/n)
+  } else{
+    at <- seq(from = min(scaleRange), to = max(scaleRange),
+              by = (max(scaleRange)-min(scaleRange))/n)
+  }
 
   if(any(is.na(land))){
-    spplot(rast, col = "transparent",
-           col.regions = viridis(n = n, alpha = alpha,
-                                 option = option),
-           at = at, main = title,
-           maxpixels = maxpixels)
+    plotResult <- spplot(rast, col = "transparent",
+                         col.regions = viridis(n = n, alpha = alpha,
+                                               option = option),
+                         at = at, main = title,
+                         maxpixels = maxpixels)
   } else {
-    spplot(rast, col = viridis(n = n, alpha = alpha,
-                                 option = option),
-           at = at, main = title,
-           maxpixels = maxpixels,
-           sp.layout=list(as(land, "Spatial"), fill=landCol, first=FALSE))
+    plotResult <- spplot(rast, col = viridis(n = n, alpha = alpha,
+                                             option = option),
+                         at = at, main = title,
+                         maxpixels = maxpixels,
+                         sp.layout=list(as(land, "Spatial"),
+                                        fill=landCol, first=FALSE))
   }
+  return(plotResult)
 }
 
 #' @title Plotting 3D model in 2D
