@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voluModel</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -103,7 +103,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2023-01-18</h4>
+            <h4 data-toc-skip class="date">2023-02-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/e_GLMWorkflow.Rmd" class="external-link"><code>vignettes/e_GLMWorkflow.Rmd</code></a></small>
       <div class="hidden name"><code>e_GLMWorkflow.Rmd</code></div>
@@ -148,7 +148,7 @@ tools.</p>
 <span><span class="co">## Loaded PROJ runtime: Rel. 8.2.1, January 1st, 2022, [PJ_VERSION: 821]</span></span>
 <span><span class="co">## Path to PROJ shared files: /home/runner/.local/share/proj:/usr/share/proj</span></span>
 <span><span class="co">## PROJ CDN enabled: FALSE</span></span>
-<span><span class="co">## Linking to sp version:1.5-1</span></span>
+<span><span class="co">## Linking to sp version:1.6-0</span></span>
 <span><span class="co">## To mute warnings of possible GDAL/OSR exportToProj4() degradation,</span></span>
 <span><span class="co">## use options("rgdal_show_exportToProj4_warnings"="none") before loading sp or rgdal.</span></span></code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -160,7 +160,7 @@ tools.</p>
 <span><span class="co">##     select</span></span></code></pre>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/terra/" class="external-link">terra</a></span><span class="op">)</span> <span class="co"># Now being transitioned in</span></span></code></pre></div>
-<pre><code><span><span class="co">## terra 1.6.53</span></span></code></pre>
+<pre><code><span><span class="co">## terra 1.7.3</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## Attaching package: 'terra'</span></span></code></pre>
 <pre><code><span><span class="co">## The following object is masked from 'package:rgdal':</span></span>
@@ -254,7 +254,7 @@ illustrative purposes.</p>
 <pre><code><span><span class="co">## Warning: OGR support is provided by the sf and terra packages among others</span></span></code></pre>
 <pre><code><span><span class="co">## Warning: OGR support is provided by the sf and terra packages among others</span></span></code></pre>
 <pre><code><span><span class="co">## OGR data source with driver: ESRI Shapefile </span></span>
-<span><span class="co">## Source: "/tmp/RtmpHWFZFq/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
+<span><span class="co">## Source: "/tmp/RtmpXXELrD/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
 <span><span class="co">## with 1633 features</span></span>
 <span><span class="co">## It has 102 fields</span></span></code></pre>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
@@ -263,7 +263,7 @@ illustrative purposes.</p>
 <span><span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">[</span><span class="va">temperature</span><span class="op">@</span><span class="va">data</span> <span class="op">==</span> <span class="op">-</span><span class="fl">999.999</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span></span>
 <span><span class="co"># Creating a RasterBrick</span></span>
-<span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span>,</span>
+<span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/spam/man/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span>,</span>
 <span>                                   <span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get names of depths</span></span>
@@ -299,15 +299,15 @@ biased sampling. The resampled points are centered in each voxel.</p>
 <span>  <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/downsample.html">downsample</a></span><span class="op">(</span><span class="va">tempPoints</span>, <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, </span>
 <span>                           verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span>  <span class="va">tempPoints</span><span class="op">$</span><span class="va">depth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">layerNames</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tempPoints</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">downsampledOccs</span>, <span class="va">tempPoints</span><span class="op">)</span></span>
+<span>  <span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spam/man/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">downsampledOccs</span>, <span class="va">tempPoints</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="va">occsClean</span> <span class="op">&lt;-</span> <span class="va">downsampledOccs</span></span>
 <span></span>
-<span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Original number of points: "</span>, <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occs</span><span class="op">)</span>, <span class="st">"; number of downsampled occs: "</span>, <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occsClean</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/spam/man/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Original number of points: "</span>, <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occs</span><span class="op">)</span>, <span class="st">"; number of downsampled occs: "</span>, <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occsClean</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "Original number of points: 301; number of downsampled occs: 82"</span></span></code></pre>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"small"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/rnaturalearth/reference/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"small"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span><span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs2 <span class="op">=</span> <span class="va">occsClean</span>, </span>
 <span>             occs1Name <span class="op">=</span> <span class="st">"Original"</span>, occs2Name <span class="op">=</span> <span class="st">"Cleaned"</span>, </span>
 <span>             spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, </span>
@@ -348,7 +348,7 @@ with 1s, signifying these are considered “presences”.</p>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">occsClean</span>, <span class="va">oxyVals</span>, <span class="va">tempVals</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spam/man/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">occsClean</span>, <span class="va">oxyVals</span>, <span class="va">tempVals</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span>, <span class="st">"depth"</span>, <span class="st">"AOU"</span>, <span class="st">"Temperature"</span><span class="op">)</span></span>
 <span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="va">vals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span>,<span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
@@ -380,7 +380,7 @@ added and filled with 0s, signifying that these are to be considered
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">backgroundVals</span>, <span class="va">oxyVals</span>, <span class="va">tempVals</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spam/man/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">backgroundVals</span>, <span class="va">oxyVals</span>, <span class="va">tempVals</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLongitude"</span>, <span class="st">"decimalLatitude"</span>, <span class="st">"depth"</span>, <span class="st">"AOU"</span>, <span class="st">"Temperature"</span><span class="op">)</span></span>
 <span><span class="va">vals</span> <span class="op">&lt;-</span> <span class="va">vals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span>,<span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/row.names.html" class="external-link">row.names</a></span><span class="op">(</span><span class="va">vals</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
@@ -407,7 +407,7 @@ most dissimilar background may more likely lead to an overfit model.</p>
 <span><span class="va">suitableCentroid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Temperature"</span>, <span class="st">"AOU"</span><span class="op">)</span><span class="op">]</span>, </span>
 <span>                          MARGIN <span class="op">=</span> <span class="fl">2</span>, FUN <span class="op">=</span> <span class="va">mean</span><span class="op">)</span></span>
 <span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Temperature"</span>, <span class="st">"AOU"</span><span class="op">)</span><span class="op">]</span>, MARGIN <span class="op">=</span> <span class="fl">1</span>, </span>
-<span>                                  FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">suitableCentroid</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>                                  FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/spam/man/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">suitableCentroid</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">sampleWeight</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span> <span class="op">-</span> </span>
 <span>                                 <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span><span class="op">)</span><span class="op">-</span></span>
 <span>                                                                 <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">backgroundWdata</span><span class="op">$</span><span class="va">distance</span><span class="op">)</span><span class="op">)</span></span>
@@ -420,7 +420,7 @@ most dissimilar background may more likely lead to an overfit model.</p>
 object.</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Unite datasets</span></span>
-<span><span class="va">datForMod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">occsWdata</span>, <span class="va">backgroundWdata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">datForMod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spam/man/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">occsWdata</span>, <span class="va">backgroundWdata</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">suitableCentroid</span>, <span class="va">sampleForAbsence</span>, <span class="va">backgroundWdata</span>, <span class="va">occsWdata</span><span class="op">)</span></span></code></pre></div>
 <p>With the data cleaned, formatted and united into a single
 <code>data.frame</code>, generating a generalized linear model is very
@@ -436,22 +436,22 @@ simple. How does it look?</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Deviance Residuals: </span></span>
 <span><span class="co">##     Min       1Q   Median       3Q      Max  </span></span>
-<span><span class="co">## -0.6678  -0.1572  -0.0815  -0.0554   3.6496  </span></span>
+<span><span class="co">## -0.5680  -0.1592  -0.0777  -0.0536   3.6710  </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Coefficients:</span></span>
 <span><span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">## (Intercept)     -2.7850736  1.3531250  -2.058  0.03957 *  </span></span>
-<span><span class="co">## Temperature     -0.1378650  0.0636828  -2.165  0.03040 *  </span></span>
-<span><span class="co">## AOU             -0.0287807  0.0102309  -2.813  0.00491 ** </span></span>
-<span><span class="co">## Temperature:AOU  0.0032176  0.0007027   4.579 4.68e-06 ***</span></span>
+<span><span class="co">## (Intercept)     -2.8240785  1.5108885  -1.869  0.06160 .  </span></span>
+<span><span class="co">## Temperature     -0.1388476  0.0703420  -1.974  0.04839 *  </span></span>
+<span><span class="co">## AOU             -0.0305902  0.0107332  -2.850  0.00437 ** </span></span>
+<span><span class="co">## Temperature:AOU  0.0034328  0.0007395   4.642 3.45e-06 ***</span></span>
 <span><span class="co">## ---</span></span>
 <span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## (Dispersion parameter for binomial family taken to be 1)</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##     Null deviance: 291.73  on 2625  degrees of freedom</span></span>
-<span><span class="co">## Residual deviance: 254.77  on 2622  degrees of freedom</span></span>
-<span><span class="co">## AIC: 262.77</span></span>
+<span><span class="co">## Residual deviance: 253.48  on 2622  degrees of freedom</span></span>
+<span><span class="co">## AIC: 261.48</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Number of Fisher Scoring iterations: 8</span></span></code></pre>
 <p>Now we project the model back into geographic space; at this stage,

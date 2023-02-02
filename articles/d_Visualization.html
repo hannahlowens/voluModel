@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">voluModel</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -103,7 +103,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2023-01-18</h4>
+            <h4 data-toc-skip class="date">2023-02-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/d_Visualization.Rmd" class="external-link"><code>vignettes/d_Visualization.Rmd</code></a></small>
       <div class="hidden name"><code>d_Visualization.Rmd</code></div>
@@ -155,7 +155,7 @@ introduction vignette</a>.</p>
 <span><span class="co">## Loaded PROJ runtime: Rel. 8.2.1, January 1st, 2022, [PJ_VERSION: 821]</span></span>
 <span><span class="co">## Path to PROJ shared files: /home/runner/.local/share/proj:/usr/share/proj</span></span>
 <span><span class="co">## PROJ CDN enabled: FALSE</span></span>
-<span><span class="co">## Linking to sp version:1.5-1</span></span>
+<span><span class="co">## Linking to sp version:1.6-0</span></span>
 <span><span class="co">## To mute warnings of possible GDAL/OSR exportToProj4() degradation,</span></span>
 <span><span class="co">## use options("rgdal_show_exportToProj4_warnings"="none") before loading sp or rgdal.</span></span></code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -175,7 +175,7 @@ introduction vignette</a>.</p>
 <span><span class="co">##     intersect, setdiff, setequal, union</span></span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/terra/" class="external-link">terra</a></span><span class="op">)</span> <span class="co"># Now being transitioned in</span></span></code></pre></div>
-<pre><code><span><span class="co">## terra 1.6.53</span></span></code></pre>
+<pre><code><span><span class="co">## terra 1.7.3</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## Attaching package: 'terra'</span></span></code></pre>
 <pre><code><span><span class="co">## The following object is masked from 'package:rgdal':</span></span>
@@ -202,7 +202,7 @@ introduction vignette</a>.</p>
 <pre><code><span><span class="co">## Warning: OGR support is provided by the sf and terra packages among others</span></span></code></pre>
 <pre><code><span><span class="co">## Warning: OGR support is provided by the sf and terra packages among others</span></span></code></pre>
 <pre><code><span><span class="co">## OGR data source with driver: ESRI Shapefile </span></span>
-<span><span class="co">## Source: "/tmp/RtmpCxPw5l/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
+<span><span class="co">## Source: "/tmp/RtmpfSm2gn/temperature", layer: "woa18_decav_t00mn01_cropped"</span></span>
 <span><span class="co">## with 1633 features</span></span>
 <span><span class="co">## It has 102 fields</span></span></code></pre>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
@@ -214,7 +214,7 @@ introduction vignette</a>.</p>
 <span>                             package<span class="op">=</span><span class="st">'voluModel'</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Creating a RasterBrick</span></span>
-<span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span>,</span>
+<span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/rasterFromXYZ.html" class="external-link">rasterFromXYZ</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/spam/man/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">@</span><span class="va">coords</span>,</span>
 <span>                                   <span class="va">temperature</span><span class="op">@</span><span class="va">data</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get names of depths</span></span>
@@ -239,7 +239,7 @@ introduction vignette</a>.</p>
 <span>  <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span><span class="va">occurrences</span><span class="op">$</span><span class="va">index</span><span class="op">==</span><span class="va">i</span>,<span class="op">]</span></span>
 <span>  <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/downsample.html">downsample</a></span><span class="op">(</span><span class="va">tempPoints</span>, <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span>  <span class="va">tempPoints</span><span class="op">$</span><span class="va">depth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">layerNames</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tempPoints</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">downsampledOccs</span>, <span class="va">tempPoints</span><span class="op">)</span></span>
+<span>  <span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spam/man/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">downsampledOccs</span>, <span class="va">tempPoints</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="va">occsWdata</span> <span class="op">&lt;-</span> <span class="va">downsampledOccs</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLatitude"</span>, <span class="st">"decimalLongitude"</span>, <span class="st">"depth"</span><span class="op">)</span><span class="op">]</span> </span>
 <span></span>
@@ -255,7 +255,7 @@ introduction vignette</a>.</p>
 <code class="sourceCode R"><span><span class="va">occsWdata</span> <span class="op">&lt;-</span> <span class="va">occsWdata</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">occsWdata</span><span class="op">)</span>,<span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Land shapefile</span></span>
-<span><span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rnaturalearth/man/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"small"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span><span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/rnaturalearth/reference/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"small"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># Study region</span></span>
 <span><span class="va">studyRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occsWdata</span>, buff <span class="op">=</span> <span class="fl">1000000</span><span class="op">)</span></span></code></pre></div>
