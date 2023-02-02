@@ -1,6 +1,6 @@
 Package: voluModel
 Title: Modeling Species Distributions in Three Dimensions
-Version: 0.1.9
+Version: 0.2.0
 Authors@R: 
     c(person(given = "Hannah L.",
              family = "Owens",
