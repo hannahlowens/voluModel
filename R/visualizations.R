@@ -49,11 +49,11 @@ areColors <- function(col) {
 #'
 #' @examples
 #'
-#' library(raster)
-#' rast1 <- raster(ncol=10, nrow=10)
+#' library(terra)
+#' rast1 <- rast(ncol=10, nrow=10)
 #' values(rast1) <- rep(0:1, 50)
 #'
-#' rast2 <- raster(ncol=10, nrow=10)
+#' rast2 <- rast(ncol=10, nrow=10)
 #' values(rast2) <- c(rep(0, 50), rep(1,50))
 #'
 #' testIntersection(rast1, rast2)
@@ -611,12 +611,12 @@ blendColor <- function( col1 = "#1b9e777F", col2 = "#7570b37F") {
 #' overlay semi-transparent distributions (coded as 1)
 #' in two different `RasterLayers`.
 #'
-#' @param rast1 A single `RasterLayer` showing the
+#' @param rast1 A single `SpatRaster` showing the
 #' distribution of the species corresponding to
 #' `rast1Name`. Should have values of 0 (absence)
 #' and 1 (presence). Can also be `NULL`.
 #'
-#' @param rast2 A single `RasterLayer` showing the
+#' @param rast2 A single `SpatRaster` showing the
 #' distribution of the species corresponding to
 #' `rast2Name`. Should have values of 0 (absence)
 #' and 1 (presence). Must match the extent and
@@ -662,16 +662,16 @@ blendColor <- function( col1 = "#1b9e777F", col2 = "#7570b37F") {
 #' must match.
 #'
 #' @examples
-#' library(raster)
-#' rast1 <- raster(ncol=10, nrow=10)
+#' library(terra)
+#' rast1 <- rast(ncol=10, nrow=10)
 #' values(rast1) <- rep(0:1, 50)
 #'
-#' rast2 <- raster(ncol=10, nrow=10)
+#' rast2 <- rast(ncol=10, nrow=10)
 #' values(rast2) <- c(rep(0, 50), rep(1,50))
 #'
 #' rasterComp(rast1 = rast1, rast2 = rast2)
 #'
-#' @import raster
+#' @import terra
 #' @importFrom latticeExtra as.layer
 #'
 #' @seealso \code{\link[raster:spplot]{spplot}}
@@ -715,10 +715,10 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
     return(NULL)
   }
 
-  if(any(all(!inherits(rast1, what = "RasterLayer"), !is.null(rast1)),
-         all(!inherits(rast2, what = "RasterLayer"), !is.null(rast2)))){
+  if(any(all(!inherits(rast1, what = "SpatRaster"), !is.null(rast1)),
+         all(!inherits(rast2, what = "SpatRaster"), !is.null(rast2)))){
     warning(paste0("'rast1' and 'rast2', must either be objects of type
-                   'RasterLayer' or NULL.\n"))
+                   'SpatRaster' or NULL.\n"))
     return(NULL)
   }
 
@@ -732,9 +732,9 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
       values(rast2) <- 0
       message(paste0("'rast2' was null. Replaced with blank raster."))
     } else{
-      rast1 <- raster(ncol=10, nrow=10)
+      rast1 <- rast(ncol=10, nrow=10)
       values(rast1) <- 0
-      rast2 <- raster(ncol=10, nrow=10)
+      rast2 <- rast(ncol=10, nrow=10)
       values(rast2) <- 0
       message(paste0("Both 'rast1' and 'rast2' were null.\n",
                      "They were replaced with blank rasters."))
@@ -748,8 +748,8 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
               blendColor(transpColor(col1, percent = 50),
                          transpColor(col2, percent = 50)))
   if(any(is.na(land))){
-    if(all(cellStats(rast2, sum) > 0, cellStats(rast1, sum) > 0)){
-      spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = FALSE,
+    if(all(global(rast2, sum) > 0, global(rast1, sum) > 0)){
+      sp::spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = FALSE,
              key=list(space="right", points=list(pch = 22, cex = 2,
                                                  fill=c("white",myCols[c(2:4)])),
                       text=list(c("Neither", rast1Name, rast2Name, "Both"))),
@@ -758,8 +758,8 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
              maxpixels = maxpixels) +
         as.layer(spplot(rast2, col.regions = myCols[c(1,3)],
                         cuts = 1, col="transparent"))
-    } else if(cellStats(rast2, sum) == 0){
-      spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = FALSE,
+    } else if(global(rast2, sum) == 0){
+      sp::spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = FALSE,
              key=list(space="right", points=list(pch = 22, cex = 2,
                                                  fill=c("white",myCols[c(2:4)])),
                       text=list(c("Neither", rast1Name, rast2Name, "Both"))),
@@ -767,7 +767,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
              par.settings = list(mai = c(0,0,0,0)),
              maxpixels = maxpixels)
     } else{
-      spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = FALSE,
+      sp::spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = FALSE,
              key=list(space="right", points=list(pch = 22, cex = 2,
                                                  fill=c("white",myCols[3])),
                       text=list(c("Neither", rast2Name))),
@@ -776,8 +776,8 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
              par.settings = list(mai = c(0,0,0,0)))
     }
   } else {
-    if (all(cellStats(rast2, sum) > 0, cellStats(rast1, sum) > 0)){
-      spplot(rast1, col.regions = myCols[c(1,2)],
+    if (all(global(rast2, sum) > 0, global(rast1, sum) > 0)){
+      sp::spplot(rast1, col.regions = myCols[c(1,2)],
              cuts = 1, colorkey = FALSE,
              key=list(space="right",
                       points=list(pch = 22, cex = 2,
@@ -788,8 +788,8 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
              sp.layout=list(as(land, "Spatial"), fill=landCol, first=FALSE),
              par.settings = list(mai = c(0,0,0,0))) +
         as.layer(spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, col="transparent"))
-    } else if (cellStats(rast2, sum) == 0){
-      spplot(rast1, col.regions = myCols[c(1,2)],
+    } else if (global(rast2, sum) == 0){
+      sp::spplot(rast1, col.regions = myCols[c(1,2)],
              cuts = 1, colorkey = FALSE,
              key=list(space="right",
                       points=list(pch = 22, cex = 2,
@@ -800,7 +800,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
              sp.layout=list(as(land, "Spatial"), fill=landCol, first=FALSE),
              par.settings = list(mai = c(0,0,0,0)))
     } else{
-      spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = FALSE,
+      sp::spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = FALSE,
              key=list(space="right", points=list(pch = 22, cex = 2,
                                                  fill=c("white",myCols[3])),
                       text=list(c("Neither", rast2Name))),
@@ -820,20 +820,20 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
 #' estimate of species richness that matches the extent and
 #' resolution of a template.
 #'
-#' @param rasterList A `list` of `RasterLayer` objects, which
+#' @param rasterList A `list` of `SpatRaster` objects, which
 #' are interpreted as species distributions (1 = presence,
 #' 0 = absence).
 #'
-#' @param template A `RasterLayer` with the desired extent
+#' @param template A `SpatRaster` with the desired extent
 #'
-#' @return A `RasterLayer`
+#' @return A `SpatRaster`
 #'
 #' @examples
-#' library(raster)
-#' rast1 <- raster(ncol=10, nrow=10)
+#' library(terra)
+#' rast1 <- rast(ncol=10, nrow=10)
 #' values(rast1) <- rep(0:1, 50)
 #'
-#' rast2 <- raster(ncol=10, nrow=10)
+#' rast2 <- rast(ncol=10, nrow=10)
 #' values(rast2) <- c(rep(0, 50), rep(1,50))
 #'
 #' rastList <- list(rast1, rast2)
@@ -842,7 +842,6 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
 #' result
 #' plot(result)
 #'
-#' @importFrom raster raster
 #' @importFrom terra rast resample
 #' @keywords plotting
 #' @export
@@ -854,32 +853,27 @@ diversityStack <- function(rasterList, template){
   }
 
   if(!all(unlist(lapply(rasterList,
-                        function(X){grepl("Raster*", class(X))})))){
-    warning(paste0("All objects in 'rasterList' must be of class 'Raster*'.\n"))
+                        function(X){grepl("SpatRaster", class(X))})))){
+    warning(paste0("All objects in 'rasterList' must be of class 'SpatRaster'.\n"))
     return(NULL)
   }
 
-  if(!grepl("Raster*", class(template))){
-    warning(paste0("'template' must be of class 'Raster*'.\n"))
+  if(!grepl("SpatRaster", class(template))){
+    warning(paste0("'template' must be of class 'SpatRaster'.\n"))
     return(NULL)
   }
 
-  diversityRaster <- raster(nrows = template@nrows, ncol = template@ncols,
-                            ext = template@extent, crs = template@crs)
+  diversityRaster <- template
   values(diversityRaster) <- 0
-  diversityRaster <- rast(diversityRaster)
-
-  template <- rast(template)
 
   for(i in rasterList){
     temp <- rast(i)
-    if(testIntersection(raster(temp),raster(template))){
+    if(testIntersection(temp,template)){
       temp <- terra::resample(temp, template, method = "near")
-      temp[is.na(temp[])] <- 0
+      temp <- subst(temp, NA, 0)
       diversityRaster <- diversityRaster + temp
     }
   }
-  diversityRaster <- raster(diversityRaster)
   return(diversityRaster)
 }
 
@@ -990,8 +984,8 @@ oneRasterPlot <- function(rast,
 
   #Function body
   if(any(is.na(scaleRange))){
-    at <- seq(from = cellStats(rast, min), to = cellStats(rast, max),
-              by = (cellStats(rast, max)-cellStats(rast, min))/n)
+    at <- seq(from = global(rast, min), to = global(rast, max),
+              by = (global(rast, max)-global(rast, min))/n)
   } else{
     at <- seq(from = min(scaleRange), to = max(scaleRange),
               by = (max(scaleRange)-min(scaleRange))/n)
@@ -1022,10 +1016,9 @@ oneRasterPlot <- function(rast,
 #' deeper. The more saturated the color, the more layers
 #' with suitable habitat.
 #'
-#' @param rast A `Raster*` with the 3D presence/absence
+#' @param rast A `SpatRaster` vector with the 3D presence/absence
 #' distribution of a species (interpreted as 1 = presence,
-#' 0 = absence). This could be a `RasterBrick` or a
-#' `RasterStack`.
+#' 0 = absence).
 #'
 #' @param land An optional coastline polygon shapefile
 #' of type `sf` to provide geographic context for the
@@ -1036,7 +1029,7 @@ oneRasterPlot <- function(rast,
 #' @param title A title for the plot. If not title is
 #' supplied, the title "Suitability from (MINIMUM
 #' DEPTH) to (MAXIMUM DEPTH)" is inferred from
-#' names of `RasterStack`.
+#' names of `rast`.
 #'
 #' @param ... Additional optional arguments.
 #'
@@ -1044,22 +1037,22 @@ oneRasterPlot <- function(rast,
 #' want to plot.
 #'
 #' @examples
-#' library(raster)
+#' library(terra)
 #'
-#' rast1 <- raster(ncol=10, nrow=10)
+#' rast1 <- rast(ncol=10, nrow=10)
 #' values(rast1) <- rep(0:1, 50)
 #'
-#' rast2 <- raster(ncol=10, nrow=10)
+#' rast2 <- rast(ncol=10, nrow=10)
 #' values(rast2) <- c(rep(0, 50), rep(1,50))
 #'
-#' rast3 <- raster(ncol=10, nrow=10)
+#' rast3 <- rast(ncol=10, nrow=10)
 #' values(rast3) <- rep(c(1,0,0,1), 25)
 #'
-#' distBrick <- brick(rast1, rast2, rast3)
+#' distBrick <- c(rast1, rast2, rast3)
 #'
 #' plotLayers(distBrick)
 #'
-#' @import raster
+#' @import terra
 #' @importFrom viridisLite viridis
 #' @importFrom latticeExtra as.layer
 #'
@@ -1085,8 +1078,8 @@ plotLayers <- function(rast,
   }
 
   # Input error checking
-  if(!grepl("Raster*", class(rast))){
-    warning(paste0("'rast' must be of class 'Raster*'.\n"))
+  if(!grepl("SpatRaster", class(rast))){
+    warning(paste0("'rast' must be of class 'SpatRaster'.\n"))
     return(NULL)
   }
 
@@ -1105,16 +1098,16 @@ plotLayers <- function(rast,
   if(is.null(title)){
    title <- paste0("Suitability from ",
            names(rast)[[1]]," to ",
-           names(rast)[[nlayers(rast)]])
+           names(rast)[[nlyr(rast)]])
   }
 
   #Function body
   redVal <- 1
   blueVal <- 0
-  stepSize <- 1/(nlayers(rast) + 1)
+  stepSize <- 1/(nlyr(rast) + 1)
 
   if(!any(is.na(land))){
-  plotStart <- spplot(rast[[1]],
+  plotStart <- sp::spplot(rast[[1]],
                       col.regions = c(rgb(0,0,0,0),
                                       rgb(redVal,0,blueVal,stepSize)),
                       cuts = 1, colorkey = FALSE, col="transparent",
@@ -1122,7 +1115,7 @@ plotLayers <- function(rast,
                       par.settings = list(mai = c(0,0,0,0)),
                       maxpixels = maxpixels, sp.layout=list(as(land, "Spatial"), fill=landCol, first=TRUE))
   } else {
-    plotStart <- spplot(rast[[1]],
+    plotStart <- sp::spplot(rast[[1]],
                         col.regions = c(rgb(0,0,0,0),
                                         rgb(redVal,0,blueVal,stepSize)),
                         cuts = 1, colorkey = FALSE, col="transparent",
@@ -1131,7 +1124,7 @@ plotLayers <- function(rast,
                         maxpixels = maxpixels)
   }
 
-  for(i in 2:nlayers(rast)){
+  for(i in 2:nlyr(rast)){
     redVal <- redVal - stepSize
     blueVal <- blueVal + stepSize
     plotStart <- plotStart + as.layer(spplot(rast[[i]],

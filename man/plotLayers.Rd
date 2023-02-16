@@ -7,10 +7,9 @@
 plotLayers(rast, land = NA, landCol = "black", title = NULL, ...)
 }
 \arguments{
-\item{rast}{A \verb{Raster*} with the 3D presence/absence
+\item{rast}{A \code{SpatRaster} vector with the 3D presence/absence
 distribution of a species (interpreted as 1 = presence,
-0 = absence). This could be a \code{RasterBrick} or a
-\code{RasterStack}.}
+0 = absence).}
 
 \item{land}{An optional coastline polygon shapefile
 of type \code{sf} to provide geographic context for the
@@ -21,7 +20,7 @@ occurrence points.}
 \item{title}{A title for the plot. If not title is
 supplied, the title "Suitability from (MINIMUM
 DEPTH) to (MAXIMUM DEPTH)" is inferred from
-names of \code{RasterStack}.}
+names of \code{rast}.}
 
 \item{...}{Additional optional arguments.}
 }
@@ -40,18 +39,18 @@ Only include the depth layers that you actually
 want to plot.
 }
 \examples{
-library(raster)
+library(terra)
 
-rast1 <- raster(ncol=10, nrow=10)
+rast1 <- rast(ncol=10, nrow=10)
 values(rast1) <- rep(0:1, 50)
 
-rast2 <- raster(ncol=10, nrow=10)
+rast2 <- rast(ncol=10, nrow=10)
 values(rast2) <- c(rep(0, 50), rep(1,50))
 
-rast3 <- raster(ncol=10, nrow=10)
+rast3 <- rast(ncol=10, nrow=10)
 values(rast3) <- rep(c(1,0,0,1), 25)
 
-distBrick <- brick(rast1, rast2, rast3)
+distBrick <- c(rast1, rast2, rast3)
 
 plotLayers(distBrick)
 

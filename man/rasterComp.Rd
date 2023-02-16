@@ -18,12 +18,12 @@ rasterComp(
 )
 }
 \arguments{
-\item{rast1}{A single \code{RasterLayer} showing the
+\item{rast1}{A single \code{SpatRaster} showing the
 distribution of the species corresponding to
 \code{rast1Name}. Should have values of 0 (absence)
 and 1 (presence). Can also be \code{NULL}.}
 
-\item{rast2}{A single \code{RasterLayer} showing the
+\item{rast2}{A single \code{SpatRaster} showing the
 distribution of the species corresponding to
 \code{rast2Name}. Should have values of 0 (absence)
 and 1 (presence). Must match the extent and
@@ -68,11 +68,11 @@ The extents of \code{rast1} and \code{rast2}
 must match.
 }
 \examples{
-library(raster)
-rast1 <- raster(ncol=10, nrow=10)
+library(terra)
+rast1 <- rast(ncol=10, nrow=10)
 values(rast1) <- rep(0:1, 50)
 
-rast2 <- raster(ncol=10, nrow=10)
+rast2 <- rast(ncol=10, nrow=10)
 values(rast2) <- c(rep(0, 50), rep(1,50))
 
 rasterComp(rast1 = rast1, rast2 = rast2)

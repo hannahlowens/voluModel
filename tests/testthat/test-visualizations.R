@@ -1,6 +1,6 @@
 library(rnaturalearth)
-library(raster)
 library(ggplot2)
+library(terra)
 
 occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
                              package='voluModel'))
@@ -116,10 +116,10 @@ test_that("blendColor checks", {
 })
 
 # Set up tests for rasterComp function
-rast1 <- raster(ncol=10, nrow=10)
+rast1 <- rast(ncol=10, nrow=10)
 values(rast1) <- rep(0:1, 50)
 
-rast2 <- raster(ncol=10, nrow=10)
+rast2 <- rast(ncol=10, nrow=10)
 values(rast2) <- c(rep(0, 50), rep(1,50))
 
 test_that("rasterComp works", {
@@ -150,10 +150,10 @@ test_that("oneRasterPlot works", {
   expect_equal(class(oneRasterPlot(divStack, land = land)), "trellis")
 })
 
-rast1 <- raster(ncol=10, nrow=10)
+rast1 <- rast(ncol=10, nrow=10)
 values(rast1) <- rep(0:1, 50)
 
-rast2 <- raster(ncol=10, nrow=5)
+rast2 <- rast(ncol=10, nrow=5)
 values(rast2) <- c(rep(0, 25), rep(1,25))
 rasterList <- list(rast1, rast2)
 
@@ -161,18 +161,18 @@ test_that("diversityStack works", {
   expect_warning(diversityStack(rasterList = "a"))
   expect_warning(diversityStack(rasterList = rasterList, template = "b"))
   divStack <- diversityStack(rasterList = rasterList, template = rast2)
-  expect_true(grepl("Raster*", class(divStack)))
+  expect_true(grepl("SpatRaster", class(divStack)))
 })
 
-rast1 <- raster(ncol=10, nrow=10)
+rast1 <- rast(ncol=10, nrow=10)
 values(rast1) <- rep(0:1, 50)
 
-rast2 <- raster(ncol=10, nrow=10)
+rast2 <- rast(ncol=10, nrow=10)
 values(rast2) <- c(rep(0, 50), rep(1,50))
 
-rast3 <- raster(ncol=10, nrow=10)
+rast3 <- rast(ncol=10, nrow=10)
 values(rast3) <- rep(c(1,0,0,1), 25)
-distBrick <- brick(rast1, rast2, rast3)
+distBrick <- c(rast1, rast2, rast3)
 
 test_that("plotLayers works", {
   expect_warning(plotLayers(rast = "a"))

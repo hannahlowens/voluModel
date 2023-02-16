@@ -23,11 +23,11 @@ template raster.
 }
 \examples{
 
-library(raster)
-rast1 <- raster(ncol=10, nrow=10)
+library(terra)
+rast1 <- rast(ncol=10, nrow=10)
 values(rast1) <- rep(0:1, 50)
 
-rast2 <- raster(ncol=10, nrow=10)
+rast2 <- rast(ncol=10, nrow=10)
 values(rast2) <- c(rep(0, 50), rep(1,50))
 
 testIntersection(rast1, rast2)
