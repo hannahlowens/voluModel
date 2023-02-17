@@ -11,7 +11,7 @@ mSampling2D(occs, rasterTemplate, mShp, verbose = TRUE)
 named "longitude" and "latitude", or that can be
 coerced into this format.}
 
-\item{rasterTemplate}{A \verb{Raster*} object to serve
+\item{rasterTemplate}{A \code{SpatRaster} object to serve
 as a template for generating background sampling
 coordinates.}
 

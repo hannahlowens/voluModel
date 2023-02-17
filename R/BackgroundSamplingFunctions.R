@@ -6,13 +6,13 @@
 #' named "longitude" and "latitude" or that
 #' can be coerced into this format.
 #'
-#' @param rasterTemplate A `Raster*` object to serve
+#' @param rasterTemplate A `SpatRaster` object to serve
 #' as a template for cells to be removed.
 #'
 #' @details This is an internal function to remove cells that
-#' intersect with occurrences from a `Raster*` template object. This
-#' template can then be overlaid onto a `RasterStack` or
-#' `RasterBrick` to remove occurrences from all layers.
+#' intersect with occurrences from a `SpatRaster` template object. This
+#' template can then be overlaid onto a `SpatRaster` vector to
+#' remove occurrences from all layers.
 #'
 #' @return A `Raster*`
 #'
@@ -62,7 +62,7 @@ occCellRemoval <- function(occs, rasterTemplate){
 #' named "longitude" and "latitude", or that can be
 #' coerced into this format.
 #'
-#' @param rasterTemplate A `Raster*` object to serve
+#' @param rasterTemplate A `SpatRaster` object to serve
 #' as a template for generating background sampling
 #' coordinates.
 #'
@@ -106,7 +106,7 @@ occCellRemoval <- function(occs, rasterTemplate){
 #' # Here's the function
 #' result <- mSampling2D(occs = occurrences, rasterTemplate = r, mShp = mShp)
 #'
-#' @import raster
+#' @import terra
 #'
 #' @keywords backgroundSampling
 #'
@@ -167,7 +167,7 @@ mSampling2D <- function(occs, rasterTemplate, mShp, verbose = TRUE){
 #' named "longitude", "latitude", and "depth", or that
 #' can be coerced into this format.
 #'
-#' @param envBrick A `RasterBrick` object to serve
+#' @param envBrick A `SpatRaster` vector object to serve
 #' as a template for generating background sampling
 #' coordinates.
 #'
@@ -182,11 +182,11 @@ mSampling2D <- function(occs, rasterTemplate, mShp, verbose = TRUE){
 #'
 #' @details This function is designed to sample background points for
 #' distributional modeling in three dimensions. If a voxel (3D pixel)
-#' in the `envBrick` intersects with an occurrence from `occs`, it is
-#' removed. Note that this function returns points representing every
-#' voxel in the background area within the specified depth range. It
-#' is up to the user to downsample from these data as necessary,
-#' depending on the model type being used.
+#' in the `SpatRaster` vector intersects with an occurrence from
+#' `occs`, it is removed. Note that this function returns points
+#' representing every voxel in the background area within the
+#' specified depth range. It is up to the user to downsample from
+#' these data as necessary, depending on the model type being used.
 #'
 #' `depthLimit` argument options:
 #' \itemize{
@@ -307,7 +307,7 @@ mSampling3D <- function(occs, envBrick, mShp, depthLimit = "all", verbose = TRUE
   # Checking for appropriate environmental layer names
   layerNames <- as.numeric(gsub("[X]", "", names(envBrick)))
   if(sum(is.na(layerNames)) > 0){
-    message("\nInput RasterBrick names inappropriate: \n",
+    message("\nInput SpatRaster vector names inappropriate: \n",
             paste(names(envBrick), collapse = ", "), "\n",
             "Names must follow the format 'X' ",
             "followed by a number corresponding to ",

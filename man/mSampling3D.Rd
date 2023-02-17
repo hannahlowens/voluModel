@@ -11,7 +11,7 @@ mSampling3D(occs, envBrick, mShp, depthLimit = "all", verbose = TRUE)
 named "longitude", "latitude", and "depth", or that
 can be coerced into this format.}
 
-\item{envBrick}{A \code{RasterBrick} object to serve
+\item{envBrick}{A \code{SpatRaster} vector object to serve
 as a template for generating background sampling
 coordinates.}
 
@@ -36,11 +36,11 @@ resolution of envBrick.
 \details{
 This function is designed to sample background points for
 distributional modeling in three dimensions. If a voxel (3D pixel)
-in the \code{envBrick} intersects with an occurrence from \code{occs}, it is
-removed. Note that this function returns points representing every
-voxel in the background area within the specified depth range. It
-is up to the user to downsample from these data as necessary,
-depending on the model type being used.
+in the \code{SpatRaster} vector intersects with an occurrence from
+\code{occs}, it is removed. Note that this function returns points
+representing every voxel in the background area within the
+specified depth range. It is up to the user to downsample from
+these data as necessary, depending on the model type being used.
 
 \code{depthLimit} argument options:
 \itemize{
