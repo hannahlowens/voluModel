@@ -20,18 +20,18 @@
 #' text report of which columns were interpreted as x and y.
 #'
 #' @examples
-#' library(raster)
+#' library(terra)
 #'
 #' # Create sample raster
-#' r <- raster(ncol=10, nrow=10)
+#' r <- rast(ncol=10, nrow=10)
 #' values(r) <- 1:100
 #'
 #' # Create test occurrences
 #' set.seed(0)
-#' longitude <- sample(extent(r)[1]:extent(r)[2],
+#' longitude <- sample(ext(r)[1]:ext(r)[2],
 #'                     size = 10, replace = FALSE)
 #' set.seed(0)
-#' latitude <- sample(extent(r)[3]:extent(r)[4],
+#' latitude <- sample(ext(r)[3]:ext(r)[4],
 #'                    size = 10, replace = FALSE)
 #' set.seed(0)
 #' depth <- sample(0:35, size = 10, replace = TRUE)
@@ -42,8 +42,6 @@
 #'                       wDepth = FALSE)
 #' result <- columnParse(occs = occurrences,
 #'                       wDepth = TRUE)
-#'
-#' @import raster
 #'
 #' @keywords internal
 #'
@@ -113,7 +111,7 @@ columnParse <- function(occs, wDepth = FALSE){
 #' named "longitude" and "latitude" or that
 #' can be coerced into this format.
 #'
-#' @param rasterTemplate A `Raster*` object to serve
+#' @param rasterTemplate A `SpatRaster` object to serve
 #' as a template for the resolution at which `occs` should be
 #' downsampled.
 #'
@@ -125,24 +123,24 @@ columnParse <- function(occs, wDepth = FALSE){
 #' input data into this format.
 #'
 #' @examples
-#' library(raster)
+#' library(terra)
 #' # Create sample raster
-#' r <- raster(ncol=10, nrow=10)
+#' r <- rast(ncol=10, nrow=10)
 #' values(r) <- 1:100
 #'
 #' # Create test occurrences
 #' set.seed(0)
-#' longitude <- sample(extent(r)[1]:extent(r)[2],
+#' longitude <- sample(ext(r)[1]:ext(r)[2],
 #'                     size = 10, replace = FALSE)
 #' set.seed(0)
-#' latitude <- sample(extent(r)[3]:extent(r)[4],
+#' latitude <- sample(ext(r)[3]:ext(r)[4],
 #'                    size = 10, replace = FALSE)
 #' occurrences <- as.data.frame(cbind(longitude,latitude))
 #'
 #' # Here's the function
 #' result <- downsample(occs = occurrences, rasterTemplate = r)
 #'
-#' @import raster
+#' @import terra
 #'
 #' @keywords inputProcessing
 #' @export
@@ -153,8 +151,8 @@ downsample <- function(occs, rasterTemplate, verbose = TRUE){
     return(NULL)
   }
 
-  if(!grepl("Raster", class(rasterTemplate))){
-    warning(paste0("'rasterTemplate' must be of class 'Raster*'.\n"))
+  if(!grepl("SpatRaster", class(rasterTemplate))){
+    warning(paste0("'rasterTemplate' must be of class 'SpatRaster'.\n"))
     return(NULL)
   }
 
@@ -194,12 +192,12 @@ downsample <- function(occs, rasterTemplate, verbose = TRUE){
 #' @title Bottom raster generation
 #'
 #' @description Samples deepest depth values from a
-#' `SpatialPointsDataFrame` and generates a `RasterLayer`.
+#' `SpatialPointsDataFrame` and generates a `SpatRaster`.
 #'
 #' @param rawPointData A `SpatialPointsDataFrame` object from which
 #' bottom variables will be sampled. See Details for more about format.
 #'
-#' @return A `RasterLayer` designed to approximate sea bottom
+#' @return A `SpatRaster` designed to approximate sea bottom
 #' measurements for modeling species' distributions and/or niches.
 #'
 #' @details `rawPointData` is a `SpatialPointsDataFrame` object that
@@ -240,7 +238,7 @@ downsample <- function(occs, rasterTemplate, verbose = TRUE){
 #' result <- bottomRaster(rawPointData = sp)
 #' plot(result)
 #'
-#' @import raster
+#' @import terra
 #' @importFrom stats complete.cases
 #'
 #' @keywords inputProcessing

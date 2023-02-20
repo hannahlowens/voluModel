@@ -40,9 +40,9 @@ areColors <- function(col) {
 #' function to verify all rasters in list overlap with the
 #' template raster.
 #'
-#' @param a The first `Raster*` object
+#' @param a The first `SpatRaster` object
 #'
-#' @param b The second `Raster*` object
+#' @param b The second `SpatRaster` object
 #'
 #' @return A logical vector stating whether the two
 #' inputs overlap
@@ -380,7 +380,7 @@ pointCompMap <- function(occs1, occs2,
   interp1 <- colParse1$reportMessage
 
   if(verbose){
-    message(interp1)
+    message(paste("First set of occurrences: ", interp1))
   }
 
   colNames2 <- colnames(occs2)
@@ -393,7 +393,7 @@ pointCompMap <- function(occs1, occs2,
   interp2 <- colParse2$reportMessage
 
   if(verbose){
-    message(interp2)
+    message(paste("Second set of occurrences: ", interp2))
   }
 
   if(!all(c(colnames(occs1)[[xIndex1]] == colnames(occs2)[[xIndex2]],
@@ -405,16 +405,16 @@ pointCompMap <- function(occs1, occs2,
 
   # Where the function actually starts
   occsBoth <- NA
-  occsBoth <- dplyr::inner_join(occs2[,c(xIndex2, yIndex2)],
-                                occs1[,c(xIndex1, yIndex1)]) %>%
+  occsBoth <- suppressMessages(dplyr::inner_join(occs2[,c(xIndex2, yIndex2)],
+                                occs1[,c(xIndex1, yIndex1)], multiple = "all") %>%
     dplyr::distinct() %>%
-    dplyr::mutate(source = "both")
-  occs1 <- dplyr::anti_join(occs1[,c(xIndex1, yIndex1)],occsBoth) %>%
+    dplyr::mutate(source = "both"))
+  occs1 <- suppressMessages(dplyr::anti_join(occs1[,c(xIndex1, yIndex1)],occsBoth) %>%
     dplyr::distinct() %>%
-    dplyr::mutate(source = occs1Name)
-  occs2 <- dplyr::anti_join(occs2[,c(xIndex2, yIndex2)],occsBoth) %>%
+    dplyr::mutate(source = occs1Name))
+  occs2 <- suppressMessages(dplyr::anti_join(occs2[,c(xIndex2, yIndex2)],occsBoth) %>%
     dplyr::distinct() %>%
-    dplyr::mutate(source = occs2Name)
+    dplyr::mutate(source = occs2Name))
 
   colParse1 <- columnParse(occs1)
   xIndex1 <- colParse1$xIndex
@@ -867,7 +867,7 @@ diversityStack <- function(rasterList, template){
   values(diversityRaster) <- 0
 
   for(i in rasterList){
-    temp <- rast(i)
+    temp <- i
     if(testIntersection(temp,template)){
       temp <- terra::resample(temp, template, method = "near")
       temp <- subst(temp, NA, 0)
@@ -882,7 +882,7 @@ diversityStack <- function(rasterList, template){
 #' @description A convenient wrapper around `spplot`
 #' to generate a formatted plot of a single raster.
 #'
-#' @param rast A single `Raster*` layer on a continuous
+#' @param rast A single `SpatRaster` layer on a continuous
 #' scale.
 #'
 #' @param land An optional coastline polygon shapefile
@@ -911,7 +911,7 @@ diversityStack <- function(rasterList, template){
 #'
 #' oneRasterPlot(rast = rast)
 #'
-#' @import raster
+#' @import terra
 #' @importFrom viridisLite viridis
 #' @importFrom latticeExtra as.layer
 #'
@@ -952,8 +952,8 @@ oneRasterPlot <- function(rast,
   }
 
   # Input error checking
-  if(!grepl("Raster*", class(rast))){
-    warning(paste0("'rast' must be of class 'Raster*'.\n"))
+  if(!grepl("SpatRaster", class(rast))){
+    warning(paste0("'rast' must be of class 'SpatRaster'.\n"))
     return(NULL)
   }
 
@@ -984,21 +984,21 @@ oneRasterPlot <- function(rast,
 
   #Function body
   if(any(is.na(scaleRange))){
-    at <- seq(from = global(rast, min), to = global(rast, max),
-              by = (global(rast, max)-global(rast, min))/n)
+    at <- seq(from = global(rast, min)[[1]], to = global(rast, max)[[1]],
+              by = (global(rast, max)[[1]]-global(rast, min)[[1]])/n)
   } else{
     at <- seq(from = min(scaleRange), to = max(scaleRange),
               by = (max(scaleRange)-min(scaleRange))/n)
   }
 
   if(any(is.na(land))){
-    plotResult <- spplot(rast, col = "transparent",
+    plotResult <- sp::spplot(rast, col = "transparent",
                          col.regions = viridis(n = n, alpha = alpha,
                                                option = option),
                          at = at, main = title,
                          maxpixels = maxpixels)
   } else {
-    plotResult <- spplot(rast, col = viridis(n = n, alpha = alpha,
+    plotResult <- sp::spplot(rast, col = viridis(n = n, alpha = alpha,
                                              option = option),
                          at = at, main = title,
                          maxpixels = maxpixels,

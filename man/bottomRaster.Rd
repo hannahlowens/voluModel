@@ -11,12 +11,12 @@ bottomRaster(rawPointData)
 bottom variables will be sampled. See Details for more about format.}
 }
 \value{
-A \code{RasterLayer} designed to approximate sea bottom
+A \code{SpatRaster} designed to approximate sea bottom
 measurements for modeling species' distributions and/or niches.
 }
 \description{
 Samples deepest depth values from a
-\code{SpatialPointsDataFrame} and generates a \code{RasterLayer}.
+\code{SpatialPointsDataFrame} and generates a \code{SpatRaster}.
 }
 \details{
 \code{rawPointData} is a \code{SpatialPointsDataFrame} object that

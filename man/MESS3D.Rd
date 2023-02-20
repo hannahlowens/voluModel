@@ -19,16 +19,16 @@ Each \code{RasterBrick} should have the same number of layers,
 corresponding to vertical depth slices.}
 }
 \value{
-A \code{RasterBrick} of mess scores in each voxel;
-layer names correspond to layer names of first
-\code{RasterBrick} in \code{projection} \code{list}.
+A \code{SpatRaster} vector with MESS scores for each
+voxel; layer names correspond to layer names of first
+\code{SpatRaster} vector in \code{projection} \code{list}.
 }
 \description{
 Calculates multivariate environmental similarity
 surface based on model calibration and projection data
 }
 \details{
-\code{MESS3D} is a wrapper around \code{mess} from the \code{dismo}
+\code{MESS3D} is a wrapper around \code{MESS} from the \code{modEvA}
 package. It calculates MESS for each depth layer. Negative values
 indicate areas of extrapolation which should be interpreted with
 caution (see Elith \emph{et al}, 2010 in \emph{MEE}).

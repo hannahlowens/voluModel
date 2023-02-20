@@ -1,6 +1,7 @@
 # voluModel 0.2.0
 
 - scaleRange argument added to oneRasterPlot().
+- MESS3D now calculated using modEvA::MESS() instead of dismo::mess().
 
 # voluModel 0.1.9
 

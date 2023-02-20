@@ -30,18 +30,18 @@ of occurrences to allow for code that is more robust to
 very common user error
 }
 \examples{
-library(raster)
+library(terra)
 
 # Create sample raster
-r <- raster(ncol=10, nrow=10)
+r <- rast(ncol=10, nrow=10)
 values(r) <- 1:100
 
 # Create test occurrences
 set.seed(0)
-longitude <- sample(extent(r)[1]:extent(r)[2],
+longitude <- sample(ext(r)[1]:ext(r)[2],
                     size = 10, replace = FALSE)
 set.seed(0)
-latitude <- sample(extent(r)[3]:extent(r)[4],
+latitude <- sample(ext(r)[3]:ext(r)[4],
                    size = 10, replace = FALSE)
 set.seed(0)
 depth <- sample(0:35, size = 10, replace = TRUE)

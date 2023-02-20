@@ -14,7 +14,7 @@ oneRasterPlot(
 )
 }
 \arguments{
-\item{rast}{A single \verb{Raster*} layer on a continuous
+\item{rast}{A single \code{SpatRaster} layer on a continuous
 scale.}
 
 \item{land}{An optional coastline polygon shapefile

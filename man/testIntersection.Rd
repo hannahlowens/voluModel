@@ -7,9 +7,9 @@
 testIntersection(a, b)
 }
 \arguments{
-\item{a}{The first \verb{Raster*} object}
+\item{a}{The first \code{SpatRaster} object}
 
-\item{b}{The second \verb{Raster*} object}
+\item{b}{The second \code{SpatRaster} object}
 }
 \value{
 A logical vector stating whether the two

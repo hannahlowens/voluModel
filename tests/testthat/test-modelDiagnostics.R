@@ -1,34 +1,34 @@
-library(raster)
+library(terra)
 library(dplyr)
 
 # Create first rasterBrick
-r1 <- raster(ncol=10, nrow=10)
+r1 <- rast(ncol=10, nrow=10)
 values(r1) <- 1:100
-r2 <- raster(ncol=10, nrow=10)
+r2 <- rast(ncol=10, nrow=10)
 values(r2) <- c(rep(20, times = 50), rep(60, times = 50))
-r3 <- raster(ncol=10, nrow=10)
+r3 <- rast(ncol=10, nrow=10)
 values(r3) <- 8
-envBrick1 <- brick(r1, r2, r3)
+envBrick1 <- c(r1, r2, r3)
 names(envBrick1) <- c(0, 10, 30)
 
 # Create second rasterBrick
-r1 <- raster(ncol=10, nrow=10)
+r1 <- rast(ncol=10, nrow=10)
 values(r1) <- 100:1
-r2 <- raster(ncol=10, nrow=10)
+r2 <- rast(ncol=10, nrow=10)
 values(r2) <- c(rep(10, times = 50), rep(20, times = 50))
-r3 <- raster(ncol=10, nrow=10)
+r3 <- rast(ncol=10, nrow=10)
 values(r3) <- rep(c(10,20,30,25), times = 25)
-envBrick2 <- brick(r1, r2, r3)
+envBrick2 <- c(r1, r2, r3)
 names(envBrick2) <- c(0, 10, 30)
 
 rastList <- list("temperature" = envBrick1, "salinity" = envBrick2)
 
 # Create test occurrences
 set.seed(0)
-longitude <- sample(extent(envBrick1)[1]:extent(envBrick1)[2],
+longitude <- sample(ext(envBrick1)[1]:ext(envBrick1)[2],
                     size = 10, replace = FALSE)
 set.seed(0)
-latitude <- sample(extent(envBrick1)[3]:extent(envBrick1)[4],
+latitude <- sample(ext(envBrick1)[3]:ext(envBrick1)[4],
                    size = 10, replace = FALSE)
 set.seed(0)
 depth <- sample(0:35, size = 10, replace = TRUE)
@@ -49,5 +49,5 @@ rastList <- list("temperature" = envBrick1, "salinity" = envBrick2)
 
 test_that("MESS3D outputs as expected", {
   temporary <- MESS3D(calibration = calibration, projection = rastList)
-  expect_equal(class(temporary)[[1]], "RasterStack")
+  expect_equal(class(temporary)[[1]], "SpatRaster")
 })
