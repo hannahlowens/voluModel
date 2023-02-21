@@ -22,11 +22,8 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
-load(system.file("extdata/oxygenSmooth.RData", 
-                 package='voluModel'))
 library(voluModel) # Since this is the package this vignette is about.
-library(rgdal, options("rgdal_show_exportToProj4_warnings"="none")) # For vector stuff. Will eventually be replaced with sf.
-library(raster) # For raster stuff. Will eventually be replaced with terra.
+library(terra) # The workhorse
 library(tibble) # For data organization
 library(ggplot2) # For supplementary visualization
 ```
@@ -37,13 +34,10 @@ Naturally, to build 3D distribution models, one needs three-dimensionally struct
 
 ```{r load packages, message=FALSE, warning=FALSE, eval=FALSE}
 library(voluModel) # Since this is the package this vignette is about.
-library(rgdal, options("rgdal_show_exportToProj4_warnings"="none")) # For vector stuff. Will eventually be replaced with sf.
-library(raster) # For raster stuff. Will eventually be replaced with terra.
 library(tibble) # For data organization
 library(ggplot2) # For supplementary visualization
 library(fields) # For raster interpolation
 library(latticeExtra) # Some fancy plotting
-
 library(terra) # Now being transitioned in
 library(sf) # Now being transitioned in
 ```
@@ -57,11 +51,8 @@ td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),
       exdir = paste0(td, "/temperature"), junkpaths = T)
-temperature <- readOGR(dsn = paste0(td, "/temperature"), 
-                       layer ="woa18_decav_t00mn01_cropped")
-unlink(paste0(td, "/temperature"), recursive = T)
-
-# Specifying "no data" value
+temperature <- sf::st_read(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
+temperature <- as(temperature, "Spatial")
 temperature@data[temperature@data == -999.999] <- NA
 
 # Looking at the dataset
@@ -71,7 +62,7 @@ head(temperature@data)
 layout(matrix(c(1, 2), ncol=2, byrow=TRUE), widths=c(4, 1))
 land <- rnaturalearth::ne_countries(scale = "small", 
                                     returnclass = "sf")[1]
-ext <- extent(temperature@coords)
+ext <- ext(temperature)
 plot(temperature, main = "Distribution of voluModel Subset\nof WOA Temperature 2018",
      pch = 20, col = "red", xlim = ext[1:2], ylim = ext[3:4], cex = .6)
 plot(land, col = "black", add = T)
@@ -89,14 +80,18 @@ Next, we convert temperature into a `RasterBrick`. While we are at it, we will g
 #Creating a bottom raster from the point shapefile
 temperatureBottom <- bottomRaster(temperature)
 
-# Creating a 3D temperature RasterBrick from the point shapefile
-temperature <- rasterFromXYZ(cbind(temperature@coords,
-                                   temperature@data))
+# Creating a SpatRaster vector
+temperatureTemplate <- rast(nrows = length(unique(temperature@coords[,2])),
+                            ncols = length(unique(temperature@coords[,1])), 
+                            extent = ext(temperature))
+tempTerVal <- rasterize(x = temperature@coords, y = temperatureTemplate, 
+                        values = temperature@data)
 
 # Get names of depths
 envtNames <- gsub("[d,M]", "", names(temperature))
 envtNames[[1]] <- "0"
-names(temperature) <- envtNames
+names(tempTerVal) <- envtNames
+temperature <- tempTerVal
 
 # How do these files look?
 p1 <- oneRasterPlot(temperature[[1]], land = land, landCol = "black", 
@@ -110,21 +105,25 @@ update(temp, strip  = strip.custom(strip.levels = TRUE,
                              horizontal = TRUE,
                              bg = "black",
                              fg = "white",
-                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
+                             par.strip.text = list(col = "white", cex = 1, font = 2)))
 ```
 
 ```{r temperature processing hidden, echo=FALSE}
 #Creating a bottom raster from the point shapefile
 temperatureBottom <- bottomRaster(temperature)
 
-# Creating a 3D temperature RasterBrick from the point shapefile
-temperature <- rasterFromXYZ(cbind(temperature@coords,
-                                   temperature@data))
+# Creating a SpatRaster vector
+temperatureTemplate <- rast(nrows = length(unique(temperature@coords[,2])),
+                            ncols = length(unique(temperature@coords[,1])), 
+                            extent = ext(temperature))
+tempTerVal <- rasterize(x = temperature@coords, y = temperatureTemplate, 
+                        values = temperature@data)
 
 # Get names of depths
 envtNames <- gsub("[d,M]", "", names(temperature))
 envtNames[[1]] <- "0"
-names(temperature) <- envtNames
+names(tempTerVal) <- envtNames
+temperature <- tempTerVal
 ```
 
 ```{r temperature plot, echo=FALSE, out.width = '100%', out.height= '100%'}
@@ -140,11 +139,9 @@ td <- tempdir()
 unzip(system.file("extdata/woa18_all_A00mn01_cropped.zip", 
                   package = "voluModel"),
       exdir = paste0(td, "/oxygen"), junkpaths = T)
-# do something with the files
-oxygen <- readOGR(dsn = paste0(td, "/oxygen"), 
-                  layer = "woa18_all_A00mn01_cropped")
-unlink(paste0(td, "/oxygen"), recursive = T)
 
+oxygen <- sf::st_read(paste0(td, "/oxygen/woa18_all_A00mn01_cropped.shp"))
+oxygen <- as(oxygen, "Spatial")
 oxygen@data[oxygen@data == -999.999] <- NA
 
 plot(oxygen, main = "Distribution of voluModel subset of WOA AOU 2018",
@@ -155,43 +152,39 @@ plot(land, col = "black", add = T)
 There is a workaround for this, since we can reasonably expect some degree of spatial autocorrelation in apparent oxygen utilization. We use the `interpolateRaster()` function to produce statistically-interpolated layers using `TPS()` from the `fields` package (this is a thin-plate spline interpolation). Be patient--this step can take a while, although as shown here, I am using the `fastTPS()` approximation, which only samples from nearby cells to speed things up. Maybe `fastTPS()` will work ok for your data, maybe it won't. It depends on the data.
 
 ```{r interpolate oxygen, warning=FALSE, eval = F}
-# Creating a RasterBrick
-oxygen <- rasterFromXYZ(cbind(oxygen@coords, oxygen@data))
+# Creating a SpatRaster vector
+template <- rast(nrows = length(unique(oxygen@coords[,2])),
+                 ncols = length(unique(oxygen@coords[,1])),
+                 extent = ext(oxygen))
+oxygen <- rasterize(x = oxygen@coords, y = template,
+                   values = oxygen@data)
 
-for (i in 1:nlayers(oxygen)){
+for (i in 1:nlyr(oxygen)){
   oxygen[[i]] <- interpolateRaster(oxygen[[i]], lon.lat = T, fast = T, aRange = 5) #Thin plate spline interpolation
-  oxygen[[i]] <- crop(mask(x = oxygen[[i]], mask = temperature[[i]]), temperature[[i]])
+  oxygen[[i]] <- crop(mask(x = oxygen[[i]], 
+                           mask = temperature[[i]]), 
+                      temperature[[i]])
 }
 
-# Change names to match temperature
+# Change names to match tempT
 names(oxygen) <- envtNames
-```
-
-```{r interpolate oxygen surface only, echo = FALSE, eval = FALSE, warning=FALSE}
-# Creating a RasterBrick
-oxygen <- rasterFromXYZ(cbind(oxygen@coords, oxygen@data[["SURFACE"]]))
-
-for (i in 1:nlayers(oxygen)){
-  oxygen[[i]] <- interpolateRaster(oxygen[[i]], lon.lat = T, fast = T, aRange = 5) #Thin plate spline interpolation
-  oxygen[[i]] <- crop(mask(x = oxygen[[i]], mask = temperature[[i]]), temperature[[i]])
-}
-
-# Change names to match temperature
-names(oxygen) <- envtNames[[1]]
 ```
 
 Some environmental data rasters may also look "patchy", possibly as an artifact of uneven sampling. If you are confident that there should be a strong spatial correlation in a data layer that looks "patchy", you can also statistically smooth it, again using `TPS()`, like this:
 
 ```{r smoothing oxygen, eval=FALSE}
+# Smoothing tempO and saving
 oxygenSmooth <- oxygen
-for (i in 1:nlayers(oxygen)){
+for (i in 1:nlyr(oxygenSmooth)){
   oxygenSmooth[[i]] <- smoothRaster(oxygenSmooth[[i]], lon.lat = T) #Thin plate spline interpolation
   oxygenSmooth[[i]] <- crop(mask(x = oxygenSmooth[[i]], mask = temperature[[i]]), temperature[[i]])
 }
 
-# Change names to match temperature
-names(oxygenSmooth) <- names(temperature)
+# Change names to match tempT and save
+names(oxygenSmooth) <- names(oxygen)
+oxygenSmooth <- oxygenSmooth
 
+# How does it look?
 p1 <- oneRasterPlot(oxygen[[1]], land = land, landCol = "black", 
               title= "Apparent Oxygen Utilization (µmol/kg) at Surface")
 p2 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
@@ -202,24 +195,18 @@ update(temp, strip  = strip.custom(strip.levels = TRUE,
                              horizontal = TRUE,
                              bg = "black",
                              fg = "white",
-                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
-```
-```{r smooth oxygen display, echo=FALSE, eval=FALSE}
-p1 <- oneRasterPlot(oxygen, land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization (µmol/kg) at Surface")
-p2 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization (µmol/kg) at Surface")
-
-temp <- c("Interpolated" = p1, "Interpolated and Smoothed" = p2)
-update(temp, strip  = strip.custom(strip.levels = TRUE,
-                             horizontal = TRUE,
-                             bg = "black",
-                             fg = "white",
-                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
+                             par.strip.text = list(col = "white", cex = .8, font = 2)))
 ```
 
 ```{r AOU plot, echo=FALSE, out.width = '100%', out.height= '100%'}
 knitr::include_graphics("AOUInterpAndSmooth.png")
+```
+
+# Tidying up
+Last, we need to close the temporary directory we opened when we opened the data.
+
+```{r cleanup temporary directory}
+unlink(td, recursive = T)
 ```
 
 # References
