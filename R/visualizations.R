@@ -673,6 +673,7 @@ blendColor <- function( col1 = "#1b9e777F", col2 = "#7570b37F") {
 #'
 #' @import terra
 #' @importFrom latticeExtra as.layer
+#' @importFrom sp spplot
 #'
 #' @seealso \code{\link[raster:spplot]{spplot}}
 #'
@@ -748,7 +749,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
               blendColor(transpColor(col1, percent = 50),
                          transpColor(col2, percent = 50)))
   if(any(is.na(land))){
-    if(all(global(rast2, sum) > 0, global(rast1, sum) > 0)){
+    if(all(global(rast2, sum, na.rm = TRUE) > 0, global(rast1, sum, na.rm = TRUE) > 0)){
       sp::spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = FALSE,
              key=list(space="right", points=list(pch = 22, cex = 2,
                                                  fill=c("white",myCols[c(2:4)])),
@@ -758,7 +759,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
              maxpixels = maxpixels) +
         as.layer(spplot(rast2, col.regions = myCols[c(1,3)],
                         cuts = 1, col="transparent"))
-    } else if(global(rast2, sum) == 0){
+    } else if(global(rast2, sum, na.rm = TRUE) == 0){
       sp::spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = FALSE,
              key=list(space="right", points=list(pch = 22, cex = 2,
                                                  fill=c("white",myCols[c(2:4)])),
@@ -776,7 +777,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
              par.settings = list(mai = c(0,0,0,0)))
     }
   } else {
-    if (all(global(rast2, sum) > 0, global(rast1, sum) > 0)){
+    if (all(global(rast2, sum, na.rm = TRUE) > 0, global(rast1, sum, na.rm = TRUE) > 0)){
       sp::spplot(rast1, col.regions = myCols[c(1,2)],
              cuts = 1, colorkey = FALSE,
              key=list(space="right",
