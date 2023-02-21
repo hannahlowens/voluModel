@@ -984,8 +984,9 @@ oneRasterPlot <- function(rast,
 
   #Function body
   if(any(is.na(scaleRange))){
-    at <- seq(from = global(rast, min)[[1]], to = global(rast, max)[[1]],
-              by = (global(rast, max)[[1]]-global(rast, min)[[1]])/n)
+    at <- seq(from = global(rast, min, na.rm = TRUE)[[1]],
+              to = global(rast, max, na.rm = TRUE)[[1]],
+              by = (global(rast, max, na.rm = TRUE)[[1]]-global(rast, min, na.rm = TRUE)[[1]])/n)
   } else{
     at <- seq(from = min(scaleRange), to = max(scaleRange),
               by = (max(scaleRange)-min(scaleRange))/n)
