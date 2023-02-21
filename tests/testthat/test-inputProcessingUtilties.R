@@ -156,7 +156,7 @@ test_that("bottomRaster input warnings behave as expected", {
 result <- bottomRaster(rawPointData = sp)
 
 test_that("bottomRaster outputs as expected", {
-  expect_true(class(result) == "RasterLayer")
-  expect_true(cellStats(is.na(result), sum) == 0)
+  expect_true(class(result) == "SpatRaster")
+  expect_true(global(result, "isNA") == 0)
   expect_true(result[2] == 22)
 })

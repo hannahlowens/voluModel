@@ -254,6 +254,11 @@ bottomRaster <- function(rawPointData){
   bottomSample <- apply(rawPointData@data, MARGIN = 1,
                         FUN = function(x) tail(x[!is.na(x)],1))
   rawPointData@data$Bottom <- bottomSample
-  bRaster <- rasterFromXYZ(cbind(rawPointData@coords,rawPointData@data$Bottom))
+
+  template <- rast(nrows = length(unique(rawPointData@coords[,2])),
+                              ncols = length(unique(rawPointData@coords[,1])),
+                              extent = ext(rawPointData))
+  bRaster <- rasterize(x = rawPointData@coords, y = template,
+                          values = rawPointData@data$Bottom)
   return(bRaster)
 }
