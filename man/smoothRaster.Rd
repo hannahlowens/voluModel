@@ -7,7 +7,7 @@
 smoothRaster(inputRaster, fast = FALSE, ...)
 }
 \arguments{
-\item{inputRaster}{An object of class \code{raster}}
+\item{inputRaster}{An object of class \code{SpatRaster}}
 
 \item{fast}{A logical operator. Setting to \code{TRUE} triggers use
 of \code{fastTps} instead of \code{Tps}.}
@@ -15,7 +15,7 @@ of \code{fastTps} instead of \code{Tps}.}
 \item{...}{For any additional arguments passed to \code{Tps} or \code{fastTps}}
 }
 \value{
-An object of class \code{RasterLayer}
+An object of class \code{SpatRaster}
 }
 \description{
 Uses thin plate spline regression from
@@ -31,10 +31,10 @@ but be advised that this is only an approximation
 of a true thin plate spline.
 }
 \examples{
-library(raster)
+library(terra)
 library(fields)
 # Create sample raster
-r <- raster(ncol=100, nrow=100)
+r <- rast(ncol=100, nrow=100)
 values(r) <- 1:10000
 
 # Introduce a "bubble"

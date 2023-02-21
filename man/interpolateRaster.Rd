@@ -7,7 +7,7 @@
 interpolateRaster(inputRaster, fast = FALSE, ...)
 }
 \arguments{
-\item{inputRaster}{An object of class \code{raster}}
+\item{inputRaster}{An object of class \code{SpatRaster}}
 
 \item{fast}{A logical operator. Setting to \code{TRUE} triggers use
 of \code{fastTps} instead of \code{Tps}.}
@@ -31,10 +31,10 @@ of a true thin plate spline.
 }
 \examples{
 \donttest{
-library(raster)
+library(terra)
 library(fields)
 # Create sample raster
-r <- raster(ncol=50, nrow=50)
+r <- rast(ncol=50, nrow=50)
 values(r) <- 1:2500
 
 # Introduce a "hole"

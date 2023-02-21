@@ -4,7 +4,7 @@
 #' `fields` package to interpolate missing two-dimensional
 #' raster values.
 #'
-#' @param inputRaster An object of class `raster`
+#' @param inputRaster An object of class `SpatRaster`
 #' @param fast A logical operator. Setting to `TRUE` triggers use
 #' of `fastTps` instead of `Tps`.
 #' @param ... For any additional arguments passed to `Tps` or `fastTps`
@@ -19,10 +19,10 @@
 #'
 #' @examples
 #' \donttest{
-#' library(raster)
+#' library(terra)
 #' library(fields)
 #' # Create sample raster
-#' r <- raster(ncol=50, nrow=50)
+#' r <- rast(ncol=50, nrow=50)
 #' values(r) <- 1:2500
 #'
 #' # Introduce a "hole"
@@ -36,7 +36,7 @@
 #' plot(fastInterp)
 #' }
 #'
-#' @import raster
+#' @import terra
 #' @importFrom fields Tps fastTps
 #'
 #' @seealso \code{\link[fields]{Tps}}, \code{\link[fields]{fastTps}}
@@ -71,8 +71,8 @@ interpolateRaster <- function(inputRaster, fast = FALSE, ...){
   }
 
   # Input error check
-  if (!is(inputRaster, "RasterLayer")) {
-    warning(paste0("inputRaster is not of class 'RasterLayer'.\n"))
+  if (!is(inputRaster, "SpatRaster")) {
+    warning(paste0("inputRaster is not of class 'SpatRaster'.\n"))
     return(NULL)
   }
   if (!is.logical(fast)) {
@@ -98,11 +98,14 @@ interpolateRaster <- function(inputRaster, fast = FALSE, ...){
 
   # Prepare input data
   r <- inputRaster
-  ra <- aggregate(r, 4)
-  xy <- data.frame(xyFromCell(ra, 1:ncell(ra)))
-  v <- getValues(ra)
+  ra <- terra::aggregate(r, 4, na.rm = TRUE)
+  xy <- data.frame(crds(ra, na.rm = FALSE))
+  v <- values(ra)
   # remove NAs
-  i <- !is.na(v)
+  i <- -c(which(is.na(v)))
+  if(length(i) == 0){
+    i <- 1:nrow(xy)
+  }
   xy <- xy[i,]
   v <- v[i]
 
@@ -114,7 +117,7 @@ interpolateRaster <- function(inputRaster, fast = FALSE, ...){
     tps <- Tps(xy, v, lon.lat = lon.lat, verbose = FALSE)
   }
 
-  p <- raster(r)
+  p <- rast(r)
 
   # use model to predict values at all locations
   p <- interpolate(p, tps, verbose = FALSE)
@@ -130,7 +133,7 @@ interpolateRaster <- function(inputRaster, fast = FALSE, ...){
 #' @description Uses thin plate spline regression from
 #' `fields` package to smooth raster values.
 #'
-#' @param inputRaster An object of class `raster`
+#' @param inputRaster An object of class `SpatRaster`
 #' @param fast A logical operator. Setting to `TRUE` triggers use
 #' of `fastTps` instead of `Tps`.
 #' @param ... For any additional arguments passed to `Tps` or `fastTps`
@@ -143,13 +146,13 @@ interpolateRaster <- function(inputRaster, fast = FALSE, ...){
 #' but be advised that this is only an approximation
 #' of a true thin plate spline.
 #'
-#' @return An object of class `RasterLayer`
+#' @return An object of class `SpatRaster`
 #'
 #' @examples
-#' library(raster)
+#' library(terra)
 #' library(fields)
 #' # Create sample raster
-#' r <- raster(ncol=100, nrow=100)
+#' r <- rast(ncol=100, nrow=100)
 #' values(r) <- 1:10000
 #'
 #' # Introduce a "bubble"
@@ -160,7 +163,7 @@ interpolateRaster <- function(inputRaster, fast = FALSE, ...){
 #' fastSmooth <- smoothRaster(r, fast = TRUE, aRange = 10.0)
 #' plot(fastSmooth)
 #'
-#' @import raster
+#' @import terra
 #' @importFrom fields Tps fastTps
 #'
 #' @seealso \code{\link[fields]{Tps}}, \code{\link[fields]{fastTps}}
@@ -194,8 +197,8 @@ smoothRaster <- function(inputRaster, fast = FALSE, ...){
   }
 
   # Input error check
-  if (!is(inputRaster, "RasterLayer")) {
-    warning(paste0("inputRaster is not of class 'RasterLayer'.\n"))
+  if (!is(inputRaster, "SpatRaster")) {
+    warning(paste0("inputRaster is not of class 'SpatRaster'.\n"))
     return(NULL)
   }
   if (!is.logical(fast)) {
@@ -221,11 +224,14 @@ smoothRaster <- function(inputRaster, fast = FALSE, ...){
 
   # Prepare input data
   r <- inputRaster
-  ra <- aggregate(r, 4)
-  xy <- data.frame(xyFromCell(ra, 1:ncell(ra)))
-  v <- getValues(ra)
+  ra <- terra::aggregate(r, 4, na.rm = TRUE)
+  xy <- data.frame(crds(ra, na.rm = FALSE))
+  v <- values(ra)
   # remove NAs
-  i <- !is.na(v)
+  i <- -c(which(is.na(v)))
+  if(length(i) == 0){
+    i <- 1:nrow(xy)
+  }
   xy <- xy[i,]
   v <- v[i]
 
@@ -237,7 +243,7 @@ smoothRaster <- function(inputRaster, fast = FALSE, ...){
     tps <- Tps(xy, v, lon.lat = lon.lat, verbose = FALSE)
   }
 
-  p <- raster(r)
+  p <- rast(r)
 
   # use model to predict values at all locations
   p <- interpolate(p, tps, verbose = FALSE)
