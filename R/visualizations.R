@@ -913,6 +913,7 @@ diversityStack <- function(rasterList, template){
 #' oneRasterPlot(rast = rast)
 #'
 #' @import terra
+#' @importFrom sp spplot
 #' @importFrom viridisLite viridis
 #' @importFrom latticeExtra as.layer
 #'
@@ -1055,6 +1056,7 @@ oneRasterPlot <- function(rast,
 #' plotLayers(distBrick)
 #'
 #' @import terra
+#' @importFrom sp spplot
 #' @importFrom viridisLite viridis
 #' @importFrom latticeExtra as.layer
 #'
