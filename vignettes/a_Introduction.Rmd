@@ -73,7 +73,7 @@ head(occurrences)
 land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
 ```
 
-``` {r plotting points, message=FALSE, warning=FALSE, include=FALSE}
+```{r point plot quick, echo=FALSE, out.width = '100%', out.height= '100%'}
 knitr::include_graphics("pointMap.png")
 ```
 

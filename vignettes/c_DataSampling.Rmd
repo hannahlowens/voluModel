@@ -22,10 +22,6 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
-load(system.file("extdata/oxygenSmooth.RData", 
-                 package='voluModel'))
-load(system.file("extdata/oxygenBottom.RData",
-                 package = 'voluModel'))
 ```
 
 # Introduction
@@ -37,16 +33,11 @@ Here are the packages you will need.
 ```{r packages, message=FALSE, warning=FALSE}
 library(voluModel) # Because of course
 library(ggplot2) # For fancy plotting
-library(rgdal, 
-        options("rgdal_show_exportToProj4_warnings"="none")) # For vector stuff. Will eventually be replaced with sf.
-library(raster) # For raster stuff. Will eventually be replaced with terra.
 library(rangeBuilder) # To compare marineBackground to getDynamicAlphaHull
 library(dplyr) # To filter data
 library(terra) # Now being transitioned in
 library(sf) # Now being transitioned in
 ```
-
-
 
 # 3D Data Extraction
 
@@ -83,10 +74,8 @@ td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),
       exdir = paste0(td, "/temperature"), junkpaths = T)
-temperature <- readOGR(dsn = paste0(td, "/temperature"), 
-                       layer ="woa18_decav_t00mn01_cropped")
-unlink(paste0(td, "/temperature"), recursive = T)
-
+temperature <- sf::st_read(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
+temperature <- as(temperature, "Spatial")
 temperature@data[temperature@data == -999.999] <- NA
 
 # How are the data structured?
@@ -96,17 +85,23 @@ head(temperature@data)
 As you can see, each point is a line in the `SpatialPointsDataFrame`; each column is a depth layer at that point--"d5M" translates to "5 meters deep". For more details on how to process environmental data, see [the raster data tutorial](https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html). This next chunk converts the `SpatialPointsDataFrame` to a `RasterBrick`; the layers of the `RasterBrick` are then named the same as the column names of the `SpatialPointsDataFrame`. I strip the "d" and "M" from the column names so they are a little easier to use as depth coordinates. Note that `R` will not allow the raster names to be numeric, so it adds an "X" to the beginning of each column name. Don't worry about this--`voluModel` can handle numbers preceded by "X"s without user intervention.
 
 ```{r temperature to compatible RasterBrick}
-# Creating a RasterBrick
-temperature <- rasterFromXYZ(cbind(temperature@coords,
-                                   temperature@data))
+# Creating a SpatRaster vector
+template <- rast(nrows = length(unique(temperature@coords[,2])),
+                            ncols = length(unique(temperature@coords[,1])), 
+                            extent = ext(temperature))
+tempTerVal <- rasterize(x = temperature@coords, y = template, 
+                        values = temperature@data)
 
 # Get names of depths
 envtNames <- gsub("[d,M]", "", names(temperature))
 envtNames[[1]] <- "0"
-names(temperature) <- envtNames
+names(tempTerVal) <- envtNames
+temperature <- tempTerVal
 
 # Here's a sampling of depth plots from the 102 depth layers available
 plot(temperature[[c(1, 50)]])
+
+rm(tempTerVal)
 ```
 
 At this point, you may have noticed a message popping up about which columns `voluModel` is interpreting as coordinates. `voluModel` is fairly flexible in how the coordinate columns are named, and it relies on names instead of column position to interpret x, y, and z (or latitude, longitude, and depth) coordinates. We do this to make `voluModel` as flexible as possible to a diversity of input formats, although English is the only supported language at the moment. Here are some examples of names that work.
@@ -114,6 +109,7 @@ At this point, you may have noticed a message popping up about which columns `vo
 ```{r column interpretations, message=TRUE, warning=TRUE}
 occsTest <- occurrences[19:24,]
 xyzSample(occs = occsTest, envBrick = temperature)
+
 colnames(occsTest) <- c("x", "y", "z")
 xyzSample(occs = occsTest, envBrick = temperature)
 
@@ -177,8 +173,6 @@ We designed `marineBackground()` as a wrapper around \code{\link[rangeBuilder:ge
 trainingRegion <- marineBackground(occurrences, 
                                 fraction = 1, partCount = 1, buff = 1000000,
                                 clipToOcean = F)
-trainingRegion <- sf::st_as_sf(trainingRegion)
-trainingRegion <- sf::st_transform(trainingRegion, crs(land))
 plot(trainingRegion, border = F, col = "gray",
      main = "Mimimum of 100% Points in Training Region,\nMaximum of 1 Polygon Permitted, 100 km Buffer",
      axes = T)
@@ -199,8 +193,6 @@ You may have noticed that the training regions in the above examples include som
 trainingRegion <- marineBackground(occurrences, 
                                    buff = 1000000, 
                                    clipToOcean = T)
-trainingRegion <- sf::st_as_sf(trainingRegion)
-trainingRegion <- sf::st_transform(trainingRegion, crs(land))
 plot(trainingRegion, border = F, col = "gray",
      main = "100 km Buffer,\n Training Region Clipped to Occupied Polygon",
      axes = T)
@@ -210,7 +202,7 @@ points(occurrences[,c("decimalLongitude", "decimalLatitude")],
 ```
 
 ```{r plot clipToOcean demo, echo=FALSE}
-trainingRegion <- readRDS(system.file("extdata/backgroundSamplingRegions.rds",
+trainingRegion <- vect(system.file("extdata/backgroundSamplingRegions.shp",
                               package='voluModel'))
 
 knitr::include_graphics("clipToOceanDemo-1.png")
@@ -232,8 +224,6 @@ for (i in 1:length(pacificOccs$decimalLongitude)){
 pacificTrainingRegion <- marineBackground(pacificOccs, 
                                           fraction = 0.95, partCount = 3, 
                                           clipToOcean = T)
-pacificTrainingRegion <- sf::st_as_sf(pacificTrainingRegion)
-pacificTrainingRegion <- sf::st_transform(pacificTrainingRegion, crs(land))
 plot(pacificTrainingRegion, border = F, col = "gray",
      main = "marineBackground Antimeridian Wrap",
      axes = T)
@@ -255,8 +245,8 @@ For this example, I am sampling training points from 50 to 1500 m.
 ```{r training points}
 # Background
 backgroundVals <- mSampling3D(occs = occurrences, 
-                              envBrick = rast(temperature), 
-                              mShp = vect(trainingRegion), 
+                              envBrick = temperature, 
+                              mShp = trainingRegion, 
                               depthLimit = c(50, 1500))
 backgroundVals$temperature <- xyzSample(occs = backgroundVals, temperature)
 
@@ -304,6 +294,13 @@ ggplot(dataForModeling, aes(x = temperature, fill = response, color = response))
 ```
 
 For a more complex, multivariate example of environmental dissimilarity weighting, refer to the [GLM workflow](https://hannahlowens.github.io/voluModel/articles/e_GLMWorkflow.html).
+
+# Tidying up
+Last, we need to close the temporary directory we opened when we opened the data.
+
+```{r cleanup temporary directory}
+unlink(td, recursive = T)
+```
 
 # References
 
