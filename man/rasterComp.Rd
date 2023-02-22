@@ -79,6 +79,6 @@ rasterComp(rast1 = rast1, rast2 = rast2)
 
 }
 \seealso{
-\code{\link[raster:spplot]{spplot}}
+\code{\link[sp:spplot]{spplot}}
 }
 \keyword{plotting}

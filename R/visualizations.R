@@ -675,7 +675,7 @@ blendColor <- function( col1 = "#1b9e777F", col2 = "#7570b37F") {
 #' @importFrom latticeExtra as.layer
 #' @importFrom sp spplot
 #'
-#' @seealso \code{\link[raster:spplot]{spplot}}
+#' @seealso \code{\link[sp:spplot]{spplot}}
 #'
 #' @keywords plotting
 #' @export
@@ -757,7 +757,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
              col="transparent", main = title,
              par.settings = list(mai = c(0,0,0,0)),
              maxpixels = maxpixels) +
-        as.layer(spplot(rast2, col.regions = myCols[c(1,3)],
+        as.layer(sp::spplot(rast2, col.regions = myCols[c(1,3)],
                         cuts = 1, col="transparent"))
     } else if(global(rast2, sum, na.rm = TRUE) == 0){
       sp::spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = FALSE,
@@ -788,7 +788,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
              maxpixels = maxpixels,
              sp.layout=list(as(land, "Spatial"), fill=landCol, first=FALSE),
              par.settings = list(mai = c(0,0,0,0))) +
-        as.layer(spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, col="transparent"))
+        as.layer(sp::spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, col="transparent"))
     } else if (global(rast2, sum) == 0){
       sp::spplot(rast1, col.regions = myCols[c(1,2)],
              cuts = 1, colorkey = FALSE,
@@ -916,7 +916,7 @@ diversityStack <- function(rasterList, template){
 #' @importFrom viridisLite viridis
 #' @importFrom latticeExtra as.layer
 #'
-#' @seealso \code{\link[viridisLite:viridis]{viridis}} \code{\link[raster:spplot]{spplot}}
+#' @seealso \code{\link[viridisLite:viridis]{viridis}} \code{\link[sp:spplot]{spplot}}
 #'
 #' @keywords plotting
 #' @export
@@ -1058,7 +1058,7 @@ oneRasterPlot <- function(rast,
 #' @importFrom viridisLite viridis
 #' @importFrom latticeExtra as.layer
 #'
-#' @seealso \code{\link[viridisLite:viridis]{viridis}} \code{\link[raster:spplot]{spplot}}
+#' @seealso \code{\link[viridisLite:viridis]{viridis}} \code{\link[sp:spplot]{spplot}}
 #'
 #' @keywords plotting
 #'
@@ -1129,7 +1129,7 @@ plotLayers <- function(rast,
   for(i in 2:nlyr(rast)){
     redVal <- redVal - stepSize
     blueVal <- blueVal + stepSize
-    plotStart <- plotStart + as.layer(spplot(rast[[i]],
+    plotStart <- plotStart + as.layer(sp::spplot(rast[[i]],
                                              col.regions = c(rgb(0,0,0,0),
                                                              rgb(redVal,0,
                                                                  blueVal,
