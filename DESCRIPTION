@@ -42,6 +42,7 @@ Imports:
     modEvA,
     rangeBuilder (>= 2.0),
     terra,
+    tidyterra,
     viridisLite,
     sf
 Suggests:

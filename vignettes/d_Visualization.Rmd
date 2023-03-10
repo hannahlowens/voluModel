@@ -22,8 +22,6 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
-knitr::opts_knit$set(root.dir = system.file('extdata', 
-                                            package='voluModel'))
 ```
 
 # Introduction 
@@ -35,39 +33,39 @@ The data I will be using for the demos in this tutorial will be loaded and analy
 ```{r generating data for plotting}
 library(voluModel) # Because of course
 library(ggplot2) # For fancy plotting
-library(rgdal, 
-        options("rgdal_show_exportToProj4_warnings"="none")) # For vector stuff. Will eventually be replaced with sf.
-library(raster) # For raster stuff. Will eventually be replaced with terra.
 library(viridisLite) # For high-contrast plotting palettes
 library(dplyr) # To filter data
 library(terra) # Now being transitioned in
 library(sf) # Now being transitioned in
+library(sp)
 
 # Load data
-load(system.file("extdata/oxygenSmooth.RData", 
-                 package='voluModel'))
+oxygenSmooth <- rast(system.file("extdata/oxygenSmooth.tif", 
+                                 package='voluModel'))
+
+occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
+                             package='voluModel'))
 
 td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),
       exdir = paste0(td, "/temperature"), junkpaths = T)
-temperature <- readOGR(dsn = paste0(td, "/temperature"), 
-                       layer ="woa18_decav_t00mn01_cropped")
-unlink(paste0(td, "/temperature"), recursive = T)
-
+temperature <- sf::st_read(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
+temperature <- as(temperature, "Spatial")
 temperature@data[temperature@data == -999.999] <- NA
 
-occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
-                             package='voluModel'))
-
-# Creating a RasterBrick
-temperature <- rasterFromXYZ(cbind(temperature@coords,
-                                   temperature@data))
+# Turn into SpatRaster
+template <- rast(nrows = length(unique(temperature@coords[,2])),
+                            ncols = length(unique(temperature@coords[,1])), 
+                            extent = ext(temperature))
+tempTerVal <- rasterize(x = temperature@coords, y = template, 
+                        values = temperature@data)
 
 # Get names of depths
 envtNames <- gsub("[d,M]", "", names(temperature))
 envtNames[[1]] <- "0"
-names(temperature) <- envtNames
+names(tempTerVal) <- envtNames
+temperature <- tempTerVal
 
 # Oxygen processing
 names(oxygenSmooth) <- names(temperature)
@@ -77,7 +75,7 @@ occurrences <- occs %>% dplyr::select(decimalLongitude, decimalLatitude, depth) 
   distinct() %>% filter(dplyr::between(depth, 1, 2000))
 
 # Gets the layer index for each occurrence by matching to depth
-layerNames <- as.numeric(gsub("[X]", "", names(temperature)))
+layerNames <- as.numeric(names(temperature))
 occurrences$index <- unlist(lapply(occurrences$depth, 
                                    FUN = function(x) which.min(abs(layerNames - x))))
 indices <- unique(occurrences$index)
@@ -100,22 +98,22 @@ land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
 
 # Study region
 studyRegion <- marineBackground(occsWdata, buff = 1000000)
-studyRegion <- sf::st_as_sf(studyRegion)
-studyRegion <- sf::st_transform(studyRegion, crs(land))
 
 # Get limits
 tempLims <- quantile(occsWdata$temperature,c(0, 1))
 aouLims <- quantile(occsWdata$AOU,c(0, 1))
 
 # Reclassify environmental bricks to presence/absence
-temperaturePresence <- reclassify(temperature, 
-                                  rcl = c(-Inf,tempLims[[1]],0,
-                                          tempLims[[1]], tempLims[[2]], 1,
-                                          tempLims[[2]], Inf, 0))
-AOUpresence <- reclassify(oxygenSmooth, 
-                          rcl = c(-Inf, aouLims[[1]],0,
-                                  aouLims[[1]], aouLims[[2]], 1,
-                                  aouLims[[2]], Inf, 0))
+temperaturePresence <- classify(temperature, 
+                                rcl = matrix(c(-Inf,tempLims[[1]],0,
+                                               tempLims[[1]], tempLims[[2]], 1,
+                                               tempLims[[2]], Inf, 0),
+                                             ncol = 3, byrow = TRUE))
+AOUpresence <- classify(oxygenSmooth, 
+                        rcl = matrix(c(-Inf, aouLims[[1]],0,
+                                       aouLims[[1]], aouLims[[2]], 1,
+                                       aouLims[[2]], Inf, 0), 
+                                     ncol = 3, byrow = TRUE))
 
 # Put it all together
 envelopeModel3D <- temperaturePresence * AOUpresence
@@ -135,7 +133,7 @@ pointMap(occs = occs, land = land, landCol = "black", spName = "Steindachneria a
          ptSize = 2, ptCol = "orange")
 ```
 
-```{r pointMap plot, echo=FALSE, out.width = '100%', out.height= '100%'}
+```{r point plot quick, echo=FALSE, out.width = '100%', out.height= '100%'}
 knitr::include_graphics("pointMap.png")
 ```
 
@@ -155,7 +153,8 @@ If you have a horizontal raster you would like to map that contains continuous d
 ```{r oneRasterPlot}
 oneRasterPlot(rast = temperature[[1]],
               land = land, title = "Sea Surface Temperature, WOA 2018",
-              landCol = "black", n = 11, option = "mako")
+              landCol = "black", n = 11, option = "mako",
+              varName = "Temperature")
 ```
 
 Suppose you want to compare the extents of two presence-absence rasters--perhaps you are comparing two species distribution model method outputs, or comparing potential distributions at two different depths. We have a function for that, too.
@@ -170,13 +169,20 @@ rasterComp(rast1 = envelopeModel3D[[1]], rast1Name = "Surface",
 Of course, 3D models such as the ones `voluModel` is designed to help you produce, are difficult to visualize. We have given it a try, though. `plotLayers()` plots a transparent layer of suitable habitat for each depth layer. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. Here, I am plotting suitability from 20 to 700 m, the depth range of occurrences used to train the envelope model.
 
 ```{r plotLayers}
-layerNames <- as.numeric(gsub("[X]", "", names(envelopeModel3D)))
+layerNames <- as.numeric(names(envelopeModel3D))
 occsWdata$index <- unlist(lapply(occsWdata$depth, FUN = function(x) which.min(abs(layerNames - x))))
 indices <- unique(occsWdata$index)
 
 plotLayers(envelopeModel3D[[min(indices):max(indices)]], 
            title = "Envelope Model of Luminous Hake,\n 20 to 700m",
            land = land, landCol = "black")
+```
+
+# Tidying up
+Last, we need to close the temporary directory we opened when we opened the data.
+
+```{r cleanup temporary directory}
+unlink(td, recursive = T)
 ```
 
 # References

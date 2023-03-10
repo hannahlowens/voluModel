@@ -146,8 +146,8 @@ test_that("oneRasterPlot works", {
   divStack <- diversityStack(list(rast1, rast2), template = rast2)
   expect_warning(oneRasterPlot(rast = "a"))
   expect_warning(oneRasterPlot(rast = divStack, land = "a"))
-  expect_equal(class(oneRasterPlot(divStack)), "trellis")
-  expect_equal(class(oneRasterPlot(divStack, land = land)), "trellis")
+  expect_equal(class(oneRasterPlot(divStack)), c("gg", "ggplot"))
+  expect_equal(class(oneRasterPlot(divStack, land = land)), c("gg", "ggplot"))
 })
 
 rast1 <- rast(ncol=10, nrow=10)
@@ -173,6 +173,7 @@ values(rast2) <- c(rep(0, 50), rep(1,50))
 rast3 <- rast(ncol=10, nrow=10)
 values(rast3) <- rep(c(1,0,0,1), 25)
 distBrick <- c(rast1, rast2, rast3)
+names(distBrick) <- c(1,2,3)
 
 test_that("plotLayers works", {
   expect_warning(plotLayers(rast = "a"))

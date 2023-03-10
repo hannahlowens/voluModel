@@ -880,7 +880,7 @@ diversityStack <- function(rasterList, template){
 
 #' @title Single raster plot
 #'
-#' @description A convenient wrapper around `spplot`
+#' @description A convenient wrapper around `ggplot`
 #' to generate a formatted plot of a single raster.
 #'
 #' @param rast A single `SpatRaster` layer on a continuous
@@ -900,9 +900,9 @@ diversityStack <- function(rasterList, template){
 #' @param title A title for the plot.
 #'
 #' @param ... Additional optional arguments to pass to
-#' `spplot` initial plot object or `viridis`.
+#' `ggplot` initial plot object or `viridis`.
 #'
-#' @return A plot of class `trellis` mapping the values
+#' @return A plot of class `ggplot` mapping the values
 #' of the input raster layer
 #'
 #' @examples
@@ -913,11 +913,11 @@ diversityStack <- function(rasterList, template){
 #' oneRasterPlot(rast = rast)
 #'
 #' @import terra
-#' @importFrom sp spplot
+#' @import tidyterra
+#' @import ggplot2
 #' @importFrom viridisLite viridis
-#' @importFrom latticeExtra as.layer
 #'
-#' @seealso \code{\link[viridisLite:viridis]{viridis}} \code{\link[sp:spplot]{spplot}}
+#' @seealso \code{\link[viridisLite:viridis]{viridis}} \code{\link[ggplot2:ggplot]{ggplot}}
 #'
 #' @keywords plotting
 #' @export
@@ -951,6 +951,12 @@ oneRasterPlot <- function(rast,
     n <- args$n
   } else{
     n = 11
+  }
+
+  if("varName" %in% names(args)){
+    varName <- args$varName
+  } else{
+    varName = "Variable"
   }
 
   # Input error checking
@@ -995,18 +1001,28 @@ oneRasterPlot <- function(rast,
   }
 
   if(any(is.na(land))){
-    plotResult <- sp::spplot(rast, col = "transparent",
-                         col.regions = viridis(n = n, alpha = alpha,
-                                               option = option),
-                         at = at, main = title,
-                         maxpixels = maxpixels)
+    plotResult <- ggplot() +
+      geom_spatraster(data = rast, maxcell = maxpixels) +
+      scale_fill_stepsn(colours = viridis(n = n,
+                                          alpha = alpha,
+                                          option = option),
+                        breaks = at,
+                        name = varName, na.value = "transparent") +
+      coord_sf(xlim=ext(rast)[1:2], ylim=ext(rast)[3:4], expand = 0) +
+      labs(title = title) +
+      theme_minimal()
   } else {
-    plotResult <- sp::spplot(rast, col = viridis(n = n, alpha = alpha,
-                                             option = option),
-                         at = at, main = title,
-                         maxpixels = maxpixels,
-                         sp.layout=list(as(land, "Spatial"),
-                                        fill=landCol, first=FALSE))
+    plotResult <- ggplot() +
+      geom_spatraster(data = rast, maxcell = maxpixels) +
+      scale_fill_stepsn(colours = viridis(n = n,
+                                          alpha = alpha,
+                                          option = option),
+                        breaks = at,
+                        name = varName, na.value = "transparent") +
+      geom_spatvector(data = land, fill = landCol, color = landCol) +
+      coord_sf(xlim=ext(rast)[1:2], ylim=ext(rast)[3:4], expand = 0) +
+      labs(title = title) +
+      theme_minimal()
   }
   return(plotResult)
 }
