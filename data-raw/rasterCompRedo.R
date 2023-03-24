@@ -94,36 +94,51 @@ names(envelopeModel3D) <- names(temperature)
 rm(AOUpresence, downsampledOccs, occurrences, temperaturePresence,
    tempPoints, aouLims, envtNames, i, indices, layerNames, td, tempLims)
 
-layerNames <- as.numeric(names(envelopeModel3D))
-occsWdata$index <- unlist(lapply(occsWdata$depth, FUN = function(x) which.min(abs(layerNames - x))))
-indices <- unique(occsWdata$index)
-
 # Internal function shit ----
-rast <- envelopeModel3D[[min(indices):max(indices)]]
-title <- "Envelope Model of Luminous Hake,\n 20 to 700m"
+rast1 = envelopeModel3D[[1]]
+rast1Name = "Surface"
+rast2 = envelopeModel3D[[10]]
+rast2Name = "45m"
+land = land
 landCol = "black"
+title = "Suitability of Habitat for Luminous Hake\nAt Two Different Depths"
+col1 = "#1b9e777F"
+col2 = "#7570b37F"
+maxpixels <- 50000
+colVec <- c(col1, col2, landCol)
+colTest <- areColors(colVec)
+myCols <- c(transpColor("white", percent = 100),
+            transpColor(col1, percent = 50),
+            transpColor(col2, percent = 50),
+            blendColor(transpColor(col1, percent = 50),
+                       transpColor(col2, percent = 50)))
 
-redVal <- 1
-blueVal <- 0
-stepSize <- 1/(nlyr(rast) + 1)
+# Old version ----
+sp::spplot(raster::raster(rast1), col.regions = myCols[c(1,2)],
+           cuts = 1, colorkey = FALSE,
+           key=list(space="right",
+                    points=list(pch = 22, cex = 2,
+                                fill=c("white", myCols[c(2:4)])),
+                    text=list(c("Neither", rast1Name, rast2Name, "Both"))),
+           col="transparent",  main = title,
+           maxpixels = maxpixels,
+           sp.layout=list(as(land, "Spatial"), fill=landCol, first=FALSE),
+           par.settings = list(mai = c(0,0,0,0))) +
+  as.layer(sp::spplot(raster::raster(rast2), col.regions = myCols[c(1,3)], cuts = 1, col="transparent"))
 
+# New version ----
+
+grat <- graticule(lon = seq(-180, 180, 10), lat = seq(-90,90,10), crs = crs(rast1))
 plot.new()
-plot(rast[[1]],
-   col = c(rgb(0,0,0,0),
-           rgb(redVal,0,blueVal,stepSize)),
-   legend = FALSE, mar = c(2,2,3,2))
-
-for(i in 2:nlyr(rast)){
-  redVal <- redVal - stepSize
-  blueVal <- blueVal + stepSize
-  plot(rast[[i]], col = c(rgb(0,0,0,0),
-                          rgb(redVal,0,blueVal,stepSize)),
-       legend = FALSE, add = TRUE)
-}
-
-grat <- graticule(lon = seq(-180, 180, 10), lat = seq(-90,90,10), crs = crs(rast))
+plot(rast1, col = c(myCols[1], myCols[2]), legend = FALSE, mar = c(2,2,3,2))
+plot(rast2, col = c(myCols[1], myCols[3]), legend = FALSE, add = T)
 plot(grat, col="gray50", add = TRUE)
-
-plot(land, col = landCol, add = TRUE)
+plot(vect(land), col = landCol, add = TRUE)
 title(main = title, cex.main = 1.1)
+legend(x = round(xmax(rast1)) + 1, y = round(ymax(rast1)) + 1,
+       bty = "n",
+       legend = c("Neither", rast1Name, rast2Name, "Both"),
+       fill = myCols)
 finalPlot <- recordPlot()
+
+"#FFFFFF00" "#1B9E777F" "#7570B37F" "#488795FE"

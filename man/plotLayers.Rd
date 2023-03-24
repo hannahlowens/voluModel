@@ -4,7 +4,14 @@
 \alias{plotLayers}
 \title{Plotting 3D model in 2D}
 \usage{
-plotLayers(rast, land = NA, landCol = "black", title = NULL, ...)
+plotLayers(
+  rast,
+  land = NA,
+  landCol = "black",
+  title = NULL,
+  graticule = TRUE,
+  ...
+)
 }
 \arguments{
 \item{rast}{A \code{SpatRaster} vector with the 3D presence/absence
@@ -12,8 +19,8 @@ distribution of a species (interpreted as 1 = presence,
 0 = absence).}
 
 \item{land}{An optional coastline polygon shapefile
-of type \code{sf} to provide geographic context for the
-occurrence points.}
+of types \code{sf} or \code{SpatRaster} to provide geographic
+context for the occurrence points.}
 
 \item{landCol}{Color for land on map.}
 
@@ -22,10 +29,12 @@ supplied, the title "Suitability from (MINIMUM
 DEPTH) to (MAXIMUM DEPTH)" is inferred from
 names of \code{rast}.}
 
+\item{graticule}{Do you want a grid of lon/lat lines?}
+
 \item{...}{Additional optional arguments.}
 }
 \value{
-A plot of class \code{trellis}
+A plot of class \code{recordedplot}
 }
 \description{
 This script plots a semitransparent layer

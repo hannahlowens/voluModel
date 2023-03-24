@@ -14,6 +14,7 @@ rasterComp(
   land = NA,
   landCol = "black",
   title = "A Raster Comparison",
+  graticule = TRUE,
   ...
 )
 }
@@ -42,18 +43,20 @@ of occurrences, which will be color-coded to
 \code{occs2Col} in the resulting plot.}
 
 \item{land}{An optional coastline polygon shapefile
-of type \code{sf} to provide geographic context for the
-occurrence points.}
+of types \code{sf} or \code{SpatRaster} to provide geographic
+context for the occurrence points.}
 
 \item{landCol}{Color for land on map.}
 
 \item{title}{A title for the plot.}
 
+\item{graticule}{Do you want a grid of lon/lat lines?}
+
 \item{...}{Additional optional arguments to pass to
-\code{spplot} initial plot object.}
+\code{terra::plot()}.}
 }
 \value{
-A plot of class \code{trellis} overlaying mapped,
+A plot of class \code{recordedplot} overlaying mapped,
 semitransparent extents of the input rasters
 }
 \description{
@@ -79,6 +82,6 @@ rasterComp(rast1 = rast1, rast2 = rast2)
 
 }
 \seealso{
-\code{\link[sp:spplot]{spplot}}
+\code{\link[terra:plot]{plot}}
 }
 \keyword{plotting}

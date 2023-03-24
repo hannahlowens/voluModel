@@ -21,12 +21,10 @@
 #' might have three layers, one from 0 to 10m, one from
 #' 10 to 30m, and one from 30 to 100m. You would name the
 #' layers in this brick `names(envBrick) <- c(0, 10, 30`.
-#' R will rename the layers "X0", "X10", and "X30". This
-#' is expected behavior and `xyzSample` was written to
-#' expect this. `xyzSample` identifies the layer name
-#' that is closest to the depth layer value at a
-#' particular X, Y coordinate, and samples the
-#' environmental value at that 3D coordinate.
+#' `xyzSample` identifies the layer name that is closest
+#' to the depth layer value at a particular X, Y
+#' coordinate, and samples the environmental value at that
+#' 3D coordinate.
 #'
 #' @return Vector of environmental values equal in length
 #' to number of rows of input `occs` `data.frame`.
@@ -88,6 +86,15 @@ xyzSample <- function(occs, envBrick, verbose = TRUE){
     return(NULL)
   }
 
+  # Checking for appropriate environmental layer names
+  suppressWarnings(layerNames <- as.numeric(names(envBrick)))
+  if(any(is.na(layerNames))){
+    warning(message("\nInput RasterBrick names inappropriate: \n",
+            paste(names(envBrick), collapse = ", "), "\n",
+            "Names must be numeric.\n"))
+    return(NULL)
+  }
+
   # Parse columns
   colNames <- colnames(occs)
   colParse <- columnParse(occs, wDepth = TRUE)
@@ -101,17 +108,6 @@ xyzSample <- function(occs, envBrick, verbose = TRUE){
 
   if(verbose){
     message(interp)
-  }
-
-  # Checking for appropriate environmental layer names
-  layerNames <- as.numeric(gsub("[X]", "", names(envBrick)))
-  if(sum(is.na(layerNames)) > 0){
-    message("\nInput RasterBrick names inappropriate: \n",
-            paste(names(envBrick), collapse = ", "), "\n",
-            "Names must follow the format 'X' ",
-            "followed by a number corresponding to ",
-            "the starting depth of the layer.")
-    return(NULL)
   }
 
   # Sampling values

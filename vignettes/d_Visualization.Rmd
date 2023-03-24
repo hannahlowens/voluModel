@@ -121,7 +121,7 @@ envelopeModel3D <- mask(crop(envelopeModel3D, studyRegion),
                         mask = studyRegion)
 names(envelopeModel3D) <- names(temperature)
 rm(AOUpresence, downsampledOccs, occurrences, temperaturePresence, 
-   tempPoints, aouLims, envtNames, i, indices, layerNames, td, tempLims)
+   tempPoints, aouLims, envtNames, i, indices, layerNames, tempLims)
 ```
 
 # Plotting points
@@ -173,9 +173,9 @@ layerNames <- as.numeric(names(envelopeModel3D))
 occsWdata$index <- unlist(lapply(occsWdata$depth, FUN = function(x) which.min(abs(layerNames - x))))
 indices <- unique(occsWdata$index)
 
-plotLayers(envelopeModel3D[[min(indices):max(indices)]], 
-           title = "Envelope Model of Luminous Hake,\n 20 to 700m",
-           land = land, landCol = "black")
+layerPlot <- plotLayers(envelopeModel3D[[min(indices):max(indices)]], 
+                        title = "Envelope Model of Luminous Hake,\n 20 to 700m",
+                        land = land, landCol = "black")
 ```
 
 # Tidying up

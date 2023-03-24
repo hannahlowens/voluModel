@@ -131,15 +131,15 @@ test_that("rasterComp works", {
   expect_warning(rasterComp(rast1 = rast1, rast1Name = "First Raster",
                             rast2 = rast2, rast2Name = "Second Raster",
                             col1 = "ukulele"))
-  expect_equal(class(rasterComp(rast1 = rast1)), "trellis")
-  expect_equal(class(rasterComp(rast2 = rast2)), "trellis")
-  expect_equal(class(rasterComp()), "trellis")
-  expect_equal(class(rasterComp(rast1 = rast1, rast2 = rast2)), "trellis")
-  expect_equal(class(rasterComp(rast1 = rast1, land = land)), "trellis")
-  expect_equal(class(rasterComp(rast2 = rast2, land = land)), "trellis")
-  expect_equal(class(rasterComp(land = land)), "trellis")
+  expect_equal(class(rasterComp(rast1 = rast1)), "recordedplot")
+  expect_equal(class(rasterComp(rast2 = rast2)), "recordedplot")
+  expect_equal(class(rasterComp(graticule = FALSE)), "recordedplot")
+  expect_equal(class(rasterComp(rast1 = rast1, rast2 = rast2)), "recordedplot")
+  expect_equal(class(rasterComp(rast1 = rast1, land = land)), "recordedplot")
+  expect_equal(class(rasterComp(rast2 = rast2, land = land)), "recordedplot")
+  expect_equal(class(rasterComp(land = land)), "recordedplot")
   expect_equal(class(rasterComp(rast1 = rast1, rast2 = rast2, land = land)),
-               "trellis")
+               "recordedplot")
 })
 
 test_that("oneRasterPlot works", {
@@ -178,7 +178,7 @@ names(distBrick) <- c(1,2,3)
 test_that("plotLayers works", {
   expect_warning(plotLayers(rast = "a"))
   expect_warning(plotLayers(rast = distBrick, land = "a"))
-  expect_equal(class(plotLayers(distBrick)), "trellis")
-  expect_equal(class(plotLayers(distBrick, land = land)), "trellis")
+  expect_equal(class(plotLayers(distBrick)), "recordedplot")
+  expect_equal(class(plotLayers(distBrick, land = land)), "recordedplot")
 })
 

@@ -31,25 +31,25 @@ to minimum and maximum of input \code{rast}.}
 \item{title}{A title for the plot.}
 
 \item{...}{Additional optional arguments to pass to
-\code{spplot} initial plot object or \code{viridis}.}
+\code{ggplot} initial plot object or \code{viridis}.}
 }
 \value{
-A plot of class \code{trellis} mapping the values
+A plot of class \code{ggplot} mapping the values
 of the input raster layer
 }
 \description{
-A convenient wrapper around \code{spplot}
+A convenient wrapper around \code{ggplot}
 to generate a formatted plot of a single raster.
 }
 \examples{
-library(raster)
-rast <- raster(ncol=10, nrow=10)
+library(terra)
+rast <- rast(ncol=10, nrow=10)
 values(rast) <- seq(0,99, 1)
 
 oneRasterPlot(rast = rast)
 
 }
 \seealso{
-\code{\link[viridisLite:viridis]{viridis}} \code{\link[sp:spplot]{spplot}}
+\code{\link[viridisLite:viridis]{viridis}} \code{\link[ggplot2:ggplot]{ggplot}}
 }
 \keyword{plotting}

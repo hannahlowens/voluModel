@@ -34,12 +34,10 @@ depth of a particular depth slice. For example, one
 might have three layers, one from 0 to 10m, one from
 10 to 30m, and one from 30 to 100m. You would name the
 layers in this brick \verb{names(envBrick) <- c(0, 10, 30}.
-R will rename the layers "X0", "X10", and "X30". This
-is expected behavior and \code{xyzSample} was written to
-expect this. \code{xyzSample} identifies the layer name
-that is closest to the depth layer value at a
-particular X, Y coordinate, and samples the
-environmental value at that 3D coordinate.
+\code{xyzSample} identifies the layer name that is closest
+to the depth layer value at a particular X, Y
+coordinate, and samples the environmental value at that
+3D coordinate.
 }
 \examples{
 library(terra)

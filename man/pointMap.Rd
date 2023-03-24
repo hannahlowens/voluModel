@@ -25,8 +25,8 @@ can be coerced into this format.}
 name to be used in the plot title.}
 
 \item{land}{An optional coastline polygon shapefile
-of type \code{sf} to provide geographic context for the
-occurrence points.}
+of types \code{sf} or \code{SpatRaster} to provide geographic
+context for the occurrence points.}
 
 \item{ptCol}{Color for occurrence points on map}
 

@@ -89,8 +89,8 @@ testIntersection <- function(a,b){
 #' name to be used in the plot title.
 #'
 #' @param land An optional coastline polygon shapefile
-#' of type `sf` to provide geographic context for the
-#' occurrence points.
+#' of types `sf` or `SpatRaster` to provide geographic
+#' context for the occurrence points.
 #'
 #' @param ptCol Color for occurrence points on map
 #'
@@ -159,9 +159,17 @@ pointMap <- function(occs, spName, land = NA,
     return(NULL)
   }
 
-  if(!any(is.na(land[[1]]), "sf" %in% class(land))){
-    warning(paste0("'land' must either be NA or of class 'sf'."))
+  if(!any(is.na(land[[1]]),
+          "sf" %in% class(land),
+          "SpatVector" %in% class(land))){
+    warning(paste0("'land' must be NA or of class 'sf' or 'SpatVector'."))
     return(NULL)
+  }
+
+  if(!any(is.na(land))){
+    if(!("sf" %in% class(land))){
+      land <- sf::st_as_sf(land)
+    }
   }
 
   colVec <- c(ptCol, landCol, waterCol)
@@ -239,8 +247,8 @@ pointMap <- function(occs, spName, land = NA,
 #' name to be used in the plot title.
 #'
 #' @param land An optional coastline polygon shapefile
-#' of type `sf` to provide geographic context for the
-#' occurrence points.
+#' of types `sf` or `SpatRaster` to provide geographic
+#' context for the occurrence points.
 #'
 #' @param occs1Col Color for occurrence points on map
 #'
@@ -345,9 +353,17 @@ pointCompMap <- function(occs1, occs2,
     return(NULL)
   }
 
-  if(!any(is.na(land[[1]]), "sf" %in% class(land))){
-    warning(paste0("'land' must either be NA or of class 'sf'."))
+  if(!any(is.na(land[[1]]),
+          "sf" %in% class(land),
+          "SpatVector" %in% class(land))){
+    warning(paste0("'land' must be NA or of class 'sf' or 'SpatVector'."))
     return(NULL)
+  }
+
+  if(!any(is.na(land))){
+    if(!("sf" %in% class(land))){
+      land <- sf::st_as_sf(land)
+    }
   }
 
   if (!is.logical(verbose)) {
@@ -622,16 +638,6 @@ blendColor <- function( col1 = "#1b9e777F", col2 = "#7570b37F") {
 #' and 1 (presence). Must match the extent and
 #' resolution of `rast1`. Can also be `NULL.`
 #'
-#' @param rast1Name A character string with the name
-#' of the species depicted in `rast1`.
-#'
-#' @param rast2Name A character string with the name
-#' of the species depicted in `rast2`.
-#'
-#' @param land An optional coastline polygon shapefile
-#' of type `sf` to provide geographic context for the
-#' occurrence points.
-#'
 #' @param col1 Color for `rast1` presences
 #'
 #' @param col2 Color for `rast2` presences
@@ -647,15 +653,17 @@ blendColor <- function( col1 = "#1b9e777F", col2 = "#7570b37F") {
 #' @param landCol Color for land on map.
 #'
 #' @param land An optional coastline polygon shapefile
-#' of type `sf` to provide geographic context for the
-#' occurrence points.
+#' of types `sf` or `SpatRaster` to provide geographic
+#' context for the occurrence points.
 #'
 #' @param title A title for the plot.
 #'
-#' @param ... Additional optional arguments to pass to
-#' `spplot` initial plot object.
+#' @param graticule Do you want a grid of lon/lat lines?
 #'
-#' @return A plot of class `trellis` overlaying mapped,
+#' @param ... Additional optional arguments to pass to
+#' `terra::plot()`.
+#'
+#' @return A plot of class `recordedplot` overlaying mapped,
 #' semitransparent extents of the input rasters
 #'
 #' @note The extents of `rast1` and `rast2`
@@ -672,10 +680,8 @@ blendColor <- function( col1 = "#1b9e777F", col2 = "#7570b37F") {
 #' rasterComp(rast1 = rast1, rast2 = rast2)
 #'
 #' @import terra
-#' @importFrom latticeExtra as.layer
-#' @importFrom sp spplot
 #'
-#' @seealso \code{\link[sp:spplot]{spplot}}
+#' @seealso \code{\link[terra:plot]{plot}}
 #'
 #' @keywords plotting
 #' @export
@@ -684,15 +690,10 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
                        col1 = "#1b9e777F", col2 = "#7570b37F",
                        rast1Name = "Set 1", rast2Name = "Set 2",
                        land = NA, landCol = "black",
-                       title = "A Raster Comparison", ...){
+                       title = "A Raster Comparison",
+                       graticule = TRUE, ...){
 
   args <- list(...)
-
-  if("maxpixels" %in% names(args)){
-    maxpixels <- args$maxpixels
-  } else{
-    maxpixels <- 50000
-  }
 
   colVec <- c(col1, col2, landCol)
   colTest <- areColors(colVec)
@@ -703,8 +704,10 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
     return(NULL)
   }
 
-  if(!any(is.na(land[[1]]), "sf" %in% class(land))){
-    warning(paste0("'land' must either be NA or of class 'sf'."))
+  if(!any(is.na(land[[1]]),
+          "sf" %in% class(land),
+          "SpatVector" %in% class(land))){
+    warning(paste0("'land' must be NA or of class 'sf' or 'SpatVector'."))
     return(NULL)
   }
 
@@ -715,6 +718,12 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
                    must be 'character' strings.\n"))
     return(NULL)
   }
+
+  if(!is.logical(graticule)){
+    warning(paste0("'graticule' must be 'TRUE' or 'FALSE'.\n"))
+    return(NULL)
+  }
+
 
   if(any(all(!inherits(rast1, what = "SpatRaster"), !is.null(rast1)),
          all(!inherits(rast2, what = "SpatRaster"), !is.null(rast2)))){
@@ -748,69 +757,49 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
               transpColor(col2, percent = 50),
               blendColor(transpColor(col1, percent = 50),
                          transpColor(col2, percent = 50)))
-  if(any(is.na(land))){
-    if(all(global(rast2, sum, na.rm = TRUE) > 0, global(rast1, sum, na.rm = TRUE) > 0)){
-      sp::spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = FALSE,
-             key=list(space="right", points=list(pch = 22, cex = 2,
-                                                 fill=c("white",myCols[c(2:4)])),
-                      text=list(c("Neither", rast1Name, rast2Name, "Both"))),
-             col="transparent", main = title,
-             par.settings = list(mai = c(0,0,0,0)),
-             maxpixels = maxpixels) +
-        as.layer(sp::spplot(rast2, col.regions = myCols[c(1,3)],
-                        cuts = 1, col="transparent"))
-    } else if(global(rast2, sum, na.rm = TRUE) == 0){
-      sp::spplot(rast1, col.regions = myCols[c(1,2)], cuts = 1, colorkey = FALSE,
-             key=list(space="right", points=list(pch = 22, cex = 2,
-                                                 fill=c("white",myCols[c(2:4)])),
-                      text=list(c("Neither", rast1Name, rast2Name, "Both"))),
-             col="transparent", main = title,
-             par.settings = list(mai = c(0,0,0,0)),
-             maxpixels = maxpixels)
-    } else{
-      sp::spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = FALSE,
-             key=list(space="right", points=list(pch = 22, cex = 2,
-                                                 fill=c("white",myCols[3])),
-                      text=list(c("Neither", rast2Name))),
-             col="transparent", main = title,
-             maxpixels = maxpixels,
-             par.settings = list(mai = c(0,0,0,0)))
-    }
-  } else {
-    if (all(global(rast2, sum, na.rm = TRUE) > 0, global(rast1, sum, na.rm = TRUE) > 0)){
-      sp::spplot(rast1, col.regions = myCols[c(1,2)],
-             cuts = 1, colorkey = FALSE,
-             key=list(space="right",
-                      points=list(pch = 22, cex = 2,
-                                  fill=c("white", myCols[c(2:4)])),
-                      text=list(c("Neither", rast1Name, rast2Name, "Both"))),
-             col="transparent",  main = title,
-             maxpixels = maxpixels,
-             sp.layout=list(as(land, "Spatial"), fill=landCol, first=FALSE),
-             par.settings = list(mai = c(0,0,0,0))) +
-        as.layer(sp::spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, col="transparent"))
-    } else if (global(rast2, sum) == 0){
-      sp::spplot(rast1, col.regions = myCols[c(1,2)],
-             cuts = 1, colorkey = FALSE,
-             key=list(space="right",
-                      points=list(pch = 22, cex = 2,
-                                  fill=c("white",myCols[2])),
-                      text=list(c("Neither", rast1Name))),
-             col="transparent", main = title,
-             maxpixels = maxpixels,
-             sp.layout=list(as(land, "Spatial"), fill=landCol, first=FALSE),
-             par.settings = list(mai = c(0,0,0,0)))
-    } else{
-      sp::spplot(rast2, col.regions = myCols[c(1,3)], cuts = 1, colorkey = FALSE,
-             key=list(space="right", points=list(pch = 22, cex = 2,
-                                                 fill=c("white",myCols[3])),
-                      text=list(c("Neither", rast2Name))),
-             col="transparent", main = title,
-             maxpixels = maxpixels,
-             sp.layout=list(as(land, "Spatial"), fill=landCol, first=FALSE),
-             par.settings = list(mai = c(0,0,0,0)))
-    }
+
+  plot(rast1, col = c(myCols[1], myCols[2]), legend = FALSE, axes = FALSE, mar = c(2,2,3,2))
+  plot(rast2, col = c(myCols[1], myCols[3]), legend = FALSE, axes = FALSE, add = T)
+
+  if(graticule){
+    grat <- graticule(lon = seq(-180, 180, 10), lat = seq(-90,90,10), crs = crs(rast1))
+    plot(grat, col="gray50", add = TRUE)
   }
+
+  if(!any(is.na(land))){
+    if(!("SpatVector" %in% class(land))){
+      land <- vect(land)
+    }
+    plot(land, col = landCol, add = TRUE)
+  }
+
+  title(main = title, cex.main = 1.1)
+
+  # Legend plotting
+  if(sum(terra::minmax(rast1) == 0, terra::minmax(rast2) == 0) == 4){
+    legend(x = round(xmax(rast1)) + 1, y = round(ymax(rast1)) + 1,
+           bty = "n",
+           legend = c("Neither"),
+           fill = myCols[1])
+  }else if(sum(terra::minmax(rast1) == 0) ==2){
+    legend(x = round(xmax(rast1)) + 1, y = round(ymax(rast1)) + 1,
+           bty = "n",
+           legend = c("Neither", rast2Name, "Both"),
+           fill = myCols[-2])
+  }else if(sum(terra::minmax(rast2) == 0) ==2){
+    legend(x = round(xmax(rast1)) + 1, y = round(ymax(rast1)) + 1,
+           bty = "n",
+           legend = c("Neither", rast1Name, "Both"),
+           fill = myCols[-3])
+  } else{
+    legend(x = round(xmax(rast1)) + 1, y = round(ymax(rast1)) + 1,
+           bty = "n",
+           legend = c("Neither", rast1Name, rast2Name, "Both"),
+           fill = myCols)
+  }
+
+  plotResult <- recordPlot()
+  return(plotResult)
 }
 
 #' @title Diversity stack
@@ -906,8 +895,8 @@ diversityStack <- function(rasterList, template){
 #' of the input raster layer
 #'
 #' @examples
-#' library(raster)
-#' rast <- raster(ncol=10, nrow=10)
+#' library(terra)
+#' rast <- rast(ncol=10, nrow=10)
 #' values(rast) <- seq(0,99, 1)
 #'
 #' oneRasterPlot(rast = rast)
@@ -965,9 +954,17 @@ oneRasterPlot <- function(rast,
     return(NULL)
   }
 
-  if(!any(is.na(land), "sf" %in% class(land))){
-    warning(paste0("'land' must either be NA or of class 'sf'."))
+  if(!any(is.na(land[[1]]),
+          "sf" %in% class(land),
+          "SpatVector" %in% class(land))){
+    warning(paste0("'land' must be NA or of class 'sf' or 'SpatVector'."))
     return(NULL)
+  }
+
+  if(!any(is.na(land))){
+    if(!("sf" %in% class(land))){
+      land <- sf::st_as_sf(land)
+    }
   }
 
   if(!all(is.na(scaleRange))){
@@ -1040,8 +1037,8 @@ oneRasterPlot <- function(rast,
 #' 0 = absence).
 #'
 #' @param land An optional coastline polygon shapefile
-#' of type `sf` to provide geographic context for the
-#' occurrence points.
+#' of types `sf` or `SpatRaster` to provide geographic
+#' context for the occurrence points.
 #'
 #' @param landCol Color for land on map.
 #'
@@ -1049,6 +1046,8 @@ oneRasterPlot <- function(rast,
 #' supplied, the title "Suitability from (MINIMUM
 #' DEPTH) to (MAXIMUM DEPTH)" is inferred from
 #' names of `rast`.
+#'
+#' @param graticule Do you want a grid of lon/lat lines?
 #'
 #' @param ... Additional optional arguments.
 #'
@@ -1072,30 +1071,21 @@ oneRasterPlot <- function(rast,
 #' plotLayers(distBrick)
 #'
 #' @import terra
-#' @importFrom sp spplot
-#' @importFrom viridisLite viridis
-#' @importFrom latticeExtra as.layer
 #'
 #' @seealso \code{\link[viridisLite:viridis]{viridis}} \code{\link[sp:spplot]{spplot}}
 #'
 #' @keywords plotting
 #'
-#' @return A plot of class `trellis`
+#' @return A plot of class `recordedplot`
 #'
 #' @export
 
-
 plotLayers <- function(rast,
                       land = NA, landCol = "black",
-                      title = NULL, ...){
+                      title = NULL,
+                      graticule = TRUE, ...){
   #Input processing
   args <- list(...)
-
-  if("maxpixels" %in% names(args)){
-    maxpixels <- args$maxpixels
-  } else{
-    maxpixels <- 10000
-  }
 
   # Input error checking
   if(!grepl("SpatRaster", class(rast))){
@@ -1103,8 +1093,10 @@ plotLayers <- function(rast,
     return(NULL)
   }
 
-  if(!any(is.na(land), "sf" %in% class(land))){
-    warning(paste0("'land' must either be NA or of class 'sf'."))
+  if(!any(is.na(land[[1]]),
+          "sf" %in% class(land),
+          "SpatVector" %in% class(land))){
+    warning(paste0("'land' must be NA or of class 'sf' or 'SpatVector'."))
     return(NULL)
   }
 
@@ -1126,34 +1118,34 @@ plotLayers <- function(rast,
   blueVal <- 0
   stepSize <- 1/(nlyr(rast) + 1)
 
-  if(!any(is.na(land))){
-  plotStart <- sp::spplot(rast[[1]],
-                      col.regions = c(rgb(0,0,0,0),
-                                      rgb(redVal,0,blueVal,stepSize)),
-                      cuts = 1, colorkey = FALSE, col="transparent",
-                      main = title,
-                      par.settings = list(mai = c(0,0,0,0)),
-                      maxpixels = maxpixels, sp.layout=list(as(land, "Spatial"), fill=landCol, first=TRUE))
-  } else {
-    plotStart <- sp::spplot(rast[[1]],
-                        col.regions = c(rgb(0,0,0,0),
-                                        rgb(redVal,0,blueVal,stepSize)),
-                        cuts = 1, colorkey = FALSE, col="transparent",
-                        main = title,
-                        par.settings = list(mai = c(0,0,0,0)),
-                        maxpixels = maxpixels)
-  }
+  plot(rast[[1]],
+       col = c(rgb(0,0,0,0),
+               rgb(redVal,0,blueVal,stepSize)),
+       legend = FALSE, mar = c(2,2,3,2), axes = FALSE)
 
   for(i in 2:nlyr(rast)){
     redVal <- redVal - stepSize
     blueVal <- blueVal + stepSize
-    plotStart <- plotStart + as.layer(sp::spplot(rast[[i]],
-                                             col.regions = c(rgb(0,0,0,0),
-                                                             rgb(redVal,0,
-                                                                 blueVal,
-                                                                 stepSize)),
-                                             cuts = 1, col="transparent"))
+    plot(rast[[i]], col = c(rgb(0,0,0,0),
+                            rgb(redVal,0,blueVal,stepSize)),
+         legend = FALSE, axes = FALSE, add = TRUE)
   }
 
-  return(plotStart)
+  if(graticule){
+    grat <- graticule(lon = seq(-180, 180, 10), lat = seq(-90,90,10), crs = crs(rast))
+    plot(grat, col="gray50", add = TRUE)
+  }
+
+  if(!any(is.na(land))){
+    if(!("SpatVector" %in% class(land))){
+      land <- vect(land)
+    }
+    plot(land, col = landCol, add = TRUE)
+  }
+
+  title(main = title, cex.main = 1.1)
+
+  finalPlot <- recordPlot()
+
+  return(finalPlot)
 }
