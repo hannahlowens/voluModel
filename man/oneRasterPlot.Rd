@@ -30,6 +30,8 @@ maximum and minimum values for color scale. Helpful
 when making multiple plots for comparison. Defaults
 to minimum and maximum of input \code{rast}.}
 
+\item{graticule}{\code{logical}. Do you want a grid of lon/lat lines?}
+
 \item{title}{A title for the plot.}
 
 \item{verbose}{\code{logical}. Switching to \code{FALSE} mutes message alerting
