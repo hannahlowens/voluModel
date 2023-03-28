@@ -209,8 +209,6 @@ pointMap <- function(occs, spName, land = NA,
         coord_sf(xlim = c(min(occs[[xIndex]]), max(occs[[xIndex]])),
                  ylim = c(min(occs[[yIndex]]), max(occs[[yIndex]])),
                  expand = .05, ) +
-        xlab("Longitude") +
-        ylab("Latitude") +
         ggtitle(paste0(spName, ", ", nrow(occs), " points"))
   }else{
     point_map <- ggplot(mapping = mapping) +
@@ -222,8 +220,6 @@ pointMap <- function(occs, spName, land = NA,
       coord_sf(xlim = c(min(occs[[xIndex]]), max(occs[[xIndex]])),
                ylim = c(min(occs[[yIndex]]), max(occs[[yIndex]])),
                expand = .05, ) +
-      xlab("Longitude") +
-      ylab("Latitude") +
       ggtitle(paste0(spName, ", ", nrow(occs), " points"))
   }
   return(point_map)
@@ -480,8 +476,6 @@ pointCompMap <- function(occs1, occs2,
              ylim = c(min(occ_dat[[occ_datIndices$yIndex]]),
                       max(occ_dat[[occ_datIndices$yIndex]])),
              expand = .05, ) +
-    xlab("Longitude") +
-    ylab("Latitude") +
     labs(
       title = paste0("***", spName,"***<p>
     <span style='color:", agreeCol,";'>Overlapping</span>,
@@ -503,8 +497,6 @@ pointCompMap <- function(occs1, occs2,
                ylim = c(min(occ_dat[[occ_datIndices$yIndex]]),
                         max(occ_dat[[occ_datIndices$yIndex]])),
                expand = .05, ) +
-      xlab("Longitude") +
-      ylab("Latitude") +
       labs(
         title = paste0("***", spName,"***<p>
     <span style='color:", agreeCol,";'>Overlapping</span>,
@@ -621,7 +613,7 @@ blendColor <- function( col1 = "#1b9e777F", col2 = "#7570b37F") {
 
 #' @title Comparative raster mapping
 #'
-#' @description A convenient wrapper around `spplot`
+#' @description A convenient wrapper around `terra::plot`
 #' to generate formatted plots comparing two rasters.
 #' This is used in the context of voluModel to
 #' overlay semi-transparent distributions (coded as 1)
@@ -680,6 +672,8 @@ blendColor <- function( col1 = "#1b9e777F", col2 = "#7570b37F") {
 #' rasterComp(rast1 = rast1, rast2 = rast2)
 #'
 #' @import terra
+#' @importFrom grDevices recordPlot
+#' @importFrom graphics legend
 #'
 #' @seealso \code{\link[terra:plot]{plot}}
 #'
@@ -758,7 +752,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
               blendColor(transpColor(col1, percent = 50),
                          transpColor(col2, percent = 50)))
 
-  plot(rast1, col = c(myCols[1], myCols[2]), legend = FALSE, axes = FALSE, mar = c(2,2,3,2))
+  plot(rast1, col = c(myCols[1], myCols[2]), legend = FALSE, axes = TRUE, mar = c(2,2,3,2))
   plot(rast2, col = c(myCols[1], myCols[3]), legend = FALSE, axes = FALSE, add = T)
 
   if(graticule){
@@ -776,21 +770,21 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
   title(main = title, cex.main = 1.1)
 
   # Legend plotting
-  if(sum(terra::minmax(rast1) == 0, terra::minmax(rast2) == 0) == 4){
+  if(sum(terra::minmax(rast1) == 0, terra::minmax(rast2) == 0) == 2){
     legend(x = round(xmax(rast1)) + 1, y = round(ymax(rast1)) + 1,
            bty = "n",
            legend = c("Neither"),
            fill = myCols[1])
-  }else if(sum(terra::minmax(rast1) == 0) ==2){
+  }else if(sum(terra::minmax(rast1) == 0) == 1){
     legend(x = round(xmax(rast1)) + 1, y = round(ymax(rast1)) + 1,
            bty = "n",
-           legend = c("Neither", rast2Name, "Both"),
-           fill = myCols[-2])
-  }else if(sum(terra::minmax(rast2) == 0) ==2){
+           legend = c("Neither", rast2Name),
+           fill = myCols[c(-2, -4)])
+  }else if(sum(terra::minmax(rast2) == 0) == 1){
     legend(x = round(xmax(rast1)) + 1, y = round(ymax(rast1)) + 1,
            bty = "n",
-           legend = c("Neither", rast1Name, "Both"),
-           fill = myCols[-3])
+           legend = c("Neither", rast1Name),
+           fill = myCols[c(-3, -4)])
   } else{
     legend(x = round(xmax(rast1)) + 1, y = round(ymax(rast1)) + 1,
            bty = "n",
@@ -876,8 +870,8 @@ diversityStack <- function(rasterList, template){
 #' scale.
 #'
 #' @param land An optional coastline polygon shapefile
-#' of type `sf` to provide geographic context for the
-#' occurrence points.
+#' of types `sf` or `SpatRaster` to provide geographic
+#' context for the occurrence points.
 #'
 #' @param landCol Color for land on map.
 #'
@@ -888,11 +882,15 @@ diversityStack <- function(rasterList, template){
 #'
 #' @param title A title for the plot.
 #'
-#' @param ... Additional optional arguments to pass to
-#' `ggplot` initial plot object or `viridis`.
+#' @param verbose `logical`. Switching to `FALSE` mutes message alerting
+#' user if input `rast` values exceed a specified `scaleRange`.
 #'
-#' @return A plot of class `ggplot` mapping the values
-#' of the input raster layer
+#' @param graticule `logical`. Do you want a grid of lon/lat lines?
+#'
+#' @param ... Additional optional arguments to pass to
+#' `plot` initial plot object or `viridis`.
+#'
+#' @return A plot of mapping the values of the input raster layer
 #'
 #' @examples
 #' library(terra)
@@ -902,8 +900,6 @@ diversityStack <- function(rasterList, template){
 #' oneRasterPlot(rast = rast)
 #'
 #' @import terra
-#' @import tidyterra
-#' @import ggplot2
 #' @importFrom viridisLite viridis
 #'
 #' @seealso \code{\link[viridisLite:viridis]{viridis}} \code{\link[ggplot2:ggplot]{ggplot}}
@@ -914,15 +910,11 @@ diversityStack <- function(rasterList, template){
 oneRasterPlot <- function(rast,
                           land = NA, landCol = "black",
                           scaleRange = NA,
-                          title = "A Raster", ...){
+                          graticule = TRUE,
+                          title = "A Raster",
+                          verbose = TRUE, ...){
   #Input processing
   args <- list(...)
-
-  if("maxpixels" %in% names(args)){
-    maxpixels <- args$maxpixels
-  } else{
-    maxpixels <- 10000
-  }
 
   if("alpha" %in% names(args)){
     alpha <- args$alpha
@@ -945,7 +937,13 @@ oneRasterPlot <- function(rast,
   if("varName" %in% names(args)){
     varName <- args$varName
   } else{
-    varName = "Variable"
+    varName <- "Variable"
+  }
+
+  if("legendRound" %in% names(args)){
+    legendRound <- args$legendRound
+  } else{
+    legendRound <- 2
   }
 
   # Input error checking
@@ -975,6 +973,11 @@ oneRasterPlot <- function(rast,
     }
   }
 
+  if (!is.logical(graticule)) {
+    warning(message("Argument 'graticule' is not of type 'logical'.\n"))
+    return(NULL)
+  }
+
   colTest <- areColors(landCol)
 
   if(!any(c(all(colTest), length(colTest) < 1))){
@@ -987,41 +990,63 @@ oneRasterPlot <- function(rast,
     return(NULL)
   }
 
-  #Function body
-  if(any(is.na(scaleRange))){
-    at <- seq(from = global(rast, min, na.rm = TRUE)[[1]],
-              to = global(rast, max, na.rm = TRUE)[[1]],
-              by = (global(rast, max, na.rm = TRUE)[[1]]-global(rast, min, na.rm = TRUE)[[1]])/n)
-  } else{
-    at <- seq(from = min(scaleRange), to = max(scaleRange),
-              by = (max(scaleRange)-min(scaleRange))/n)
+  if (!is.logical(verbose)) {
+    warning(message("Argument 'verbose' is not of type 'logical'.\n"))
+    return(NULL)
   }
 
-  if(any(is.na(land))){
-    plotResult <- ggplot() +
-      geom_spatraster(data = rast, maxcell = maxpixels) +
-      scale_fill_stepsn(colours = viridis(n = n,
-                                          alpha = alpha,
-                                          option = option),
-                        breaks = at,
-                        name = varName, na.value = "transparent") +
-      coord_sf(xlim=ext(rast)[1:2], ylim=ext(rast)[3:4], expand = 0) +
-      labs(title = title) +
-      theme_minimal()
-  } else {
-    plotResult <- ggplot() +
-      geom_spatraster(data = rast, maxcell = maxpixels) +
-      scale_fill_stepsn(colours = viridis(n = n,
-                                          alpha = alpha,
-                                          option = option),
-                        breaks = at,
-                        name = varName, na.value = "transparent") +
-      geom_spatvector(data = land, fill = landCol, color = landCol) +
-      coord_sf(xlim=ext(rast)[1:2], ylim=ext(rast)[3:4], expand = 0) +
-      labs(title = title) +
-      theme_minimal()
+  #Function body
+  if(any(is.na(scaleRange))){
+    begin <- unlist(global(rast, min, na.rm = TRUE))
+    end <- unlist(global(rast, max, na.rm = TRUE))
+  } else if(any(global(rast, min, na.rm = TRUE) < min(scaleRange),
+                global(rast, max, na.rm = TRUE) > max(scaleRange))){
+    begin <- unlist(global(rast, min, na.rm = TRUE))
+    end <- unlist(global(rast, max, na.rm = TRUE))
+
+    if(verbose){
+      message(paste0("Input raster extremes exceed specified scale range.\n",
+                     "Using input raster max and min instead."))
+    }
+
+  } else{
+    begin <- min(scaleRange)
+    end <- max(scaleRange)
   }
-  return(plotResult)
+
+  colVals <- seq(from = begin, to = end, by = (end-begin)/n)
+  colVals <- data.frame("from" = colVals[1:(length(colVals)-1)],
+                        "to" = colVals[2:length(colVals)],
+                        "color" = viridisLite::viridis(n = n, alpha = 1, option = option))
+
+  plot(rast,
+       col = colVals,
+       legend = FALSE, mar = c(2,2,3,2), axes = TRUE)
+
+  if(graticule){
+    grat <- graticule(lon = seq(-180, 180, 10), lat = seq(-90,90,10), crs = crs(rast))
+    plot(grat, col="gray50", add = TRUE)
+  }
+
+  if(!any(is.na(land))){
+    if(!("SpatVector" %in% class(land))){
+      land <- vect(land)
+    }
+    plot(land, col = landCol, add = TRUE)
+  }
+
+  legend(x = round(xmax(rast)) + 1, y = round(ymax(rast)) + 1,
+         title = varName,
+         bty = "n",
+         legend = paste0(round(colVals[,1], legendRound),
+                         " - ", round(colVals[,2], legendRound)),
+         fill = colVals[,3])
+
+  title(main = title, cex.main = 1.1)
+
+  finalPlot <- recordPlot()
+
+  return(finalPlot)
 }
 
 #' @title Plotting 3D model in 2D
@@ -1071,6 +1096,7 @@ oneRasterPlot <- function(rast,
 #' plotLayers(distBrick)
 #'
 #' @import terra
+#' @importFrom grDevices recordPlot
 #'
 #' @seealso \code{\link[viridisLite:viridis]{viridis}} \code{\link[sp:spplot]{spplot}}
 #'
@@ -1107,11 +1133,17 @@ plotLayers <- function(rast,
     return(NULL)
   }
 
+  if (!is.logical(graticule)) {
+    warning(message("Argument 'graticule' is not of type 'logical'.\n"))
+    return(NULL)
+  }
+
   if(is.null(title)){
    title <- paste0("Suitability from ",
            names(rast)[[1]]," to ",
            names(rast)[[nlyr(rast)]])
   }
+
 
   #Function body
   redVal <- 1
@@ -1121,7 +1153,7 @@ plotLayers <- function(rast,
   plot(rast[[1]],
        col = c(rgb(0,0,0,0),
                rgb(redVal,0,blueVal,stepSize)),
-       legend = FALSE, mar = c(2,2,3,2), axes = FALSE)
+       legend = FALSE, mar = c(2,2,3,2), axes = TRUE)
 
   for(i in 2:nlyr(rast)){
     redVal <- redVal - stepSize
