@@ -146,8 +146,8 @@ test_that("oneRasterPlot works", {
   divStack <- diversityStack(list(rast1, rast2), template = rast2)
   expect_warning(oneRasterPlot(rast = "a"))
   expect_warning(oneRasterPlot(rast = divStack, land = "a"))
-  expect_equal(class(oneRasterPlot(divStack)), c("gg", "ggplot"))
-  expect_equal(class(oneRasterPlot(divStack, land = land)), c("gg", "ggplot"))
+  expect_equal(class(oneRasterPlot(rast = divStack)), c("recordedplot"))
+  expect_equal(class(oneRasterPlot(divStack, land = land)), c("recordedplot"))
 })
 
 rast1 <- rast(ncol=10, nrow=10)

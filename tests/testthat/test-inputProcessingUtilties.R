@@ -1,5 +1,4 @@
 library(terra)
-library(sp)
 
 # voluModel:::columnParse() tests ----
 # Create sample raster
