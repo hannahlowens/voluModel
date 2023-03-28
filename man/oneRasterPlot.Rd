@@ -9,7 +9,9 @@ oneRasterPlot(
   land = NA,
   landCol = "black",
   scaleRange = NA,
+  graticule = TRUE,
   title = "A Raster",
+  verbose = TRUE,
   ...
 )
 }
@@ -18,8 +20,8 @@ oneRasterPlot(
 scale.}
 
 \item{land}{An optional coastline polygon shapefile
-of type \code{sf} to provide geographic context for the
-occurrence points.}
+of types \code{sf} or \code{SpatRaster} to provide geographic
+context for the occurrence points.}
 
 \item{landCol}{Color for land on map.}
 
@@ -30,12 +32,14 @@ to minimum and maximum of input \code{rast}.}
 
 \item{title}{A title for the plot.}
 
+\item{verbose}{\code{logical}. Switching to \code{FALSE} mutes message alerting
+user if input \code{rast} values exceed a specified \code{scaleRange}.}
+
 \item{...}{Additional optional arguments to pass to
-\code{ggplot} initial plot object or \code{viridis}.}
+\code{plot} initial plot object or \code{viridis}.}
 }
 \value{
-A plot of class \code{ggplot} mapping the values
-of the input raster layer
+A plot of mapping the values of the input raster layer
 }
 \description{
 A convenient wrapper around \code{ggplot}

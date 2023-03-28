@@ -60,7 +60,7 @@ A plot of class \code{recordedplot} overlaying mapped,
 semitransparent extents of the input rasters
 }
 \description{
-A convenient wrapper around \code{spplot}
+A convenient wrapper around \code{terra::plot}
 to generate formatted plots comparing two rasters.
 This is used in the context of voluModel to
 overlay semi-transparent distributions (coded as 1)
