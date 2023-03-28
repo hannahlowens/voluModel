@@ -327,7 +327,7 @@ AOUpresence <- classify(oxygenSmooth[[1]],
 
 # Put it all together, surface
 envelopeModelSurface <- temperaturePresence * AOUpresence
-envelopeModelSurface <- mask(raster::crop(envelopeModelSurface, studyRegion), 
+envelopeModelSurface <- mask(crop(envelopeModelSurface, studyRegion), 
                              mask = studyRegion)
 
 # Get limits, bottom

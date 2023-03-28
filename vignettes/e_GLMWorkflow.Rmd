@@ -22,10 +22,6 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
-knitr::opts_knit$set(root.dir = system.file('extdata', 
-                                            package='voluModel'))
-load(system.file("extdata/oxygenSmooth.RData", 
-                 package='voluModel'))
 ```
 
 # Introduction 
@@ -37,9 +33,6 @@ Here are the packages you will need.
 library(voluModel) # Because of course
 library(dplyr) # For occurrence data filtration
 library(ggplot2) # For fancy plotting
-library(rgdal,
-        options("rgdal_show_exportToProj4_warnings"="none")) # For vector stuff. Will eventually be replaced with sf.
-library(raster) # For raster stuff. Will eventually be replaced with terra.
 library(terra) # Now being transitioned in
 library(sf) # Now being transitioned in
 library(viridisLite) # For high-contrast plotting palettes
@@ -82,27 +75,29 @@ td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),
       exdir = paste0(td, "/temperature"), junkpaths = T)
-temperature <- readOGR(dsn = paste0(td, "/temperature"), 
-                       layer ="woa18_decav_t00mn01_cropped")
-unlink(paste0(td, "/temperature"), recursive = T)
-
+temperature <- sf::st_read(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
+temperature <- as(temperature, "Spatial")
 temperature@data[temperature@data == -999.999] <- NA
 
-# Creating a RasterBrick
-temperature <- rasterFromXYZ(cbind(temperature@coords,
-                                   temperature@data))
+# Turn into SpatRaster
+template <- rast(nrows = length(unique(temperature@coords[,2])),
+                            ncols = length(unique(temperature@coords[,1])), 
+                            extent = ext(temperature))
+tempTerVal <- rasterize(x = temperature@coords, y = template, 
+                        values = temperature@data)
 
 # Get names of depths
 envtNames <- gsub("[d,M]", "", names(temperature))
 envtNames[[1]] <- "0"
-names(temperature) <- envtNames
+names(tempTerVal) <- envtNames
+temperature <- tempTerVal
 ```
 
 Pre-processed apparent oxygen utilization is loaded from an `.Rdata` file for speed.
 
 ```{r environmental data loading oxygen, eval=T, asis=T, warning=FALSE}
-load(system.file("extdata/oxygenSmooth.RData", 
-                 package='voluModel'))
+oxygenSmooth <- rast(system.file("extdata/oxygenSmooth.tif", 
+                                 package='voluModel'))
 
 # Change names to match temperature
 names(oxygenSmooth) <- names(temperature)
@@ -114,7 +109,7 @@ The first step is down-sampling the occurrence data so that there is only one oc
 
 ```{r downsample to voxel, eval=TRUE, warning=FALSE, message=FALSE}
 # Gets the layer index for each occurrence by matching to depth
-layerNames <- as.numeric(gsub("[X]", "", names(temperature)))
+layerNames <- as.numeric(names(temperature))
 occsClean$index <- unlist(lapply(occsClean$depth, FUN = function(x) which.min(abs(layerNames - x))))
 indices <- unique(occsClean$index)
 
@@ -152,7 +147,7 @@ points(occsClean[,c("decimalLongitude", "decimalLatitude")],
        pch = 20, col = "red", cex = 1.5)
 ```
 ```{r environmental background sampling hidden, warning=FALSE, echo=FALSE}
-backgroundSamplingRegions <- readRDS(system.file("extdata/backgroundSamplingRegions.rds",
+backgroundSamplingRegions <- vect(system.file("extdata/backgroundSamplingRegions.shp",
                               package='voluModel'))
 ```
 
@@ -181,8 +176,8 @@ Then, we generate background data by drawing occurrences from the XY extent of t
 ```{r background sampling}
 # Background
 backgroundVals <- mSampling3D(occs = occsClean, 
-                              envBrick = rast(temperature), 
-                              mShp = vect(backgroundSamplingRegions), 
+                              envBrick = temperature, 
+                              mShp = backgroundSamplingRegions, 
                               depthLimit = c(5, 800))
 oxyVals <- xyzSample(occs = backgroundVals, oxygenSmooth)
 tempVals <- xyzSample(occs = backgroundVals, temperature)
@@ -232,22 +227,22 @@ glmModel <- glm(formula = response ~ Temperature *  AOU,
 summary(glmModel)
 ```
 
-Now we project the model back into geographic space; at this stage, the niche model is being used to model the geographic distribution of putatively suitable habit for Luminous Hake (an ENM becomes an SDM).
+Now we project the model back into geographic space; at this stage, the niche model is being used to model the geographic distribution of putative suitable habit for Luminous Hake (an ENM becomes an SDM).
 
 ```{r project glm niche model}
-layerNames <- as.numeric(gsub("[X]", "", names(temperature)))
+layerNames <- as.numeric(names(temperature))
 index <- seq(from = match(min(datForMod$depth), layerNames), 
              to = match(max(datForMod$depth), layerNames), by = 1)
 depthPred <- NULL
 for(j in index){
-  depthPreds <- stack(temperature[[j]], oxygenSmooth[[j]])
+  depthPreds <- c(temperature[[j]], oxygenSmooth[[j]])
   crs(depthPreds) <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
   names(depthPreds) <- c("Temperature", "AOU")
   depthPred[[j]] <- mask(predict(depthPreds, glmModel), backgroundSamplingRegions)
   depthPred[[j]] <- crop(depthPred[[j]], backgroundSamplingRegions)
   names(depthPred[[j]]) <- layerNames[[j]]
 }
-glmPred <- stack(depthPred[!unlist(lapply(depthPred, FUN = function(x) is.null(x)))])
+glmPred <- rast(depthPred[!unlist(lapply(depthPred, FUN = function(x) is.null(x)))])
 ```
 
 And here's what the SDM looks like threshholded to presences and absences; raw ENM suitability values above the threshold value become presences, values below the threshold become absences. This is useful in a variety of applications, including, but not limited to visualizing the model. In this case, the threshold is the bottom tenth percentile of suitability scores at occurrences. What this means is that we are interpreting about 10% of the occurrence points to be erroneous. It is important to remember that there are MANY different thresholds you may choose based on your dataset and the goals of your analysis. Try to choose wisely.
@@ -255,9 +250,10 @@ And here's what the SDM looks like threshholded to presences and absences; raw E
 ```{r glm niche threshold}
 glmThreshold <- quantile(xyzSample(datForMod[datForMod$response == 1,
                                              c("depth", "decimalLongitude", "decimalLatitude")], 
-                                   brick(glmPred)), .1, na.rm = T)[[1]] # MS90
+                                   glmPred), .1, na.rm = T)[[1]] # MS90
 glmThresholded <- glmPred > glmThreshold
-glmThresholded <- reclassify(glmThresholded, c(NA, NA, 0), include.lowest = T)
+rclMatrix <- matrix(c(NA, NA, 0), ncol = 3, byrow = TRUE)
+glmThresholded <- classify(glmThresholded, rclMatrix, include.lowest = T)
 ```
 
 `plotLayers()` plots a transparent layer of suitable habitat for each depth layer. The redder the color, the shallower the layer, the bluer, the deeper. The more saturated the color, the more layers with suitable habitat. Here, I am plotting suitability from 0m to 800m, the depth range of occurrences used to train the envelope model.
@@ -276,7 +272,7 @@ Sometimes ecological models fail to extrapolate realistically when they are proj
 
 ```{r calculate MESS, warning=FALSE}
 # Prepare environmental data
-layerNames <- as.numeric(gsub("[X]", "", names(temperature)))
+layerNames <- as.numeric(names(temperature))
 datForMod$index <- unlist(lapply(datForMod$depth, FUN = function(x) which.min(abs(layerNames - x))))
 indices <- unique(datForMod$index)
 
@@ -305,10 +301,13 @@ In the second `RasterBrick`, `noExtrapolation`, I reclassify the layers so that 
 noExtrapolation <- messBrick > 0
 
 glmThreshNoExtrapolation <- NULL
-for(i in 1:nlayers(noExtrapolation)){
-  croppedLayer <- glmThresholded[[i]] * noExtrapolation[[i]]
-  glmThreshNoExtrapolation <- stack(c(glmThreshNoExtrapolation, croppedLayer))
+for(i in 1:nlyr(noExtrapolation)){
+  extrapCut <- crop(noExtrapolation[[i]], y = glmThresholded[[i]])
+  croppedLayer <- glmThresholded[[i]] * extrapCut
+  glmThreshNoExtrapolation[[i]] <- croppedLayer
 }
+
+glmThreshNoExtrapolation <- rast(glmThreshNoExtrapolation)
 
 # Plot MESS
 plotLayers(glmThreshNoExtrapolation, land = land, 
@@ -316,6 +315,12 @@ plotLayers(glmThreshNoExtrapolation, land = land,
            title = "Areas of suitable habitat with no model extrapolation,\n 5m to 800m")
 ```
 
+# Tidying up
+Last, we need to close the temporary directory we opened when we opened the data.
+
+```{r cleanup temporary directory}
+unlink(td, recursive = T)
+```
 
 # References
 
