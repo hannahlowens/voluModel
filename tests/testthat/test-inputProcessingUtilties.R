@@ -142,10 +142,10 @@ dd <- data.frame(SURFACE = 1:25,
 dd$d25M[c(1:5, 18:25)] <- NA
 dd$d10M[c(3:4, 21:23)] <- NA
 dd$d5M[c(4, 15, 22)] <- NA
+dd <- cbind(coords, dd)
 
 # Create SpatialPointsDataFrame
-sp <- SpatialPointsDataFrame(coords = coords,
-                             data = dd)
+sp <- vect(dd, geom = c("x", "y"))
 
 test_that("bottomRaster input warnings behave as expected", {
   expect_error(bottomRaster())
