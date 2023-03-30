@@ -7,7 +7,7 @@
 bottomRaster(rawPointData)
 }
 \arguments{
-\item{rawPointData}{A \code{SpatialPointsDataFrame} object from which
+\item{rawPointData}{A \code{SpatVector} object from which
 bottom variables will be sampled. See Details for more about format.}
 }
 \value{
@@ -19,7 +19,7 @@ Samples deepest depth values from a
 \code{SpatialPointsDataFrame} and generates a \code{SpatRaster}.
 }
 \details{
-\code{rawPointData} is a \code{SpatialPointsDataFrame} object that
+\code{rawPointData} is a \code{SpatVector} object that
 contains measurements of a single environmental variable (e.g.
 salinity, temperature, etc.) with x, y, and z coordinates. The
 measurements in the \code{data.frame} should be organized so that each
@@ -29,11 +29,13 @@ by the World Ocean Atlas
 (\url{https://www.ncei.noaa.gov/access/world-ocean-atlas-2018/}).
 The function selects the "deepest" (rightmost) measurement at each
 x, y coordinate pair that contains data. These measurements are then
-rasterized at the resolution and extent of the x,y coordinates.
+rasterized at the resolution and extent of the x,y coordinates, under
+the assumption that x and y intervals are equal and represent the center
+of a cell.
 }
 \examples{
 
-library(sp)
+library(terra)
 
 # Create point grid
 coords <- data.frame(x = rep(seq(1:5), times = 5),
@@ -50,8 +52,7 @@ dd$d10M[c(3:5, 21:23)] <- NA
 dd$d5M[c(4, 22)] <- NA
 
 # Create SpatialPointsDataFrame
-sp <- sp::SpatialPointsDataFrame(coords = coords,
-                            data = dd)
+sp <- vect(dd, geom = c("x", "y"))
 
 # Here's the function
 result <- bottomRaster(rawPointData = sp)
