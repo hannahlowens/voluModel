@@ -209,6 +209,8 @@ pointMap <- function(occs, spName, land = NA,
         coord_sf(xlim = c(min(occs[[xIndex]]), max(occs[[xIndex]])),
                  ylim = c(min(occs[[yIndex]]), max(occs[[yIndex]])),
                  expand = .05, ) +
+        xlab("") +
+        ylab("") +
         ggtitle(paste0(spName, ", ", nrow(occs), " points"))
   }else{
     point_map <- ggplot(mapping = mapping) +
@@ -220,6 +222,8 @@ pointMap <- function(occs, spName, land = NA,
       coord_sf(xlim = c(min(occs[[xIndex]]), max(occs[[xIndex]])),
                ylim = c(min(occs[[yIndex]]), max(occs[[yIndex]])),
                expand = .05, ) +
+      xlab("") +
+      ylab("") +
       ggtitle(paste0(spName, ", ", nrow(occs), " points"))
   }
   return(point_map)
@@ -476,6 +480,8 @@ pointCompMap <- function(occs1, occs2,
              ylim = c(min(occ_dat[[occ_datIndices$yIndex]]),
                       max(occ_dat[[occ_datIndices$yIndex]])),
              expand = .05, ) +
+    xlab("") +
+    ylab("") +
     labs(
       title = paste0("***", spName,"***<p>
     <span style='color:", agreeCol,";'>Overlapping</span>,
@@ -497,6 +503,8 @@ pointCompMap <- function(occs1, occs2,
                ylim = c(min(occ_dat[[occ_datIndices$yIndex]]),
                         max(occ_dat[[occ_datIndices$yIndex]])),
                expand = .05, ) +
+      xlab("") +
+      ylab("") +
       labs(
         title = paste0("***", spName,"***<p>
     <span style='color:", agreeCol,";'>Overlapping</span>,
@@ -770,17 +778,17 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
   title(main = title, cex.main = 1.1)
 
   # Legend plotting
-  if(sum(terra::minmax(rast1) == 0, terra::minmax(rast2) == 0) == 2){
+  if(sum(terra::minmax(rast1), terra::minmax(rast2)) == 0){
     legend(x = round(xmax(rast1)) + 1, y = round(ymax(rast1)) + 1,
            bty = "n",
            legend = c("Neither"),
            fill = myCols[1])
-  }else if(sum(terra::minmax(rast1) == 0) == 1){
+  }else if(terra::minmax(rast1)[2] == 0){
     legend(x = round(xmax(rast1)) + 1, y = round(ymax(rast1)) + 1,
            bty = "n",
            legend = c("Neither", rast2Name),
            fill = myCols[c(-2, -4)])
-  }else if(sum(terra::minmax(rast2) == 0) == 1){
+  }else if(terra::minmax(rast2)[2] == 0){
     legend(x = round(xmax(rast1)) + 1, y = round(ymax(rast1)) + 1,
            bty = "n",
            legend = c("Neither", rast1Name),
