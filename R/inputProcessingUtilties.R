@@ -194,13 +194,13 @@ downsample <- function(occs, rasterTemplate, verbose = TRUE){
 #' @description Samples deepest depth values from a
 #' `SpatialPointsDataFrame` and generates a `SpatRaster`.
 #'
-#' @param rawPointData A `SpatialPointsDataFrame` object from which
+#' @param rawPointData A `SpatVector` object from which
 #' bottom variables will be sampled. See Details for more about format.
 #'
 #' @return A `SpatRaster` designed to approximate sea bottom
 #' measurements for modeling species' distributions and/or niches.
 #'
-#' @details `rawPointData` is a `SpatialPointsDataFrame` object that
+#' @details `rawPointData` is a `SpatVector` object that
 #' contains measurements of a single environmental variable (e.g.
 #' salinity, temperature, etc.) with x, y, and z coordinates. The
 #' measurements in the `data.frame` should be organized so that each
@@ -210,11 +210,13 @@ downsample <- function(occs, rasterTemplate, verbose = TRUE){
 #' (\url{https://www.ncei.noaa.gov/access/world-ocean-atlas-2018/}).
 #' The function selects the "deepest" (rightmost) measurement at each
 #' x, y coordinate pair that contains data. These measurements are then
-#' rasterized at the resolution and extent of the x,y coordinates.
+#' rasterized at the resolution and extent of the x,y coordinates, under
+#' the assumption that x and y intervals are equal and represent the center
+#' of a cell.
 #'
 #' @examples
 #'
-#' library(sp)
+#' library(terra)
 #'
 #' # Create point grid
 #' coords <- data.frame(x = rep(seq(1:5), times = 5),
@@ -231,34 +233,41 @@ downsample <- function(occs, rasterTemplate, verbose = TRUE){
 #' dd$d5M[c(4, 22)] <- NA
 #'
 #' # Create SpatialPointsDataFrame
-#' sp <- sp::SpatialPointsDataFrame(coords = coords,
-#'                             data = dd)
+#' sp <- vect(dd, geom = c("x", "y"))
 #'
 #' # Here's the function
 #' result <- bottomRaster(rawPointData = sp)
 #' plot(result)
 #'
 #' @import terra
-#' @importFrom stats complete.cases
 #'
 #' @keywords inputProcessing
 #' @export
 
 # Samples bottom values from raster bricks
 bottomRaster <- function(rawPointData){
-  if(!is(rawPointData, "SpatialPointsDataFrame")){
-    warning(paste0("'rawPointData' must be class 'SpatialPointsDataFrame'.\n"))
+  if(!is(rawPointData, "SpatVector")){
+    warning(paste0("'rawPointData' must be class 'SpatVector'.\n"))
     return(NULL)
   }
 
-  bottomSample <- apply(rawPointData@data, MARGIN = 1,
-                        FUN = function(x) tail(x[!is.na(x)],1))
-  rawPointData@data$Bottom <- bottomSample
+  rpdf <- as.data.frame(rawPointData)
 
-  template <- rast(nrows = length(unique(rawPointData@coords[,2])),
-                              ncols = length(unique(rawPointData@coords[,1])),
-                              extent = ext(rawPointData))
-  bRaster <- rasterize(x = rawPointData@coords, y = template,
-                          values = rawPointData@data$Bottom)
+  bottomSample <- apply(rpdf, MARGIN = 1,
+                        FUN = function(x) tail(x[!is.na(x)],1))
+  rawPointData$Bottom <- bottomSample
+
+  rpdGeom <- geom(rawPointData)
+
+  centeringAdjustment <- min(abs(diff(unique(rpdGeom[,"x"]))), abs(diff(unique(rpdGeom[,"y"]))))/2
+  oldExtent <- ext(rawPointData)
+  newExtent <- ext(oldExtent[1] - centeringAdjustment,
+                   oldExtent[2] + centeringAdjustment,
+                   oldExtent[3] - centeringAdjustment,
+                   oldExtent[4] + centeringAdjustment)
+
+  template <- rast(nrows=length(unique(rpdGeom[,"y"])),
+                   ncols=length(unique(rpdGeom[,"x"])), extent = newExtent)
+  bRaster <- rasterize(x = rawPointData, y = template, field = "Bottom")
   return(bRaster)
 }
