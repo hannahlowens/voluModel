@@ -16,7 +16,7 @@ measurements for modeling species' distributions and/or niches.
 }
 \description{
 Samples deepest depth values from a
-\code{SpatialPointsDataFrame} and generates a \code{SpatRaster}.
+\code{SpatVector} data frame and generates a \code{SpatRaster}.
 }
 \details{
 \code{rawPointData} is a \code{SpatVector} object that

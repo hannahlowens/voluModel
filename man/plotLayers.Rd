@@ -65,6 +65,6 @@ plotLayers(distBrick)
 
 }
 \seealso{
-\code{\link[viridisLite:viridis]{viridis}} \code{\link[sp:spplot]{spplot}}
+\code{\link[viridisLite:viridis]{viridis}}
 }
 \keyword{plotting}
