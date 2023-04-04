@@ -42,7 +42,7 @@
 #' values(r2) <- c(rep(20, times = 50), rep(60, times = 50))
 #' r3 <- rast(ncol=10, nrow=10)
 #' values(r3) <- 8
-#' envBrick1 <- rast(r1, r2, r3)
+#' envBrick1 <- c(r1, r2, r3)
 #' names(envBrick1) <- c(0, 10, 30)
 #'
 #' r1 <- rast(ncol=10, nrow=10)
