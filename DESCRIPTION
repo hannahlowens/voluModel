@@ -54,7 +54,6 @@ Suggests:
     rmarkdown,
     rnaturalearth,
     rnaturalearthdata,
-    sp,
     tibble
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
