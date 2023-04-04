@@ -1106,7 +1106,7 @@ oneRasterPlot <- function(rast,
 #' @import terra
 #' @importFrom grDevices recordPlot
 #'
-#' @seealso \code{\link[viridisLite:viridis]{viridis}} \code{\link[sp:spplot]{spplot}}
+#' @seealso \code{\link[viridisLite:viridis]{viridis}}
 #'
 #' @keywords plotting
 #'
