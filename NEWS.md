@@ -2,6 +2,8 @@
 
 - scaleRange argument added to oneRasterPlot().
 - MESS3D now calculated using modEvA::MESS() instead of dismo::mess().
+- Removed dependency on `raster` and `rgdal`. Raster visualizations now done with `terra` and include optional graticule plotting.
+- Added function to generate `SpatRaster` template with input `SpatVector` points centered on template cells.
 
 # voluModel 0.1.9
 
