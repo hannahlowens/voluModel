@@ -127,7 +127,7 @@ test_that("downsample special case checks", {
   expect_true(nrow(result) == 1)
 })
 
-# bottomRaster() tests ----
+# centerPointRasterTemplate() tests ----
 
 # Create point grid
 coords <- data.frame(x = rep(seq(1:5), times = 5),
@@ -144,9 +144,22 @@ dd$d10M[c(3:4, 21:23)] <- NA
 dd$d5M[c(4, 15, 22)] <- NA
 dd <- cbind(coords, dd)
 
-# Create SpatialPointsDataFrame
+# Create SpatVector
 sp <- vect(dd, geom = c("x", "y"))
 
+test_that("centerPointRasterTemplate input warnings behave as expected", {
+  expect_error(centerPointRasterTemplate())
+  expect_warning(centerPointRasterTemplate(rawPointData = "a"))
+})
+
+test_that("centerPointRasterTemplate outputs as expected", {
+  result <- centerPointRasterTemplate(rawPointData = sp)
+  expect_true(class(result) == "SpatRaster")
+  expect_warning(values(result))
+  expect_true(suppressWarnings(sum(is.na(values(result)))) == 25)
+})
+
+# bottomRaster() tests ----
 test_that("bottomRaster input warnings behave as expected", {
   expect_error(bottomRaster())
   expect_warning(bottomRaster(rawPointData = "a"))

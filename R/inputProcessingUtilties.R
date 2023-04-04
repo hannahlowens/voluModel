@@ -192,7 +192,7 @@ downsample <- function(occs, rasterTemplate, verbose = TRUE){
 #' @title Bottom raster generation
 #'
 #' @description Samples deepest depth values from a
-#' `SpatialPointsDataFrame` and generates a `SpatRaster`.
+#' `SpatVector` data frame and generates a `SpatRaster`.
 #'
 #' @param rawPointData A `SpatVector` object from which
 #' bottom variables will be sampled. See Details for more about format.
@@ -253,10 +253,68 @@ bottomRaster <- function(rawPointData){
 
   rpdf <- as.data.frame(rawPointData)
 
+  template <- centerPointRasterTemplate(rawPointData)
+
   bottomSample <- apply(rpdf, MARGIN = 1,
                         FUN = function(x) tail(x[!is.na(x)],1))
   rawPointData$Bottom <- bottomSample
 
+  bRaster <- terra::rasterize(x = rawPointData, y = template, field = "Bottom")
+  return(bRaster)
+}
+
+#' @title Center Point Raster Template
+#'
+#' @description Samples deepest depth values from a
+#' `SpatVector` point object and generates a `SpatRaster`.
+#'
+#' @param rawPointData A `SpatVector` object with points
+#' that will represent the center of each cell in the output
+#' template.
+#'
+#' @return An empty `SpatRaster` designed to serve as a template for
+#' rasterizing `SpatVector` objects.
+#'
+#' @details `rawPointData` is a `SpatVector` object that
+#' contains x and y coordinates.
+#'
+#' @seealso \code{\link[terra:rasterize]{rasterize}}
+#'
+#' @examples
+#'
+#' library(terra)
+#'
+#' # Create point grid
+#' coords <- data.frame(x = rep(seq(1:5), times = 5),
+#'                     y = unlist(lapply(1:5, FUN = function(x) {
+#'                       rep(x, times = 5)})))
+#'
+#' # Create data and add NAs to simulate uneven bottom depths
+#' dd <- data.frame(SURFACE = 1:25,
+#'                 d5M = 6:30,
+#'                 d10M = 11:35,
+#'                 d25M = 16:40)
+#' dd$d25M[c(1:5, 18:25)] <- NA
+#' dd$d10M[c(3:5, 21:23)] <- NA
+#' dd$d5M[c(4, 22)] <- NA
+#'
+#' # Create SpatialPointsDataFrame
+#' sp <- vect(dd, geom = c("x", "y"))
+#'
+#' # Here's the function
+#' template <- centerPointRaster(rawPointData = sp)
+#' class(template)
+#'
+#' @import terra
+#'
+#' @keywords inputProcessing
+#' @export
+#'
+centerPointRasterTemplate <- function(rawPointData){
+  if(!is(rawPointData, "SpatVector")){
+    warning(paste0("'rawPointData' must be class 'SpatVector'.\n"))
+    return(NULL)
+  }
   rpdGeom <- geom(rawPointData)
 
   centeringAdjustment <- min(abs(diff(unique(rpdGeom[,"x"]))), abs(diff(unique(rpdGeom[,"y"]))))/2
@@ -268,6 +326,5 @@ bottomRaster <- function(rawPointData){
 
   template <- rast(nrows=length(unique(rpdGeom[,"y"])),
                    ncols=length(unique(rpdGeom[,"x"])), extent = newExtent)
-  bRaster <- rasterize(x = rawPointData, y = template, field = "Bottom")
-  return(bRaster)
+  return(template)
 }
