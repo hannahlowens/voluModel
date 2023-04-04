@@ -37,7 +37,6 @@ library(viridisLite) # For high-contrast plotting palettes
 library(dplyr) # To filter data
 library(terra) # Now being transitioned in
 library(sf) # Now being transitioned in
-library(sp)
 
 # Load data
 oxygenSmooth <- rast(system.file("extdata/oxygenSmooth.tif", 
@@ -46,20 +45,16 @@ oxygenSmooth <- rast(system.file("extdata/oxygenSmooth.tif",
 occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
                              package='voluModel'))
 
+# Temperature
 td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),
       exdir = paste0(td, "/temperature"), junkpaths = T)
-temperature <- sf::st_read(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
-temperature <- as(temperature, "Spatial")
-temperature@data[temperature@data == -999.999] <- NA
+temperature <- vect(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
 
-# Turn into SpatRaster
-template <- rast(nrows = length(unique(temperature@coords[,2])),
-                            ncols = length(unique(temperature@coords[,1])), 
-                            extent = ext(temperature))
-tempTerVal <- rasterize(x = temperature@coords, y = template, 
-                        values = temperature@data)
+# Creating a SpatRaster vector
+template <- centerPointRasterTemplate(temperature)
+tempTerVal <- rasterize(x = temperature, y = template, field = names(temperature))
 
 # Get names of depths
 envtNames <- gsub("[d,M]", "", names(temperature))

@@ -22,108 +22,93 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
-library(voluModel) # Since this is the package this vignette is about.
-library(terra) # The workhorse
-library(tibble) # For data organization
-library(ggplot2) # For supplementary visualization
 ```
 
 # Introduction 
 
 Naturally, to build 3D distribution models, one needs three-dimensionally structured environmental data. These data may come in the form of interpolated *in situ* measurements (e.g. [NOAA's World Ocean Atlas dataset](https://www.ncei.noaa.gov/access/world-ocean-atlas-2018/); Garcia et al. 2018a) or as outputs from climate models, either as stand-alone ocean components or as a component of coupled atmosphere-ocean models (e.g. CCSM3, Collins et al. 2006; HadCM3, Valdes et al. 2017). Typically, these data are organized as a series of horizontal layers that are stacked by depth. 
 
-```{r load packages, message=FALSE, warning=FALSE, eval=FALSE}
+```{r load packages, message=FALSE, warning=FALSE}
 library(voluModel) # Since this is the package this vignette is about.
 library(tibble) # For data organization
 library(ggplot2) # For supplementary visualization
 library(fields) # For raster interpolation
-library(latticeExtra) # Some fancy plotting
 library(terra) # Now being transitioned in
-library(sf) # Now being transitioned in
 ```
 
 # Data Inputs
 
-First, let's look at a relatively simple environmental variable from the WOA: temperature (Locarnini et al, 2018). These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. You can download the full dataset via the WOA website. Our first task is to read in the shapefile as a `SpatialPointsDataFrame`. Note that each row in `temperature@data` is a set of horizontal coordinates. Each column is a vertical position in the water column. Make sure to check the metadata of the data you use. Different sources may use vertical depth structures.
+First, let's look at a relatively simple environmental variable from the WOA: temperature (Locarnini et al, 2018). These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. You can download the full dataset via the WOA website. Our first task is to read in the shapefile as a `SpatVector`. Note that each row in `temperature` is a set of horizontal coordinates. Each column is a vertical position in the water column. Make sure to check the metadata of the data you use. Different sources may use vertical depth structures.
 
 ```{r environmental data loading temperature, eval=T, message=FALSE, warning=FALSE, asis=T}
+# Temperature
 td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),
       exdir = paste0(td, "/temperature"), junkpaths = T)
-temperature <- sf::st_read(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
-temperature <- as(temperature, "Spatial")
-temperature@data[temperature@data == -999.999] <- NA
+temperature <- vect(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
 
 # Looking at the dataset
-head(temperature@data)
+head(temperature)
 
 # Plotting the dataset
 layout(matrix(c(1, 2), ncol=2, byrow=TRUE), widths=c(4, 1))
 land <- rnaturalearth::ne_countries(scale = "small", 
                                     returnclass = "sf")[1]
-ext <- ext(temperature)
-plot(temperature, main = "Distribution of voluModel Subset\nof WOA Temperature 2018",
-     pch = 20, col = "red", xlim = ext[1:2], ylim = ext[3:4], cex = .6)
+temperatureForPlot <- temperature
+crs(temperatureForPlot) <- crs(land) 
+ext <- ext(temperatureForPlot)
+plot(temperatureForPlot, main = "Distribution of voluModel Subset\nof WOA Temperature 2018",
+     pch = 20, col = "red", xlim = ext[1:2], ylim = ext[3:4], cex = .6, mar = c(2,2,3,2))
 plot(land, col = "black", add = T)
 
 # What does the WOA depth structure look like?
-depths <- colnames(temperature@data)
+depths <- names(temperatureForPlot)
 depths <- as.numeric(gsub(depths[-1], pattern = "[d,M]", replacement = ""))
 plot(0, xlim = c(0,1), ylim = c(0-max(depths), 0), axes=FALSE, type = "n", xlab = "", ylab = "Depth Intervals (m)")
 axis(2, at = 0-depths, labels = depths)
 ```
 
-Next, we convert temperature into a `RasterBrick`. While we are at it, we will generate a raster from the deepest value available for each point. While you might call this a "bottom" raster, it is important to note that in some cases, values are not available for the bottom. After the `RasterBrick` is created, we give it the same depth names as the columns in the `SpatialPointsDataFrame`. This is important, because `voluModel` uses these names as z coordinates when handling 3D data. I am using `oneRasterPlot()` from voluModel to visualize the rasters using a uniform, high-contrast asthetic.
+Next, we convert temperature into a `SpatRaster`. While we are at it, we will generate a raster from the deepest value available for each point. While you might call this a "bottom" raster, it is important to note that in some cases, values are not available for the bottom. After the `SpatRaster` is created, we give it the same depth names as the columns in the `SpatVector`. This is important, because `voluModel` uses these names as z coordinates when handling 3D data. I am using `oneRasterPlot()` from voluModel to visualize the rasters using a uniform, high-contrast aesthetic.
 
 ```{r temperature processing, eval=FALSE}
-#Creating a bottom raster from the point shapefile
+# Creating a bottom raster
 temperatureBottom <- bottomRaster(temperature)
 
 # Creating a SpatRaster vector
-temperatureTemplate <- rast(nrows = length(unique(temperature@coords[,2])),
-                            ncols = length(unique(temperature@coords[,1])), 
-                            extent = ext(temperature))
-tempTerVal <- rasterize(x = temperature@coords, y = temperatureTemplate, 
-                        values = temperature@data)
+template <- centerPointRasterTemplate(temperature)
+tempTerVal <- rasterize(x = temperature, y = template, field = names(temperature))
 
 # Get names of depths
 envtNames <- gsub("[d,M]", "", names(temperature))
 envtNames[[1]] <- "0"
 names(tempTerVal) <- envtNames
 temperature <- tempTerVal
+rm(tempTerVal)
 
 # How do these files look?
+par(mfrow=c(1,2))
 p1 <- oneRasterPlot(temperature[[1]], land = land, landCol = "black", 
-              title= "Temperature (C)")
+              title= "Surface Temperature (C)")
 
 p2 <- oneRasterPlot(temperatureBottom,land = land, landCol = "black", 
-              title = "Temperature (C)")
-
-temp <- c("Surface" = p1, "Bottom" = p2)
-update(temp, strip  = strip.custom(strip.levels = TRUE,
-                             horizontal = TRUE,
-                             bg = "black",
-                             fg = "white",
-                             par.strip.text = list(col = "white", cex = 1, font = 2)))
+              title = "Bottom Temperature (C)")
 ```
 
 ```{r temperature processing hidden, echo=FALSE}
-#Creating a bottom raster from the point shapefile
+# Creating a bottom raster
 temperatureBottom <- bottomRaster(temperature)
 
 # Creating a SpatRaster vector
-temperatureTemplate <- rast(nrows = length(unique(temperature@coords[,2])),
-                            ncols = length(unique(temperature@coords[,1])), 
-                            extent = ext(temperature))
-tempTerVal <- rasterize(x = temperature@coords, y = temperatureTemplate, 
-                        values = temperature@data)
+template <- centerPointRasterTemplate(temperature)
+tempTerVal <- rasterize(x = temperature, y = template, field = names(temperature))
 
 # Get names of depths
 envtNames <- gsub("[d,M]", "", names(temperature))
 envtNames[[1]] <- "0"
 names(tempTerVal) <- envtNames
 temperature <- tempTerVal
+rm(tempTerVal)
 ```
 
 ```{r temperature plot, echo=FALSE, out.width = '100%', out.height= '100%'}
@@ -140,9 +125,7 @@ unzip(system.file("extdata/woa18_all_A00mn01_cropped.zip",
                   package = "voluModel"),
       exdir = paste0(td, "/oxygen"), junkpaths = T)
 
-oxygen <- sf::st_read(paste0(td, "/oxygen/woa18_all_A00mn01_cropped.shp"))
-oxygen <- as(oxygen, "Spatial")
-oxygen@data[oxygen@data == -999.999] <- NA
+oxygen <- vect(paste0(td, "/oxygen/woa18_all_A00mn01_cropped.shp"))
 
 plot(oxygen, main = "Distribution of voluModel subset of WOA AOU 2018",
      pch = 20, col = "red", xlim = ext[1:2], ylim = ext[3:4], cex = .6)
@@ -153,11 +136,8 @@ There is a workaround for this, since we can reasonably expect some degree of sp
 
 ```{r interpolate oxygen, warning=FALSE, eval = F}
 # Creating a SpatRaster vector
-template <- rast(nrows = length(unique(oxygen@coords[,2])),
-                 ncols = length(unique(oxygen@coords[,1])),
-                 extent = ext(oxygen))
-oxygen <- rasterize(x = oxygen@coords, y = template,
-                   values = oxygen@data)
+oxygen <- rasterize(x = oxygen, y = template,
+                   field = names(oxygen)) #Uses same raster template as temperature
 
 for (i in 1:nlyr(oxygen)){
   oxygen[[i]] <- interpolateRaster(oxygen[[i]], lon.lat = T, fast = T, aRange = 5) #Thin plate spline interpolation
@@ -184,18 +164,11 @@ for (i in 1:nlyr(oxygenSmooth)){
 names(oxygenSmooth) <- names(oxygen)
 oxygenSmooth <- oxygenSmooth
 
-# How does it look?
-p1 <- oneRasterPlot(oxygen[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization (µmol/kg) at Surface")
-p2 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization (µmol/kg) at Surface")
-
-temp <- c("Interpolated" = p1, "Interpolated and Smoothed" = p2)
-update(temp, strip  = strip.custom(strip.levels = TRUE,
-                             horizontal = TRUE,
-                             bg = "black",
-                             fg = "white",
-                             par.strip.text = list(col = "white", cex = .8, font = 2)))
+par(mfrow=c(1,2))
+p3 <- oneRasterPlot(oxygen[[1]], land = land, landCol = "black", 
+              title= "Surface Apparent Oxygen Utilization (µmol/kg),\ninterpolated")
+p4 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black",
+     title = "Bottom Apparent Oxygen Utilization (µmol/kg),\ninterpolated and smoothed")
 ```
 
 ```{r AOU plot, echo=FALSE, out.width = '100%', out.height= '100%'}

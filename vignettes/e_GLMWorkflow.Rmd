@@ -71,20 +71,16 @@ ggplot(occsClean, aes(x = 1, y=depth)) +
 Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. For more details on how to process environmental data, see [the raster data tutorial](https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html). Temperature processing is shown below for illustrative purposes.
 
 ```{r environmental data loading, eval=T, asis=T, message=FALSE}
+# Temperature
 td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),
       exdir = paste0(td, "/temperature"), junkpaths = T)
-temperature <- sf::st_read(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
-temperature <- as(temperature, "Spatial")
-temperature@data[temperature@data == -999.999] <- NA
+temperature <- vect(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
 
-# Turn into SpatRaster
-template <- rast(nrows = length(unique(temperature@coords[,2])),
-                            ncols = length(unique(temperature@coords[,1])), 
-                            extent = ext(temperature))
-tempTerVal <- rasterize(x = temperature@coords, y = template, 
-                        values = temperature@data)
+# Creating a SpatRaster vector
+template <- centerPointRasterTemplate(temperature)
+tempTerVal <- rasterize(x = temperature, y = template, field = names(temperature))
 
 # Get names of depths
 envtNames <- gsub("[d,M]", "", names(temperature))

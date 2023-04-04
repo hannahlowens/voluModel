@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
 
 # Introduction
 
-As stated in the [introduction to this package](https://hannahlowens.github.io/voluModel/articles/a_Introduction.html), one of the key contributions of `voluModel` is the way it handles the extraction of environmental data for niche modeling. Specifically, environmental data at presences, absences, pseudoabsences, and/or background points can be extracted from environmental data `RasterBrick` objects based on depth in addition to horizontal coordinates. Another useful tool provided with `voluModel` is `marineBackground()`, which helps the user generate training regions from which background or pseudoabsence data are drawn. This is where we will start, so let's get into it.
+As stated in the [introduction to this package](https://hannahlowens.github.io/voluModel/articles/a_Introduction.html), one of the key contributions of `voluModel` is the way it handles the extraction of environmental data for niche modeling. Specifically, environmental data at presences, absences, pseudoabsences, and/or background points can be extracted from environmental data multi-layer `SpatRaster` objects based on depth in addition to horizontal coordinates. Another useful tool provided with `voluModel` is `marineBackground()`, which helps the user generate training regions from which background or pseudoabsence data are drawn. This is where we will start, so let's get into it.
 
 Here are the packages you will need.
 
@@ -41,7 +41,7 @@ library(sf) # Now being transitioned in
 
 # 3D Data Extraction
 
-First, we will cover how to extract environmental data from a `RasterBrick` object using 3D occurrence coordinates. The species occurrences I will use are *Steindachneria argentea*, Luminous Hake, data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via `occCite` (Owens *et al.*, 2021).
+First, we will cover how to extract environmental data from a multi-layer `SpatRaster` object using 3D occurrence coordinates. The species occurrences I will use are *Steindachneria argentea*, Luminous Hake, data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via `occCite` (Owens *et al.*, 2021).
 
 ```{r occurrence dataset, message=FALSE, warning = FALSE}
 # Get points
@@ -50,7 +50,7 @@ occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
 occurrences <- occs %>% 
   dplyr::select(decimalLongitude, decimalLatitude, depth) %>%
   dplyr::distinct() %>% 
-  dplyr::filter(dplyr::between(depth, 1, 2000))
+  dplyr::filter(depth %in% 1:2000)
 ```
 
 ```{r occurrence dataset plotting code, message=FALSE, warning = FALSE, eval=FALSE, echo = FALSE}
@@ -67,30 +67,26 @@ knitr::include_graphics("pointMap.png")
 
 The environmental dataset I will use as an example is temperature (Locarnini *et al.*, 2018) from the World Ocean Atlas (WOA; Garcia *et al.*, 2019). I have chosen to focus on temperature for simple illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. 
 
-This chunk of code loads the example data shapefile, which results in a `SpatialPointsDataFrame`:
+This chunk of code loads the example data shapefile, which results in a `SpatVector`:
 
 ```{r environmental data loading, eval=T, asis=T, message = FALSE, warning=FALSE}
+# Temperature
 td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),
       exdir = paste0(td, "/temperature"), junkpaths = T)
-temperature <- sf::st_read(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
-temperature <- as(temperature, "Spatial")
-temperature@data[temperature@data == -999.999] <- NA
+temperature <- vect(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
 
-# How are the data structured?
-head(temperature@data)
+# Looking at the dataset
+head(temperature)
 ```
 
-As you can see, each point is a line in the `SpatialPointsDataFrame`; each column is a depth layer at that point--"d5M" translates to "5 meters deep". For more details on how to process environmental data, see [the raster data tutorial](https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html). This next chunk converts the `SpatialPointsDataFrame` to a `RasterBrick`; the layers of the `RasterBrick` are then named the same as the column names of the `SpatialPointsDataFrame`. I strip the "d" and "M" from the column names so they are a little easier to use as depth coordinates. Note that `R` will not allow the raster names to be numeric, so it adds an "X" to the beginning of each column name. Don't worry about this--`voluModel` can handle numbers preceded by "X"s without user intervention.
+As you can see, each point in the `SpatVector` is a line in the associated `data.frame`; each column is a depth layer at that point--"d5M" translates to "5 meters deep". For more details on how to process environmental data, see [the raster data tutorial](https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html). This next chunk converts the `SpatVector` to a multi-layer `SpatRaster`; the layers of the multi-layer `SpatRaster` are then named the same as the column names of the `SpatVector`. I strip the "d" and "M" from the column names so they are a little easier to use as depth coordinates. Note that `R` will not allow the raster names to be numeric, so it adds an "X" to the beginning of each column name. Don't worry about this--`voluModel` can handle numbers preceded by "X"s without user intervention.
 
 ```{r temperature to compatible RasterBrick}
 # Creating a SpatRaster vector
-template <- rast(nrows = length(unique(temperature@coords[,2])),
-                            ncols = length(unique(temperature@coords[,1])), 
-                            extent = ext(temperature))
-tempTerVal <- rasterize(x = temperature@coords, y = template, 
-                        values = temperature@data)
+template <- centerPointRasterTemplate(temperature)
+tempTerVal <- rasterize(x = temperature, y = template, field = names(temperature))
 
 # Get names of depths
 envtNames <- gsub("[d,M]", "", names(temperature))
@@ -116,11 +112,11 @@ xyzSample(occs = occsTest, envBrick = temperature)
 rm(occsTest)
 ```
 
-One optional step in a niche modeling workflow is to down-sample occurrence data to the same resolution as the environmental data. We do this to avoid over-fitting the model due to biased sampling. The next chunk of code downsamples occurrence points so that there is only one per voxel (i.e. 3D pixel) of environmental data. It does this by looping through each layer of the `RasterBrick`, selecting the occurrence points with depths closest to the depths represented by that layer in the raster brick. I then downsample these points using `voluModel`'s `downsample()` function.
+One optional step in a niche modeling workflow is to down-sample occurrence data to the same resolution as the environmental data. We do this to avoid over-fitting the model due to biased sampling. The next chunk of code downsamples occurrence points so that there is only one per voxel (i.e. 3D pixel) of environmental data. It does this by looping through each layer of the multi-layer `SpatRaster`, selecting the occurrence points with depths closest to the depths represented by that layer in the raster brick. I then downsample these points using `voluModel`'s `downsample()` function.
 
 ```{r downsample to voxel, eval=TRUE, warning=FALSE, message=FALSE}
 # Gets the layer index for each occurrence by matching to depth
-layerNames <- as.numeric(gsub("[X]", "", names(temperature)))
+layerNames <- as.numeric(names(temperature))
 occurrences$index <- unlist(lapply(occurrences$depth, FUN = function(x) which.min(abs(layerNames - x))))
 indices <- unique(occurrences$index)
 downsampledOccs <- data.frame()
@@ -141,7 +137,7 @@ The resampled points returned by `downsample()` are horizontally centered in eac
 
 ```{r plot downsample, warning=FALSE}
 pointCompMap(occs1 = occs, occs2 = occurrences, 
-             occs1Name = "Original", occs2Name = "Cleaned", 
+             occs1Name = "original", occs2Name = "cleaned", 
              spName = "Steindachneria argentea", 
              land = land, verbose = FALSE)
 ```
@@ -174,7 +170,7 @@ trainingRegion <- marineBackground(occurrences,
                                 fraction = 1, partCount = 1, buff = 1000000,
                                 clipToOcean = F)
 plot(trainingRegion, border = F, col = "gray",
-     main = "Mimimum of 100% Points in Training Region,\nMaximum of 1 Polygon Permitted, 100 km Buffer",
+     main = "100% Points, Max 1 Polygon Permitted, 100 km Buffer",
      axes = T)
 plot(land, col = "black", add = T)
 points(occurrences[,c("decimalLongitude", "decimalLatitude")], 
@@ -194,7 +190,7 @@ trainingRegion <- marineBackground(occurrences,
                                    buff = 1000000, 
                                    clipToOcean = T)
 plot(trainingRegion, border = F, col = "gray",
-     main = "100 km Buffer,\n Training Region Clipped to Occupied Polygon",
+     main = "100 km Buffer, Clipped to Occupied Polygon",
      axes = T)
 plot(land, col = "black", add = T)
 points(occurrences[,c("decimalLongitude", "decimalLatitude")], 
@@ -238,7 +234,7 @@ knitr::include_graphics("meridianWrapDemo-1.png")
 
 # Background Data Extraction
 
-As discussed above, some modeling methods require the generation of a sampling region from which training/pseudoabsence/background points are drawn. The training region should approximately answer the question "What environments are most likely to have been experienced by Lumious Hakes?" Our answer to this question for the purposes of this tutorial is represented in `trainingRegion`, which we generated above using `marineBackground()`. Next, we generate 3D training points within this region using the `mSampling3D()` function. The function takes an occurrence `data.frame`, a `RasterBrick` that will serve as a template for the resolution of the training points, a `SpatialPolygons` object representing the training region, and, optionally, information on the range of depths from which the function should sample. If you have reason to believe the species you are modeling can access depths higher or lower than those represented by occurrences, you can specify a maximum and minimum training depth from which to draw occurrence points. `mSampling3D()` by default draws training points from the full depth extent of the supplied `RasterBrick`. 
+As discussed above, some modeling methods require the generation of a sampling region from which training/pseudoabsence/background points are drawn. The training region should approximately answer the question "What environments are most likely to have been experienced by Lumious Hakes?" Our answer to this question for the purposes of this tutorial is represented in `trainingRegion`, which we generated above using `marineBackground()`. Next, we generate 3D training points within this region using the `mSampling3D()` function. The function takes an occurrence `data.frame`, a multi-layer `SpatRaster` that will serve as a template for the resolution of the training points, a `SpatialPolygons` object representing the training region, and, optionally, information on the range of depths from which the function should sample. If you have reason to believe the species you are modeling can access depths higher or lower than those represented by occurrences, you can specify a maximum and minimum training depth from which to draw occurrence points. `mSampling3D()` by default draws training points from the full depth extent of the supplied multi-layer `SpatRaster`. 
 
 For this example, I am sampling training points from 50 to 1500 m.
 
@@ -284,9 +280,9 @@ backgroundVals$response <- as.factor(backgroundVals$response)
 dataForModeling <- rbind(occurrences, backgroundVals[,colnames(occurrences)])
 ggplot(dataForModeling, aes(x = temperature, fill = response, color = response)) +
   geom_density(alpha = .6) +
-  scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"), 
+  scale_color_manual(values=c("#999999", "#E69F00"), 
                      labels = c("Pseudoabsence", "Presence")) +
-  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"), 
+  scale_fill_manual(values=c("#999999", "#E69F00"), 
                     labels = c("Pseudoabsence", "Presence")) +
   labs(title="Temperature Sampling Density,\nOccurrences vs. Pseudoabsences",
        x="Temperature (C)", y = "Density")+

@@ -34,8 +34,6 @@ library(voluModel) # Because of course
 library(dplyr) # To filter data
 library(ggplot2) # For fancy plotting
 library(terra) # Now being transitioned in
-library(sf) # Now being transitioned in
-library(lattice) # For plotting
 ```
 
 # Data Inputs
@@ -50,7 +48,7 @@ occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
 occurrences <- occs %>% 
   dplyr::select(decimalLongitude, decimalLatitude, depth) %>%
   dplyr::distinct() %>% 
-  dplyr::filter(dplyr::between(depth, 1, 2000))
+  filter(depth %in% 1:2000)
 
 head(occurrences)
 land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
@@ -85,19 +83,14 @@ td <- tempdir()
 unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip", 
                   package = "voluModel"),
       exdir = paste0(td, "/temperature"), junkpaths = T)
-temperature <- sf::st_read(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
-temperature <- as(temperature, "Spatial")
-temperature@data[temperature@data == -999.999] <- NA
+temperature <- vect(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
 
 # Creating a bottom raster
 temperatureBottom <- bottomRaster(temperature)
 
 # Creating a SpatRaster vector
-temperatureTemplate <- rast(nrows = length(unique(temperature@coords[,2])),
-                            ncols = length(unique(temperature@coords[,1])), 
-                            extent = ext(temperature))
-tempTerVal <- rasterize(x = temperature@coords, y = temperatureTemplate, 
-                        values = temperature@data)
+template <- centerPointRasterTemplate(temperature)
+tempTerVal <- terra::rasterize(x = temperature, y = template, field = names(temperature))
 
 # Get names of depths
 envtNames <- gsub("[d,M]", "", names(temperature))
@@ -111,18 +104,12 @@ Let's see what the top and bottom temperature files look like.
 
 ``` {r plotting temperature, eval = FALSE}
 # How do these files look?
+par(mfrow=c(1,2))
 p1 <- oneRasterPlot(temperature[[1]], land = land, landCol = "black", 
-              title= "Temperature (C)")
+              title= "Surface Temperature (C)")
 
 p2 <- oneRasterPlot(temperatureBottom,land = land, landCol = "black", 
-              title = "Temperature (C)")
-
-temp <- c("Surface" = p1, "Bottom" = p2)
-update(temp, strip  = strip.custom(strip.levels = TRUE,
-                             horizontal = TRUE,
-                             bg = "black",
-                             fg = "white",
-                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
+              title = "Bottom Temperature (C)")
 ```
 
 ```{r temperature plot, echo=FALSE, out.width = '100%', out.height= '100%'}
@@ -142,16 +129,11 @@ names(oxygenSmooth) <- names(temperature)
 Then we plot it.
 
 ```{r oxygen plotting, echo=TRUE, eval = FALSE, message=FALSE, warning=FALSE}
+par(mfrow=c(1,2))
 p3 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black", 
-              title= "Apparent Oxygen Utilization (µmol/kg),\n interpolated and smoothed")
+              title= "Surface Apparent Oxygen Utilization (µmol/kg),\ninterpolated and smoothed")
 p4 <- oneRasterPlot(oxygenBottom, land = land, landCol = "black",
-     title = "Apparent Oxygen Utilization (µmol/kg), interpolated and smoothed")
-temp <- c("Surface" = p3, "Bottom" = p4)
-update(temp, strip  = strip.custom(strip.levels = TRUE,
-                             horizontal = TRUE,
-                             bg = "black",
-                             fg = "white",
-                             par.strip.text = list(col = "white", cex = 1.2, font = 2)))
+     title = "Bottom Apparent Oxygen Utilization (µmol/kg),\ninterpolated and smoothed")
 ```
 
 ```{r oxygen plot, echo=FALSE, out.width = '100%', out.height= '100%'}
@@ -223,7 +205,7 @@ allOxy$Oxygen <- as.numeric(allOxy$Oxygen)
 # Plotting
 groups <- c("X, Y,\nSurface", "X, Y,\nBottom", "X, Y,\nZ")
 tempPlot <- ggplot(allTemp, aes(x=Group, y=Temperature)) + 
-  geom_boxplot(fill="#b2182b", notch = T) +
+  geom_boxplot(fill="#b2182b", notch = TRUE) +
   theme_classic(base_size = 15) +
   theme(axis.title.x = element_blank(), 
         text = element_text(family = "Arial"), 
@@ -232,7 +214,7 @@ tempPlot <- ggplot(allTemp, aes(x=Group, y=Temperature)) +
   ylab("Temperature (C)")
 
 oxyPlot <- ggplot(allOxy, aes(x=Group, y=Oxygen)) + 
-  geom_boxplot(fill="#2166ac", notch = T) +
+  geom_boxplot(fill="#2166ac", notch = TRUE) +
   theme_classic(base_size = 15) +
   theme(axis.title.x = element_blank(), 
         text = element_text(family = "Arial"), 
