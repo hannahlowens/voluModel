@@ -91,7 +91,7 @@ can be coerced into this format.</p></dd>
 
 
 <dt>envBrick</dt>
-<dd><p>A <code>RasterBrick</code> object to serve
+<dd><p>A <code>SpatRaster</code> vector object to serve
 as a template for generating background sampling
 coordinates.</p></dd>
 
@@ -122,11 +122,11 @@ sampling.</p>
     <h2>Details</h2>
     <p>This function is designed to sample background points for
 distributional modeling in three dimensions. If a voxel (3D pixel)
-in the <code>envBrick</code> intersects with an occurrence from <code>occs</code>, it is
-removed. Note that this function returns points representing every
-voxel in the background area within the specified depth range. It
-is up to the user to downsample from these data as necessary,
-depending on the model type being used.</p>
+in the <code>SpatRaster</code> vector intersects with an occurrence from
+<code>occs</code>, it is removed. Note that this function returns points
+representing every voxel in the background area within the
+specified depth range. It is up to the user to downsample from
+these data as necessary, depending on the model type being used.</p>
 <p><code>depthLimit</code> argument options:</p><ul><li><p><code>occs</code> Samples background from the full depth extent of <code>occs</code>.</p></li>
 <li><p><code>all</code> Samples background from the full depth extent of <code>envBrick</code>.</p></li>
 <li><p>A <code>vector</code> of length 2 with maximum and minimum depth values from
@@ -186,7 +186,7 @@ which to sample.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

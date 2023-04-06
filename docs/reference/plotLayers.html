@@ -83,22 +83,28 @@ with suitable habitat.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotLayers</span><span class="op">(</span><span class="va">rast</span>, land <span class="op">=</span> <span class="cn">NA</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, title <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotLayers</span><span class="op">(</span></span>
+<span>  <span class="va">rast</span>,</span>
+<span>  land <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  landCol <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  graticule <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>rast</dt>
-<dd><p>A <code>Raster*</code> with the 3D presence/absence
+<dd><p>A <code>SpatRaster</code> vector with the 3D presence/absence
 distribution of a species (interpreted as 1 = presence,
-0 = absence). This could be a <code>RasterBrick</code> or a
-<code>RasterStack</code>.</p></dd>
+0 = absence).</p></dd>
 
 
 <dt>land</dt>
 <dd><p>An optional coastline polygon shapefile
-of type <code>sf</code> to provide geographic context for the
-occurrence points.</p></dd>
+of types <code>sf</code> or <code>SpatRaster</code> to provide geographic
+context for the occurrence points.</p></dd>
 
 
 <dt>landCol</dt>
@@ -109,7 +115,11 @@ occurrence points.</p></dd>
 <dd><p>A title for the plot. If not title is
 supplied, the title "Suitability from (MINIMUM
 DEPTH) to (MAXIMUM DEPTH)" is inferred from
-names of <code>RasterStack</code>.</p></dd>
+names of <code>rast</code>.</p></dd>
+
+
+<dt>graticule</dt>
+<dd><p>Do you want a grid of lon/lat lines?</p></dd>
 
 
 <dt>...</dt>
@@ -120,7 +130,7 @@ names of <code>RasterStack</code>.</p></dd>
     <h2>Value</h2>
     
 
-<p>A plot of class <code>trellis</code></p>
+<p>A plot of class <code>recordedplot</code></p>
 
 
     </div>
@@ -131,23 +141,23 @@ want to plot.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></code> <code><a href="https://rdrr.io/pkg/sp/man/spplot.html" class="external-link">spplot</a></code></p></div>
+    <div class="dont-index"><p><code><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></code></p></div>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/terra/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">rast1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span>ncol<span class="op">=</span><span class="fl">10</span>, nrow<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rast1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span>ncol<span class="op">=</span><span class="fl">10</span>, nrow<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span>, <span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">rast2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span>ncol<span class="op">=</span><span class="fl">10</span>, nrow<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rast2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span>ncol<span class="op">=</span><span class="fl">10</span>, nrow<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">50</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">rast3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span>ncol<span class="op">=</span><span class="fl">10</span>, nrow<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rast3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span>ncol<span class="op">=</span><span class="fl">10</span>, nrow<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">rast3</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>, <span class="fl">25</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">distBrick</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/brick.html" class="external-link">brick</a></span><span class="op">(</span><span class="va">rast1</span>, <span class="va">rast2</span>, <span class="va">rast3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">distBrick</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">rast1</span>, <span class="va">rast2</span>, <span class="va">rast3</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">plotLayers</span><span class="op">(</span><span class="va">distBrick</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotLayers-1.png" alt="" width="700" height="433"></span>
@@ -166,7 +176,7 @@ want to plot.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
