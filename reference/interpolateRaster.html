@@ -85,7 +85,7 @@ raster values.</p>
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>inputRaster</dt>
-<dd><p>An object of class <code>raster</code></p></dd>
+<dd><p>An object of class <code>SpatRaster</code></p></dd>
 
 
 <dt>fast</dt>
@@ -119,7 +119,7 @@ of a true thin plate spline.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/raster" class="external-link">raster</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rspatial.org/terra/" class="external-link">terra</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dnychka/fieldsRPackage" class="external-link">fields</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: spam</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Spam version 2.9-1 (2022-08-07) is loaded.</span>
@@ -136,13 +136,18 @@ of a true thin plate spline.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: viridisLite</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Try help(fields) to get started.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘fields’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:terra’:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>     describe</span>
 <span class="r-in"><span><span class="co"># Create sample raster</span></span></span>
-<span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/raster/man/raster.html" class="external-link">raster</a></span><span class="op">(</span>ncol<span class="op">=</span><span class="fl">50</span>, nrow<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span>ncol<span class="op">=</span><span class="fl">50</span>, nrow<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2500</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Introduce a "hole"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/values.html" class="external-link">values</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">117</span><span class="op">:</span><span class="fl">127</span>, <span class="fl">167</span><span class="op">:</span><span class="fl">177</span>, <span class="fl">500</span><span class="op">:</span><span class="fl">550</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="interpolateRaster-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Patch hole with interpolateRaster</span></span></span>
@@ -151,10 +156,10 @@ of a true thin plate spline.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   (GCV) Generalized Cross-Validation </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    minimum at  right endpoint  lambda  =  1.263526e-05 (eff. df= 160.55 )</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">interpolatedRaster</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">interpolatedRaster</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="interpolateRaster-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">fastInterp</span> <span class="op">&lt;-</span> <span class="fu">interpolateRaster</span><span class="op">(</span><span class="va">r</span>, fast <span class="op">=</span> <span class="cn">TRUE</span>, aRange <span class="op">=</span> <span class="fl">3.0</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fastInterp</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/terra/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fastInterp</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="interpolateRaster-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
