@@ -65,10 +65,10 @@ rastList <- list("temperature" = envBrick1, "salinity" = envBrick2)
 
 # Create test reference set
 set.seed(0)
-longitude <- sample(extent(envBrick1)[1]:extent(envBrick1)[2],
+longitude <- sample(ext(envBrick1)[1]:ext(envBrick1)[2],
                     size = 10, replace = FALSE)
 set.seed(0)
-latitude <- sample(extent(envBrick1)[3]:extent(envBrick1)[4],
+latitude <- sample(ext(envBrick1)[3]:ext(envBrick1)[4],
                    size = 10, replace = FALSE)
 set.seed(0)
 depth <- sample(0:35, size = 10, replace = TRUE)

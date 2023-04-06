@@ -95,22 +95,6 @@ p2 <- oneRasterPlot(temperatureBottom,land = land, landCol = "black",
               title = "Bottom Temperature (C)")
 ```
 
-```{r temperature processing hidden, echo=FALSE}
-# Creating a bottom raster
-temperatureBottom <- bottomRaster(temperature)
-
-# Creating a SpatRaster vector
-template <- centerPointRasterTemplate(temperature)
-tempTerVal <- rasterize(x = temperature, y = template, field = names(temperature))
-
-# Get names of depths
-envtNames <- gsub("[d,M]", "", names(temperature))
-envtNames[[1]] <- "0"
-names(tempTerVal) <- envtNames
-temperature <- tempTerVal
-rm(tempTerVal)
-```
-
 ```{r temperature plot, echo=FALSE, out.width = '100%', out.height= '100%'}
 knitr::include_graphics("TemperatureTopBottom.png")
 ```

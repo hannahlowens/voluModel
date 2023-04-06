@@ -141,6 +141,7 @@ columnParse <- function(occs, wDepth = FALSE){
 #' result <- downsample(occs = occurrences, rasterTemplate = r)
 #'
 #' @import terra
+#' @importFrom stats complete.cases
 #'
 #' @keywords inputProcessing
 #' @export
