@@ -47,7 +47,7 @@ dd[,c("x","y")] <- coords
 sp <- vect(dd, geom = c("x", "y"))
 
 # Here's the function
-template <- centerPointRaster(rawPointData = sp)
+template <- centerPointRasterTemplate(rawPointData = sp)
 class(template)
 
 }

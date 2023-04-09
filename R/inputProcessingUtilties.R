@@ -307,14 +307,14 @@ bottomRaster <- function(rawPointData){
 #' sp <- vect(dd, geom = c("x", "y"))
 #'
 #' # Here's the function
-#' template <- centerPointRaster(rawPointData = sp)
+#' template <- centerPointRasterTemplate(rawPointData = sp)
 #' class(template)
 #'
 #' @import terra
 #'
 #' @keywords inputProcessing
 #' @export
-#'
+
 centerPointRasterTemplate <- function(rawPointData){
   if(!is(rawPointData, "SpatVector")){
     warning(paste0("'rawPointData' must be class 'SpatVector'.\n"))
