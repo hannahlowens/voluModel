@@ -9,9 +9,9 @@
 #' calibrate the model. Columns with names not corresponding to
 #' `projection` `list` items are ignored.
 #'
-#' @param projection A named `list` of `RasterBrick` objects for
+#' @param projection A named `list` of `SpatRaster` objects for
 #' projection; names correspond to `calibration` column names.
-#' Each `RasterBrick` should have the same number of layers,
+#' Each `SpatRaster` should have the same number of layers,
 #' corresponding to vertical depth slices.
 #'
 #' @details `MESS3D` is a wrapper around `MESS` from the `modEvA`
@@ -76,8 +76,9 @@
 #'
 #' @importFrom modEvA MESS
 #' @importFrom methods is
+#' @importFrom terra rasterize
 #'
-#' @seealso \code{\link[dismo]{mess}}
+#' @seealso \code{\link[modeEvA]{MESS}}
 #'
 #' @keywords modelDiagnostics
 #' @export
@@ -104,7 +105,7 @@ MESS3D <- function (calibration, projection) {
     projVals <- as.data.frame(proj)
     projCoords <- terra::crds(proj[[1]])
     messScores <- MESS(P = projVals, V = cal, verbosity = 0)
-    messLayer <- terra::rasterize(projCoords, proj[[1]], values = messScores["TOTAL"])
+    messLayer <- rasterize(projCoords, proj[[1]], values = messScores["TOTAL"])
     messStack[[i]] <- messLayer
   }
   names(messStack) <- names(projection[[1]])

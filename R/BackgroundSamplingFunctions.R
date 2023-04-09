@@ -14,7 +14,7 @@
 #' template can then be overlaid onto a `SpatRaster` vector to
 #' remove occurrences from all layers.
 #'
-#' @return A `Raster*`
+#' @return A `SpatRaster`
 #'
 #' @examples
 #'
