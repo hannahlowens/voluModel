@@ -58,8 +58,8 @@ areColors <- function(col) {
 #'
 #' testIntersection(rast1, rast2)
 #'
-#' rast1 <- crop(rast1, extent(10, 20, 30, 40))
-#' rast2 <- crop(rast2, extent(-20, -10, -40, -30))
+#' rast1 <- crop(rast1, ext(10, 20, 30, 40))
+#' rast2 <- crop(rast2, ext(-20, -10, -40, -30))
 #'
 #' testIntersection(rast1, rast2)
 #'
