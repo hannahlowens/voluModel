@@ -78,7 +78,7 @@
 #' @importFrom methods is
 #' @importFrom terra rasterize
 #'
-#' @seealso \code{\link[modeEvA]{MESS}}
+#' @seealso \code{\link[modEvA]{MESS}}
 #'
 #' @keywords modelDiagnostics
 #' @export

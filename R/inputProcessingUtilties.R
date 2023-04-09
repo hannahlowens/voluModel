@@ -233,6 +233,8 @@ downsample <- function(occs, rasterTemplate, verbose = TRUE){
 #' dd$d10M[c(3:5, 21:23)] <- NA
 #' dd$d5M[c(4, 22)] <- NA
 #'
+#' dd[,c("x","y")] <- coords
+#'
 #' # Create SpatialPointsDataFrame
 #' sp <- vect(dd, geom = c("x", "y"))
 #'
