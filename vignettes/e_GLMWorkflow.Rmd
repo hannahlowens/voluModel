@@ -279,7 +279,7 @@ projList <- list("AOU" = oxygenSmooth[[min(indices):max(indices)]],
 messBrick <- MESS3D(calibration = datForMod, projection = projList)
 ```
 
-Now I will calculate two `rasterBrick` objects. In the first, `extrapolation`, MESS values zero and below (i.e. signalling extrapolation) will be reclassified as 1, which will allow me to easily map where extrapolation is occurring.
+Now I will calculate two `SpatRaster` objects. In the first, `extrapolation`, MESS values zero and below (i.e. signalling extrapolation) will be reclassified as 1, which will allow me to easily map where extrapolation is occurring.
 
 ```{r reclassify and plot extrapolation}
 # Reclassify MESS 
@@ -290,7 +290,7 @@ plotLayers(extrapolation, land = land, landCol = "black",
            title = "Areas of extrapolation according to MESS,\n 5m to 800m")
 ```
 
-In the second `RasterBrick`, `noExtrapolation`, I reclassify the layers so that positive MESS values = 1 and MESS values less than or equal to 0 = 0. This will make plotting cropping out areas of extrapolation from the niche model projection easier. I simply multiply the thresholded GLM map by the `noExtrapolation` `RasterBrick`.
+In the second `RasterBrick`, `noExtrapolation`, I reclassify the layers so that positive MESS values = 1 and MESS values less than or equal to 0 = 0. This will make plotting cropping out areas of extrapolation from the niche model projection easier. I simply multiply the thresholded GLM map by the `noExtrapolation` `SpatRaster`.
 
 ```{r reclassify MESS and plot GLM with no extrapolation, warning=FALSE}
 # Reclassify MESS 

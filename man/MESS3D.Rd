@@ -13,9 +13,9 @@ measurements from each voxel included in the data used to
 calibrate the model. Columns with names not corresponding to
 \code{projection} \code{list} items are ignored.}
 
-\item{projection}{A named \code{list} of \code{RasterBrick} objects for
+\item{projection}{A named \code{list} of \code{SpatRaster} objects for
 projection; names correspond to \code{calibration} column names.
-Each \code{RasterBrick} should have the same number of layers,
+Each \code{SpatRaster} should have the same number of layers,
 corresponding to vertical depth slices.}
 }
 \value{
@@ -88,6 +88,6 @@ The art of modelling range-shifting species.
 \emph{Methods in Ecology and Evolution}, 1, 330-342.
 }
 \seealso{
-\code{\link[dismo]{mess}}
+\code{\link[modeEvA]{MESS}}
 }
 \keyword{modelDiagnostics}

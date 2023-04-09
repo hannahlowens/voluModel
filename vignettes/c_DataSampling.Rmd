@@ -112,7 +112,7 @@ xyzSample(occs = occsTest, envBrick = temperature)
 rm(occsTest)
 ```
 
-One optional step in a niche modeling workflow is to down-sample occurrence data to the same resolution as the environmental data. We do this to avoid over-fitting the model due to biased sampling. The next chunk of code downsamples occurrence points so that there is only one per voxel (i.e. 3D pixel) of environmental data. It does this by looping through each layer of the multi-layer `SpatRaster`, selecting the occurrence points with depths closest to the depths represented by that layer in the raster brick. I then downsample these points using `voluModel`'s `downsample()` function.
+One optional step in a niche modeling workflow is to down-sample occurrence data to the same resolution as the environmental data. We do this to avoid over-fitting the model due to biased sampling. The next chunk of code downsamples occurrence points so that there is only one per voxel (i.e. 3D pixel) of environmental data. It does this by looping through each layer of the multi-layer `SpatRaster`, selecting the occurrence points with depths closest to the depths represented by the corresponding layer in the `SpatRaster` vector. I then downsample these points using `voluModel`'s `downsample()` function.
 
 ```{r downsample to voxel, eval=TRUE, warning=FALSE, message=FALSE}
 # Gets the layer index for each occurrence by matching to depth

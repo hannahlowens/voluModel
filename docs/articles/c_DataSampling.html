@@ -103,7 +103,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2023-04-06</h4>
+            <h4 data-toc-skip class="date">2023-04-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/c_DataSampling.Rmd" class="external-link"><code>vignettes/c_DataSampling.Rmd</code></a></small>
       <div class="hidden name"><code>c_DataSampling.Rmd</code></div>
@@ -302,8 +302,9 @@ chunk of code downsamples occurrence points so that there is only one
 per voxel (i.e. 3D pixel) of environmental data. It does this by looping
 through each layer of the multi-layer <code>SpatRaster</code>, selecting
 the occurrence points with depths closest to the depths represented by
-that layer in the raster brick. I then downsample these points using
-<code>voluModel</code>’s <code><a href="../reference/downsample.html">downsample()</a></code> function.</p>
+the corresponding layer in the <code>SpatRaster</code> vector. I then
+downsample these points using <code>voluModel</code>’s
+<code><a href="../reference/downsample.html">downsample()</a></code> function.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Gets the layer index for each occurrence by matching to depth</span></span>
 <span><span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span><span class="op">)</span></span>

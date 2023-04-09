@@ -103,7 +103,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2023-04-06</h4>
+            <h4 data-toc-skip class="date">2023-04-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/e_GLMWorkflow.Rmd" class="external-link"><code>vignettes/e_GLMWorkflow.Rmd</code></a></small>
       <div class="hidden name"><code>e_GLMWorkflow.Rmd</code></div>
@@ -392,22 +392,22 @@ simple. How does it look?</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Deviance Residuals: </span></span>
 <span><span class="co">##     Min       1Q   Median       3Q      Max  </span></span>
-<span><span class="co">## -0.6074  -0.1639  -0.0860  -0.0580   3.6393  </span></span>
+<span><span class="co">## -0.6219  -0.1566  -0.0805  -0.0546   3.6615  </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Coefficients:</span></span>
 <span><span class="co">##                   Estimate Std. Error z value Pr(&gt;|z|)    </span></span>
-<span><span class="co">## (Intercept)     -2.5883198  1.3629730  -1.899  0.05756 .  </span></span>
-<span><span class="co">## Temperature     -0.1445606  0.0644025  -2.245  0.02479 *  </span></span>
-<span><span class="co">## AOU             -0.0272552  0.0101303  -2.690  0.00714 ** </span></span>
-<span><span class="co">## Temperature:AOU  0.0029452  0.0006853   4.298 1.72e-05 ***</span></span>
+<span><span class="co">## (Intercept)     -2.6804698  1.4289991  -1.876  0.06069 .  </span></span>
+<span><span class="co">## Temperature     -0.1434542  0.0667821  -2.148  0.03171 *  </span></span>
+<span><span class="co">## AOU             -0.0287191  0.0104494  -2.748  0.00599 ** </span></span>
+<span><span class="co">## Temperature:AOU  0.0032042  0.0007145   4.484 7.32e-06 ***</span></span>
 <span><span class="co">## ---</span></span>
 <span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## (Dispersion parameter for binomial family taken to be 1)</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##     Null deviance: 291.73  on 2625  degrees of freedom</span></span>
-<span><span class="co">## Residual deviance: 258.59  on 2622  degrees of freedom</span></span>
-<span><span class="co">## AIC: 266.59</span></span>
+<span><span class="co">## Residual deviance: 254.29  on 2622  degrees of freedom</span></span>
+<span><span class="co">## AIC: 262.29</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Number of Fisher Scoring iterations: 8</span></span></code></pre>
 <p>Now we project the model back into geographic space; at this stage,
@@ -485,7 +485,7 @@ projection dataset (supplied to the function as a named list of
 <span></span>
 <span><span class="co"># Calculate MESS</span></span>
 <span><span class="va">messBrick</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MESS3D.html">MESS3D</a></span><span class="op">(</span>calibration <span class="op">=</span> <span class="va">datForMod</span>, projection <span class="op">=</span> <span class="va">projList</span><span class="op">)</span></span></code></pre></div>
-<p>Now I will calculate two <code>rasterBrick</code> objects. In the
+<p>Now I will calculate two <code>SpatRaster</code> objects. In the
 first, <code>extrapolation</code>, MESS values zero and below
 (i.e. signalling extrapolation) will be reclassified as 1, which will
 allow me to easily map where extrapolation is occurring.</p>
@@ -502,7 +502,7 @@ I reclassify the layers so that positive MESS values = 1 and MESS values
 less than or equal to 0 = 0. This will make plotting cropping out areas
 of extrapolation from the niche model projection easier. I simply
 multiply the thresholded GLM map by the <code>noExtrapolation</code>
-<code>RasterBrick</code>.</p>
+<code>SpatRaster</code>.</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Reclassify MESS </span></span>
 <span><span class="va">noExtrapolation</span> <span class="op">&lt;-</span> <span class="va">messBrick</span> <span class="op">&gt;</span> <span class="fl">0</span></span>

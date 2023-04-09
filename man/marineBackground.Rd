@@ -69,9 +69,9 @@ drawn around the buffer polygons.
 }
 \examples{
 \donttest{
-library(raster)
+library(terra)
 # Create sample raster
-r <- raster(ncol=10, nrow=10)
+r <- rast(ncol=10, nrow=10)
 values(r) <- 1:100
 
 # Create test occurrences
