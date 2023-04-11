@@ -40,7 +40,7 @@ library(terra) # Now being transitioned in
 
 First thing's first. Distributional models are based on coordinates of species' occurrences. We start with and example occurrence dataset of *Steindachneria argentea*, Luminous Hake, using data downloaded via R (R Core Team, 2020) from GBIF (Chamberlain *et al.*, 2021; Chamberlain and Boettiger, 2017) and OBIS (Provoost and Bosch, 2019) via occCite (Owens *et al.*, 2021). Here is how the occurrence data file is structured, and where the occurrences we will be using are located.
 
-```{r show points, warning=FALSE, echo=TRUE, message=FALSE, eval=FALSE}
+```{r show points, warning=FALSE, echo=TRUE, message=FALSE, eval=TRUE}
 occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
                              package='voluModel'))
 
@@ -55,24 +55,6 @@ land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
 pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
              spName = "Steindachneria argentea", ptSize = 3,
              land = land)
-```
-
-```{r point plot, echo=FALSE, out.width = '100%', out.height= '100%'}
-occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
-                             package='voluModel'))
-
-# Filter points
-occurrences <- occs %>% 
-  dplyr::select(decimalLongitude, decimalLatitude, depth) %>%
-  dplyr::distinct() %>% 
-  dplyr::filter(dplyr::between(depth, 1, 2000))
-
-head(occurrences)
-land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
-```
-
-```{r point plot quick, echo=FALSE, out.width = '100%', out.height= '100%'}
-knitr::include_graphics("pointMap.png")
 ```
 
 Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (AOU; Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more space-efficient. 

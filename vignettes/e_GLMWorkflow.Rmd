@@ -89,7 +89,7 @@ names(tempTerVal) <- envtNames
 temperature <- tempTerVal
 ```
 
-Pre-processed apparent oxygen utilization is loaded from an `.Rdata` file for speed.
+Pre-processed apparent oxygen utilization is loaded from an `.tif` file for speed.
 
 ```{r environmental data loading oxygen, eval=T, asis=T, warning=FALSE}
 oxygenSmooth <- rast(system.file("extdata/oxygenSmooth.tif", 

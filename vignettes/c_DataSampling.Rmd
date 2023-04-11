@@ -53,16 +53,12 @@ occurrences <- occs %>%
   dplyr::filter(depth %in% 1:2000)
 ```
 
-```{r occurrence dataset plotting code, message=FALSE, warning = FALSE, eval=FALSE, echo = FALSE}
+```{r occurrence dataset plotting code, message=FALSE, warning = FALSE, eval=TRUE, echo = FALSE}
 # Map occurrences
 land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
 pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
              spName = "Steindachneria argentea", ptSize = 3,
              land = land)
-```
-```{r point plot, echo=FALSE, out.width = '100%', out.height= '100%'}
-land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
-knitr::include_graphics("pointMap.png")
 ```
 
 The environmental dataset I will use as an example is temperature (Locarnini *et al.*, 2018) from the World Ocean Atlas (WOA; Garcia *et al.*, 2019). I have chosen to focus on temperature for simple illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. 
