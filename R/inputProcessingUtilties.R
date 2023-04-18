@@ -268,8 +268,9 @@ bottomRaster <- function(rawPointData){
 
 #' @title Center Point Raster Template
 #'
-#' @description Samples deepest depth values from a
-#' `SpatVector` point object and generates a `SpatRaster`.
+#' @description Creates a `SpatRaster` template from a
+#' `SpatVector` point object in which the raster cells
+#' are centered on the vector points.
 #'
 #' @param rawPointData A `SpatVector` object with points
 #' that will represent the center of each cell in the output

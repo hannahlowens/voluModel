@@ -16,8 +16,9 @@ An empty \code{SpatRaster} designed to serve as a template for
 rasterizing \code{SpatVector} objects.
 }
 \description{
-Samples deepest depth values from a
-\code{SpatVector} point object and generates a \code{SpatRaster}.
+Creates a \code{SpatRaster} template from a
+\code{SpatVector} point object in which the raster cells
+are centered on the vector points.
 }
 \details{
 \code{rawPointData} is a \code{SpatVector} object that
