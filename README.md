@@ -1,4 +1,4 @@
-# voluModel <img src="man/figures/logo.png" alt="voluModel hex logo" align="right" height="138" />
+# voluModel <img src="man/figures/logo.png" align="right" height="138" />
 
 <!-- badges: start -->
 

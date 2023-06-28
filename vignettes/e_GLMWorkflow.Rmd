@@ -189,7 +189,7 @@ backgroundWdata$response <- rep(0, times = nrow(backgroundWdata))
 
 # Generalized linear model
 
-If you are concerned about overfitting the model because you generated a lot more background points than presence points, you can sample from the background data however you think is logical. The example below samples 100 times the number of occurrence points from the background, weighted by distance form the suitable centroid of occurrence points. That is, the more environmentally-different a background point is from an occurrence point, the more likely it is to be sampled. This is helpful for GLMs, because background points are interpreted as "absences" unlike methods like Maxent, where sampling the most dissimilar background may more likely lead to an overfit model.
+If you are concerned about overfitting the model because you generated a lot more background points than presence points, you can sample from the background data however you think is logical. The example below samples 100 times the number of occurrence points from the background, weighted by distance form the suitable centroid of occurrence points. That is, the more environmentally-different a background point is from an occurrence point, the more likely it is to be sampled. This is helpful for GLMs, because background points are interpreted as "absences" unlike methods like Maxent, where sampling the most dissimilar background may more likely lead to an over-fit model.
 
 ```{r glm data prep part 2}
 # Sample background points weighted by distance from centroid of occurrence environments

@@ -765,7 +765,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
 
   if(graticule){
     grat <- graticule(lon = seq(-180, 180, 10), lat = seq(-90,90,10), crs = crs(rast1))
-    plot(grat, col="gray50", add = TRUE)
+    plot(grat, col="gray50", labels = FALSE, add = TRUE)
   }
 
   if(!any(is.na(land))){
@@ -1033,7 +1033,7 @@ oneRasterPlot <- function(rast,
 
   if(graticule){
     grat <- graticule(lon = seq(-180, 180, 10), lat = seq(-90,90,10), crs = crs(rast))
-    plot(grat, col="gray50", add = TRUE)
+    plot(grat, col="gray50", labels = FALSE, add = TRUE)
   }
 
   if(!any(is.na(land))){
@@ -1173,7 +1173,7 @@ plotLayers <- function(rast,
 
   if(graticule){
     grat <- graticule(lon = seq(-180, 180, 10), lat = seq(-90,90,10), crs = crs(rast))
-    plot(grat, col="gray50", add = TRUE)
+    plot(grat, col="gray50", labels = FALSE, add = TRUE)
   }
 
   if(!any(is.na(land))){
