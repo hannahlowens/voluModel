@@ -1,3 +1,7 @@
+# voluModel 0.2.1
+
+- Fixed messy axis labels when graticules are plotted for rasters.
+
 # voluModel 0.2.0
 
 - scaleRange argument added to oneRasterPlot().
