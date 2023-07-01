@@ -37,7 +37,7 @@ test_that("pointMap checks", {
   expect_warning(pointMap(occs = occs,
                           spName = spName, land = land,
                           verbose = "banana"))
-  point_map <- pointMap(occs = occs,
+  point_map <- pointMap(occs = occs, alpha = 1,
                         spName = spName, land = land)
   expect_true(is.ggplot(point_map))
   point_map <- pointMap(occs = occs,
@@ -86,6 +86,9 @@ test_that("pointCompMap checks", {
                             spName = spName, land = land)
   expect_true(is.ggplot(point_map))
   point_map <- pointCompMap(occs1 = occs1, occs2 = occs2,
+                            spName = spName, land = vect(land))
+  expect_true(is.ggplot(point_map))
+  point_map <- pointCompMap(occs1 = occs1, occs2 = occs2,
                             spName = spName, land = NA)
   expect_true(is.ggplot(point_map))
   point_map <- pointCompMap(occs1 = rbind(occs1,occs2), occs2 = occs2,
@@ -127,6 +130,9 @@ test_that("rasterComp works", {
   expect_warning(rasterComp(rast1 = rast1, rast1Name = 2))
   expect_warning(rasterComp(rast1 = rast1, rast1Name = "First Raster",
                             rast2 = rast2, rast2Name = "Second Raster",
+                            graticule = "b"))
+  expect_warning(rasterComp(rast1 = rast1, rast1Name = "First Raster",
+                            rast2 = rast2, rast2Name = "Second Raster",
                             land = "b"))
   expect_warning(rasterComp(rast1 = rast1, rast1Name = "First Raster",
                             rast2 = rast2, rast2Name = "Second Raster",
@@ -146,8 +152,28 @@ test_that("oneRasterPlot works", {
   divStack <- diversityStack(list(rast1, rast2), template = rast2)
   expect_warning(oneRasterPlot(rast = "a"))
   expect_warning(oneRasterPlot(rast = divStack, land = "a"))
+  expect_warning(oneRasterPlot(rast = divStack, graticule = "a"))
+  expect_warning(oneRasterPlot(rast = divStack, landCol = "a"))
+  expect_warning(oneRasterPlot(rast = divStack, scaleRange = "a"))
+  expect_warning(oneRasterPlot(rast = divStack, verbose = "a"))
+  expect_warning(oneRasterPlot(rast = divStack, scaleRange = c(1)))
+  expect_message(oneRasterPlot(rast = divStack, scaleRange = c(1,10), verbose = TRUE))
   expect_equal(class(oneRasterPlot(rast = divStack)), c("recordedplot"))
+  expect_equal(class(oneRasterPlot(rast = divStack,
+                                   scaleRange = c(-1, 80))), c("recordedplot"))
   expect_equal(class(oneRasterPlot(divStack, land = land)), c("recordedplot"))
+  expect_equal(class(oneRasterPlot(divStack, land = land,
+                                   alpha = .5)), c("recordedplot"))
+  expect_equal(class(oneRasterPlot(divStack, land = land,
+                                   option = "mako")), c("recordedplot"))
+  expect_equal(class(oneRasterPlot(divStack, land = land,
+                                   plotLegend = TRUE)), c("recordedplot"))
+  expect_equal(class(oneRasterPlot(divStack, land = land,
+                                   n = 3)), c("recordedplot"))
+  expect_equal(class(oneRasterPlot(divStack, land = land,
+                                   varName = "Test")), c("recordedplot"))
+  expect_equal(class(oneRasterPlot(divStack, land = land,
+                                   legendRound = 1)), c("recordedplot"))
 })
 
 rast1 <- rast(ncol=10, nrow=10)
@@ -178,6 +204,8 @@ names(distBrick) <- c(1,2,3)
 test_that("plotLayers works", {
   expect_warning(plotLayers(rast = "a"))
   expect_warning(plotLayers(rast = distBrick, land = "a"))
+  expect_warning(plotLayers(rast = distBrick, landCol = "bacon"))
+  expect_warning(plotLayers(rast = distBrick, graticule = 10))
   expect_equal(class(plotLayers(distBrick)), "recordedplot")
   expect_equal(class(plotLayers(distBrick, land = land)), "recordedplot")
 })

@@ -166,10 +166,8 @@ pointMap <- function(occs, spName, land = NA,
     return(NULL)
   }
 
-  if(!any(is.na(land))){
-    if(!("sf" %in% class(land))){
-      land <- sf::st_as_sf(land)
-    }
+  if("SpatVector" %in% class(land)){
+    land <- sf::st_as_sf(land)
   }
 
   colVec <- c(ptCol, landCol, waterCol)
@@ -936,6 +934,12 @@ oneRasterPlot <- function(rast,
     option <- "plasma"
   }
 
+  if("plotLegend" %in% names(args)){
+    plotLegend <- args$plotLegend
+  } else{
+    plotLegend <- FALSE
+  }
+
   if("n" %in% names(args)){
     n <- args$n
   } else{
@@ -993,11 +997,6 @@ oneRasterPlot <- function(rast,
     return(NULL)
   }
 
-  if(!is.character(title)){
-    warning(paste0("'title' must be a 'character' string.\n"))
-    return(NULL)
-  }
-
   if (!is.logical(verbose)) {
     warning(message("Argument 'verbose' is not of type 'logical'.\n"))
     return(NULL)
@@ -1023,13 +1022,14 @@ oneRasterPlot <- function(rast,
   }
 
   colVals <- seq(from = begin, to = end, by = (end-begin)/n)
+  colVals <- round(colVals, legendRound)
   colVals <- data.frame("from" = colVals[1:(length(colVals)-1)],
                         "to" = colVals[2:length(colVals)],
-                        "color" = viridisLite::viridis(n = n, alpha = 1, option = option))
+                        "color" = viridisLite::viridis(n = length(colVals)-1, alpha = 1, option = option))
 
   plot(rast,
        col = colVals,
-       legend = FALSE, mar = c(2,2,3,2), axes = TRUE)
+       legend = plotLegend, mar = c(2,2,3,2), axes = TRUE)
 
   if(graticule){
     grat <- graticule(lon = seq(-180, 180, 10), lat = seq(-90,90,10), crs = crs(rast))
@@ -1050,7 +1050,9 @@ oneRasterPlot <- function(rast,
                          " - ", round(colVals[,2], legendRound)),
          fill = colVals[,3])
 
-  title(main = title, cex.main = 1.1)
+  if(!is.na(title)){
+    title(main = title, cex.main = 1.1)
+  }
 
   finalPlot <- recordPlot()
 

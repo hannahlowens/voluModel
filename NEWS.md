@@ -1,6 +1,8 @@
 # voluModel 0.2.1
 
 - Fixed messy axis labels when graticules are plotted for rasters.
+- Enhanced testing
+- More robust manual plot scaling, including rounding.
 
 # voluModel 0.2.0
 

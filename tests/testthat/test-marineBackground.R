@@ -53,7 +53,8 @@ test_that("marineBackground results as expected", {
   expect_equal(length(result), 1)
 
   result <- marineBackground(occs = occurrences,
-                             fraction = .9, partCount = 2, clipToOcean = TRUE)
+                             fraction = .9, partCount = 2,
+                             clipToOcean = TRUE)
   expect_equal(class(result)[[1]], "SpatVector")
   expect_equal(length(result), 1)
 })
