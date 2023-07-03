@@ -1060,13 +1060,15 @@ oneRasterPlot <- function(rast,
     plot(land, col = landCol, add = TRUE)
   }
 
-  legend(x = round(xmax(rast)) + 1,
-         yjust = 0,
-         title = varName,
-         bty = "n",
-         legend = paste0(round(colVals[,1], legendRound),
-                         " - ", round(colVals[,2], legendRound)),
-         fill = colVals[,3])
+  if(plotLegend){
+    legend(x = round(xmax(rast)) + 1,
+           yjust = 0,
+           title = varName,
+           bty = "n",
+           legend = paste0(round(colVals[,1], legendRound),
+                           " - ", round(colVals[,2], legendRound)),
+           fill = colVals[,3])
+  }
 
   if(!is.na(title)){
     title(main = title, cex.main = 1.1)
