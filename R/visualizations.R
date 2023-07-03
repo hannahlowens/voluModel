@@ -940,6 +940,12 @@ oneRasterPlot <- function(rast,
     plotLegend <- FALSE
   }
 
+  if("legendMargin" %in% names(args)){
+    legendMargin <- args$legendMargin
+  } else{
+    legendMargin <- 3
+  }
+
   if("n" %in% names(args)){
     n <- args$n
   } else{
@@ -1027,9 +1033,20 @@ oneRasterPlot <- function(rast,
                         "to" = colVals[2:length(colVals)],
                         "color" = viridisLite::viridis(n = length(colVals)-1, alpha = 1, option = option))
 
+  if(is.na(title)){
+    adjustedMargin <- c(2,2,0,2)
+  } else{
+    adjustedMargin <- c(2,2,3,2)
+  }
+
+  if(plotLegend){
+    adjustedMargin[[4]] <- legendMargin
+  }
+
   plot(rast,
        col = colVals,
-       legend = plotLegend, mar = c(2,2,3,2), axes = TRUE)
+       legend = plotLegend, mar = adjustedMargin,
+       axes = TRUE)
 
   if(graticule){
     grat <- graticule(lon = seq(-180, 180, 10), lat = seq(-90,90,10), crs = crs(rast))
@@ -1043,7 +1060,8 @@ oneRasterPlot <- function(rast,
     plot(land, col = landCol, add = TRUE)
   }
 
-  legend(x = round(xmax(rast)) + 1, y = round(ymax(rast)) + 1,
+  legend(x = round(xmax(rast)) + 1,
+         yjust = 0,
          title = varName,
          bty = "n",
          legend = paste0(round(colVals[,1], legendRound),
