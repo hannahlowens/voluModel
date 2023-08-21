@@ -6,7 +6,7 @@
 \usage{
 plotLayers(
   rast,
-  land = NA,
+  land = NULL,
   landCol = "black",
   title = NULL,
   graticule = TRUE,

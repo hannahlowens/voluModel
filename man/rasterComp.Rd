@@ -11,7 +11,7 @@ rasterComp(
   col2 = "#7570b37F",
   rast1Name = "Set 1",
   rast2Name = "Set 2",
-  land = NA,
+  land = NULL,
   landCol = "black",
   title = "A Raster Comparison",
   graticule = TRUE,

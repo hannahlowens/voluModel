@@ -262,7 +262,7 @@ bottomRaster <- function(rawPointData){
                         FUN = function(x) tail(x[!is.na(x)],1))
   rawPointData$Bottom <- bottomSample
 
-  bRaster <- terra::rasterize(x = rawPointData, y = template, field = "Bottom")
+  bRaster <- rasterize(x = rawPointData, y = template, field = "Bottom")
   return(bRaster)
 }
 

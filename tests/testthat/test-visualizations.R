@@ -41,7 +41,7 @@ test_that("pointMap checks", {
                         spName = spName, land = land)
   expect_true(is.ggplot(point_map))
   point_map <- pointMap(occs = occs,
-                        spName = spName, land = NA)
+                        spName = spName, land = NULL)
   expect_true(is.ggplot(point_map))
 })
 
@@ -89,13 +89,13 @@ test_that("pointCompMap checks", {
                             spName = spName, land = vect(land))
   expect_true(is.ggplot(point_map))
   point_map <- pointCompMap(occs1 = occs1, occs2 = occs2,
-                            spName = spName, land = NA)
+                            spName = spName, land = NULL)
   expect_true(is.ggplot(point_map))
   point_map <- pointCompMap(occs1 = rbind(occs1,occs2), occs2 = occs2,
-                            spName = spName, land = NA)
+                            spName = spName, land = NULL)
   expect_true(is.ggplot(point_map))
   point_map <- pointCompMap(occs1 = occs1, occs2 = rbind(occs1,occs2),
-                            spName = spName, land = NA)
+                            spName = spName, land = NULL)
   expect_true(is.ggplot(point_map))
 })
 
