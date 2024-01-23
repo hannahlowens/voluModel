@@ -159,7 +159,7 @@ pointMap <- function(occs, spName, land = NA,
     return(NULL)
   }
 
-  if(!any(is.null(land[[1]]),
+  if(!any(is.na(land[[1]]),
           "sf" %in% class(land),
           "SpatVector" %in% class(land))){
     warning(paste0("'land' must be NA or of class 'sf' or 'SpatVector'."))
@@ -198,7 +198,7 @@ pointMap <- function(occs, spName, land = NA,
   }
 
   # Where the actual function happens
-  if(any(is.null(land))){
+  if(any(is.na(land))){
       point_map <- ggplot(mapping = mapping) +
         geom_point(data = occs, aes(x = occs[[xIndex]], y = occs[[yIndex]]),
                    colour = ptCol, cex = ptSize, shape = 20, alpha = alpha) +
@@ -351,14 +351,14 @@ pointCompMap <- function(occs1, occs2,
     return(NULL)
   }
 
-  if(!any(is.null(land[[1]]),
+  if(!any(is.na(land[[1]]),
           "sf" %in% class(land),
           "SpatVector" %in% class(land))){
     warning(paste0("'land' must be NA or of class 'sf' or 'SpatVector'."))
     return(NULL)
   }
 
-  if(!any(is.null(land))){
+  if(!any(is.na(land))){
     if(!("sf" %in% class(land))){
       land <- sf::st_as_sf(land)
     }
@@ -466,7 +466,7 @@ pointCompMap <- function(occs1, occs2,
 
   occ_datIndices <- columnParse(occ_dat)
 
-  if(any(is.null(land))){
+  if(any(is.na(land))){
     comparison_map <- ggplot() +
     geom_point(data = occ_dat, aes(x = occ_dat[[occ_datIndices$xIndex]],
                                    y = occ_dat[[occ_datIndices$yIndex]]),
@@ -689,7 +689,7 @@ blendColor <- function( col1 = "#1b9e777F", col2 = "#7570b37F") {
 rasterComp <- function(rast1 = NULL, rast2 = NULL,
                        col1 = "#1b9e777F", col2 = "#7570b37F",
                        rast1Name = "Set 1", rast2Name = "Set 2",
-                       land = NULL, landCol = "black",
+                       land = NA, landCol = "black",
                        title = "A Raster Comparison",
                        graticule = TRUE, ...){
 
@@ -704,7 +704,7 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
     return(NULL)
   }
 
-  if(!any(is.null(land[[1]]),
+  if(!any(is.na(land[[1]]),
           "sf" %in% class(land),
           "SpatVector" %in% class(land))){
     warning(paste0("'land' must be NA or of class 'sf' or 'SpatVector'."))
@@ -763,14 +763,14 @@ rasterComp <- function(rast1 = NULL, rast2 = NULL,
 
   if(graticule){
     grat <- graticule(lon = seq(-180, 180, 10), lat = seq(-90,90,10), crs = crs(rast1))
-    plot(crop(grat, rast1), col="gray50", labels = FALSE, add = TRUE)
+    plot(grat, col="gray50", labels = FALSE, add = TRUE)
   }
 
-  if(!any(is.null(land))){
+  if(!any(is.na(land))){
     if(!("SpatVector" %in% class(land))){
       land <- vect(land)
     }
-    plot(land, col = landCol, axes = FALSE, add = TRUE)
+    plot(land, col = landCol, add = TRUE)
   }
 
   title(main = title, cex.main = 1.1)
@@ -914,7 +914,7 @@ diversityStack <- function(rasterList, template){
 #' @export
 
 oneRasterPlot <- function(rast,
-                          land = NULL, landCol = "black",
+                          land = NA, landCol = "black",
                           scaleRange = NA,
                           graticule = TRUE,
                           title = "A Raster",
@@ -970,14 +970,14 @@ oneRasterPlot <- function(rast,
     return(NULL)
   }
 
-  if(!any(is.null(land[[1]]),
+  if(!any(is.na(land[[1]]),
           "sf" %in% class(land),
           "SpatVector" %in% class(land))){
     warning(paste0("'land' must be NA or of class 'sf' or 'SpatVector'."))
     return(NULL)
   }
 
-  if(!any(is.null(land))){
+  if(!any(is.na(land))){
     if(!("sf" %in% class(land))){
       land <- sf::st_as_sf(land)
     }
@@ -1050,10 +1050,10 @@ oneRasterPlot <- function(rast,
 
   if(graticule){
     grat <- graticule(lon = seq(-180, 180, 10), lat = seq(-90,90,10), crs = crs(rast))
-    plot(crop(grat, rast), col="gray50", labels = FALSE, add = TRUE)
+    plot(grat, col="gray50", labels = FALSE, add = TRUE)
   }
 
-  if(!any(is.null(land))){
+  if(!any(is.na(land))){
     if(!("SpatVector" %in% class(land))){
       land <- vect(land)
     }
@@ -1137,7 +1137,7 @@ oneRasterPlot <- function(rast,
 #' @export
 
 plotLayers <- function(rast,
-                      land = NULL, landCol = "black",
+                      land = NA, landCol = "black",
                       title = NULL,
                       graticule = TRUE, ...){
   #Input processing
@@ -1149,7 +1149,7 @@ plotLayers <- function(rast,
     return(NULL)
   }
 
-  if(!any(is.null(land[[1]]),
+  if(!any(is.na(land[[1]]),
           "sf" %in% class(land),
           "SpatVector" %in% class(land))){
     warning(paste0("'land' must be NA or of class 'sf' or 'SpatVector'."))
@@ -1195,10 +1195,10 @@ plotLayers <- function(rast,
 
   if(graticule){
     grat <- graticule(lon = seq(-180, 180, 10), lat = seq(-90,90,10), crs = crs(rast))
-    plot(crop(grat, rast), col="gray50", labels = FALSE, add = TRUE)
+    plot(grat, col="gray50", labels = FALSE, add = TRUE)
   }
 
-  if(!any(is.null(land))){
+  if(!any(is.na(land))){
     if(!("SpatVector" %in% class(land))){
       land <- vect(land)
     }

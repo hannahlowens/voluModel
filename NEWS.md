@@ -1,5 +1,6 @@
 # voluModel 0.2.1
 
+- Updated `blendColor()` argument documentation.
 - Fixed messy axis labels when graticules are plotted for rasters.
 - Enhanced testing
 - More robust manual plot scaling, including rounding.
