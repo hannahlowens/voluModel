@@ -6,7 +6,7 @@
 \usage{
 oneRasterPlot(
   rast,
-  land = NULL,
+  land = NA,
   landCol = "black",
   scaleRange = NA,
   graticule = TRUE,
