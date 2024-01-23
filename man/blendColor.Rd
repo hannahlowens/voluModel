@@ -7,11 +7,11 @@
 blendColor(col1 = "#1b9e777F", col2 = "#7570b37F")
 }
 \arguments{
-\item{color}{Anything that can be interpreted by \code{rgb}
+\item{col1}{Anything that can be interpreted by \code{rgb}
 as a color.}
 
-\item{percent}{A whole number between 0 and 100 specifying
-how transparent the color should be.}
+\item{col2}{Anything that can be interpreted by \code{rgb}
+as a color.}
 }
 \value{
 A \code{character} string with hex color, including

@@ -572,11 +572,11 @@ transpColor <- function(color, percent = 50) {
 #'
 #' @description Generates a blended color from two transparent colors
 #'
-#' @param color Anything that can be interpreted by `rgb`
+#' @param col1 Anything that can be interpreted by `rgb`
 #' as a color.
 #'
-#' @param percent A whole number between 0 and 100 specifying
-#' how transparent the color should be.
+#' @param col2 Anything that can be interpreted by `rgb`
+#' as a color.
 #'
 #' @return A `character` string with hex color, including
 #' adjustment for transparency.
