@@ -7,11 +7,11 @@
 
 ## Test environments
 * local OS X 14.2.1, R 4.3.1
-* mac-latest (release), R 4.2.3
-* win-builder (devel and release), R 4.2.3
-* ubuntu 20.04 (devel, release, and oldrel-1; on GitHub Actions), R 4.2.3
-* windows-latest (on GitHub Actions), R 4.2.3
-* macOS-latest (on GitHub Actions), R 4.2.3
+* mac-latest (release), R 4.3.0
+* win-builder (devel and release), R 4.3.2
+* ubuntu 22.04.3 (devel, release, and oldrel-1; on GitHub Actions), R 4.3.2
+* windows-latest (on GitHub Actions), R 4.3.2
+* macOS-latest (on GitHub Actions), R 4.3.2
 * rhub
 
 ## R CMD check results
