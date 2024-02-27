@@ -1,3 +1,7 @@
+# voluModel 0.2.2
+
+- Removed use of sf package in `e_GLMWorkflow vignette.
+
 # voluModel 0.2.1
 
 - Updated `blendColor()` argument documentation.
