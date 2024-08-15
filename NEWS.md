@@ -1,6 +1,7 @@
 # voluModel 0.2.2
 
-- Removed use of sf package in `e_GLMWorkflow vignette.
+- Removed use of sf package in `e_GLMWorkflow` vignette.
+- Added possibility to specify method in `interpolateRaster()` and `smoothRaster()` using `method` argument as in `fields::Tps()`.
 
 # voluModel 0.2.1
 

@@ -23,6 +23,8 @@ test_that("interpolateRaster input warnings behave as expected", {
                                    theta = "a"))
   expect_warning(interpolateRaster(inputRaster = r, fast = T,
                                    REML = "a"))
+  expect_warning(interpolateRaster(inputRaster = r, fast = T,
+                                   REML = T, method = "guess"))
 })
 
 # Introduce a "hole"
@@ -48,11 +50,11 @@ test_that("interpolateRaster interpolates as expected", {
 
 # Create sample raster
 r <- rast(ncol=100, nrow=100)
-values(r) <- 1:10000
+values(r) <- rep(1:100, times = 100)
 completeRaster <- r
 
 # Introduce a "hole"
-values(r)[100:105] <- NA
+values(r)[c(5030:5040)] <- NA
 
 # Execute function
 interpolatedRaster <- interpolateRaster(r, fast = T, aRange = 1)
@@ -71,12 +73,8 @@ test_that("fast version of interpolateRaster interpolates as expected", {
 })
 
 # smoothRaster() tests ----
-# Create sample raster
-r <- rast(ncol=100, nrow=100)
-values(r) <- 1:10000
-
 # Introduce a "bubble"
-values(r)[c(5030:5050,5130:5150,5230:5250)] <- 9999
+values(r)[c(5030:5050,5130:5150)] <- 99
 
 test_that("smoothRaster input warnings behave as expected", {
 
@@ -93,10 +91,12 @@ test_that("smoothRaster input warnings behave as expected", {
                                    theta = "a"))
   expect_warning(smoothRaster(inputRaster = r, fast = T,
                                    REML = "a"))
+  expect_warning(smoothRaster(inputRaster = r, fast = T,
+                              REML = T, method = "guess"))
 })
 
 # Execute function
-smoothedRaster <- smoothRaster(r)
+smoothedRaster <- smoothRaster(r, method = "REML")
 
 test_that("smoothRaster returns appropriate information", {
   expect_equal(class(r), class(smoothedRaster))
@@ -132,3 +132,4 @@ test_that("fast version of smoothRaster interpolates as expected", {
   expect_equal(global(smoothedRaster, min),
                global(smoothedRaster, min))
 })
+

@@ -70,6 +70,12 @@ interpolateRaster <- function(inputRaster, fast = FALSE, ...){
     REML <- FALSE
   }
 
+  if("method" %in% names(args)){
+    method <- args$method
+  } else{
+    method <- "GCV"
+  }
+
   # Input error check
   if (!is(inputRaster, "SpatRaster")) {
     warning(paste0("inputRaster is not of class 'SpatRaster'.\n"))
@@ -95,6 +101,10 @@ interpolateRaster <- function(inputRaster, fast = FALSE, ...){
     warning(paste0("Argument 'REML' is not of type 'logical'.\n"))
     return(NULL)
   }
+  if (!(method %in% c("GCV", "GCV.model", "GCV.one", "RMSE", "pure error", "REML"))) {
+    warning(paste0("Argument 'method' is not a recognized value.\n"))
+    return(NULL)
+  }
 
   # Prepare input data
   r <- inputRaster
@@ -114,7 +124,7 @@ interpolateRaster <- function(inputRaster, fast = FALSE, ...){
     tps <- fastTps(xy, v, lon.lat = lon.lat, aRange = aRange, REML = REML,
                    verbose = F)
   } else {
-    tps <- Tps(xy, v, lon.lat = lon.lat, verbose = FALSE)
+    tps <- Tps(xy, v, lon.lat = lon.lat, method = method, verbose = FALSE)
   }
 
   p <- rast(r)
@@ -196,6 +206,12 @@ smoothRaster <- function(inputRaster, fast = FALSE, ...){
     REML <- FALSE
   }
 
+  if("method" %in% names(args)){
+    method <- args$method
+  } else{
+    method <- "GCV"
+  }
+
   # Input error check
   if (!is(inputRaster, "SpatRaster")) {
     warning(paste0("inputRaster is not of class 'SpatRaster'.\n"))
@@ -221,6 +237,10 @@ smoothRaster <- function(inputRaster, fast = FALSE, ...){
     warning(paste0("Argument 'REML' is not of type 'logical'.\n"))
     return(NULL)
   }
+  if (!(method %in% c("GCV", "GCV.model", "GCV.one", "RMSE", "pure error", "REML"))) {
+    warning(paste0("Argument 'method' is not a recognized value.\n"))
+    return(NULL)
+  }
 
   # Prepare input data
   r <- inputRaster
@@ -240,7 +260,7 @@ smoothRaster <- function(inputRaster, fast = FALSE, ...){
     tps <- fastTps(xy, v, lon.lat = lon.lat, aRange = aRange, REML = REML,
                    verbose = FALSE)
   } else {
-    tps <- Tps(xy, v, lon.lat = lon.lat, verbose = FALSE)
+    tps <- Tps(xy, v, lon.lat = lon.lat, method = method, verbose = FALSE)
   }
 
   p <- rast(r)
