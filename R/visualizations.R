@@ -166,8 +166,10 @@ pointMap <- function(occs, spName, land = NA,
     return(NULL)
   }
 
-  if("SpatVector" %in% class(land)){
-    land <- sf::st_as_sf(land)
+  if(!any(is.na(land))){
+    if(!("sf" %in% class(land))){
+      land <- sf::st_as_sf(land)
+    }
   }
 
   colVec <- c(ptCol, landCol, waterCol)
@@ -1210,4 +1212,312 @@ plotLayers <- function(rast,
   finalPlot <- recordPlot()
 
   return(finalPlot)
+}
+
+#' @title Vertical sample
+#'
+#' @description Samples data along a vertical transect
+#'
+#' @param x A multilayer `SpatRaster` object
+#'
+#' @param sampleAxis Specifies whether a latitudinal ("lat") or
+#' longitudinal ("long") transect is desired.
+#'
+#' @param axisValue Numeric value specifying transect postion.
+#'
+#' @note Only unprojected `SpatRaster` files are supported.
+#'
+#' @return A `data.frame` with values sampled across vertical
+#' transect.
+#'
+#' @keywords internal plotting
+#'
+#' @export
+
+verticalSample <- function(x = NULL, sampleAxis = "lon", axisValue = NA){
+
+  # Input error checking
+  if(any(!grepl("SpatRaster", class(x)), is.null(x))){
+    warning(paste0("'x' must be of class 'SpatRaster'.\n"))
+    return(NULL)
+  }
+
+  if(all(!is.numeric(axisValue), !is.na(axisValue))){
+    warning(paste0("'axisValue' must be single numeric value."))
+    return(NULL)
+  }
+
+  if(!(sampleAxis %in% c("lat", "lon"))){
+    warning(paste0("'sampleAxis' must be 'lon' or 'lat'."))
+    return(NULL)
+  }
+
+  samplePoints <- as.data.frame(x, xy = TRUE, na.rm=FALSE)
+
+  # Takes mean axis value if none specified
+  if(is.na(axisValue)){
+    if(sampleAxis == "lon"){
+      axisValue <-  mean(c(xmin(x), xmax(x)))
+    } else{
+      axisValue <-  mean(c(ymin(x), ymax(x)))
+    }
+  }
+
+  if(sampleAxis == "lon"){
+    if(all(axisValue > xmin(x), axisValue < xmax(x))){
+      axisValue <- samplePoints[which.min(abs(samplePoints[,"x"] - axisValue)), "x"]
+    } else{
+      warning(paste0("'axisValue' falls outside the extent of 'x'."))
+      return(NULL)
+    }
+  } else{
+    if(all(axisValue > ymin(x), axisValue < ymax(x))){
+      axisValue <- samplePoints[which.min(abs(samplePoints[,"y"] - axisValue)), "y"]
+    } else{
+      warning(paste0("'axisValue' falls outside the extent of 'x'."))
+      return(NULL)
+    }
+  }
+
+  # Select coordinates to sample
+  if(sampleAxis == "lon"){
+    samplePoints <- samplePoints[samplePoints[,"x"] == axisValue,]
+  } else{
+    samplePoints <- samplePoints[samplePoints[,"y"] == axisValue,]
+  }
+
+  samplePoints <- lapply(1:nrow(samplePoints), FUN = function(x){
+    cbind(rep(samplePoints[x,"x"], n = (ncol(samplePoints)-2)),
+          rep(samplePoints[x,"y"], n = (ncol(samplePoints)-2)),
+          as.numeric(colnames(samplePoints[c(-1,-2)])),
+          t(samplePoints[x,])[c(-1,-2),])
+  })
+
+  samplePoints <- as.data.frame(do.call(rbind, samplePoints))
+  colnames(samplePoints) <- c("x", "y", "z", "value")
+
+  if(all(is.na(samplePoints$z))){
+    samplePoints <- samplePoints[, !names(samplePoints) == "z"]
+  } else{
+    zVals <- sort(unique(samplePoints$z))
+    zHeights <- vector(mode = "numeric",
+                       length = length(zVals))
+    for(i in 1:length(zHeights)){
+      if ( i == length(zHeights)){
+        zHeights[[i]] <- abs(zVals[[i]] - zVals[[i-1]])
+      } else{
+        zHeights[[i]] <- abs(zVals[[i]] - zVals[[i+1]])
+      }
+    }
+
+    height <- vector(mode = "numeric", length = nrow(samplePoints))
+    for(i in 1:nrow(samplePoints)){
+      height[[i]] <- zHeights[which(zVals %in% samplePoints$z[[i]])]
+    }
+    samplePoints$height <- height
+  }
+
+  samplePoints <- samplePoints[complete.cases(samplePoints),]
+
+  if(sampleAxis == "lon"){
+    samplePoints <- samplePoints[,2:5]
+  } else{
+    samplePoints <- samplePoints[,-2]
+  }
+
+  colnames(samplePoints) <- c("x", "y", "value", "height")
+
+  return(samplePoints)
+}
+
+#' @title Plot vertical sample
+#'
+#' @description Plots cell values along a vertical transect
+#'
+#' @param rast A multilayer `SpatRaster` object, with names
+#' corresponding to the z coordinate represented by the layer.
+#' These names must be interpretable by `as.numeric`.
+#'
+#' @param sampleAxis Specifies whether a latitudinal ("lat") or
+#' longitudinal ("long") transect is desired.
+#'
+#' @param axisValue Numeric value specifying transect postion.
+#'
+#' @param scaleRange A numeric vector of length 2, specifying
+#' the range that should be used for the plot color scale.
+#'
+#' @param plotLegend `logical`, controls whether legend is plotted.
+#'
+#' @param depthLim A single vector of class `numeric`. How deep
+#' should the plot go?
+#'
+#' @param transRange A `numeric` vector of lenghth 2. How far
+#' along the transect should be plotted?
+#'
+#' @param transTicks `numeric`, spacing between breaks on x axis.
+#'
+#' @param verbose `logical`. Switching to `FALSE` mutes message
+#' alerting user if input `rast` values exceed specified `scaleRange`.
+#'
+#' @param ... Additional optional arguments to pass to `viridis`.
+#'
+#' @note Only unprojected `SpatRaster` files are supported.
+#'
+#' @return A `ggplot` showing a vertical slice through the `SpatRaster`.
+#'
+#' @examples
+#' library(terra)
+#'
+#' rast1 <- rast(ncol=10, nrow=10)
+#' values(rast1) <- rep(0:3, 50)
+#'
+#' rast2 <- rast(ncol=10, nrow=10)
+#' values(rast2) <- c(rep(0, 50), rep(1,25), rep(2,25))
+#'
+#' rast3 <- rast(ncol=10, nrow=10)
+#' values(rast3) <- rep(c(1,3,2,1), 25)
+#'
+#' distBrick <- c(rast1, rast2, rast3)
+#' names(distBrick) <- c(0:2)
+#'
+#' transectPlot(distBrick, depthLim = 3)
+#'
+#'
+#' @importFrom ggplot2 ggplot
+#' @importFrom metR scale_x_latitude
+#'
+#' @keywords plotting
+#'
+#' @export
+
+transectPlot <- function(rast = NULL,
+                         sampleAxis = "lon",
+                         axisValue = NA,
+                         scaleRange = NA,
+                         plotLegend = TRUE,
+                         depthLim = as.numeric(max(names(rast))),
+                         transRange = c(-90,90),
+                         transTicks = 20,
+                         verbose = FALSE,
+                         ...){
+  #Input processing
+  args <- list(...)
+
+  if("option" %in% names(args)){
+    option <- args$option
+  } else{
+    option <- "plasma"
+  }
+
+  if("n" %in% names(args)){
+    n <- args$n
+  } else{
+    n <- 11
+  }
+
+  if("legendRound" %in% names(args)){
+    legendRound <- args$legendRound
+  } else{
+    legendRound <- 2
+  }
+
+  # Input error checking
+  if(any(!grepl("SpatRaster", class(rast)), is.null(rast))){
+    warning(paste0("'rast' must be of class 'SpatRaster'.\n"))
+    return(NULL)
+  }
+
+  nameTest <- suppressWarnings(as.numeric(names(rast)))
+  if(any(is.na(nameTest))){
+    warning(paste0("Names of 'rast' must be interpretable as 'numeric'.\n"))
+    return(NULL)
+  }
+
+  if(!(sampleAxis %in% c("lat", "lon"))){
+    warning(paste0("'sampleAxis' must be 'lon' or 'lat'."))
+    return(NULL)
+  }
+
+  if(all(!is.numeric(axisValue), !is.na(axisValue))){
+    warning(paste0("'axisValue' must be single numeric value."))
+    return(NULL)
+  }
+
+  if(!all(is.na(scaleRange))){
+    if(!all(any("numeric" %in% class(scaleRange)),
+            length(scaleRange) == 2)){
+      warning(paste0("'scaleRange' must either be NA or\na numeric vector of length 2."))
+      return(NULL)
+    }
+  }
+
+  # Get vertical transect
+  verticalTransect <- try(verticalSample(x = rast, sampleAxis = sampleAxis,
+                                     axisValue = axisValue))
+  if(is.null(verticalTransect)){
+    return(NULL)
+  } else {
+    # Get information for color scale
+    if(any(is.na(scaleRange))){
+      begin <- min(verticalTransect$value)
+      end <- max(verticalTransect$value)
+      scaleRange <- c(begin, end)
+    } else if(any(min(verticalTransect$value) < min(scaleRange),
+                  max(verticalTransect$value) > max(scaleRange))){
+      begin <- min(verticalTransect$value)
+      end <- max(verticalTransect$value)
+
+      if(verbose){
+        message(paste0("Input extremes exceed specified scale range.\n",
+                       "Using input max and min instead."))
+      }
+    } else{
+      begin <- min(scaleRange)
+      end <- max(scaleRange)
+    }
+
+    at <- seq(from = begin, to = end, by = (end-begin)/n)
+    at <- round(at, legendRound)[c(-1,-length(at))]
+
+    begin <- (begin - min(verticalTransect$value)/diff(scaleRange))
+    end <- max(verticalTransect$value)/end
+
+    # Tiled heatmap
+    # Kluge to get rid of annoying note
+    x <- NA
+    y <- NA
+    value <- NA
+    height <- NA
+
+    transect.tile <- ggplot(verticalTransect) +
+      geom_tile(aes(x = x, y = y, fill = value, height = height), na.rm = TRUE) +
+      coord_cartesian(expand = FALSE) +
+      labs(x = NULL, y = "Water Depth (m)") +
+      scale_fill_viridis_b(option = option, begin = begin,
+                           end = end, breaks = at) +
+      theme_bw() %+%
+      theme(panel.background = element_rect(fill = "grey90"),
+            panel.grid.major = element_line(linetype = 3, colour = "grey60"),
+            axis.text = element_text(colour = 1, size = 10),
+            axis.title = element_text(colour = 1, size = 12)) +
+      scale_y_reverse() +
+      scale_x_latitude(ticks = transTicks, position = "bottom",
+                       breaks = seq(transRange[[1]], transRange[[2]],
+                                    by = transTicks)) +
+      guides(fill = "none") +
+      theme(plot.margin = margin(.5,.5,.5,0, "cm")) +
+      ylim(depthLim, -0.5) + # Allows plot at surface
+      xlim(transRange)
+
+    if(plotLegend){
+      transect.tile <- transect.tile +
+        guides(fill = guide_legend(title.position = "right", direction = "vertical",
+                                   title.theme = element_text(angle = 90, size = 12,
+                                                              colour = "black"),
+                                   barheight = .5, barwidth = .95,
+                                   title.hjust = 0.5, raster = FALSE,
+                                   title = "Value"))
+    }
+    return(transect.tile)
+  }
 }

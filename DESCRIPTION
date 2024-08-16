@@ -38,6 +38,7 @@ Imports:
     ggtext,
     grDevices,
     methods,
+    metR,
     modEvA,
     rangeBuilder (>= 2.0),
     terra,

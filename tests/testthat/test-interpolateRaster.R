@@ -21,9 +21,9 @@ test_that("interpolateRaster input warnings behave as expected", {
                                 aRange = "a"))
   expect_warning(interpolateRaster(inputRaster = r, fast = T,
                                    theta = "a"))
-  expect_warning(interpolateRaster(inputRaster = r, fast = T,
+  expect_warning(interpolateRaster(inputRaster = r, fast = F,
                                    REML = "a"))
-  expect_warning(interpolateRaster(inputRaster = r, fast = T,
+  expect_warning(interpolateRaster(inputRaster = r, fast = F,
                                    REML = T, method = "guess"))
 })
 
@@ -88,9 +88,9 @@ test_that("smoothRaster input warnings behave as expected", {
   expect_warning(smoothRaster(inputRaster = r, fast = T,
                                    aRange = "a"))
   expect_warning(smoothRaster(inputRaster = r, fast = T,
-                                   theta = "a"))
+                              theta = "a"))
   expect_warning(smoothRaster(inputRaster = r, fast = T,
-                                   REML = "a"))
+                              REML = "a"))
   expect_warning(smoothRaster(inputRaster = r, fast = T,
                               REML = T, method = "guess"))
 })
