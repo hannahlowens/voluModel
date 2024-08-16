@@ -376,7 +376,7 @@ unlink(td, recursive = T)
 
 # References
 
-Bakis Y (2021): TU_Fish. v1.1. No organization. Dataset/Occurrence. https://fishair.org/ipt/resource?r=tu_fish&v=1.1 Accessed via OBIS on 2020-11-04.  
+Bakis Y (2021): TU_Fish. v1.1. No organization. Dataset/Occurrence. https://web.archive.org/web/20221202141213/https://bgnn.tulane.edu/ipt/resource?r=tu_fish&v=1.1 Accessed via OBIS on 2020-11-04.  
 
 Bentley A (2022). KUBI Ichthyology Collection. Version 17.80. University of Kansas Biodiversity Institute. DOI: 10.15468/mgjasg. Accessed via GBIF on 2020-10-13.
 
@@ -416,7 +416,7 @@ Harvard University M, Morris P J (2022). Museum of Comparative Zoology, Harvard 
 
 Hendrickson D A, Cohen A E, Casarez M J (2022). University of Texas, Biodiversity Center, Ichthyology Collection (TNHCi). Version 5.175. University of Texas at Austin, Biodiversity Collections. DOI: 10.15468/h8gxdr. Accessed via GBIF on 2020-10-13.
 
-INVEMAR. SIBM en línea: Sistema de Información sobre Biodiversidad Marina. Santa Marta: Instituto de investigaciones Marinas y Costeras José Benito Vives de Andréis,. http://www.invemar.org.co/siam/sibm/index.htm Accessed via OBIS on 2020-11-04. 
+INVEMAR. SIBM en línea: Sistema de Información sobre Biodiversidad Marina. Santa Marta: Instituto de investigaciones Marinas y Costeras José Benito Vives de Andréis,. https://www.invemar.org.co/siam/sibm/index.htm Accessed via OBIS on 2020-11-04. 
 
 Locarnini RA, Mishonov AV, Baranova OK, Boyer TP, Zweng MM, Garcia HE, Reagan JR, Seidov D, Weathers K, Paver CR, Smolyar I (2018). World Ocean Atlas 2018, Volume 1: Temperature. A. Mishonov Technical Ed.; NOAA Atlas NESDIS 81, 52pp.
 
