@@ -4,6 +4,7 @@
 - Added possibility to specify method in `interpolateRaster()` and `smoothRaster()` using `method` argument as in `fields::Tps()`.
 - Added `verticalTransect()` for visualizing vertical slices through multi-layered `spatRaster` 
 objects.
+- Updated bad URLs for two citations to archived version.
 
 # voluModel 0.2.1
 
