@@ -6,7 +6,7 @@
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Codecov test coverage](https://codecov.io/gh/hannahlowens/voluModel/branch/main/graph/badge.svg)](https://codecov.io/gh/hannahlowens/voluModel?branch=main)
 [![cran version](https://www.r-pkg.org/badges/version/voluModel)](https://cran.r-project.org/package=voluModel)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7813394.svg)](https://doi.org/10.5281/zenodo.7813394)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5792654.svg)](https://doi.org/10.5281/zenodo.5792654)
 [![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/voluModel)](https://github.com/r-hub/cranlogs.app)
 
 <!-- badges: end -->
@@ -26,8 +26,8 @@ citation for the version you’re using:
 ```r 
 citation(package = "voluModel")
 ```
-    ## Owens H, Rahbek C (2022). _voluModel: Modeling Species Distributions in Three Dimensions_. doi:
-    ## 10.5281/zenodo.7813394  (URL: https://doi.org/10.5281/zenodo.7813394), R package version 0.2.0, <URL:
+    ## Owens H, Rahbek C (2024). _voluModel: Modeling Species Distributions in Three Dimensions_. doi:
+    ## 10.5281/zenodo.7813394  (URL: https://doi.org/10.5281/zenodo.7813394), R package version 0.2.2, <URL:
     ## http://CRAN.R-project.org/package=voluModel>.
     ##
     ## A BibTeX entry for LaTeX users is
@@ -35,10 +35,10 @@ citation(package = "voluModel")
     ##  @Manual{,
     ##    title = {{voluModel}: Modeling Species Distributions in Three Dimensions},
     ##    author = {Hannah L. Owens and Carsten Rahbek},
-    ##    year = {2022}
-    ##    note = {R package version 0.2.0},
+    ##    year = {2024}
+    ##    note = {R package version 0.2.2},
     ##    url = {http://CRAN.R-project.org/package=voluModel},
-    ##    doi = {10.5281/zenodo.7813394},
+    ##    doi = {10.5281/zenodo.5792654},
     ##  }
 
 
@@ -73,6 +73,6 @@ devtools::install_github("hannahlowens/voluModel", build_vignettes = TRUE)
     
 ## Acknowledgements
 
-<img src="http://publications.europa.eu/code/images/scan/5000100-flag.jpg" alt="EU flag" align="right" height="100" />
+<img src="https://en.m.wikipedia.org/wiki/File:Flag_of_Europe.svg" alt="EU flag" align="right" height="100" />
 
 - This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No 891702. 
