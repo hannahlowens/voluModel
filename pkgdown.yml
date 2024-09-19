@@ -1,5 +1,5 @@
 pandoc: 3.1.11
-pkgdown: 2.1.0
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   a_Introduction: a_Introduction.html
@@ -7,4 +7,4 @@ articles:
   c_DataSampling: c_DataSampling.html
   d_Visualization: d_Visualization.html
   e_GLMWorkflow: e_GLMWorkflow.html
-last_built: 2024-08-21T09:24Z
+last_built: 2024-09-19T07:48Z
