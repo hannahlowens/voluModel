@@ -73,6 +73,6 @@ devtools::install_github("hannahlowens/voluModel", build_vignettes = TRUE)
     
 ## Acknowledgements
 
-<img src="https://en.m.wikipedia.org/wiki/File:Flag_of_Europe.svg" alt="EU flag" align="right" height="100" />
+<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Flag_of_Europe.svg/383px-Flag_of_Europe.svg.png" alt="EU flag" align="right" height="50" />
 
 - This project has received funding from the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No 891702. 
