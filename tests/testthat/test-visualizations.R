@@ -214,7 +214,7 @@ test_that("plotLayers works", {
 })
 
 rast1 <- rast(ncol=10, nrow=10)
-values(rast1) <- rep(0:3, 50)
+values(rast1) <- rep(0:3, 25)
 
 rast2 <- rast(ncol=10, nrow=10)
 values(rast2) <- c(rep(0, 50), rep(1,25), rep(2,25))

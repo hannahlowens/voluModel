@@ -1,3 +1,8 @@
+# voluModel 0.2.3
+
+- In development
+- Emmaline Sheahan added as author.
+
 # voluModel 0.2.2
 
 - Removed use of sf package in `e_GLMWorkflow` vignette.
