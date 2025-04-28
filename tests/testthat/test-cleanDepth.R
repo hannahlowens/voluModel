@@ -1,26 +1,28 @@
 # testing cleanDepth function
 
-library(rnaturalearthhires)
+library(rnaturalearth)
 library(terra)
 library(sf)
 library(dplyr)
 library(voluModel)
 
-source('./scripts/scyli_analysis/voluModel_functions/cleanDepth.R')
-
 # reading in example data
-occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv", 
+occs <- read.csv(system.file("extdata/Steindachneria_argentea.csv",
                              package='voluModel'))
 occs <- occs %>% dplyr::select(scientificName, decimalLatitude, decimalLongitude, depth)
 colnames(occs) <- c("species", "latitude", "longitude", "depth")
+target_crs <- "+proj=longlat +datum=WGS84"
+occs_sf <- st_as_sf(x = occs,
+                    coords = c("longitude", "latitude"),
+                    crs = target_crs)
 
 # creating example land polygon
-target_crs <- "+proj=longlat +datum=WGS84"
-land <- st_as_sf(rnaturalearthhires::countries10)[1] %>% st_set_crs(target_crs)
+land <- st_as_sf(ne_countries())[1] %>% st_set_crs(target_crs)
 land <- land[-which(!(st_is_valid(land))),]
 
-# reading in example bathymetry layer
-bath_data <- rast('./data/rasters/ETOPO1_Bed_c_geotiff.tif')
+# creating example bathymetry layer
+bath_data <- rast(extend(ext(occs_sf), 10), crs = target_crs, resolution = 1)
+values(bath_data) <- sample(c(-4000:0), size = length(values(bath_data)))
 
 # setting example depth_range
 depth_range <- c(0, 300)
@@ -45,7 +47,7 @@ testcase6 <- cleanDepth(occs = occs, bathy = bath_data, land_poly = land, flag =
                         bottom_correct = T)
 
 # test case 7: land_poly is supplied, depth_range is supplied, flag and bottom_correct are false
-testcase7 <- cleanDepth(occs = occs, bathy = bath_data, land_poly = land, 
+testcase7 <- cleanDepth(occs = occs, bathy = bath_data, land_poly = land,
                         depth_range = depth_range,
                         flag = T,
                         bottom_correct = T)
