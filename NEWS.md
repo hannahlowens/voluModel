@@ -1,7 +1,7 @@
 # voluModel 0.2.3
 
-- In development
 - Emmaline Sheahan added as author.
+- Updated for compatibility with major ggplot2 update; back-compatibility maintained.
 
 # voluModel 0.2.2
 
