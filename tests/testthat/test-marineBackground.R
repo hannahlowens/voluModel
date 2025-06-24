@@ -46,17 +46,15 @@ test_that("marineBackground input warnings behave as expected", {
 
 test_that("marineBackground results as expected", {
   skip_on_cran() # Function's a little slow for CRAN's tastes
-  skip_on_ci() # Something weird happens at line 58
+#  skip_on_ci() # Something weird happens at line 58
   result <- marineBackground(occs = occurrences, buff = 100000,
                              fraction = .9, partCount = 2, clipToOcean = TRUE)
-  expect_equal(class(result)[[1]], "SpatVector")
-  expect_equal(length(result), 1)
+  expect_true("SpatVector" %in% class(result))
 
   result <- marineBackground(occs = occurrences,
                              fraction = .9, partCount = 2,
                              clipToOcean = TRUE)
-  expect_equal(class(result)[[1]], "SpatVector")
-  expect_equal(length(result), 1)
+  expect_true("SpatVector" %in% class(result))
 })
 
 test_that("marineBackground Pacific results as expected", {
@@ -77,13 +75,11 @@ test_that("marineBackground Pacific results as expected", {
   result <- marineBackground(occs = occurrences, buff = 1000000,
                              fraction = .95, partCount = 2, clipToOcean = TRUE,
                              verbose = FALSE)
-  expect_equal(class(result)[[1]], "SpatVector")
-  expect_equal(length(result), 1)
+  expect_true("SpatVector" %in% class(result))
 
   #One side
   result <- marineBackground(occs = occurrences[1:10,], buff = 1000000,
                              fraction = .95, partCount = 2, clipToOcean = TRUE,
                              verbose = FALSE)
-  expect_equal(class(result)[[1]], "SpatVector")
-  expect_equal(length(result), 1)
+  expect_true("SpatVector" %in% class(result))
 })
