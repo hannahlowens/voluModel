@@ -208,7 +208,7 @@ pointMap <- function(occs, spName, land = NA,
               panel.grid = element_blank()) +
         coord_sf(xlim = c(min(occs[[xIndex]]), max(occs[[xIndex]])),
                  ylim = c(min(occs[[yIndex]]), max(occs[[yIndex]])),
-                 expand = .05, ) +
+                 expand = TRUE, ) +
         xlab("") +
         ylab("") +
         ggtitle(paste0(spName, ", ", nrow(occs), " points"))
@@ -221,7 +221,7 @@ pointMap <- function(occs, spName, land = NA,
             panel.grid = element_blank()) +
       coord_sf(xlim = c(min(occs[[xIndex]]), max(occs[[xIndex]])),
                ylim = c(min(occs[[yIndex]]), max(occs[[yIndex]])),
-               expand = .05, ) +
+               expand = TRUE, ) +
       xlab("") +
       ylab("") +
       ggtitle(paste0(spName, ", ", nrow(occs), " points"))
@@ -479,7 +479,7 @@ pointCompMap <- function(occs1, occs2,
                       max(occ_dat[[occ_datIndices$xIndex]])),
              ylim = c(min(occ_dat[[occ_datIndices$yIndex]]),
                       max(occ_dat[[occ_datIndices$yIndex]])),
-             expand = .05, ) +
+             expand = TRUE, ) +
     xlab("") +
     ylab("") +
     labs(
@@ -502,7 +502,7 @@ pointCompMap <- function(occs1, occs2,
                         max(occ_dat[[occ_datIndices$xIndex]])),
                ylim = c(min(occ_dat[[occ_datIndices$yIndex]]),
                         max(occ_dat[[occ_datIndices$yIndex]])),
-               expand = .05, ) +
+               expand = TRUE, ) +
       xlab("") +
       ylab("") +
       labs(
@@ -1495,7 +1495,7 @@ transectPlot <- function(rast = NULL,
       labs(x = NULL, y = "Water Depth (m)") +
       scale_fill_viridis_b(option = option, begin = begin,
                            end = end, breaks = at) +
-      theme_bw() %+%
+      theme_bw() +
       theme(panel.background = element_rect(fill = "grey90"),
             panel.grid.major = element_line(linetype = 3, colour = "grey60"),
             axis.text = element_text(colour = 1, size = 10),
@@ -1515,7 +1515,7 @@ transectPlot <- function(rast = NULL,
                                    title.theme = element_text(angle = 90, size = 12,
                                                               colour = "black"),
                                    barheight = .5, barwidth = .95,
-                                   title.hjust = 0.5, raster = FALSE,
+                                   title.hjust = 0.5,
                                    title = "Value"))
     }
     return(transect.tile)

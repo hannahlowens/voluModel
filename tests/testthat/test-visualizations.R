@@ -39,10 +39,10 @@ test_that("pointMap checks", {
                           verbose = "banana"))
   point_map <- pointMap(occs = occs, alpha = 1,
                         spName = spName, land = land)
-  expect_true(is.ggplot(point_map))
+  expect_true(is_ggplot(point_map))
   point_map <- pointMap(occs = occs,
                         spName = spName, land = NA)
-  expect_true(is.ggplot(point_map))
+  expect_true(is_ggplot(point_map))
 })
 
 set.seed(0)
@@ -84,19 +84,19 @@ test_that("pointCompMap checks", {
 
   point_map <- pointCompMap(occs1 = occs1, occs2 = occs2,
                             spName = spName, land = land)
-  expect_true(is.ggplot(point_map))
+  expect_true(is_ggplot(point_map))
   point_map <- pointCompMap(occs1 = occs1, occs2 = occs2,
                             spName = spName, land = vect(land))
-  expect_true(is.ggplot(point_map))
+  expect_true(is_ggplot(point_map))
   point_map <- pointCompMap(occs1 = occs1, occs2 = occs2,
                             spName = spName, land = NA)
-  expect_true(is.ggplot(point_map))
+  expect_true(is_ggplot(point_map))
   point_map <- pointCompMap(occs1 = rbind(occs1,occs2), occs2 = occs2,
                             spName = spName, land = NA)
-  expect_true(is.ggplot(point_map))
+  expect_true(is_ggplot(point_map))
   point_map <- pointCompMap(occs1 = occs1, occs2 = rbind(occs1,occs2),
                             spName = spName, land = NA)
-  expect_true(is.ggplot(point_map))
+  expect_true(is_ggplot(point_map))
 })
 
 test_that("transpColor checks", {
