@@ -278,7 +278,8 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
   # Crop out land
   land <- readRDS(system.file("extdata/smallLand.rds",
                               package='voluModel'))
-  wholeM <- erase(wholeM, vect(land))
+  land <- project(land, crs(wholeM))
+  wholeM <- erase(wholeM, land)
 
   # Optional removal of unoccupied polygons
   if(clipToOcean){
