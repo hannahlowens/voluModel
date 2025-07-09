@@ -13,7 +13,6 @@
 ^pkgdown$
 ^cran-comments\.md$
 ^CRAN-RELEASE$
-ComplementaryDataProcessing.R
 ^data-raw$
 ^CRAN-SUBMISSION$
 ^CONTRIBUTING.md

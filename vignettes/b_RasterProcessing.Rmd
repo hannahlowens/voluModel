@@ -71,7 +71,7 @@ axis(2, at = 0-depths, labels = depths)
 
 Next, we convert temperature into a `SpatRaster`. While we are at it, we will generate a raster from the deepest value available for each point. While you might call this a "bottom" raster, it is important to note that in some cases, values are not available for the bottom. After the `SpatRaster` is created, we give it the same depth names as the columns in the `SpatVector`. This is important, because `voluModel` uses these names as z coordinates when handling 3D data. I am using `oneRasterPlot()` from voluModel to visualize the rasters using a uniform, high-contrast aesthetic.
 
-```{r temperature processing, eval=FALSE}
+```{r temperature processing, eval=TRUE}
 # Creating a bottom raster
 temperatureBottom <- bottomRaster(temperature)
 
@@ -95,10 +95,6 @@ p2 <- oneRasterPlot(temperatureBottom,land = land, landCol = "black",
               title = "Bottom Temperature (C)")
 ```
 
-```{r temperature plot, echo=FALSE, out.width = '100%', out.height= '100%'}
-knitr::include_graphics("TemperatureTopBottom.png")
-```
-
 # Interpolation
 
 Next, we have a bit of a more complicated example: apparent oxygen utilization (AOU; Garcia et al, 2018b). Apparent oxygen usage is more patchily sampled than temperature (it's generally measured from instrument casts on research cruises, and the coverage isn't quite as dense as for temperature).
@@ -109,7 +105,7 @@ unzip(system.file("extdata/woa18_all_A00mn01_cropped.zip",
                   package = "voluModel"),
       exdir = paste0(td, "/oxygen"), junkpaths = T)
 
-oxygen <- vect(paste0(td, "/oxygen/woa18_all_A00mn01_cropped.shp"))
+oxygen <- vect(paste0(td, "/oxygen/woa18_all_A00mn01_cropped.shp"))[,1:70] # Only taking uppermost 70 depth layers, for speed
 
 plot(oxygen, main = "Distribution of voluModel subset of WOA AOU 2018",
      pch = 20, col = "red", xlim = ext[1:2], ylim = ext[3:4], cex = .6)
@@ -118,25 +114,25 @@ plot(land, col = "black", add = T)
 
 There is a workaround for this, since we can reasonably expect some degree of spatial autocorrelation in apparent oxygen utilization. We use the `interpolateRaster()` function to produce statistically-interpolated layers using `TPS()` from the `fields` package (this is a thin-plate spline interpolation). Be patient--this step can take a while, although as shown here, I am using the `fastTPS()` approximation, which only samples from nearby cells to speed things up. Maybe `fastTPS()` will work ok for your data, maybe it won't. It depends on the data.
 
-```{r interpolate oxygen, warning=FALSE, eval = F}
+```{r interpolate oxygen, warning=FALSE, eval = T}
 # Creating a SpatRaster vector
 oxygen <- rasterize(x = oxygen, y = template,
                    field = names(oxygen)) #Uses same raster template as temperature
 
-for (i in 1:nlyr(oxygen)){
-  oxygen[[i]] <- interpolateRaster(oxygen[[i]], lon.lat = T, fast = T, aRange = 5) #Thin plate spline interpolation
+for (i in 1:nlyr(oxygen)){ 
+  oxygen[[i]] <- interpolateRaster(oxygen[[i]], lon.lat = T, fast = T, aRange = 30) #Thin plate spline interpolation
   oxygen[[i]] <- crop(mask(x = oxygen[[i]], 
                            mask = temperature[[i]]), 
                       temperature[[i]])
 }
 
 # Change names to match tempT
-names(oxygen) <- envtNames
+names(oxygen) <- envtNames[1:70]
 ```
 
 Some environmental data rasters may also look "patchy", possibly as an artifact of uneven sampling. If you are confident that there should be a strong spatial correlation in a data layer that looks "patchy", you can also statistically smooth it, again using `TPS()`, like this:
 
-```{r smoothing oxygen, eval=FALSE}
+```{r smoothing oxygen, eval=TRUE}
 # Smoothing tempO and saving
 oxygenSmooth <- oxygen
 for (i in 1:nlyr(oxygenSmooth)){
@@ -153,10 +149,6 @@ p3 <- oneRasterPlot(oxygen[[1]], land = land, landCol = "black",
               title= "Surface Apparent Oxygen Utilization (µmol/kg),\ninterpolated")
 p4 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black",
      title = "Bottom Apparent Oxygen Utilization (µmol/kg),\ninterpolated and smoothed")
-```
-
-```{r AOU plot, echo=FALSE, out.width = '100%', out.height= '100%'}
-knitr::include_graphics("AOUInterpAndSmooth.png")
 ```
 
 # Tidying up
