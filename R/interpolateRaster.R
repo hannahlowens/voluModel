@@ -121,10 +121,17 @@ interpolateRaster <- function(inputRaster, fast = FALSE, ...){
 
   #### Thin plate spline model
   if(fast){
-    tps <- fastTps(xy, v, lon.lat = lon.lat, aRange = aRange, REML = REML,
-                   verbose = F)
+    tps <- try(fastTps(xy, v, lon.lat = lon.lat, aRange = aRange, REML = REML,
+                   verbose = F),
+               silent = TRUE)
   } else {
-    tps <- Tps(xy, v, lon.lat = lon.lat, method = method, verbose = FALSE)
+    tps <- try(Tps(xy, v, lon.lat = lon.lat, method = method, verbose = FALSE),
+               silent = TRUE)
+  }
+
+  if("try-error" %in% class(tps)){
+    tps <- try(Tps(xy, v, lon.lat = lon.lat, method = method, verbose = FALSE),
+               silent = TRUE)
   }
 
   p <- rast(r)
@@ -257,10 +264,12 @@ smoothRaster <- function(inputRaster, fast = FALSE, ...){
 
   #### Thin plate spline model
   if(fast){
-    tps <- fastTps(xy, v, lon.lat = lon.lat, aRange = aRange, REML = REML,
+    tps <- fastTps(xy, v, lon.lat = lon.lat, aRange = aRange,
+                   REML = REML,
                    verbose = FALSE)
   } else {
-    tps <- Tps(xy, v, lon.lat = lon.lat, method = method, verbose = FALSE)
+    tps <- Tps(xy, v, lon.lat = lon.lat, method = method,
+               verbose = FALSE)
   }
 
   p <- rast(r)
