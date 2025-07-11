@@ -100,7 +100,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2025-07-07</h4>
+            <h4 data-toc-skip class="date">2025-07-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/d_Visualization.Rmd" class="external-link"><code>vignettes/d_Visualization.Rmd</code></a></small>
       <div class="hidden name"><code>d_Visualization.Rmd</code></div>
@@ -195,7 +195,7 @@ introduction vignette</a>.</p>
 <span>  <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span><span class="va">occurrences</span><span class="op">$</span><span class="va">index</span><span class="op">==</span><span class="va">i</span>,<span class="op">]</span></span>
 <span>  <span class="va">tempPoints</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/downsample.html">downsample</a></span><span class="op">(</span><span class="va">tempPoints</span>, <span class="va">temperature</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span>  <span class="va">tempPoints</span><span class="op">$</span><span class="va">depth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">layerNames</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, times <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tempPoints</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">downsampledOccs</span>, <span class="va">tempPoints</span><span class="op">)</span></span>
+<span>  <span class="va">downsampledOccs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spam/man/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">downsampledOccs</span>, <span class="va">tempPoints</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="va">occsWdata</span> <span class="op">&lt;-</span> <span class="va">downsampledOccs</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"decimalLatitude"</span>, <span class="st">"decimalLongitude"</span>, <span class="st">"depth"</span><span class="op">)</span><span class="op">]</span> </span>
 <span></span>
@@ -325,7 +325,7 @@ opened the data.</p>
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <p>Bakis Y (2021): TU_Fish. v1.1. No organization. Dataset/Occurrence.
-<a href="https://web.archive.org/web/20221202141213/https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1" class="external-link uri">https://web.archive.org/web/20221202141213/https://bgnn.tulane.edu/ipt/resource?r=tu_fish&amp;v=1.1</a>
+<a href="https://fishair.org/" class="external-link uri">https://fishair.org/</a>.
 Accessed via OBIS on 2020-11-04.</p>
 <p>Bentley A (2022). KUBI Ichthyology Collection. Version 17.80.
 University of Kansas Biodiversity Institute. DOI: 10.15468/mgjasg.
