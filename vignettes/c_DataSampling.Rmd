@@ -53,14 +53,6 @@ occurrences <- occs %>%
   dplyr::filter(depth %in% 1:2000)
 ```
 
-```{r occurrence dataset plotting code, message=FALSE, warning = FALSE, eval=TRUE, echo = FALSE}
-# Map occurrences
-land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
-pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
-             spName = "Steindachneria argentea", ptSize = 3,
-             land = land)
-```
-
 The environmental dataset I will use as an example is temperature (Locarnini *et al.*, 2018) from the World Ocean Atlas (WOA; Garcia *et al.*, 2019). I have chosen to focus on temperature for simple illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. 
 
 This chunk of code loads the example data shapefile, which results in a `SpatVector`:
@@ -74,10 +66,10 @@ unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip",
 temperature <- vect(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
 
 # Looking at the dataset
-head(temperature)
+as.data.frame(temperature[1:5,1:10])
 ```
 
-As you can see, each point in the `SpatVector` is a line in the associated `data.frame`; each column is a depth layer at that point--"d5M" translates to "5 meters deep". For more details on how to process environmental data, see [the raster data tutorial](https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html). This next chunk converts the `SpatVector` to a multi-layer `SpatRaster`; the layers of the multi-layer `SpatRaster` are then named the same as the column names of the `SpatVector`. I strip the "d" and "M" from the column names so they are a little easier to use as depth coordinates. Note that `R` will not allow the raster names to be numeric, so it adds an "X" to the beginning of each column name. Don't worry about this--`voluModel` can handle numbers preceded by "X"s without user intervention.
+As you can see, each point in the `SpatVector` is a line in the associated `data.frame`; each column is a depth layer at that point--"d5M" translates to "5 meters deep". For more details on how to process environmental data, see [the raster data tutorial](https://hannahlowens.github.io/voluModel/articles/b_RasterProcessing.html). This next chunk converts the `SpatVector` to a multi-layer `SpatRaster`; the layers of the multi-layer `SpatRaster` are then named the same as the column names of the `SpatVector`. I strip the "d" and "M" from the column names so they are a little easier to use as depth coordinates. 
 
 ```{r temperature to compatible RasterBrick}
 # Creating a SpatRaster vector
@@ -89,9 +81,6 @@ envtNames <- gsub("[d,M]", "", names(temperature))
 envtNames[[1]] <- "0"
 names(tempTerVal) <- envtNames
 temperature <- tempTerVal
-
-# Here's a sampling of depth plots from the 102 depth layers available
-plot(temperature[[c(1, 50)]])
 
 rm(tempTerVal)
 ```
@@ -108,7 +97,7 @@ xyzSample(occs = occsTest, envBrick = temperature)
 rm(occsTest)
 ```
 
-One optional step in a niche modeling workflow is to down-sample occurrence data to the same resolution as the environmental data. We do this to avoid over-fitting the model due to biased sampling. The next chunk of code downsamples occurrence points so that there is only one per voxel (i.e. 3D pixel) of environmental data. It does this by looping through each layer of the multi-layer `SpatRaster`, selecting the occurrence points with depths closest to the depths represented by the corresponding layer in the `SpatRaster` vector. I then downsample these points using `voluModel`'s `downsample()` function.
+One common step in a niche modeling workflow is to down-sample occurrence data to the same resolution as the environmental data. We do this to avoid over-fitting the model due to biased sampling. The next chunk of code downsamples occurrence points so that there is only one per voxel (i.e. 3D pixel) of environmental data. It does this by looping through each layer of the multi-layer `SpatRaster`, selecting the occurrence points with depths closest to the depths represented by the corresponding layer in the `SpatRaster` vector. I then downsample these points using `voluModel`'s `downsample()` function.
 
 ```{r downsample to voxel, eval=TRUE, warning=FALSE, message=FALSE}
 # Gets the layer index for each occurrence by matching to depth
@@ -132,6 +121,8 @@ print(paste0("Original number of points: ", nrow(occs), "; number of downsampled
 The resampled points returned by `downsample()` are horizontally centered in each voxel. The red dots in the plot show occurrences from the original dataset; the orange dots show the downsampled dataset. Not all of the orange dots may be visible underneath the red dots.
 
 ```{r plot downsample, warning=FALSE}
+land <- rnaturalearth::ne_countries(scale = "small", returnclass = "sf")[1]
+
 pointCompMap(occs1 = occs, occs2 = occurrences, 
              occs1Name = "original", occs2Name = "cleaned", 
              spName = "Steindachneria argentea", 

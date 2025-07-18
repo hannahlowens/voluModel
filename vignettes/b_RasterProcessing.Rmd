@@ -38,7 +38,7 @@ library(terra) # Now being transitioned in
 
 # Data Inputs
 
-First, let's look at a relatively simple environmental variable from the WOA: temperature (Locarnini et al, 2018). These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more memory-efficient. You can download the full dataset via the WOA website. Our first task is to read in the shapefile as a `SpatVector`. Note that each row in `temperature` is a set of horizontal coordinates. Each column is a vertical position in the water column. Make sure to check the metadata of the data you use. Different sources may use vertical depth structures.
+First, let's look at a relatively simple environmental variable from the WOA: temperature (Locarnini et al, 2018). These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -98 and -45 longitude, between -1 and 45 latitude, and between 0 and 4,400 m in depth to make it more space-efficientf. You can download the full dataset via the WOA website. Our first task is to read in the shapefile as a `SpatVector`. Note that each row in `temperature` is a set of horizontal coordinates. Each column is a vertical position in the water column. Make sure to check the metadata of the data you use. Different sources may use vertical depth structures.
 
 ```{r environmental data loading temperature, eval=T, message=FALSE, warning=FALSE, asis=T}
 # Temperature
@@ -49,7 +49,7 @@ unzip(system.file("extdata/woa18_decav_t00mn01_cropped.zip",
 temperature <- vect(paste0(td, "/temperature/woa18_decav_t00mn01_cropped.shp"))
 
 # Looking at the dataset
-head(temperature)
+as.data.frame(temperature[1:5,1:10])
 
 # Plotting the dataset
 layout(matrix(c(1, 2), ncol=2, byrow=TRUE), widths=c(4, 1))
@@ -105,17 +105,18 @@ unzip(system.file("extdata/woa18_all_A00mn01_cropped.zip",
                   package = "voluModel"),
       exdir = paste0(td, "/oxygen"), junkpaths = T)
 
-oxygen <- vect(paste0(td, "/oxygen/woa18_all_A00mn01_cropped.shp"))[,1:70] # Only taking uppermost 70 depth layers, for speed
+oxygen <- vect(paste0(td, "/oxygen/woa18_all_A00mn01_cropped.shp")) 
 
 plot(oxygen, main = "Distribution of voluModel subset of WOA AOU 2018",
      pch = 20, col = "red", xlim = ext[1:2], ylim = ext[3:4], cex = .6)
 plot(land, col = "black", add = T)
 ```
 
-There is a workaround for this, since we can reasonably expect some degree of spatial autocorrelation in apparent oxygen utilization. We use the `interpolateRaster()` function to produce statistically-interpolated layers using `TPS()` from the `fields` package (this is a thin-plate spline interpolation). Be patient--this step can take a while, although as shown here, I am using the `fastTPS()` approximation, which only samples from nearby cells to speed things up. Maybe `fastTPS()` will work ok for your data, maybe it won't. It depends on the data.
+There is a workaround for this, since we can reasonably expect some degree of spatial autocorrelation in apparent oxygen utilization. We use the `interpolateRaster()` function to produce statistically-interpolated layers using `TPS()` from the `fields` package (this is a thin-plate spline interpolation). Be patient--this step can take a while, although as shown here, I am using the `fastTPS()` approximation, which only samples from nearby cells to speed things up. Maybe `fastTPS()` will work ok for your data, maybe it won't. It depends on the data. For the sake of efficiency for this example, I am going to limit this to the first 10 depth layers.
 
 ```{r interpolate oxygen, warning=FALSE, eval = T}
-# Creating a SpatRaster vector
+# Creating a SpatRaster vector for the first 10 depth layers
+oxygen <- oxygen[,1:10] # Remove this line if you want to process the whole file
 oxygen <- rasterize(x = oxygen, y = template,
                    field = names(oxygen)) #Uses same raster template as temperature
 
@@ -127,7 +128,7 @@ for (i in 1:nlyr(oxygen)){
 }
 
 # Change names to match tempT
-names(oxygen) <- envtNames[1:70]
+names(oxygen) <- envtNames[1:nlyr(oxygen)]
 ```
 
 Some environmental data rasters may also look "patchy", possibly as an artifact of uneven sampling. If you are confident that there should be a strong spatial correlation in a data layer that looks "patchy", you can also statistically smooth it, again using `TPS()`, like this:
@@ -148,7 +149,7 @@ par(mfrow=c(1,2))
 p3 <- oneRasterPlot(oxygen[[1]], land = land, landCol = "black", 
               title= "Surface Apparent Oxygen Utilization\n(µmol/kg), interpolated")
 p4 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black",
-     title = "Bottom Apparent Oxygen Utilization\n(µmol/kg), interpolated and smoothed")
+     title = "Surface Apparent Oxygen Utilization\n(µmol/kg), interpolated and smoothed")
 ```
 
 # Tidying up
