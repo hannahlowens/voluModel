@@ -150,7 +150,6 @@ from GBIF (Chamberlain <em>et al.</em>, 2021; Chamberlain and Boettiger,
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">decimalLongitude</span>, <span class="va">decimalLatitude</span>, <span class="va">depth</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">depth</span> <span class="op"><a href="https://rspatial.github.io/terra/reference/match.html" class="external-link">%in%</a></span> <span class="fl">1</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span></span></code></pre></div>
-<p><img src="c_DataSampling_files/figure-html/occurrence%20dataset%20plotting%20code-1.png"><!-- --></p>
 <p>The environmental dataset I will use as an example is temperature
 (Locarnini <em>et al.</em>, 2018) from the World Ocean Atlas (WOA;
 Garcia <em>et al.</em>, 2019). I have chosen to focus on temperature for
@@ -170,70 +169,13 @@ a <code>SpatVector</code>:</p>
 <span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"/temperature/woa18_decav_t00mn01_cropped.shp"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Looking at the dataset</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   SURFACE    d5M   d10M   d15M   d20M   d25M   d30M   d35M   d40M   d45M   d50M</span></span>
-<span><span class="co">## 1  23.575 23.392 22.919 22.318 21.766 21.117 20.531 19.860 19.266 18.673 18.161</span></span>
-<span><span class="co">## 2  23.204 22.979 22.559 22.057 21.401 20.651 19.978 19.433 18.835 18.247 17.691</span></span>
-<span><span class="co">## 3  23.451 23.125 22.726 22.134 21.520 20.828 20.128 19.472 18.875 18.353 17.875</span></span>
-<span><span class="co">## 4  23.261 22.968 22.559 22.052 21.528 20.945 20.337 19.759 19.198 18.669 18.162</span></span>
-<span><span class="co">## 5  22.977 22.790 22.463 22.036 21.611 21.079 20.521 20.000 19.423 18.835 18.332</span></span>
-<span><span class="co">## 6  21.940 21.615 21.202 20.709 20.185 19.803 19.439 19.104 18.657 18.389 18.065</span></span>
-<span><span class="co">##     d55M   d60M   d65M   d70M   d75M   d80M   d85M   d90M   d95M  d100M  d125M</span></span>
-<span><span class="co">## 1 17.675 17.174 16.689 16.236 15.919 15.619 15.391 15.165 14.931 14.699 13.993</span></span>
-<span><span class="co">## 2 17.177 16.744 16.395 16.074 15.633 15.361 15.172 14.891 14.735 14.556 13.907</span></span>
-<span><span class="co">## 3 17.425 16.966 16.536 16.184 15.881 15.588 15.335 15.110 14.875 14.686 14.084</span></span>
-<span><span class="co">## 4 17.727 17.306 16.856 16.491 16.135 15.794 15.530 15.219 15.031 14.822 14.159</span></span>
-<span><span class="co">## 5 17.907 17.417 17.010 16.607 16.237 15.909 15.573 15.233 15.071 14.874 14.257</span></span>
-<span><span class="co">## 6 17.734 17.357 16.896 16.628 16.229 15.891 15.650 15.385 15.191 15.023 14.384</span></span>
-<span><span class="co">##    d150M  d175M  d200M  d225M  d250M  d275M  d300M  d325M  d350M  d375M d400M</span></span>
-<span><span class="co">## 1 13.574 13.328 13.123 12.928 12.693 12.278 11.729 11.155 10.538  9.984 9.504</span></span>
-<span><span class="co">## 2 13.528 13.305 13.117 12.926 12.655 12.275 11.745 11.064 10.454  9.927 9.559</span></span>
-<span><span class="co">## 3 13.720 13.465 13.216 13.032 12.682 12.247 11.732 11.089 10.423  9.892 9.668</span></span>
-<span><span class="co">## 4 13.757 13.515 13.299 13.123 12.759 12.287 11.760 11.087 10.540 10.019 9.684</span></span>
-<span><span class="co">## 5 13.849 13.605 13.399 13.174 12.865 12.383 11.771 11.095 10.378  9.886 9.435</span></span>
-<span><span class="co">## 6 14.040 13.761 13.532 13.255 12.910 12.352 11.694 11.085 10.456  9.884 9.430</span></span>
-<span><span class="co">##   d425M d450M d475M d500M d550M d600M d650M d700M d750M d800M d850M d900M d950M</span></span>
-<span><span class="co">## 1 9.093 8.765 8.442 8.101 7.620 7.180 6.687 6.267 5.875 5.566 5.293 5.052 4.811</span></span>
-<span><span class="co">## 2 9.118 8.732 8.421 8.182 7.663 7.176 6.712 6.270 5.912 5.598 5.330 5.094 4.844</span></span>
-<span><span class="co">## 3 9.063 8.720 8.404 8.156 7.593 7.114 6.662 6.249 5.869 5.553 5.301 5.038 4.781</span></span>
-<span><span class="co">## 4 9.142 8.805 8.477 8.217 7.654 7.170 6.760 6.335 5.927 5.590 5.327 5.088 4.847</span></span>
-<span><span class="co">## 5 9.064 8.722 8.405 8.107 7.603 7.147 6.682 6.275 5.908 5.568 5.316 5.053 4.828</span></span>
-<span><span class="co">## 6 9.057 8.714 8.378 8.105 7.586 7.125 6.679 6.228 5.870 5.564 5.288 5.050 4.832</span></span>
-<span><span class="co">##   d1000M d1050M d1100M d1150M d1200M d1250M d1300M d1350M d1400M d1450M d1500M</span></span>
-<span><span class="co">## 1  4.571  4.397  4.218  4.048  3.896  3.737  3.592  3.440  3.286  3.149  3.044</span></span>
-<span><span class="co">## 2  4.614  4.415  4.219  4.048  3.899  3.743  3.581  3.426  3.279  3.153  3.049</span></span>
-<span><span class="co">## 3  4.587  4.395  4.233  4.062  3.911  3.727  3.555  3.404  3.279  3.150  3.045</span></span>
-<span><span class="co">## 4  4.617  4.441  4.243  4.060  3.905  3.747  3.573  3.424  3.294  3.172  3.050</span></span>
-<span><span class="co">## 5  4.621  4.431  4.228  4.051  3.885  3.742  3.582  3.433  3.291  3.166  3.054</span></span>
-<span><span class="co">## 6  4.600  4.409  4.238  4.051  3.887  3.728  3.576  3.432  3.308  3.182  3.065</span></span>
-<span><span class="co">##   d1550M d1600M d1650M d1700M d1750M d1800M d1850M d1900M d1950M d2000M d2100M</span></span>
-<span><span class="co">## 1  2.946  2.860  2.759  2.682  2.605  2.531  2.456  2.392  2.326  2.351  2.193</span></span>
-<span><span class="co">## 2  2.938  2.843  2.754  2.675  2.602  2.528  2.463  2.398  2.335  2.223  2.130</span></span>
-<span><span class="co">## 3  2.936  2.845  2.760  2.666  2.579  2.513  2.453  2.395  2.340  2.254  2.165</span></span>
-<span><span class="co">## 4  2.946  2.845  2.758  2.679  2.600  2.526  2.459  2.397  2.338  2.276  2.165</span></span>
-<span><span class="co">## 5  2.956  2.866  2.766  2.672  2.588  2.519  2.459  2.400  2.340    NaN    NaN</span></span>
-<span><span class="co">## 6  2.968  2.865  2.772  2.681  2.592  2.522  2.465  2.412  2.341    NaN    NaN</span></span>
-<span><span class="co">##   d2200M d2300M d2400M d2500M d2600M d2700M d2800M d2900M d3000M d3100M d3200M</span></span>
-<span><span class="co">## 1  2.081  1.993  1.921  1.862  1.813  1.777  1.753  1.754  1.755    NaN    NaN</span></span>
-<span><span class="co">## 2  2.046  1.962  1.891  1.834  1.789  1.795  1.745    NaN    NaN    NaN    NaN</span></span>
-<span><span class="co">## 3  2.047  1.985  1.921  1.870  1.812  1.769  1.746  1.743  1.753  1.766    NaN</span></span>
-<span><span class="co">## 4  2.076  2.003  1.936  1.886  1.843  1.796  1.761  1.751  1.753  1.759   1.78</span></span>
-<span><span class="co">## 5    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN</span></span>
-<span><span class="co">## 6    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN</span></span>
-<span><span class="co">##   d3300M d3400M d3500M d3600M d3700M d3800M d3900M d4000M d4100M d4200M d4300M</span></span>
-<span><span class="co">## 1    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN</span></span>
-<span><span class="co">## 2    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN</span></span>
-<span><span class="co">## 3    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN</span></span>
-<span><span class="co">## 4    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN</span></span>
-<span><span class="co">## 5    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN</span></span>
-<span><span class="co">## 6    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN</span></span>
-<span><span class="co">##   d4400M</span></span>
-<span><span class="co">## 1    NaN</span></span>
-<span><span class="co">## 2    NaN</span></span>
-<span><span class="co">## 3    NaN</span></span>
-<span><span class="co">## 4    NaN</span></span>
-<span><span class="co">## 5    NaN</span></span>
-<span><span class="co">## 6    NaN</span></span></code></pre>
+<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##   SURFACE    d5M   d10M   d15M   d20M   d25M   d30M   d35M   d40M   d45M</span></span>
+<span><span class="co">## 1  23.575 23.392 22.919 22.318 21.766 21.117 20.531 19.860 19.266 18.673</span></span>
+<span><span class="co">## 2  23.204 22.979 22.559 22.057 21.401 20.651 19.978 19.433 18.835 18.247</span></span>
+<span><span class="co">## 3  23.451 23.125 22.726 22.134 21.520 20.828 20.128 19.472 18.875 18.353</span></span>
+<span><span class="co">## 4  23.261 22.968 22.559 22.052 21.528 20.945 20.337 19.759 19.198 18.669</span></span>
+<span><span class="co">## 5  22.977 22.790 22.463 22.036 21.611 21.079 20.521 20.000 19.423 18.835</span></span></code></pre>
 <p>As you can see, each point in the <code>SpatVector</code> is a line
 in the associated <code>data.frame</code>; each column is a depth layer
 at that point–“d5M” translates to “5 meters deep”. For more details on
@@ -243,10 +185,7 @@ raster data tutorial</a>. This next chunk converts the
 layers of the multi-layer <code>SpatRaster</code> are then named the
 same as the column names of the <code>SpatVector</code>. I strip the “d”
 and “M” from the column names so they are a little easier to use as
-depth coordinates. Note that <code>R</code> will not allow the raster
-names to be numeric, so it adds an “X” to the beginning of each column
-name. Don’t worry about this–<code>voluModel</code> can handle numbers
-preceded by “X”s without user intervention.</p>
+depth coordinates.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Creating a SpatRaster vector</span></span>
 <span><span class="va">template</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/centerPointRasterTemplate.html">centerPointRasterTemplate</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span></span>
@@ -258,11 +197,7 @@ preceded by “X”s without user intervention.</p>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">tempTerVal</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">envtNames</span></span>
 <span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="va">tempTerVal</span></span>
 <span></span>
-<span><span class="co"># Here's a sampling of depth plots from the 102 depth layers available</span></span>
-<span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">50</span><span class="op">)</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="c_DataSampling_files/figure-html/temperature%20to%20compatible%20RasterBrick-1.png"><!-- --></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">tempTerVal</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">tempTerVal</span><span class="op">)</span></span></code></pre></div>
 <p>At this point, you may have noticed a message popping up about which
 columns <code>voluModel</code> is interpreting as coordinates.
 <code>voluModel</code> is fairly flexible in how the coordinate columns
@@ -271,21 +206,21 @@ interpret x, y, and z (or latitude, longitude, and depth) coordinates.
 We do this to make <code>voluModel</code> as flexible as possible to a
 diversity of input formats, although English is the only supported
 language at the moment. Here are some examples of names that work.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">occsTest</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span><span class="fl">19</span><span class="op">:</span><span class="fl">24</span>,<span class="op">]</span></span>
 <span><span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occsTest</span>, envBrick <span class="op">=</span> <span class="va">temperature</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
 <pre><code><span><span class="co">## [1] 25.770 15.091     NA  9.137     NA     NA</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">occsTest</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"z"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occsTest</span>, envBrick <span class="op">=</span> <span class="va">temperature</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using x, y, and z</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
 <pre><code><span><span class="co">## [1] 25.770 15.091     NA  9.137     NA     NA</span></span></code></pre>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">occsTest</span><span class="op">)</span></span></code></pre></div>
-<p>One optional step in a niche modeling workflow is to down-sample
+<p>One common step in a niche modeling workflow is to down-sample
 occurrence data to the same resolution as the environmental data. We do
 this to avoid over-fitting the model due to biased sampling. The next
 chunk of code downsamples occurrence points so that there is only one
@@ -295,7 +230,7 @@ the occurrence points with depths closest to the depths represented by
 the corresponding layer in the <code>SpatRaster</code> vector. I then
 downsample these points using <code>voluModel</code>’s
 <code><a href="../reference/downsample.html">downsample()</a></code> function.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Gets the layer index for each occurrence by matching to depth</span></span>
 <span><span class="va">layerNames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">occurrences</span><span class="op">$</span><span class="va">index</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">$</span><span class="va">depth</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/summarize-generics.html" class="external-link">which.min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">layerNames</span> <span class="op">-</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -317,7 +252,7 @@ downsample these points using <code>voluModel</code>’s
 <span><span class="co">## 4            -97.5            22.5   450</span></span>
 <span><span class="co">## 5            -82.5            23.5   450</span></span>
 <span><span class="co">## 6            -89.5            23.5   450</span></span></code></pre>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://www.math.uzh.ch/pages/spam/reference/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Original number of points: "</span>, <span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occs</span><span class="op">)</span>, <span class="st">"; number of downsampled occs: "</span>, <span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "Original number of points: 301; number of downsampled occs: 71"</span></span></code></pre>
 <p>The resampled points returned by <code><a href="../reference/downsample.html">downsample()</a></code> are
@@ -325,8 +260,10 @@ horizontally centered in each voxel. The red dots in the plot show
 occurrences from the original dataset; the orange dots show the
 downsampled dataset. Not all of the orange dots may be visible
 underneath the red dots.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs2 <span class="op">=</span> <span class="va">occurrences</span>, </span>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">land</span> <span class="op">&lt;-</span> <span class="fu">rnaturalearth</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/rnaturalearth/reference/ne_countries.html" class="external-link">ne_countries</a></span><span class="op">(</span>scale <span class="op">=</span> <span class="st">"small"</span>, returnclass <span class="op">=</span> <span class="st">"sf"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/pointCompMap.html">pointCompMap</a></span><span class="op">(</span>occs1 <span class="op">=</span> <span class="va">occs</span>, occs2 <span class="op">=</span> <span class="va">occurrences</span>, </span>
 <span>             occs1Name <span class="op">=</span> <span class="st">"original"</span>, occs2Name <span class="op">=</span> <span class="st">"cleaned"</span>, </span>
 <span>             spName <span class="op">=</span> <span class="st">"Steindachneria argentea"</span>, </span>
 <span>             land <span class="op">=</span> <span class="va">land</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
@@ -339,12 +276,12 @@ instead of extrapolating to surface or bottom conditions. Finally, we
 add a column called “response” and fill it by repeating “1”, to signify
 that these occurrences should be interpreted as presences for the
 purposes of modeling.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extraction</span></span>
 <span><span class="va">occurrences</span><span class="op">$</span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, envBrick <span class="op">=</span> <span class="va">temperature</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add "response" column for modeling</span></span>
 <span><span class="va">occurrences</span><span class="op">$</span><span class="va">response</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, times <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">occurrences</span> <span class="op">&lt;-</span> <span class="va">occurrences</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">)</span>,<span class="op">]</span></span>
@@ -396,7 +333,7 @@ is the maximum number of polygons generated to fit the data, and
 edge of a polyon in meters. <code><a href="../reference/marineBackground.html">marineBackground()</a></code> takes these
 and many of the same other arguments as
 <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>. Here’s how it works.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trainingRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occurrences</span>, </span>
 <span>                                   fraction <span class="op">=</span> <span class="fl">1</span>, </span>
 <span>                                   partCount <span class="op">=</span> <span class="fl">1</span>, </span>
@@ -427,7 +364,7 @@ favorite GIS software, OR you could change <code>clipToOcean</code> to
 fragments that do not contain an occurrence will be deleted
 automatically. This is a key difference from
 <code><a href="https://rdrr.io/pkg/rangeBuilder/man/getDynamicAlphaHull.html" class="external-link">getDynamicAlphaHull()</a></code>.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trainingRegion</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/marineBackground.html">marineBackground</a></span><span class="op">(</span><span class="va">occurrences</span>, </span>
 <span>                                   buff <span class="op">=</span> <span class="fl">1000000</span>, </span>
 <span>                                   clipToOcean <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
@@ -447,7 +384,7 @@ which can lead to some strange-looking training areas or fatal errors.
 across the meridian and merges them if they overlap. For this example, I
 am going to manipulate the longitudinal coordinates of our Luminous Hake
 dataset to generate a quick fictional example.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fictional example occurrences</span></span>
 <span><span class="va">pacificOccs</span> <span class="op">&lt;-</span> <span class="va">occurrences</span></span>
 <span><span class="va">pacificOccs</span><span class="op">$</span><span class="va">decimalLongitude</span> <span class="op">&lt;-</span> <span class="va">pacificOccs</span><span class="op">$</span><span class="va">decimalLongitude</span> <span class="op">-</span> <span class="fl">100</span></span>
@@ -494,7 +431,7 @@ full depth extent of the supplied multi-layer
 <code>SpatRaster</code>.</p>
 <p>For this example, I am sampling training points from 50 to 1500
 m.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Background</span></span>
 <span><span class="va">backgroundVals</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mSampling3D.html">mSampling3D</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">occurrences</span>, </span>
 <span>                              envBrick <span class="op">=</span> <span class="va">temperature</span>, </span>
@@ -502,17 +439,17 @@ m.</p>
 <span>                              depthLimit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">1500</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">backgroundVals</span><span class="op">$</span><span class="va">temperature</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/xyzSample.html">xyzSample</a></span><span class="op">(</span>occs <span class="op">=</span> <span class="va">backgroundVals</span>, <span class="va">temperature</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using decimalLongitude, decimalLatitude, and depth</span></span>
 <span><span class="co">##  as x, y, and z coordinates, respectively.</span></span></code></pre>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Remove incomplete cases</span></span>
 <span><span class="va">backgroundVals</span> <span class="op">&lt;-</span> <span class="va">backgroundVals</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">)</span>,<span class="op">]</span></span></code></pre></div>
 <p>Once the points are sampled, we add a column called “response” and
 fill it by repeating “0”, to signify that these occurrences should be
 interpreted as absences for the purposes of modeling.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add "response" column for modeling</span></span>
 <span><span class="va">backgroundVals</span><span class="op">$</span><span class="va">response</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, times <span class="op">=</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -535,7 +472,7 @@ manner of downsampling may be appropriate for modeling methods that
 interpret training points as pseudoabsences, such as generalized linear
 modeling, but will lead to overfit models when using algorithms like
 Maxent.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Sample background points weighted by distance from mean of occurrence temperatures</span></span>
 <span><span class="va">meanTemp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/summarize-generics.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">occurrences</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temperature"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">backgroundVals</span><span class="op">$</span><span class="va">distance</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">backgroundVals</span><span class="op">[</span>,<span class="st">"temperature"</span><span class="op">]</span> <span class="op">-</span> <span class="va">meanTemp</span><span class="op">)</span></span>
@@ -571,7 +508,7 @@ workflow</a>.</p>
 </h2>
 <p>Last, we need to close the temporary directory we opened when we
 opened the data.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">td</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -623,8 +560,8 @@ via OBIS on 2020-11-04.</p>
 Peabody Museum. Yale University Peabody Museum. DOI: 10.15468/mgyhok.
 Accessed via GBIF on 2020-10-13.</p>
 <p>García, CB, and Duarte, LO, ‘Columbian Caribbean Sea’, in J.H.
-Nicholls (comp.) HMAP Data Pages <a href="https://oceanspast.org/hmap_db.php" class="external-link uri">https://oceanspast.org/hmap_db.php</a> Accessed via OBIS on
-2020-11-04.</p>
+Nicholls (comp.) HMAP Data Pages <a href="https://doi.org/10.6084/m9.figshare.23504046" class="external-link uri">https://doi.org/10.6084/m9.figshare.23504046</a> Accessed
+via OBIS on 2020-11-04.</p>
 <p>Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA,
 Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018). World
 Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen
