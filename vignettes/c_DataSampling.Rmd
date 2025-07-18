@@ -21,7 +21,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
+knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 100)
 ```
 
 # Introduction
@@ -161,48 +161,39 @@ We designed `marineBackground()` as a wrapper around \code{\link[rangeBuilder:ge
 
 `getDynamicAlphaHull()`, which is run within `marineBackground()` generates a polygon (or polygons) that can be used as a training region by fitting an alpha hull (or hulls) around an occurrence dataset. Alpha is a parameter that controls the complexity of the polygon(s) that is being fit around the occurrences. `getDynamicAlphaHull()` adjusts the alpha parameter iteratively, until it meets criteria the user can set via the arguments `fraction`, which is the minimum fraction of occurrences that must be contained within the polygon(s), `partCount`, which is the maximum number of polygons generated to fit the data, and `buff`, which is the permissible distance from a point to the edge of a polyon in meters. `marineBackground()` takes these and many of the same other arguments as `getDynamicAlphaHull()`. Here's how it works.
 
-```{r alpha hull demonstration, message=FALSE, warning=FALSE, eval=FALSE}
+```{r alpha hull demonstration, message=FALSE, warning=FALSE, eval=T}
 trainingRegion <- marineBackground(occurrences, 
-                                fraction = 1, partCount = 1, buff = 1000000,
-                                clipToOcean = F)
+                                   fraction = 1, 
+                                   partCount = 1, 
+                                   buff = 1000000,
+                                   clipToOcean = F)
 plot(trainingRegion, border = F, col = "gray",
-     main = "100% Points, Max 1 Polygon Permitted, 100 km Buffer",
+     main = "100% Points,\nMax 1 Polygon Permitted, 100 km Buffer",
      axes = T)
 plot(land, col = "black", add = T)
 points(occurrences[,c("decimalLongitude", "decimalLatitude")], 
        pch = 20, col = "red", cex = 1.5)
-```
-
-```{r plot alpha hull demonstration, echo=FALSE, fig.width=7}
-knitr::include_graphics("alphaHullDemonstration-1.png", )
 ```
 
 What parameters you choose to fit the alpha hull will depend on the biology of the organism you are trying to model (e.g. you may choose a much smaller buffer for a sessile organism than you would for a highly vagile migratory species), your data, and the particulars of your study system and the geography of your study area. You may need to experiment to find something that looks sensible. If you do not provide a pre-defined buffer, `marineBackground()` will calculate a buffer that is the mean of the top and bottom 10% of distances between points in the dataset.
 
 You may have noticed that the training regions in the above examples include some areas of the Pacific where the species has not been observed, and cannot access. This could cause problems if it is used to train your model. You *could* delete this area by hand in your favorite GIS software, OR you could change `clipToOcean` to `TRUE` in `marineBackground()`, and any polygon fragments that do not contain an occurrence will be deleted automatically. This is a key difference from `getDynamicAlphaHull()`.
 
-```{r clipToOcean demo, message=FALSE, warning=FALSE, eval=F}
+```{r clipToOcean demo, message=FALSE, warning=FALSE, eval=T}
 trainingRegion <- marineBackground(occurrences, 
                                    buff = 1000000, 
                                    clipToOcean = T)
 plot(trainingRegion, border = F, col = "gray",
-     main = "100 km Buffer, Clipped to Occupied Polygon",
+     main = "100 km Buffer,\nClipped to Occupied Polygon",
      axes = T)
 plot(land, col = "black", add = T)
 points(occurrences[,c("decimalLongitude", "decimalLatitude")], 
        pch = 20, col = "red", cex = 1.5)
 ```
 
-```{r plot clipToOcean demo, echo=FALSE}
-trainingRegion <- vect(system.file("extdata/backgroundSamplingRegions.shp",
-                              package='voluModel'))
-
-knitr::include_graphics("clipToOceanDemo-1.png")
-```
-
 The last major difference between `marineBackground()` and `getDynamicAlphaHull()` is how the functions handle training regions that are adjacent to the antimeridian (i.e. 180° E or W). `getDynamicAlphaHull()` truncates polygons at this line, which can lead to some strange-looking training areas or fatal errors. `marineBackground()`, on the other hand, wraps polygons across the meridian and merges them if they overlap. For this example, I am going to manipulate the longitudinal coordinates of our Luminous Hake dataset to generate a quick fictional example.
 
-```{r meridian wrap demo, warning=FALSE, message=FALSE, eval=F}
+```{r meridian wrap demo, warning=FALSE, message=FALSE, eval=T}
 # Fictional example occurrences
 pacificOccs <- occurrences
 pacificOccs$decimalLongitude <- pacificOccs$decimalLongitude - 100
@@ -214,18 +205,15 @@ for (i in 1:length(pacificOccs$decimalLongitude)){
 
 # marine Background
 pacificTrainingRegion <- marineBackground(pacificOccs, 
-                                          fraction = 0.95, partCount = 3, 
+                                          fraction = 0.95, partCount = 3,
+                                          buff = 1000000,
                                           clipToOcean = T)
 plot(pacificTrainingRegion, border = F, col = "gray",
-     main = "marineBackground Antimeridian Wrap",
+     main = "marineBackground\nAntimeridian Wrap",
      axes = T)
 plot(land, col = "black", add = T)
 points(pacificOccs[,c("decimalLongitude", "decimalLatitude")], 
        pch = 20, col = "red", cex = 1.5)
-```
-
-```{r plot meridian wrap demo, echo=FALSE}
-knitr::include_graphics("meridianWrapDemo-1.png")
 ```
 
 # Background Data Extraction

@@ -21,7 +21,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
+knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 100)
 ```
 
 # Introduction 
@@ -57,7 +57,7 @@ pointMap(occs = occurrences, ptCol = "orange", landCol = "black",
              land = land)
 ```
 
-Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (AOU; Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -110 and -40 longitude and between -5 and 50 latitude to make it more space-efficient. 
+Next, we load two environmental datasets from the World Ocean Atlas (Garcia *et al.*, 2019): temperature (Locarnini *et al.*, 2018) and apparent oxygen utilization (AOU; Garcia *et al.*, 2019). I have chosen these variables for simplified illustrative purposes--we recommend you explore additional variables from the World Ocean Atlas and other sources. These data are supplied by the World Ocean Atlas as point shapefiles; the version supplied here has been cropped between -98 and -45 longitude, between -1 and 45 latitude, and between 0 and 4,400 m in depth to make it more space-efficient. 
 
 ```{r loading temperature data, message=FALSE, warning=FALSE, include=TRUE}
 # Temperature
@@ -179,7 +179,7 @@ allOxy$Oxygen <- as.numeric(allOxy$Oxygen)
 # Plotting
 groups <- c("X, Y,\nSurface", "X, Y,\nBottom", "X, Y,\nZ")
 tempPlot <- ggplot(allTemp, aes(x=Group, y=Temperature)) + 
-  geom_boxplot(fill="#b2182b", notch = TRUE) +
+  geom_boxplot(fill="#b2182b", notch = FALSE) +
   theme_classic(base_size = 15) +
   theme(axis.title.x = element_blank(), 
         text = element_text(family = "Arial"), 
@@ -188,7 +188,7 @@ tempPlot <- ggplot(allTemp, aes(x=Group, y=Temperature)) +
   ylab("Temperature (C)")
 
 oxyPlot <- ggplot(allOxy, aes(x=Group, y=Oxygen)) + 
-  geom_boxplot(fill="#2166ac", notch = TRUE) +
+  geom_boxplot(fill="#2166ac", notch = FALSE) +
   theme_classic(base_size = 15) +
   theme(axis.title.x = element_blank(), 
         text = element_text(family = "Arial"), 
@@ -207,8 +207,12 @@ AOU based on 3D extraction is significantly higher than AOU extracted at the sur
 
 Some modeling methods require the generation of a sampling region from which pseudoabsence or background points are drawn. For this introduction, we are showing you a simple envelope method that does not require background sampling. Instead, I will be applying the same principle to define the study region to which I project the envelope model, so we have a product that makes biological sense in terms of the question "Where are we most likely to encounter Lumious Hakes?" See [the background sampling tutorial](https://hannahlowens.github.io/voluModel/articles/c_DataSampling.html) for more information on `voluModel`'s `marineBackground()` function, and [the generalized linear model tutorial](https://hannahlowens.github.io/voluModel/articles/e_GLMWorkflow.html) for an example of a modelling application that uses a background sampling region. 
 
-```{r study region, message=FALSE, warning=FALSE, eval=FALSE}
-studyRegion <- marineBackground(occurrences, buff = 1000000, clipToOcean = TRUE)
+```{r study region, message=FALSE, warning=FALSE}
+studyRegion <- marineBackground(occurrences,
+                                buff = 1000000,
+                                clipToOcean = TRUE,
+                                alpha = 1,
+                                partCount = 1)
 landVect <- vect(land)
 landVect <- terra::project(landVect, y = studyRegion)
 plot(studyRegion, border = F, col = "gray",
@@ -217,15 +221,6 @@ plot(studyRegion, border = F, col = "gray",
 plot(landVect, col = "black", add = T)
 points(occurrences[,c("decimalLongitude", "decimalLatitude")], 
        pch = 20, col = "red", cex = 1.5)
-```
-
-```{r study region hidden, message=FALSE, warning=FALSE, eval=TRUE, echo=FALSE}
-studyRegion <- vect(system.file("extdata/backgroundSamplingRegions.shp",
-                                package='voluModel'))
-```
-
-```{r plot study region, echo=FALSE, out.width = '100%', out.height= '100%'}
-knitr::include_graphics("PointsAndTrainingRegion.png")
 ```
 
 For our simple niche envelope models, we need to draw the environmental variable data from each occurrence voxel. For comparison with previous modeling approaches, I will extract data from the surface, from the bottom, and from the 3D coordinate for each variable.

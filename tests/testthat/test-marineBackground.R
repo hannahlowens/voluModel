@@ -17,31 +17,31 @@ test_that("marineBackground input warnings behave as expected", {
   expect_warning(marineBackground(occs = occurrences, fraction = "a",
                                   partCount = 3, buff = 10000,
                                   initialAlpha = 3, alphaIncrement = 1,
-                                  clipToCoast = 'no'))
+                                  clipToOcean = 'no'))
   expect_warning(marineBackground(occs = occurrences, fraction = 0.95,
                                   partCount = "a", buff = 10000,
                                   initialAlpha = 3, alphaIncrement = 1,
-                                  clipToCoast = 'no'))
+                                  clipToOcean = 'no'))
   expect_warning(marineBackground(occs = occurrences, fraction = 0.95,
                                   partCount = 3, buff = "a",
                                   initialAlpha = 3, alphaIncrement = 1,
-                                  clipToCoast = 'no'))
+                                  clipToOcean = 'no'))
   expect_warning(marineBackground(occs = occurrences, fraction = 0.95,
                                   partCount = 3, buff = 10000,
                                   initialAlpha = "a", alphaIncrement = 1,
-                                  clipToCoast = 'no'))
+                                  clipToOcean = 'no'))
   expect_warning(marineBackground(occs = occurrences, fraction = 0.95,
                                   partCount = 3, buff = 10000,
                                   initialAlpha = 3, alphaIncrement = "a",
-                                  clipToCoast = 'no'))
+                                  clipToOcean = 'no'))
   expect_warning(marineBackground(occs = occurrences, fraction = 0.95,
                                   partCount = 3, buff = 10000,
                                   initialAlpha = 3, alphaIncrement = 1,
-                                  clipToCoast = 1))
+                                  clipToOcean = 1))
   expect_warning(marineBackground(occs = occurrences, fraction = 0.95,
                                   partCount = 3, buff = 10000,
                                   initialAlpha = 3, alphaIncrement = 1,
-                                  clipToCoast = 1, verbose = "rabbit"))
+                                  clipToOcean = 1, verbose = "rabbit"))
 })
 
 test_that("marineBackground results as expected", {

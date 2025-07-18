@@ -21,7 +21,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 80)
+knitr::opts_chunk$set(echo = TRUE, error = FALSE, fig.retina = 1, dpi = 100)
 ```
 
 # Introduction 
@@ -146,9 +146,9 @@ oxygenSmooth <- oxygenSmooth
 
 par(mfrow=c(1,2))
 p3 <- oneRasterPlot(oxygen[[1]], land = land, landCol = "black", 
-              title= "Surface Apparent Oxygen Utilization (µmol/kg),\ninterpolated")
+              title= "Surface Apparent Oxygen Utilization\n(µmol/kg), interpolated")
 p4 <- oneRasterPlot(oxygenSmooth[[1]], land = land, landCol = "black",
-     title = "Bottom Apparent Oxygen Utilization (µmol/kg),\ninterpolated and smoothed")
+     title = "Bottom Apparent Oxygen Utilization\n(µmol/kg), interpolated and smoothed")
 ```
 
 # Tidying up

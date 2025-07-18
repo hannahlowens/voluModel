@@ -100,7 +100,7 @@ Owens</h4>
                         <h4 data-toc-skip class="author">Carsten
 Rahbek</h4>
             
-            <h4 data-toc-skip class="date">2025-07-10</h4>
+            <h4 data-toc-skip class="date">2025-07-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/HEAD/vignettes/b_RasterProcessing.Rmd" class="external-link"><code>vignettes/b_RasterProcessing.Rmd</code></a></small>
       <div class="hidden name"><code>b_RasterProcessing.Rmd</code></div>
@@ -152,54 +152,54 @@ structures.</p>
 <span><span class="co"># Looking at the dataset</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/headtail.html" class="external-link">head</a></span><span class="op">(</span><span class="va">temperature</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   SURFACE    d5M   d10M   d15M   d20M   d25M   d30M   d35M   d40M   d45M   d50M</span></span>
-<span><span class="co">## 1  23.514 23.266 22.969 22.373 21.832 21.320 20.839 20.309 19.780 19.264 18.715</span></span>
-<span><span class="co">## 2  23.542 23.222 22.915 22.430 21.938 21.343 20.747 20.182 19.584 18.984 18.394</span></span>
-<span><span class="co">## 3  23.575 23.392 22.919 22.318 21.766 21.117 20.531 19.860 19.266 18.673 18.161</span></span>
-<span><span class="co">## 4  23.204 22.979 22.559 22.057 21.401 20.651 19.978 19.433 18.835 18.247 17.691</span></span>
-<span><span class="co">## 5  23.451 23.125 22.726 22.134 21.520 20.828 20.128 19.472 18.875 18.353 17.875</span></span>
-<span><span class="co">## 6  23.261 22.968 22.559 22.052 21.528 20.945 20.337 19.759 19.198 18.669 18.162</span></span>
+<span><span class="co">## 1  23.575 23.392 22.919 22.318 21.766 21.117 20.531 19.860 19.266 18.673 18.161</span></span>
+<span><span class="co">## 2  23.204 22.979 22.559 22.057 21.401 20.651 19.978 19.433 18.835 18.247 17.691</span></span>
+<span><span class="co">## 3  23.451 23.125 22.726 22.134 21.520 20.828 20.128 19.472 18.875 18.353 17.875</span></span>
+<span><span class="co">## 4  23.261 22.968 22.559 22.052 21.528 20.945 20.337 19.759 19.198 18.669 18.162</span></span>
+<span><span class="co">## 5  22.977 22.790 22.463 22.036 21.611 21.079 20.521 20.000 19.423 18.835 18.332</span></span>
+<span><span class="co">## 6  21.940 21.615 21.202 20.709 20.185 19.803 19.439 19.104 18.657 18.389 18.065</span></span>
 <span><span class="co">##     d55M   d60M   d65M   d70M   d75M   d80M   d85M   d90M   d95M  d100M  d125M</span></span>
-<span><span class="co">## 1 18.164 17.671 17.179 16.743 16.284 15.861 15.622 15.217 14.949 14.767 14.020</span></span>
-<span><span class="co">## 2 17.843 17.343 16.906 16.497 16.113 15.800 15.488 15.187 14.927 14.720 13.958</span></span>
-<span><span class="co">## 3 17.675 17.174 16.689 16.236 15.919 15.619 15.391 15.165 14.931 14.699 13.993</span></span>
-<span><span class="co">## 4 17.177 16.744 16.395 16.074 15.633 15.361 15.172 14.891 14.735 14.556 13.907</span></span>
-<span><span class="co">## 5 17.425 16.966 16.536 16.184 15.881 15.588 15.335 15.110 14.875 14.686 14.084</span></span>
-<span><span class="co">## 6 17.727 17.306 16.856 16.491 16.135 15.794 15.530 15.219 15.031 14.822 14.159</span></span>
+<span><span class="co">## 1 17.675 17.174 16.689 16.236 15.919 15.619 15.391 15.165 14.931 14.699 13.993</span></span>
+<span><span class="co">## 2 17.177 16.744 16.395 16.074 15.633 15.361 15.172 14.891 14.735 14.556 13.907</span></span>
+<span><span class="co">## 3 17.425 16.966 16.536 16.184 15.881 15.588 15.335 15.110 14.875 14.686 14.084</span></span>
+<span><span class="co">## 4 17.727 17.306 16.856 16.491 16.135 15.794 15.530 15.219 15.031 14.822 14.159</span></span>
+<span><span class="co">## 5 17.907 17.417 17.010 16.607 16.237 15.909 15.573 15.233 15.071 14.874 14.257</span></span>
+<span><span class="co">## 6 17.734 17.357 16.896 16.628 16.229 15.891 15.650 15.385 15.191 15.023 14.384</span></span>
 <span><span class="co">##    d150M  d175M  d200M  d225M  d250M  d275M  d300M  d325M  d350M  d375M d400M</span></span>
-<span><span class="co">## 1 13.552 13.277 13.096 12.912 12.678 12.306 11.736 11.055 10.482  9.987 9.504</span></span>
-<span><span class="co">## 2 13.598 13.302 13.106 12.928 12.667 12.272 11.675 11.060 10.469  9.908 9.476</span></span>
-<span><span class="co">## 3 13.574 13.328 13.123 12.928 12.693 12.278 11.729 11.155 10.538  9.984 9.504</span></span>
-<span><span class="co">## 4 13.528 13.305 13.117 12.926 12.655 12.275 11.745 11.064 10.454  9.927 9.559</span></span>
-<span><span class="co">## 5 13.720 13.465 13.216 13.032 12.682 12.247 11.732 11.089 10.423  9.892 9.668</span></span>
-<span><span class="co">## 6 13.757 13.515 13.299 13.123 12.759 12.287 11.760 11.087 10.540 10.019 9.684</span></span>
+<span><span class="co">## 1 13.574 13.328 13.123 12.928 12.693 12.278 11.729 11.155 10.538  9.984 9.504</span></span>
+<span><span class="co">## 2 13.528 13.305 13.117 12.926 12.655 12.275 11.745 11.064 10.454  9.927 9.559</span></span>
+<span><span class="co">## 3 13.720 13.465 13.216 13.032 12.682 12.247 11.732 11.089 10.423  9.892 9.668</span></span>
+<span><span class="co">## 4 13.757 13.515 13.299 13.123 12.759 12.287 11.760 11.087 10.540 10.019 9.684</span></span>
+<span><span class="co">## 5 13.849 13.605 13.399 13.174 12.865 12.383 11.771 11.095 10.378  9.886 9.435</span></span>
+<span><span class="co">## 6 14.040 13.761 13.532 13.255 12.910 12.352 11.694 11.085 10.456  9.884 9.430</span></span>
 <span><span class="co">##   d425M d450M d475M d500M d550M d600M d650M d700M d750M d800M d850M d900M d950M</span></span>
-<span><span class="co">## 1 9.061 8.696 8.413 8.119 7.570 7.117 6.676 6.241 5.894 5.618 5.313 5.062 4.828</span></span>
-<span><span class="co">## 2 9.071 8.712 8.431 8.134 7.621 7.136 6.644 6.255 5.891 5.574 5.262 4.994 4.787</span></span>
-<span><span class="co">## 3 9.093 8.765 8.442 8.101 7.620 7.180 6.687 6.267 5.875 5.566 5.293 5.052 4.811</span></span>
-<span><span class="co">## 4 9.118 8.732 8.421 8.182 7.663 7.176 6.712 6.270 5.912 5.598 5.330 5.094 4.844</span></span>
-<span><span class="co">## 5 9.063 8.720 8.404 8.156 7.593 7.114 6.662 6.249 5.869 5.553 5.301 5.038 4.781</span></span>
-<span><span class="co">## 6 9.142 8.805 8.477 8.217 7.654 7.170 6.760 6.335 5.927 5.590 5.327 5.088 4.847</span></span>
+<span><span class="co">## 1 9.093 8.765 8.442 8.101 7.620 7.180 6.687 6.267 5.875 5.566 5.293 5.052 4.811</span></span>
+<span><span class="co">## 2 9.118 8.732 8.421 8.182 7.663 7.176 6.712 6.270 5.912 5.598 5.330 5.094 4.844</span></span>
+<span><span class="co">## 3 9.063 8.720 8.404 8.156 7.593 7.114 6.662 6.249 5.869 5.553 5.301 5.038 4.781</span></span>
+<span><span class="co">## 4 9.142 8.805 8.477 8.217 7.654 7.170 6.760 6.335 5.927 5.590 5.327 5.088 4.847</span></span>
+<span><span class="co">## 5 9.064 8.722 8.405 8.107 7.603 7.147 6.682 6.275 5.908 5.568 5.316 5.053 4.828</span></span>
+<span><span class="co">## 6 9.057 8.714 8.378 8.105 7.586 7.125 6.679 6.228 5.870 5.564 5.288 5.050 4.832</span></span>
 <span><span class="co">##   d1000M d1050M d1100M d1150M d1200M d1250M d1300M d1350M d1400M d1450M d1500M</span></span>
-<span><span class="co">## 1  4.618  4.410  4.223  4.054  3.868  3.727  3.563  3.410  3.278  3.144  3.050</span></span>
-<span><span class="co">## 2  4.562  4.379  4.207  4.048  3.876  3.731  3.560  3.428  3.297  3.167  3.040</span></span>
-<span><span class="co">## 3  4.571  4.397  4.218  4.048  3.896  3.737  3.592  3.440  3.286  3.149  3.044</span></span>
-<span><span class="co">## 4  4.614  4.415  4.219  4.048  3.899  3.743  3.581  3.426  3.279  3.153  3.049</span></span>
-<span><span class="co">## 5  4.587  4.395  4.233  4.062  3.911  3.727  3.555  3.404  3.279  3.150  3.045</span></span>
-<span><span class="co">## 6  4.617  4.441  4.243  4.060  3.905  3.747  3.573  3.424  3.294  3.172  3.050</span></span>
+<span><span class="co">## 1  4.571  4.397  4.218  4.048  3.896  3.737  3.592  3.440  3.286  3.149  3.044</span></span>
+<span><span class="co">## 2  4.614  4.415  4.219  4.048  3.899  3.743  3.581  3.426  3.279  3.153  3.049</span></span>
+<span><span class="co">## 3  4.587  4.395  4.233  4.062  3.911  3.727  3.555  3.404  3.279  3.150  3.045</span></span>
+<span><span class="co">## 4  4.617  4.441  4.243  4.060  3.905  3.747  3.573  3.424  3.294  3.172  3.050</span></span>
+<span><span class="co">## 5  4.621  4.431  4.228  4.051  3.885  3.742  3.582  3.433  3.291  3.166  3.054</span></span>
+<span><span class="co">## 6  4.600  4.409  4.238  4.051  3.887  3.728  3.576  3.432  3.308  3.182  3.065</span></span>
 <span><span class="co">##   d1550M d1600M d1650M d1700M d1750M d1800M d1850M d1900M d1950M d2000M d2100M</span></span>
-<span><span class="co">## 1  2.949  2.858  2.769  2.692  2.618  2.540  2.470  2.406  2.329  2.320  2.227</span></span>
-<span><span class="co">## 2  2.950  2.856  2.765  2.686  2.606  2.527  2.455  2.376  2.308    NaN    NaN</span></span>
-<span><span class="co">## 3  2.946  2.860  2.759  2.682  2.605  2.531  2.456  2.392  2.326  2.351  2.193</span></span>
-<span><span class="co">## 4  2.938  2.843  2.754  2.675  2.602  2.528  2.463  2.398  2.335  2.223  2.130</span></span>
-<span><span class="co">## 5  2.936  2.845  2.760  2.666  2.579  2.513  2.453  2.395  2.340  2.254  2.165</span></span>
-<span><span class="co">## 6  2.946  2.845  2.758  2.679  2.600  2.526  2.459  2.397  2.338  2.276  2.165</span></span>
+<span><span class="co">## 1  2.946  2.860  2.759  2.682  2.605  2.531  2.456  2.392  2.326  2.351  2.193</span></span>
+<span><span class="co">## 2  2.938  2.843  2.754  2.675  2.602  2.528  2.463  2.398  2.335  2.223  2.130</span></span>
+<span><span class="co">## 3  2.936  2.845  2.760  2.666  2.579  2.513  2.453  2.395  2.340  2.254  2.165</span></span>
+<span><span class="co">## 4  2.946  2.845  2.758  2.679  2.600  2.526  2.459  2.397  2.338  2.276  2.165</span></span>
+<span><span class="co">## 5  2.956  2.866  2.766  2.672  2.588  2.519  2.459  2.400  2.340    NaN    NaN</span></span>
+<span><span class="co">## 6  2.968  2.865  2.772  2.681  2.592  2.522  2.465  2.412  2.341    NaN    NaN</span></span>
 <span><span class="co">##   d2200M d2300M d2400M d2500M d2600M d2700M d2800M d2900M d3000M d3100M d3200M</span></span>
-<span><span class="co">## 1  2.147  2.075  2.012  1.960  1.908  1.864  1.826  1.794  1.770    NaN    NaN</span></span>
-<span><span class="co">## 2    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN</span></span>
-<span><span class="co">## 3  2.081  1.993  1.921  1.862  1.813  1.777  1.753  1.754  1.755    NaN    NaN</span></span>
-<span><span class="co">## 4  2.046  1.962  1.891  1.834  1.789  1.795  1.745    NaN    NaN    NaN    NaN</span></span>
-<span><span class="co">## 5  2.047  1.985  1.921  1.870  1.812  1.769  1.746  1.743  1.753  1.766    NaN</span></span>
-<span><span class="co">## 6  2.076  2.003  1.936  1.886  1.843  1.796  1.761  1.751  1.753  1.759   1.78</span></span>
+<span><span class="co">## 1  2.081  1.993  1.921  1.862  1.813  1.777  1.753  1.754  1.755    NaN    NaN</span></span>
+<span><span class="co">## 2  2.046  1.962  1.891  1.834  1.789  1.795  1.745    NaN    NaN    NaN    NaN</span></span>
+<span><span class="co">## 3  2.047  1.985  1.921  1.870  1.812  1.769  1.746  1.743  1.753  1.766    NaN</span></span>
+<span><span class="co">## 4  2.076  2.003  1.936  1.886  1.843  1.796  1.761  1.751  1.753  1.759   1.78</span></span>
+<span><span class="co">## 5    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN</span></span>
+<span><span class="co">## 6    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN</span></span>
 <span><span class="co">##   d3300M d3400M d3500M d3600M d3700M d3800M d3900M d4000M d4100M d4200M d4300M</span></span>
 <span><span class="co">## 1    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN</span></span>
 <span><span class="co">## 2    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN    NaN</span></span>
@@ -309,16 +309,24 @@ ok for your data, maybe it won’t. It depends on the data.</p>
 <pre><code><span><span class="co">## Warning: </span></span>
 <span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
-<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06491755 (eff. df= 110.2 )</span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06224376 (eff. df= 121.6 )</span></span>
 <span><span class="co">## Warning: </span></span>
 <span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
-<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06532046 (eff. df= 108.3 )</span></span></code></pre>
-<pre><code><span><span class="co">## Warning: </span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06365412 (eff. df= 113.0501 )</span></span>
+<span><span class="co">## Warning: </span></span>
 <span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
-<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06730784 (eff. df= 97.84996 )</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06537143 (eff. df= 109.25 )</span></span>
+<span><span class="co">## Warning: </span></span>
+<span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
+<span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06740526 (eff. df= 101.65 )</span></span>
+<span><span class="co">## Warning: </span></span>
+<span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
+<span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06793219 (eff. df= 99.7504 )</span></span></code></pre>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Change names to match tempT</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">envtNames</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">70</span><span class="op">]</span></span></code></pre></div>
 <p>Some environmental data rasters may also look “patchy”, possibly as
@@ -326,7 +334,7 @@ an artifact of uneven sampling. If you are confident that there should
 be a strong spatial correlation in a data layer that looks “patchy”, you
 can also statistically smooth it, again using <code>TPS()</code>, like
 this:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Smoothing tempO and saving</span></span>
 <span><span class="va">oxygenSmooth</span> <span class="op">&lt;-</span> <span class="va">oxygen</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">oxygenSmooth</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
@@ -336,57 +344,97 @@ this:</p>
 <pre><code><span><span class="co">## Warning: </span></span>
 <span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
-<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06244986 (eff. df= 122.55 )</span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06197414 (eff. df= 127.3 )</span></span>
 <span><span class="co">## Warning: </span></span>
 <span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
-<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06326617 (eff. df= 114.0074 )</span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06197414 (eff. df= 127.3 )</span></span>
 <span><span class="co">## Warning: </span></span>
 <span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
-<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06373437 (eff. df= 113.05 )</span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06197414 (eff. df= 127.3 )</span></span>
 <span><span class="co">## Warning: </span></span>
 <span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
-<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06373437 (eff. df= 113.05 )</span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06197414 (eff. df= 127.3 )</span></span>
 <span><span class="co">## Warning: </span></span>
 <span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
-<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06463537 (eff. df= 111.15 )</span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06203537 (eff. df= 126.3499 )</span></span>
 <span><span class="co">## Warning: </span></span>
 <span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
-<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06463537 (eff. df= 111.15 )</span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06203537 (eff. df= 126.3499 )</span></span>
 <span><span class="co">## Warning: </span></span>
 <span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
-<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06463537 (eff. df= 111.15 )</span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06224376 (eff. df= 121.6 )</span></span>
 <span><span class="co">## Warning: </span></span>
 <span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
-<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06520346 (eff. df= 109.25 )</span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06213116 (eff. df= 119.7 )</span></span>
 <span><span class="co">## Warning: </span></span>
 <span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
-<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06521743 (eff. df= 108.2996 )</span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06220057 (eff. df= 118.75 )</span></span>
 <span><span class="co">## Warning: </span></span>
 <span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
-<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06514298 (eff. df= 107.3498 )</span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06220057 (eff. df= 118.75 )</span></span>
 <span><span class="co">## Warning: </span></span>
 <span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
 <span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
-<span><span class="co">##    minimum at  right endpoint  lambda  =  0.0654606 (eff. df= 106.4 )</span></span></code></pre>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06226672 (eff. df= 117.8 )</span></span>
+<span><span class="co">## Warning: </span></span>
+<span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
+<span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06263384 (eff. df= 116.85 )</span></span>
+<span><span class="co">## Warning: </span></span>
+<span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
+<span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06263384 (eff. df= 116.85 )</span></span>
+<span><span class="co">## Warning: </span></span>
+<span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
+<span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06263384 (eff. df= 116.85 )</span></span>
+<span><span class="co">## Warning: </span></span>
+<span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
+<span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06263384 (eff. df= 116.85 )</span></span>
+<span><span class="co">## Warning: </span></span>
+<span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
+<span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06305491 (eff. df= 115.9 )</span></span>
+<span><span class="co">## Warning: </span></span>
+<span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
+<span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06305491 (eff. df= 115.9 )</span></span>
+<span><span class="co">## Warning: </span></span>
+<span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
+<span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06305491 (eff. df= 115.9 )</span></span>
+<span><span class="co">## Warning: </span></span>
+<span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
+<span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06305491 (eff. df= 115.9 )</span></span>
+<span><span class="co">## Warning: </span></span>
+<span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
+<span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06419127 (eff. df= 112.1 )</span></span>
+<span><span class="co">## Warning: </span></span>
+<span><span class="co">## Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: </span></span>
+<span><span class="co">##   (GCV) Generalized Cross-Validation </span></span>
+<span><span class="co">##    minimum at  right endpoint  lambda  =  0.06474647 (eff. df= 110.2 )</span></span></code></pre>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Change names to match tempT and save</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">oxygenSmooth</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">)</span></span>
 <span><span class="va">oxygenSmooth</span> <span class="op">&lt;-</span> <span class="va">oxygenSmooth</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">p3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">oxygen</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>, </span>
-<span>              title<span class="op">=</span> <span class="st">"Surface Apparent Oxygen Utilization (µmol/kg),\ninterpolated"</span><span class="op">)</span></span>
+<span>              title<span class="op">=</span> <span class="st">"Surface Apparent Oxygen Utilization\n(µmol/kg), interpolated"</span><span class="op">)</span></span>
 <span><span class="va">p4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/oneRasterPlot.html">oneRasterPlot</a></span><span class="op">(</span><span class="va">oxygenSmooth</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, land <span class="op">=</span> <span class="va">land</span>, landCol <span class="op">=</span> <span class="st">"black"</span>,</span>
-<span>     title <span class="op">=</span> <span class="st">"Bottom Apparent Oxygen Utilization (µmol/kg),\ninterpolated and smoothed"</span><span class="op">)</span></span></code></pre></div>
+<span>     title <span class="op">=</span> <span class="st">"Bottom Apparent Oxygen Utilization\n(µmol/kg), interpolated and smoothed"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="b_RasterProcessing_files/figure-html/smoothing%20oxygen-1.png"><!-- --></p>
 </div>
 <div class="section level2">
@@ -394,7 +442,7 @@ this:</p>
 </h2>
 <p>Last, we need to close the temporary directory we opened when we
 opened the data.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">td</span>, recursive <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
