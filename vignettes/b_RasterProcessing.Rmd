@@ -163,7 +163,7 @@ unlink(td, recursive = T)
 
 Collins WD, Bitz CM, Blackmon ML, Bonan GB, Bretherton CS, Carton JA, Chang P, Doney SC, Hack JJ, Henderson TB, Kiehl JT, Large WG, McKenna DS, Santer BD, Smith RD. (2006) The Community Climate System Model Version 3 (CCSM3) Journal of Climate, 19(11), 2122–2143 DOI: 10.1175/jcli3761.1
 
-Garcia HE, Boyer P, Baranova OK, Locarnini RA, Mishonov AV, Grodsky A, Paver CR, Weathers KW, Smolyar IV, Reagan JR, Seidov D, Zweng MM. (2018a). World Ocean Atlas 2018 (A. Mishonov, Ed.). NOAA National Centers for Environmental Information. https://accession.nodc.noaa.gov/NCEI-WOA18
+Garcia HE, Boyer P, Baranova OK, Locarnini RA, Mishonov AV, Grodsky A, Paver CR, Weathers KW, Smolyar IV, Reagan JR, Seidov D, Zweng MM. (2018a). World Ocean Atlas 2018 (A. Mishonov, Ed.). NOAA National Centers for Environmental Information. https://doi.org/10.25923/tzyw-rp36
 
 Garcia HE, Weathers K, Paver CR, Smolyar I, Boyer TP, Locarnini RA, Zweng MM, Mishonov AV, Baranova OK, Seidov D, Reagan JR (2018b). World Ocean Atlas 2018, Volume 3: Dissolved Oxygen, Apparent Oxygen Utilization, and Oxygen Saturation. A Mishonov Technical Ed.; NOAA Atlas NESDIS 83, 38pp.
 
