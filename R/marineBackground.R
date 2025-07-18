@@ -82,6 +82,7 @@
 #' @import sf
 #' @importFrom rangeBuilder getDynamicAlphaHull
 #' @importFrom methods as slot<-
+#' @importFrom rnaturalearth ne_countries
 #'
 #' @seealso \code{\link[rangeBuilder:getDynamicAlphaHull]{getDynamicAlphaHull}}
 #'
@@ -109,12 +110,6 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
     initialAlpha <- args$initialAlpha
   } else{
     initialAlpha <- 3
-  }
-
-  if("clipToCoast" %in% names(args)){
-    clipToCoast <- args$clipToCoast
-  } else {
-    clipToCoast <- "no"
   }
 
   if("alphaIncrement" %in% names(args)){
@@ -175,8 +170,8 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
     warning(message("Argument 'initialAlpha' is not of type 'numeric'.\n"))
     return(NULL)
   }
-  if (!(clipToCoast %in% c("no", "terrestrial", "aquatic"))) {
-    warning(message(clipToCoast, " is not valid for 'clipToCoast'.\n"))
+  if (!(is.logical(clipToOcean))) {
+    warning(message(clipToOcean, " is not valid for 'clipToOcean'.\n"))
     return(NULL)
   }
   if (!is.numeric(alphaIncrement)) {
@@ -200,7 +195,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
                                   alphaIncrement = alphaIncrement,
                                   coordHeaders=colnames(occs)[c(xIndex,
                                                                 yIndex)],
-                                  clipToCoast = clipToCoast,
+                                  clipToCoast = "no",
                                   fraction = fraction,
                                   partCount = partCount),
               silent = TRUE)
@@ -221,7 +216,9 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
     occBuffTmp <- disagg(occBuff)
     occBuffConv <- vector(mode = "list", length = length(occBuffTmp))
     for (i in 1:length(occBuffTmp)){
-      occBuffConv[[i]] <- convHull(occBuffTmp[i])
+      occBuffConv[[i]] <- terra::hull(occBuffTmp[i],
+                                      type = "concave_ratio",
+                                      param = 0.1, allowHoles = F)
       values(occBuffConv[[i]]) <- 1
     }
     wholeM <- aggregate(vect(occBuffConv))
@@ -276,8 +273,7 @@ marineBackground <- function(occs, clipToOcean = TRUE, verbose = TRUE, ...){
   crs(wholeM) <- pj$wkt
 
   # Crop out land
-  land <- readRDS(system.file("extdata/smallLand.rds",
-                              package='voluModel'))
+  land <- aggregate(rnaturalearth::ne_countries(returnclass = "sv"))
   land <- project(land, crs(wholeM))
   wholeM <- erase(wholeM, land)
 

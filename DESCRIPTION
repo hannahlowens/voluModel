@@ -46,6 +46,7 @@ Imports:
     metR,
     modEvA,
     rangeBuilder (>= 2.0),
+    rnaturalearth,
     terra,
     viridisLite,
     sf
@@ -57,7 +58,6 @@ Suggests:
     gridExtra,
     lattice,
     rmarkdown,
-    rnaturalearth,
     rnaturalearthdata,
     tibble
 VignetteBuilder: knitr
