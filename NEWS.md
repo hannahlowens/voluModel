@@ -2,6 +2,7 @@
 
 - Emmaline Sheahan added as author.
 - Updated for compatibility with major ggplot2 update; back-compatibility maintained.
+- Vignettes edited and updated.
 
 # voluModel 0.2.2
 
