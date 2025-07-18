@@ -18,3 +18,4 @@
 ^CONTRIBUTING.md
 ^man/figures/SoMePreview$
 ^man/figures/vmHex.ai
+^tests/testthat/Rplots.pdf
