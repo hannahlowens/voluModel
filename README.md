@@ -26,7 +26,7 @@ citation for the version you’re using:
 ```r 
 citation(package = "voluModel")
 ```
-    ## Owens H, Rahbek C (2024). _voluModel: Modeling Species Distributions in Three Dimensions_. doi:
+    ## Owens H, Sheahan E, Rahbek C (2025). _voluModel: Modeling Species Distributions in Three Dimensions_. doi:
     ## 10.5281/zenodo.7813394  (URL: https://doi.org/10.5281/zenodo.7813394), R package version 0.2.3, <URL:
     ## http://CRAN.R-project.org/package=voluModel>.
     ##
@@ -49,7 +49,7 @@ citation(package = "voluModel")
 install.packages("voluModel")
 ```
 
-Or, install GitHub development version (version 0.2.1):
+Or, install GitHub development version (version 0.2.4):
 
 ``` r
 devtools::install_github("hannahlowens/voluModel", build_vignettes = TRUE)
