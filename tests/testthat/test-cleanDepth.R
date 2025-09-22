@@ -27,27 +27,22 @@ values(bath_data) <- sample(c(-4000:0), size = length(values(bath_data)))
 # setting example depth_range
 depth_range <- c(0, 300)
 
-# test case 1: no land_poly or depth_range supplied, flag and bottom_correct are both false
-testcase1 <- cleanDepth(occs = occs, bathy = bath_data)
+# testing that cleanDepth outputs as expected
+test_that("cleanDepth outputs as expected", {
+  expect_error(cleanDepth())
+  testcase1 <- cleanDepth(occs = occs, bathy = bath_data)
+  expect_false(nrow(occs) == nrow(testcase1))
+  testcase2 <- cleanDepth(occs = occs, bathy = bath_data, flag = T)
+  expect_true(nrow(occs) == nrow(testcase2))
+  testcase3 <- cleanDepth(occs = occs, bathy = bath_data, flag = T, bottom_correct = T)
+  expect_true("bottom_correct_values" %in% names(testcase3))
+  testcase4 <- cleanDepth(occs = occs, bathy = bath_data, land_poly = land)
+  expect_false(nrow(testcase4) == nrow(testcase1))
+  testcase5 <- cleanDepth(occs = occs, bathy = bath_data, land_poly = land,
+                          depth_range = depth_range,
+                          flag = T,
+                          bottom_correct = T)
+  expect_false(nrow(testcase1) == nrow(testcase5))
+}
+)
 
-# test case 2: no land_poly or depth_range supplied, flag is true but bottom_correct is false
-testcase2 <- cleanDepth(occs = occs, bathy = bath_data, flag = T)
-
-# test case 3: no land_poly or depth_range supplied, flag and bottom_correct are true
-testcase3 <- cleanDepth(occs = occs, bathy = bath_data, flag = T, bottom_correct = T)
-
-# test_case 4: land_poly is supplied, no depth_range, flag and bottom_correct are false
-testcase4 <- cleanDepth(occs = occs, bathy = bath_data, land_poly = land)
-
-# test_case 5: land_poly is supplied, no depth_range, flag is true and bottom_correct is false
-testcase5 <- cleanDepth(occs = occs, bathy = bath_data, land_poly = land, flag = T)
-
-# test case 6: land_poly is supplied, no depth_range, flag and bottom_correct are true
-testcase6 <- cleanDepth(occs = occs, bathy = bath_data, land_poly = land, flag = T,
-                        bottom_correct = T)
-
-# test case 7: land_poly is supplied, depth_range is supplied, flag and bottom_correct are false
-testcase7 <- cleanDepth(occs = occs, bathy = bath_data, land_poly = land,
-                        depth_range = depth_range,
-                        flag = T,
-                        bottom_correct = T)

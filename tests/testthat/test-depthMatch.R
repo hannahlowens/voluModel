@@ -21,5 +21,13 @@ temp <- c(temp1, temp2, temp3)
 names(temp) <- c(10, 100, 1000)
 
 # testing function
-depth_occs <- depthMatch(occs = occs, rasterTemplate = temp)
+
+test_that("depthMatch outputs as expected", {
+  depth_occs <- depthMatch(occs = occs, rasterTemplate = temp)
+  expect_false(any(occs$depth == depth_occs$depth, na.rm = T))
+  wantdepths <- as.numeric(depth_occs$depth[which(!(is.na(depth_occs$depth)))])
+  expect_false(any(!(wantdepths %in% names(temp))))
+}
+)
+
 
