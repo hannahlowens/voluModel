@@ -125,8 +125,8 @@
 #' result <- threshold_3D(predicted_layers = suit, thresholding_vals = c(0.9, 0.95),
 #' maxent_df = maxdf, coord_df = coord_df, weights = 2/3)
 #'
-#' @import terra
 #' @import dplyr
+#' @import terra
 #'
 #' @keywords threshold
 #'

@@ -21,7 +21,8 @@ land <- st_as_sf(ne_countries())[1] %>% st_set_crs(target_crs)
 land <- land[-which(!(st_is_valid(land))),]
 
 # creating example bathymetry layer
-bath_data <- rast(extend(ext(occs_sf), 10), crs = target_crs, resolution = 1)
+bath_data <- rast(extend(ext(occs_sf), 10),
+                                   crs = target_crs, resolution = 1, vals = NA)
 values(bath_data) <- sample(c(-4000:0), size = length(values(bath_data)))
 
 # setting example depth_range

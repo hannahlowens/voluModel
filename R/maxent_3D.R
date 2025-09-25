@@ -131,11 +131,9 @@
 #'                     wanted_rm = c(1:2), projection_layers = envlist,
 #'                     occ_list = occ_list, depth_list = c(1,2))
 #'
-#' @import terra
 #' @import dplyr
-#' @importFrom predicts MaxEnt
-#' @importFrom predicts predict
-#' @importFrom predicts pa_evaluate
+#' @import predicts
+#' @import terra
 #'
 #' @keywords MaxEnt
 #'
