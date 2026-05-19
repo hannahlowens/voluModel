@@ -1,11 +1,11 @@
 #' @title Create 3D Ecological Niche Models with Maxent
 #'
-#' @description Uses MaxEnt from 'predicts' package to test multiple models with
+#' @description Uses MaxEnt from `predicts` package to test multiple models with
 #' different feature class combinations, regularization multipliers, and a user
 #' supplied partitioning scheme for training and testing. The function outputs
 #' model objects, model results, as well as prediction SpatRasters of each model
 #' projected back onto geographic space using the supplied environmental SpatRaster
-#' stacks
+#' stacks. Note: you will need to install `rJava` to successfully run this function.
 #'
 #' @param maxent_df 'data.frame' where the first column is a vector
 #' of presences named "p" containing 1's and 0's. Each row represents a cell in the
@@ -25,13 +25,13 @@
 #' @param wanted_partition optional, should be the output of 'partition_3D'. if no
 #' partition is supplied, all points will be used for training
 #'
-#' @param projection_layers list of SpatRaster stacks by depth for predictions,
+#' @param projection_layers `list` of SpatRaster stacks by depth for predictions,
 #' must all be cropped to the depth slice with the largest extent and masked
 #' to the accessible area of the matching depth slice. Each element is a depth slice,
 #' and each stack should contain all of the environmental variables used in the model
 #' with the same names as that used in the model.
 #'
-#' @param occ_list occurrence data frame of longitude, latitude, and depth, with columns
+#' @param occs `data.frame` of longitude, latitude, and depth occurrences with columns
 #' named "longitude", "latitude", and "depth".
 #'
 #' @param depth_list vector of depths corresponding to depth slices of list elements of
@@ -43,22 +43,22 @@
 #' For example, a wanted_fc of c("L", "Q", "P") and a wanted_rm of c(1:3) will output 9
 #' total models.
 #'
-#' @return An object of class 'list' with four components:
+#' @return An object of class `list` with four components:
 #'
 #' $models, a list containing each model object produced.
 #'
-#' $results, a 'data.frame' where each row is a model corresponding to the list element
+#' $results, a `data.frame` where each row is a model corresponding to the list element
 #' in $models and $predictions. If there was no partition supplied for training and
 #' testing, each column will report the feature class, regularization multiplier, AUC,
 #' total coefficients, nonzero coefficients, AICc, and delta AICc. if a partition is
 #' used, it will report the average of these statistics across all partitions.
 #'
-#' $predictions, a 'list' of spatraster stacks where each list element is a model
+#' $predictions, a `list` of spatRaster stacks where each list element is a model
 #' corresponding to the rows of $results and elements of $models projected onto the
 #' supplied projection_layers. Each layer in the stack is a depth slice.
 #'
-#' $partition_results, a 'list' object of the same length as the number of partition
-#' groups containing a 'data.frame' of results for each model for each partition. Only
+#' $partition_results, a `list` object of the same length as the number of partition
+#' groups containing a `data.frame` of results for each model for each partition. Only
 #' produced if a partition is supplied.
 #'
 #' @examples
@@ -70,14 +70,14 @@
 #' # creating list of spatraster stacks where each element is a depth slice
 #' r1_d1 <- rast(ncol = 100, nrow = 100)
 #' set.seed(0)
-#' values(r1_d1) <- sample(c(1:100), size = 1000, replace = T)
+#' values(r1_d1) <- as.numeric(sample(c(1:100), size = 1000, replace = TRUE))
 #' r2_d1 <- rast(ncol = 100, nrow = 100)
 #' set.seed(0)
-#' values(r2_d1) <- sample(c(1:1000), size = 1000, replace = T)
+#' values(r2_d1) <- as.numeric(sample(c(1:1000), size = 1000, replace = FALSE))
 #' r1_d2 <- r1_d1
-#' values(r1_d2) <- values(r1_d1)+10
+#' values(r1_d2) <- as.numeric(values(r1_d1)+10)
 #' r2_d2 <- r2_d1
-#' values(r2_d2) <- values(r2_d1)+10
+#' values(r2_d2) <- as.numeric(values(r2_d1)+10)
 #' d1 <- c(r1_d1, r2_d1)
 #' names(d1) <- c("valsr1", "valsr2")
 #' d2 <- c(r1_d2, r2_d2)
@@ -86,13 +86,16 @@
 #'
 #' # creating occs and bgs
 #' set.seed(0)
-#' occs <- sample(c(1:nrow(crds(envlist[[1]][[1]]))), size = 50, replace = F)
-#' bgs <- sample(c(1:nrow(crds(envlist[[1]][[1]]))), size = 500, replace = F)
+#' occs <- sample(c(1:nrow(crds(envlist[[1]][[1]]))), size = 50, replace = FALSE)
+#' bgs <- sample(c(1:nrow(crds(envlist[[1]][[1]]))), size = 500, replace = FALSE)
 #'
-#' occs_d1 <- crds(envlist[[1]][[1]])[occs[1:25],]
-#' occs_d2 <- crds(envlist[[2]][[1]])[occs[26:50],]
-#' bg_d1 <- crds(envlist[[1]][[1]])[bgs[1:250],]
-#' bg_d2 <- crds(envlist[[1]][[1]])[bgs[251:500],]
+#' occ_indices <- sample(c(1:nrow(crds(envlist[[1]][[1]]))), size = 50, replace = FALSE)
+#' bg_indices  <- sample(c(1:nrow(crds(envlist[[1]][[1]]))), size = 500, replace = FALSE)
+#'
+#' occs_d1 <- crds(envlist[[1]][[1]])[occ_indices[1:25],]
+#' occs_d2 <- crds(envlist[[2]][[1]])[occ_indices[26:50],]
+#' bg_d1   <- crds(envlist[[1]][[1]])[bg_indices[1:250],]
+#' bg_d2   <- crds(envlist[[2]][[1]])[bg_indices[251:500],]
 #'
 #' # extracting at occs and bgs
 #' occ_valsr1_d1 <- extract(envlist[[1]][[1]], occs_d1)
@@ -120,20 +123,23 @@
 #'
 #' maxdf <- data.frame(p, valsr1, valsr2)
 #'
-#' # creating occ_list
 #' coords <- rbind(occs_d1, occs_d2)
 #' colnames(coords) <- c("longitude", "latitude")
-#' depth <- c(rep(1, times = 25), rep(2, times = 25))
-#' occ_list <- cbind(coords, depth)
+#' depth_vector     <- c(rep(1, times = 25), rep(2, times = 25))
 #'
-#' # here's the function
-#' result <- maxent_3D(maxent_df = maxdf, wanted_fc = c("L", "Q"),
-#'                     wanted_rm = c(1:2), projection_layers = envlist,
-#'                     occ_list = occ_list, depth_list = c(1,2))
+#' # Use data.frame instead of cbind so $depth is completely valid inside maxent_3D
+#' occs_dataframe <- data.frame(coords, depth = depth_vector)
 #'
-#' @import dplyr
+#' # Pass the clean data.frame to the function
+#' if(requireNamespace("rJava", quietly = TRUE)){
+#'   result <- maxent_3D(maxent_df = maxdf, wanted_fc = c("L", "Q"),
+#'                       wanted_rm = c(1:2), projection_layers = envlist,
+#'                       occs = occs_dataframe, depth_list = c(1,2))
+#' }
+#'
+#' @importFrom terra extract
+#'
 #' @import predicts
-#' @import terra
 #'
 #' @keywords MaxEnt
 #'
@@ -141,7 +147,12 @@
 
 
 maxent_3D <- function(maxent_df, wanted_fc, wanted_rm, wanted_partition=NULL,
-                      projection_layers, occ_list, depth_list) {
+                      projection_layers, occs, depth_list) {
+
+  if(!requireNamespace("rJava", quietly = TRUE)){
+    warning(message("rJava not available, cannot run MaxEnt."))
+    return(NULL)
+  }
 
   # initial check of proper formatting
   if(!("p" %in% colnames(maxent_df))) {
@@ -149,8 +160,8 @@ maxent_3D <- function(maxent_df, wanted_fc, wanted_rm, wanted_partition=NULL,
     return(NULL)
   }
 
-  if(any(!(c("longitude", "latitude", "depth") %in% colnames(occ_list)))) {
-    warning(message("Argument 'occ_list' should have columns named 'longitude',
+  if(any(!(c("longitude", "latitude", "depth") %in% colnames(occs)))) {
+    warning(message("Argument 'occs' should have columns named 'longitude',
                     'latitude' and 'depth'.\n"))
     return(NULL)
   }
@@ -172,9 +183,14 @@ maxent_3D <- function(maxent_df, wanted_fc, wanted_rm, wanted_partition=NULL,
     return(NULL)
   }
 
+  # Confirm predicts is using the correct .jar file
+  pred_jar_dir <- system.file("java", package = "predicts")
+  pred_jar <- file.path(pred_jar_dir, "maxent.jar")
+  rJava::.jinit(classpath = pred_jar, force.init = TRUE)
+
   # lets remove incomplete cases from the maxent_df so all points match
-  maxent_df_present <- maxent_df %>% filter(p == 1)
-  maxent_df_absent <- maxent_df %>% filter(p == 0)
+  maxent_df_present <- maxent_df[maxent_df$p == 1,]
+  maxent_df_absent <- maxent_df[maxent_df$p == 0,]
   maxent_df_present <- maxent_df_present[complete.cases(maxent_df_present),]
   df_for_maxent <- rbind(maxent_df_present, maxent_df_absent)
 
@@ -258,12 +274,14 @@ maxent_3D <- function(maxent_df, wanted_fc, wanted_rm, wanted_partition=NULL,
     predictions_list <- vector("list", length = length(final_perm_list))
     AICc_list <- vector(length = length(final_perm_list))
     print("running models")
+
     for(i in 1:length(final_perm_list)) {
       # create model
-      mod1 <- MaxEnt(x = df_for_maxent[,-1], p = df_for_maxent[,1],
-                     args = c(paste0("betamultiplier=",
-                                     final_perm_list[[i]][[1]]),
-                              paste0(final_perm_list[[i]][[2]])))
+      mod1 <- predicts::MaxEnt(x = df_for_maxent[,!names(df_for_maxent) %in% "p"],
+                               p = c(df_for_maxent[,"p"]),
+                               args = c(paste0("betamultiplier=",
+                                               final_perm_list[[i]][[1]]),
+                                        paste0(final_perm_list[[i]][[2]])))
       # save model
       model_list[[i]] <- mod1
       # retrieve AUC
@@ -284,8 +302,8 @@ maxent_3D <- function(maxent_df, wanted_fc, wanted_rm, wanted_partition=NULL,
         predicted_suit_list[[j]] <- predicted_suit
         standard_suit <- predicted_suit
         values(standard_suit) <- values(standard_suit)/max(values(standard_suit),
-                                                           na.rm = T)
-        needed_occs <- occ_list %>% filter(depth == depth_list[j])
+                                                           na.rm = TRUE)
+        needed_occs <- occs[occs$depth == depth_list[j],]
         if(nrow(needed_occs > 0)) {
           wanted_val_list[[j]] <- terra::extract(standard_suit,
                                                  data.frame(needed_occs$longitude,
@@ -330,15 +348,15 @@ maxent_3D <- function(maxent_df, wanted_fc, wanted_rm, wanted_partition=NULL,
   } else {
 
     # partition warnings
-    if(!(is.list(wanted_partition)) & !("occ_partitions" %in% names(wanted_partition))
-         & !("bg_partitions" %in% names(wanted_partition))) {
+    if(!(all(is.list(wanted_partition),
+             c("occ_partitions", "bg_partitions") %in% names(wanted_partition)))) {
       warning(message("Argument 'wanted_partition' should be a list containing the
-                      elements '$occ_partitions' and 'bg_partitions', as output
-                      by partition_3D.\n"))
+                      named elements 'occ_partitions' and 'bg_partitions', as output
+                      by partition_3D().\n"))
       return(NULL)
     }
 
-    if(length(wanted_partition$occ_partitions) != nrow(maxent_df_present)) {
+    if(length(wanted_partition$occ_partitions) != nrow(maxent_df[maxent_df$p == 1,])) {
       warning(message("Number of occurrences in partition does not match number of
                       occurrences in 'maxent_df'.\n"))
       return(NULL)
@@ -392,8 +410,8 @@ maxent_3D <- function(maxent_df, wanted_fc, wanted_rm, wanted_partition=NULL,
         # saving model
         mod_per_param_list[[j]] <- train_model
         # retrieving validation auc
-        test_full_present <- test_full %>% filter(p == 1)
-        test_full_absent <- test_full %>% filter(p == 0)
+        test_full_present <- test_full[test_full$p == 1,]
+        test_full_absent <- test_full[test_full$p == 0,]
         ev <- predicts::pa_evaluate(p = test_full_present[,-1],
                                     a = test_full_absent[,-1],
                                     model = train_model)
@@ -477,7 +495,7 @@ maxent_3D <- function(maxent_df, wanted_fc, wanted_rm, wanted_partition=NULL,
         standard_suit <- avg_predictions_list[[i]][[j]]
         values(standard_suit) <- values(standard_suit)/max(values(standard_suit),
                                                            na.rm = T)
-        needed_occs <- occ_list %>% filter(depth == depth_list[j])
+        needed_occs <- occs[occs$depth == depth_list[j],]
         if(nrow(needed_occs) > 0) {
           wanted_val_list[[j]] <- terra::extract(standard_suit,
                                     data.frame(needed_occs$longitude, needed_occs$latitude))
