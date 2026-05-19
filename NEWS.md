@@ -1,6 +1,7 @@
 # voluModel 0.2.4
 
-- Development version.
+- Bugs in maxent_3D() and partition_3D() resolved; corresponding tests updated.
+- MESS3D() nottest bugs from CRAN resolved. 
 
 # voluModel 0.2.3
 

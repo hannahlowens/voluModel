@@ -42,3 +42,6 @@ vignettes/*.pdf
 # Miscellany
 ComplementaryDataProcessing.R
 man/figures/SoMePreview*
+
+
+.positai

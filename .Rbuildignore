@@ -1,21 +1,53 @@
-^voluModel\.Rproj$
+# RStudio project files
+^.*\.Rproj$
 ^\.Rproj\.user$
+
+# Git & GitHub
+^\.git$
+^\.gitignore$
 ^\.github$
-^codecov\.yml$
+
+# Documentation & pkgdown
 ^docs$
-^README_files$
-^README.Rmd
-^readme.md
-^cran-comments.md$
-^LICENSE\.md$
-^.*yml
-^CODE_OF_CONDUCT.md
 ^pkgdown$
+^README\.Rmd$
+^README_files$
+^readme\.md$
+^LICENSE\.md$
+^CODE_OF_CONDUCT\.md$
+^CONTRIBUTING\.md$
 ^cran-comments\.md$
 ^CRAN-RELEASE$
-^data-raw$
 ^CRAN-SUBMISSION$
-^CONTRIBUTING.md
+
+# Config files
+^codecov\.yml$
+^.*\.yml$
+
+# Data & analysis artifacts
+^data-raw$
 ^man/figures/SoMePreview$
-^man/figures/vmHex.ai
-^tests/testthat/Rplots.pdf
+^man/figures/vmHex\.ai$
+
+# Test artifacts
+^tests/testthat/Rplots\.pdf$
+
+# Dependency managers & caches
+^renv$
+^renv\.lock$
+^packrat$
+^_targets$
+^targets\.json$
+^\.pytest_cache$
+^\.ruff_cache$
+
+# IDE/editor artifacts
+^\.DS_Store$
+^\.vscode$
+^\.idea$
+^\.dropbox.*$
+
+# Misc
+^~$
+^\.positai$
+^\.claude$
