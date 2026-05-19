@@ -44,7 +44,6 @@ Imports:
     grDevices,
     methods,
     metR,
-    modEvA,
     predicts,
     rangeBuilder (>= 2.0),
     rnaturalearth,

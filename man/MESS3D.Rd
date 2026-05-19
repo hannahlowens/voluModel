@@ -93,6 +93,6 @@ The art of modelling range-shifting species.
 \emph{Methods in Ecology and Evolution}, 1, 330-342.
 }
 \seealso{
-\code{\link[modEvA]{MESS}}
+\code{\link[predicts]{mess}}
 }
 \keyword{modelDiagnostics}

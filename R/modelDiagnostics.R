@@ -79,11 +79,11 @@
 #' messStack <- MESS3D(calibration = calibration, projection = rastList)
 #' plot(messStack)
 #'
-#' @importFrom modEvA MESS
+#' @importFrom predicts mess
 #' @importFrom methods is
 #' @importFrom terra rasterize
 #'
-#' @seealso \code{\link[modEvA]{MESS}}
+#' @seealso \code{\link[predicts]{mess}}
 #'
 #' @keywords modelDiagnostics
 #' @export
@@ -106,12 +106,8 @@ MESS3D <- function (calibration, projection) {
   cal <- as.data.frame(calibration[,names(projection)])
   messStack <- projection
   for (i in 1:nlyr(projection[[1]])){
-    proj <- c(lapply(projection, FUN = function(x) x[[i]]))
-    projVals <- as.data.frame(proj)
-    projCoords <- terra::crds(proj[[1]])
-    messScores <- MESS(P = projVals, V = cal, verbosity = 0)
-    messLayer <- rasterize(projCoords, proj[[1]], values = messScores["TOTAL"])
-    messStack[[i]] <- messLayer
+    proj <- rast(unlist(lapply(projection, FUN = function(x) x[[i]])))
+    messStack[[i]] <- mess(x = proj, v = cal)
   }
   names(messStack) <- names(projection[[1]])
   messStack <- rast(messStack)
