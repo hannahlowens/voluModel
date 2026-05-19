@@ -4,7 +4,7 @@
 
 [![R-CMD-check](https://github.com/hannahlowens/voluModel/workflows/R-CMD-check/badge.svg)](https://github.com/hannahlowens/voluModel/actions)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Codecov test coverage](https://codecov.io/gh/hannahlowens/voluModel/branch/main/graph/badge.svg)](https://codecov.io/gh/hannahlowens/voluModel?branch=main)
+[![codecov](https://codecov.io/gh/hannahlowens/voluModel/graph/badge.svg?token=ZS0YUITESQ)](https://codecov.io/gh/hannahlowens/voluModel)
 [![cran version](https://www.r-pkg.org/badges/version/voluModel)](https://cran.r-project.org/package=voluModel)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5792654.svg)](https://doi.org/10.5281/zenodo.5792654)
 [![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/voluModel)](https://github.com/r-hub/cranlogs.app)
