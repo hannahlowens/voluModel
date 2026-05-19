@@ -17,6 +17,8 @@
 #' depth values adjusted to match the spatRaster stack depth slices
 #'
 #' @examples
+
+#' library(terra)
 #' # Create test raster brick
 #' r1 <- rast(ncol = 100, nrow = 100)
 #' r2 <- rast(ncol = 100, nrow = 100)
@@ -35,6 +37,8 @@
 #'
 #' # Here's the function
 #' result <- depthMatch(occs = occs, rasterTemplate = rbrick)
+#'
+#'@importFrom terra rast
 #'
 #' @keywords occurrence cleaning
 #'
