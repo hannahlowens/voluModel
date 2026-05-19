@@ -27,7 +27,7 @@ citation for the version you’re using:
 citation(package = "voluModel")
 ```
     ## Owens H, Sheahan E, Rahbek C (2025). _voluModel: Modeling Species Distributions in Three Dimensions_. doi:
-    ## 10.5281/zenodo.7813394  (URL: https://doi.org/10.5281/zenodo.7813394), R package version 0.2.3, <URL:
+    ## 10.5281/zenodo.7813394  (URL: https://doi.org/10.5281/zenodo.7813394), R package version 0.2.4, <URL:
     ## http://CRAN.R-project.org/package=voluModel>.
     ##
     ## A BibTeX entry for LaTeX users is
@@ -35,8 +35,8 @@ citation(package = "voluModel")
     ##  @Manual{,
     ##    title = {{voluModel}: Modeling Species Distributions in Three Dimensions},
     ##    author = {Hannah L. Owens and Emmaline Sheahan and Carsten Rahbek},
-    ##    year = {2025}
-    ##    note = {R package version 0.2.3},
+    ##    year = {2026}
+    ##    note = {R package version 0.2.4},
     ##    url = {http://CRAN.R-project.org/package=voluModel},
     ##    doi = {10.5281/zenodo.5792654},
     ##  }
