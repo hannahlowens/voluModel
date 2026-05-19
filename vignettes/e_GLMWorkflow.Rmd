@@ -270,8 +270,13 @@ indices <- unique(datForMod$index)
 projList <- list("AOU" = oxygenSmooth[[min(indices):max(indices)]], 
                  "Temperature" = temperature[[min(indices):max(indices)]])
 
+# Explicitly formatting calibration data
+calibration <- data.frame(
+  AOU = datForMod$AOU,
+  Temperature = datForMod$Temperature)
+
 # Calculate MESS
-messBrick <- MESS3D(calibration = datForMod, projection = projList)
+messBrick <- MESS3D(calibration = calibration, projection = projList)
 ```
 
 Now I will calculate two `SpatRaster` objects. In the first, `extrapolation`, MESS values zero and below (i.e. signalling extrapolation) will be reclassified as 1, which will allow me to easily map where extrapolation is occurring.
