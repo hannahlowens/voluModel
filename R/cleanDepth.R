@@ -42,7 +42,6 @@
 #' #Heres the function
 #' result <- cleanDepth(bathy = r1, occs = occs)
 #'
-#' @importFrom dplyr select
 #' @importFrom terra extract
 #' @import sf
 #'
@@ -54,7 +53,7 @@ cleanDepth <- function(occs, bathy, land_poly, depth_range, flag = FALSE,
                        bottom_correct = FALSE) {
 
   # bathymetry cleaning
-  occ_mat <- occs %>% dplyr::select(longitude, latitude)
+  occ_mat <- occs[,c("longitude", "latitude")]
   depth_at_points <- terra::extract(bathy, occ_mat)
   occs$depth[which(occs$depth > 0 & !(is.na(occs$depth)))] <- 0 -
     occs$depth[which(occs$depth > 0 & !(is.na(occs$depth)))]
