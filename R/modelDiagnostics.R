@@ -67,8 +67,13 @@
 #' depth <- sample(0:35, size = 10, replace = TRUE)
 #' occurrences <- as.data.frame(cbind(longitude,latitude,depth))
 #'
-#' # Calibration
-#' calibration <- lapply(rastList, FUN = function(x) xyzSample(occurrences, x)) %>% bind_rows
+#' # Sample data at occurrences to characterize calibration region
+#' cal_temp <- xyzSample(occurrences, rastList$temperature)
+#' cal_sal  <- xyzSample(occurrences, rastList$salinity)
+#'
+#' calibration <- data.frame(
+#'   temperature = cal_temp,
+#'   salinity    = cal_sal)
 #'
 #' # Run the function
 #' messStack <- MESS3D(calibration = calibration, projection = rastList)
