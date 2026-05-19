@@ -54,13 +54,13 @@
 #' library(terra)
 #' library(dplyr)
 #'
-#' # creating list of spatraster stacks where each element is a depth slice
+#' # creating list of spatRaster stacks where each element is a depth slice
 #' r1_d1 <- rast(ncol = 100, nrow = 100)
 #' set.seed(0)
-#' values(r1_d1) <- sample(c(1:100), size = 1000, replace = T)
+#' values(r1_d1) <- sample(c(1:100), size = 1000, replace = TRUE)
 #' r2_d1 <- rast(ncol = 100, nrow = 100)
 #' set.seed(0)
-#' values(r2_d1) <- sample(c(1:1000), size = 1000, replace = T)
+#' values(r2_d1) <- sample(c(1:1000), size = 1000, replace = TRUE)
 #' r1_d2 <- r1_d1
 #' values(r1_d2) <- values(r1_d1)+10
 #' r2_d2 <- r2_d1
@@ -73,8 +73,8 @@
 #'
 #' # creating occs and bgs
 #' set.seed(0)
-#' occs <- sample(c(1:nrow(crds(envlist[[1]][[1]]))), size = 50, replace = F)
-#' bgs <- sample(c(1:nrow(crds(envlist[[1]][[1]]))), size = 500, replace = F)
+#' occs <- sample(c(1:nrow(crds(envlist[[1]][[1]]))), size = 50, replace = FALSE)
+#' bgs <- sample(c(1:nrow(crds(envlist[[1]][[1]]))), size = 500, replace = FALSE)
 #'
 #' occs_d1 <- crds(envlist[[1]][[1]])[occs[1:25],]
 #' occs_d2 <- crds(envlist[[2]][[1]])[occs[26:50],]
@@ -125,8 +125,7 @@
 #' result <- threshold_3D(predicted_layers = suit, thresholding_vals = c(0.9, 0.95),
 #' maxent_df = maxdf, coord_df = coord_df, weights = 2/3)
 #'
-#' @import dplyr
-#' @import terra
+#' @importFrom terra extract
 #'
 #' @keywords threshold
 #'
@@ -159,14 +158,14 @@ threshold_3D <- function(predicted_layers,
 
   # making a dataframe occurrences and background
   full_df <- cbind(maxent_df, coord_df)
-  occ_df <- full_df %>% filter(p == 1)
-  bg_df <- full_df %>% filter(p == 0)
+  occ_df <- full_df[full_df$p == 1,]
+  bg_df <- full_df[full_df$p == 0,]
 
   depth_slices <- unique(bg_df$depth)
 
   sdm_suit_vals <- vector("list", length = length(depth_slices))
   for(i in 1:length(depth_slices)) {
-    need_occ <- occ_df %>% filter(depth == depth_slices[i])
+    need_occ <- occ_df[occ_df$depth == depth_slices[i],]
     if(nrow(need_occ) < 1) {
       sdm_suit_vals[[i]] <- NA
     } else {
@@ -193,7 +192,7 @@ threshold_3D <- function(predicted_layers,
                                 thresh_val, 1, 1), nrow = 2, ncol = 3, byrow = T)
       thresholded_layers[[j]] <- classify(predicted_layers[[j]],
                                           rcl = rclmat)
-      need_bg <- bg_df %>% filter(depth == depth_slices[j])
+      need_bg <- bg_df[bg_df$depth == depth_slices[j],]
       real_abs_list[[j]] <- terra::extract(thresholded_layers[[j]],
                                            data.frame(need_bg$longitude, need_bg$latitude))
     }
