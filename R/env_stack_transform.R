@@ -26,16 +26,16 @@
 #' library(terra)
 #'
 #' # creating a list of spatRaster stacks where each element is an environmental variable
-#' and each layer is a depth
+#' # and each layer is a depth
 #'
 #' env1_d1 <- rast(ncol = 50, nrow = 50)
-#' values(env1_d1) <- sample(c(1:100), size = 2500, replace = T)
+#' values(env1_d1) <- sample(c(1:100), size = 2500, replace = TRUE)
 #' env2_d1 <- rast(ncol = 50, nrow = 50)
-#' values(env2_d1) <- sample(c(1:100), size = 2500, replace = T)
+#' values(env2_d1) <- sample(c(1:100), size = 2500, replace = TRUE)
 #' env1_d2 <- rast(ncol = 50, nrow = 50)
-#' values(env1_d2) <- sample(c(1:100), size = 2500, replace = T)
+#' values(env1_d2) <- sample(c(1:100), size = 2500, replace = TRUE)
 #' env2_d2 <- rast(ncol = 50, nrow = 50)
-#' values(env2_d2) <- sample(c(1:100), size = 2500, replace = T)
+#' values(env2_d2) <- sample(c(1:100), size = 2500, replace = TRUE)
 #'
 #' env1 <- c(env1_d1, env1_d2)
 #' env2 <- c(env2_d1, env2_d2)
@@ -45,7 +45,7 @@
 #' # Here's the function
 #' result <- env_stack_transform(envs_all = envs, envs_names = envnames)
 #'
-#' @import terra
+#' @importFrom terra rast
 #'
 #' @keywords transform list SpatRaster stack
 #'
