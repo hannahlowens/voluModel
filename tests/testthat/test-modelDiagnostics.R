@@ -1,7 +1,7 @@
 library(terra)
 library(dplyr)
 
-# Create first rasterBrick
+# Create first rasterStack
 r1 <- rast(ncol=10, nrow=10)
 values(r1) <- 1:100
 r2 <- rast(ncol=10, nrow=10)
@@ -11,7 +11,7 @@ values(r3) <- 8
 envBrick1 <- c(r1, r2, r3)
 names(envBrick1) <- c(0, 10, 30)
 
-# Create second rasterBrick
+# Create second rasterStack
 r1 <- rast(ncol=10, nrow=10)
 values(r1) <- 100:1
 r2 <- rast(ncol=10, nrow=10)
@@ -34,8 +34,14 @@ set.seed(0)
 depth <- sample(0:35, size = 10, replace = TRUE)
 occurrences <- as.data.frame(cbind(longitude,latitude,depth))
 
-# Calibration
-calibration <- lapply(rastList, FUN = function(x) xyzSample(occurrences, x))  %>% bind_rows
+# Sample data at occurrences
+cal_temp <- xyzSample(occurrences, rastList$temperature)
+cal_sal  <- xyzSample(occurrences, rastList$salinity)
+
+# Calibration, assuming the sampled environmental value is the 4th column
+calibration <- data.frame(
+  temperature = cal_temp,
+  salinity    = cal_sal)
 
 test_that("MESS3D warnings work", {
   expect_error(MESS3D())
@@ -51,3 +57,4 @@ test_that("MESS3D outputs as expected", {
   temporary <- MESS3D(calibration = calibration, projection = rastList)
   expect_equal(class(temporary)[[1]], "SpatRaster")
 })
+
