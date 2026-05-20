@@ -27,6 +27,7 @@
 #' Unassignable rows get NA. If "list": list(occ_partitions, bg_partitions).
 #'
 #' @examples
+#' \donttest{
 #' # create test dataframe
 #' occ <- rep(1, times = 10)
 #' bg <- rep(0, times = 1000)
@@ -50,6 +51,7 @@
 #'
 #' result_block <- partition_3D(maxent_df = testdf, coord_df = test_coords,
 #' which_partition = 'block', orientation = 'lat_lon')
+#' }
 #'
 #' @keywords partition validation
 #'
