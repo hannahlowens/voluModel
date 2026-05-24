@@ -1,3 +1,5 @@
+# voluModel (development version)
+
 # voluModel 0.2.4
 
 - Bugs in maxent_3D() and partition_3D() resolved; corresponding tests updated.
