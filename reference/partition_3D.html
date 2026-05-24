@@ -67,7 +67,7 @@ Can create block or kfold partitions, with output as a vector or list"><meta pro
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Create 3D partitions</h1>
-    <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/main/R/partition_3D.R" class="external-link"><code>R/partition_3D.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/hannahlowens/voluModel/blob/v0.2.4/R/partition_3D.R" class="external-link"><code>R/partition_3D.R</code></a></small>
     <div class="hidden name"><code>partition_3D.Rd</code></div>
     </div>
 
@@ -150,8 +150,7 @@ close to equal as the occurrences.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="co"># create test dataframe</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># create test dataframe</span></span></span>
 <span class="r-in"><span><span class="va">occ</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, times <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">bg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, times <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">env1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1010</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -174,7 +173,6 @@ close to equal as the occurrences.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">result_block</span> <span class="op">&lt;-</span> <span class="fu">partition_3D</span><span class="op">(</span>maxent_df <span class="op">=</span> <span class="va">testdf</span>, coord_df <span class="op">=</span> <span class="va">test_coords</span>,</span></span>
 <span class="r-in"><span>which_partition <span class="op">=</span> <span class="st">'block'</span>, orientation <span class="op">=</span> <span class="st">'lat_lon'</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
