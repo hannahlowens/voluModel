@@ -130,11 +130,13 @@
 #' # Use data.frame instead of cbind so $depth is completely valid inside maxent_3D
 #' occs_dataframe <- data.frame(coords, depth = depth_vector)
 #'
+#'\donttest{
 #' # Pass the clean data.frame to the function
 #' if(requireNamespace("rJava", quietly = TRUE)){
 #'   result <- maxent_3D(maxent_df = maxdf, wanted_fc = c("L", "Q"),
 #'                       wanted_rm = c(1:2), projection_layers = envlist,
 #'                       occs = occs_dataframe, depth_list = c(1,2))
+#' }
 #' }
 #'
 #' @importFrom terra extract

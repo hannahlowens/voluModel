@@ -55,6 +55,7 @@ Note that this means the number of background points in each partition may not b
 close to equal as the occurrences.
 }
 \examples{
+\donttest{
 # create test dataframe
 occ <- rep(1, times = 10)
 bg <- rep(0, times = 1000)
@@ -78,6 +79,7 @@ which_partition = 'k.fold', kfolds = 3)
 
 result_block <- partition_3D(maxent_df = testdf, coord_df = test_coords,
 which_partition = 'block', orientation = 'lat_lon')
+}
 
 }
 \keyword{partition}
