@@ -483,12 +483,12 @@ pointCompMap <- function(occs1, occs2,
     xlab("") +
     ylab("") +
     labs(
-      title = paste0("***", spName,"***<br>
-    <span style='color:", agreeCol,";'>Overlapping</span>,
-    <span style='color:", occs1Col, ";'>in ", occs1Name,
-                     " dataset only</span>, and
-    <span style='color:", occs2Col, ";'>in ",
-                     occs2Name, " dataset only</span>")) +
+      title = paste0("***", spName, "***<br>",
+                     "<span style='color:", agreeCol, ";'>Overlapping</span>, ",
+                     "<span style='color:", occs1Col, ";'>in ", occs1Name,
+                     " dataset only</span>, and ",
+                     "<span style='color:", occs2Col, ";'>in ", occs2Name,
+                     " dataset only</span>")) +
     theme(plot.title = element_markdown(lineheight = .4))}
   else{
     comparison_map <- ggplot() +
@@ -505,13 +505,12 @@ pointCompMap <- function(occs1, occs2,
                expand = TRUE, ) +
       xlab("") +
       ylab("") +
-      labs(
-        title = paste0("***", spName,"***<br>
-    <span style='color:", agreeCol,";'>Overlapping</span>,
-    <span style='color:", occs1Col, ";'>in ", occs1Name,
-                       " dataset only</span>, and
-    <span style='color:", occs2Col, ";'>in ", occs2Name,
-                       " dataset only</span>")) +
+      labs(title = paste0("***", spName, "***<br>",
+                          "<span style='color:", agreeCol, ";'>Overlapping</span>, ",
+                          "<span style='color:", occs1Col, ";'>in ", occs1Name,
+                          " dataset only</span>, and ",
+                          "<span style='color:", occs2Col, ";'>in ", occs2Name,
+                          " dataset only</span>")) +
       theme(plot.title = element_markdown(lineheight = .4))
   }
   return(comparison_map)
