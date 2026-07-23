@@ -1,7 +1,6 @@
 ## This is a package update. In this version, I have:
 
-* New functions `maxent_3D()` and `partition_3D()`; corresponding tests updated.
-* `MESS3D()` nottest bugs from CRAN resolved.
+* Fixed `ggtext` bug in `pointCompMap()`.
 
 ## Test environments
 * local macOS X 26.5.1, R 4.5.2

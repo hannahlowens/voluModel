@@ -483,7 +483,7 @@ pointCompMap <- function(occs1, occs2,
     xlab("") +
     ylab("") +
     labs(
-      title = paste0("***", spName,"***<p>
+      title = paste0("***", spName,"***<br>
     <span style='color:", agreeCol,";'>Overlapping</span>,
     <span style='color:", occs1Col, ";'>in ", occs1Name,
                      " dataset only</span>, and
@@ -506,7 +506,7 @@ pointCompMap <- function(occs1, occs2,
       xlab("") +
       ylab("") +
       labs(
-        title = paste0("***", spName,"***<p>
+        title = paste0("***", spName,"***<br>
     <span style='color:", agreeCol,";'>Overlapping</span>,
     <span style='color:", occs1Col, ";'>in ", occs1Name,
                        " dataset only</span>, and
