@@ -1,4 +1,6 @@
-# voluModel (development version)
+# voluModel 0.2.5
+
+- Fixed `ggtext` bug in `pointCompMap()`.
 
 # voluModel 0.2.4
 
